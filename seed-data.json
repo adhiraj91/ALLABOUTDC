@@ -1,333 +1,2031 @@
 {
   "movies": [
     {
+      "t": "Adventures of Captain Marvel",
+      "y": "1941",
+      "type": "Live Action",
+      "format": "Serial",
+      "connected": "Classic Serials",
+      "hero": [],
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "12-chapter Republic Pictures serial — the first-ever screen adaptation of a Fawcett/DC hero, decades before Shazam's own solo films."
+    },
+    {
+      "t": "Batman",
+      "y": "1943",
+      "type": "Live Action",
+      "format": "Serial",
+      "connected": "Classic Serials",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 5.8,
+      "blurb": "Columbia Pictures' 15-chapter serial — the first-ever screen Batman, fighting a wartime Japanese saboteur."
+    },
+    {
+      "t": "Superman",
+      "y": "1948",
+      "type": "Live Action",
+      "format": "Serial",
+      "connected": "Classic Serials",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "15-chapter Columbia serial, the first screen Superman, played by Kirk Alyn."
+    },
+    {
+      "t": "Batman and Robin",
+      "y": "1949",
+      "type": "Live Action",
+      "format": "Serial",
+      "connected": "Classic Serials",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 5.3,
+      "blurb": "Columbia's second Batman serial, introducing the screen's first Robin."
+    },
+    {
+      "t": "Atom Man vs. Superman",
+      "y": "1950",
+      "type": "Live Action",
+      "format": "Serial",
+      "connected": "Classic Serials",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "Kirk Alyn's second serial outing as Superman, against Lex Luthor as 'Atom Man'."
+    },
+    {
+      "t": "Superman and the Mole Men",
+      "y": "1951",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Classic",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6,
+      "blurb": "George Reeves' first outing as Superman — the first-ever feature film based on a DC character, and the pilot for Adventures of Superman."
+    },
+    {
       "t": "Superman",
       "y": "1978",
       "type": "Live Action",
-      "cont": "Donnerverse",
+      "format": "Theatrical",
+      "connected": "Donnerverse",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 87,
+      "imdb": 7.4,
       "blurb": "Christopher Reeve's origin-to-icon debut; the film that proved a superhero movie could be prestige cinema."
     },
     {
       "t": "Superman II",
       "y": "1980",
       "type": "Live Action",
-      "cont": "Donnerverse",
+      "format": "Theatrical",
+      "connected": "Donnerverse",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 89,
+      "imdb": 6.8,
       "blurb": "Zod and the Phantom Zone criminals arrive; Superman gives up his powers for Lois, then takes them back."
+    },
+    {
+      "t": "Superman III",
+      "y": "1983",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Donnerverse",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 29,
+      "imdb": 5.1,
+      "blurb": "A tonal swing toward comedy, pitting Superman against a corrupted version of himself and Richard Pryor's hacker."
+    },
+    {
+      "t": "Supergirl",
+      "y": "1984",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Donnerverse",
+      "hero": [
+        "Supergirl"
+      ],
+      "rt": 19,
+      "imdb": 4.6,
+      "blurb": "Kara's solo spin-off from the Superman film series, poorly received on release."
+    },
+    {
+      "t": "Superman IV: The Quest for Peace",
+      "y": "1987",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Donnerverse",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 10,
+      "imdb": 3.7,
+      "blurb": "A famously troubled production sees Superman take on nuclear disarmament and Nuclear Man."
+    },
+    {
+      "t": "Superman Returns",
+      "y": "2006",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Donnerverse",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 74,
+      "imdb": 6.1,
+      "blurb": "Bryan Singer's spiritual sequel to Superman II, ignoring III and IV, with Brandon Routh as Clark."
+    },
+    {
+      "t": "Swamp Thing",
+      "y": "1982",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Swamp Thing"
+      ],
+      "rt": 62,
+      "imdb": 5.7,
+      "blurb": "Wes Craven's B-movie take on the muck-monster hero, based on the Len Wein/Bernie Wrightson comic."
+    },
+    {
+      "t": "The Return of Swamp Thing",
+      "y": "1989",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Swamp Thing"
+      ],
+      "rt": 44,
+      "imdb": 4.7,
+      "blurb": "A campier sequel leaning further into B-movie horror-comedy."
     },
     {
       "t": "Batman",
       "y": "1989",
       "type": "Live Action",
-      "cont": "Burtonverse",
+      "format": "Theatrical",
+      "connected": "Burtonverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 77,
+      "imdb": 7.5,
       "blurb": "Tim Burton's gothic, operatic take on Gotham, with Jack Nicholson's Joker."
     },
     {
       "t": "Batman Returns",
       "y": "1992",
       "type": "Live Action",
-      "cont": "Burtonverse",
+      "format": "Theatrical",
+      "connected": "Burtonverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 81,
+      "imdb": 7.1,
       "blurb": "Burton doubles down on the grotesque with Catwoman and Penguin as tragic monsters."
     },
     {
       "t": "Batman Forever",
       "y": "1995",
       "type": "Live Action",
-      "cont": "Schumacherverse",
+      "format": "Theatrical",
+      "connected": "Schumacherverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 41,
+      "imdb": 5.4,
       "blurb": "Joel Schumacher brightens the tone considerably; Two-Face and the Riddler headline."
     },
     {
       "t": "Batman & Robin",
       "y": "1997",
       "type": "Live Action",
-      "cont": "Schumacherverse",
+      "format": "Theatrical",
+      "connected": "Schumacherverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 11,
+      "imdb": 3.7,
       "blurb": "Neon camp excess that effectively ended the franchise until Nolan's reboot."
+    },
+    {
+      "t": "Steel",
+      "y": "1997",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 12,
+      "imdb": 3.7,
+      "blurb": "Shaquille O'Neal stars as John Henry Irons, loosely based on the post-Death of Superman hero."
+    },
+    {
+      "t": "Catwoman",
+      "y": "2004",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Catwoman"
+      ],
+      "rt": 8,
+      "imdb": 3.4,
+      "blurb": "Halle Berry stars in a version of Catwoman not directly tied to the comics character."
+    },
+    {
+      "t": "Constantine",
+      "y": "2005",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Constantine"
+      ],
+      "rt": 46,
+      "imdb": 7,
+      "blurb": "Keanu Reeves as a chain-smoking occult detective, loosely based on Hellblazer."
     },
     {
       "t": "Batman Begins",
       "y": "2005",
       "type": "Live Action",
-      "cont": "Nolanverse",
+      "format": "Theatrical",
+      "connected": "Nolanverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 85,
+      "imdb": 8.2,
       "blurb": "Christopher Nolan grounds Batman's origin in realism; the start of The Dark Knight Trilogy."
     },
     {
       "t": "The Dark Knight",
       "y": "2008",
       "type": "Live Action",
-      "cont": "Nolanverse",
+      "format": "Theatrical",
+      "connected": "Nolanverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 94,
+      "imdb": 9,
       "blurb": "Heath Ledger's Joker anchors a crime-thriller take on Batman vs. chaos."
     },
     {
       "t": "The Dark Knight Rises",
       "y": "2012",
       "type": "Live Action",
-      "cont": "Nolanverse",
+      "format": "Theatrical",
+      "connected": "Nolanverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 87,
+      "imdb": 8.4,
       "blurb": "Bane and Talia al Ghul close out the trilogy with Gotham under siege."
+    },
+    {
+      "t": "Watchmen",
+      "y": "2009",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 65,
+      "imdb": 7.6,
+      "blurb": "Zack Snyder's dense adaptation of Alan Moore and Dave Gibbons' deconstruction of superheroes."
+    },
+    {
+      "t": "V for Vendetta",
+      "y": "2006",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 73,
+      "imdb": 8.1,
+      "blurb": "Alan Moore and David Lloyd's dystopian anarchist tale, adapted by the Wachowskis (as writers/producers)."
+    },
+    {
+      "t": "Stardust",
+      "y": "2007",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 77,
+      "imdb": 7.6,
+      "blurb": "A fantasy romance based on Neil Gaiman and Charles Vess' Vertigo miniseries."
+    },
+    {
+      "t": "The Losers",
+      "y": "2010",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 49,
+      "imdb": 6.4,
+      "blurb": "A black-ops team framed for a crime they didn't commit, based on the Vertigo series."
+    },
+    {
+      "t": "Jonah Hex",
+      "y": "2010",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 12,
+      "imdb": 4.7,
+      "blurb": "A poorly-received Western adaptation of DC's scarred bounty-hunter antihero."
+    },
+    {
+      "t": "Red",
+      "y": "2010",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 72,
+      "imdb": 7,
+      "blurb": "Retired black-ops agents are targeted for elimination, based on Warren Ellis and Cully Hamner's WildStorm miniseries."
+    },
+    {
+      "t": "Red 2",
+      "y": "2013",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 44,
+      "imdb": 6.6,
+      "blurb": "The sequel to Red, sending the retired team on a globe-trotting mission."
+    },
+    {
+      "t": "The Kitchen",
+      "y": "2019",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 23,
+      "imdb": 5.3,
+      "blurb": "Three mob wives take over their husbands' Hell's Kitchen rackets, based on the DC Vertigo miniseries."
+    },
+    {
+      "t": "Road to Perdition",
+      "y": "2002",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 81,
+      "imdb": 7.6,
+      "blurb": "A Depression-era mob drama based on Max Allan Collins' graphic novel, published under DC's Paradox Press imprint."
+    },
+    {
+      "t": "A History of Violence",
+      "y": "2005",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 87,
+      "imdb": 7.4,
+      "blurb": "A diner owner's violent past resurfaces, based on the graphic novel published by DC/Vertigo."
+    },
+    {
+      "t": "The League of Extraordinary Gentlemen",
+      "y": "2003",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 17,
+      "imdb": 5.9,
+      "blurb": "Victorian literary icons team up, based on Alan Moore and Kevin O'Neill's WildStorm series."
+    },
+    {
+      "t": "Green Lantern",
+      "y": "2011",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Green Lantern"
+      ],
+      "rt": 25,
+      "imdb": 5.5,
+      "blurb": "Ryan Reynolds' first superhero outing, a critical and commercial disappointment for the character's live-action debut."
     },
     {
       "t": "Man of Steel",
       "y": "2013",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 57,
+      "imdb": 7.1,
       "blurb": "Zack Snyder relaunches Superman as a darker, mythic figure; opens the DC Extended Universe."
     },
     {
       "t": "Batman v Superman: Dawn of Justice",
       "y": "2016",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Batman",
+        "Superman"
+      ],
+      "rt": 28,
+      "imdb": 6.4,
       "blurb": "Introduces Ben Affleck's Batman and sets up the Justice League; also the first live-action Wonder Woman."
     },
     {
       "t": "Suicide Squad",
       "y": "2016",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Suicide Squad",
+        "Harley Quinn"
+      ],
+      "rt": 26,
+      "imdb": 5.9,
       "blurb": "A team of imprisoned villains is sent on a black-ops mission."
     },
     {
       "t": "Wonder Woman",
       "y": "2017",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Wonder Woman"
+      ],
+      "rt": 93,
+      "imdb": 7.3,
       "blurb": "Diana's WWI-set origin, widely seen as a turning point for the DCEU's critical reception."
     },
     {
       "t": "Justice League",
       "y": "2017",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": 39,
+      "imdb": 6.1,
       "blurb": "The theatrical cut, finished by Joss Whedon after Snyder departed production."
+    },
+    {
+      "t": "Zack Snyder's Justice League",
+      "y": "2021",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": 71,
+      "imdb": 7.9,
+      "blurb": "The four-hour director's cut released after years of fan campaigning; a substantially different film from 2017's."
     },
     {
       "t": "Aquaman",
       "y": "2018",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Aquaman"
+      ],
+      "rt": 65,
+      "imdb": 6.9,
       "blurb": "Arthur Curry claims the throne of Atlantis in a colorful, undersea epic."
     },
     {
       "t": "Shazam!",
       "y": "2019",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Shazam"
+      ],
+      "rt": 90,
+      "imdb": 7,
       "blurb": "A foster kid who transforms into an adult hero, played with family-comedy warmth."
     },
     {
       "t": "Birds of Prey",
       "y": "2020",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Harley Quinn"
+      ],
+      "rt": 79,
+      "imdb": 6.1,
       "blurb": "Harley Quinn, freshly split from the Joker, teams up with Gotham's other women."
     },
     {
       "t": "Wonder Woman 1984",
       "y": "2020",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Wonder Woman"
+      ],
+      "rt": 57,
+      "imdb": 5.4,
       "blurb": "Diana faces a wish-granting artifact in the excess of the Reagan era."
-    },
-    {
-      "t": "Zack Snyder's Justice League",
-      "y": "2021",
-      "type": "Live Action",
-      "cont": "DCEU",
-      "blurb": "The four-hour director's cut released after years of fan campaigning; a substantially different film from 2017's."
     },
     {
       "t": "The Suicide Squad",
       "y": "2021",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Suicide Squad",
+        "Harley Quinn"
+      ],
+      "rt": 90,
+      "imdb": 7.2,
       "blurb": "James Gunn's R-rated, mostly standalone reboot of the concept."
     },
     {
       "t": "Black Adam",
       "y": "2022",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Black Adam"
+      ],
+      "rt": 38,
+      "imdb": 6.3,
       "blurb": "Dwayne Johnson's antihero is freed from millennia of imprisonment."
     },
     {
       "t": "Shazam! Fury of the Gods",
       "y": "2023",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Shazam"
+      ],
+      "rt": 49,
+      "imdb": 5.6,
       "blurb": "The Shazam family faces the daughters of Atlas."
     },
     {
-      "t": "Aquaman and the Lost Kingdom",
+      "t": "The Flash",
       "y": "2023",
       "type": "Live Action",
-      "cont": "DCEU",
-      "blurb": "The final film released under the original DCEU banner."
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Flash"
+      ],
+      "rt": 63,
+      "imdb": 6.6,
+      "blurb": "Barry Allen's time-travel misadventure, and the effective finale of the Snyderverse continuity."
     },
     {
       "t": "Blue Beetle",
       "y": "2023",
       "type": "Live Action",
-      "cont": "DCEU",
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Blue Beetle"
+      ],
+      "rt": 78,
+      "imdb": 6.5,
       "blurb": "Jaime Reyes bonds with an alien scarab; the last new DCEU hero introduced."
     },
     {
-      "t": "The Batman",
-      "y": "2022",
+      "t": "Aquaman and the Lost Kingdom",
+      "y": "2023",
       "type": "Live Action",
-      "cont": "Elseworlds (Reeves)",
-      "blurb": "Matt Reeves' noir detective-thriller take, standalone from the DCEU and DCU."
+      "format": "Theatrical",
+      "connected": "DCEU",
+      "hero": [
+        "Aquaman"
+      ],
+      "rt": 34,
+      "imdb": 5.5,
+      "blurb": "The final film released under the original DCEU banner."
     },
     {
       "t": "Joker",
       "y": "2019",
       "type": "Live Action",
-      "cont": "Elseworlds",
+      "format": "Theatrical",
+      "connected": "Elseworlds",
+      "hero": [
+        "Joker"
+      ],
+      "rt": 68,
+      "imdb": 8.4,
       "blurb": "A grounded character study of Arthur Fleck's descent, disconnected from any shared DC continuity."
     },
     {
       "t": "Joker: Folie à Deux",
       "y": "2024",
       "type": "Live Action",
-      "cont": "Elseworlds",
+      "format": "Theatrical",
+      "connected": "Elseworlds",
+      "hero": [
+        "Joker"
+      ],
+      "rt": 31,
+      "imdb": 5.2,
       "blurb": "A musical-tinged sequel following Arthur's trial and his bond with Harley Quinn."
+    },
+    {
+      "t": "The Batman",
+      "y": "2022",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Reevesverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 85,
+      "imdb": 7.8,
+      "blurb": "Matt Reeves' noir detective-thriller take, standalone from the DCEU and DCU."
     },
     {
       "t": "Superman",
       "y": "2025",
       "type": "Live Action",
-      "cont": "DCU Chapter 1",
+      "format": "Theatrical",
+      "connected": "DCU (Gunnverse)",
+      "hero": [
+        "Superman"
+      ],
+      "rt": 83,
+      "imdb": 7.2,
       "blurb": "James Gunn's relaunch of the character, opening the new shared DC Universe (DCU)."
+    },
+    {
+      "t": "Supergirl",
+      "y": "2026",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "DCU (Gunnverse)",
+      "hero": [
+        "Supergirl"
+      ],
+      "rt": 52,
+      "imdb": 5.5,
+      "blurb": "Milly Alcock's Kara Zor-El, the second live-action film of the new DCU."
+    },
+    {
+      "t": "Clayface",
+      "y": "2026",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "DCU (Gunnverse)",
+      "hero": [],
+      "rt": null,
+      "imdb": null,
+      "blurb": "A body-horror take on the shapeshifting Batman villain, set in the new DCU."
+    },
+    {
+      "t": "Man of Tomorrow",
+      "y": "2027",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "DCU (Gunnverse)",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "The Superman sequel, continuing the DCU's Chapter 1 slate."
+    },
+    {
+      "t": "The Batman: Part II",
+      "y": "2028",
+      "type": "Live Action",
+      "format": "Theatrical",
+      "connected": "Reevesverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "Matt Reeves' sequel to The Batman, currently filming."
+    },
+    {
+      "t": "DC League of Super-Pets",
+      "y": "2022",
+      "type": "Animated",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": 73,
+      "imdb": 6.1,
+      "blurb": "Krypto and a shelter-pet squad get powers of their own in this CG animated comedy."
+    },
+    {
+      "t": "Aztec Batman: Clash of Empires",
+      "y": "2025",
+      "type": "Animated",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "An Aztec-set reimagining of Batman, released theatrically in Mexico."
     },
     {
       "t": "Batman: Mask of the Phantasm",
       "y": "1993",
       "type": "Animated",
-      "cont": "DCAU",
+      "format": "Theatrical",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 83,
+      "imdb": 7.9,
       "blurb": "A feature film extension of Batman: The Animated Series, considered one of the best Batman films in any medium."
+    },
+    {
+      "t": "The Lego Batman Movie",
+      "y": "2017",
+      "type": "Animated",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 89,
+      "imdb": 7.3,
+      "blurb": "A comedic spin-off of The Lego Movie, sending up decades of Batman media."
+    },
+    {
+      "t": "Teen Titans Go! To the Movies",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Theatrical",
+      "connected": "Teen Titans Go!",
+      "hero": [
+        "Teen Titans"
+      ],
+      "rt": 91,
+      "imdb": 6.9,
+      "blurb": "The chibi Teen Titans satirize the superhero movie genre itself."
+    },
+    {
+      "t": "Batman & Mr. Freeze: SubZero",
+      "y": "1998",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "Batman and Robin race to save Barbara Gordon after Mr. Freeze kidnaps her for a transfusion."
     },
     {
       "t": "Batman Beyond: Return of the Joker",
       "y": "2000",
       "type": "Animated",
-      "cont": "DCAU",
+      "format": "Direct-to-Video",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 8,
       "blurb": "An older Bruce Wayne and successor Terry McGinnis confront a resurrected Joker."
+    },
+    {
+      "t": "Batman: Mystery of the Batwoman",
+      "y": "2003",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "A mysterious new Batwoman appears in Gotham, and Batman must uncover her identity."
+    },
+    {
+      "t": "The Batman vs. Dracula",
+      "y": "2005",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "The Batman (2004)",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "Set in The Batman TV series' universe, Dracula rises in Gotham after the Penguin unearths his coffin."
+    },
+    {
+      "t": "Superman: Brainiac Attacks",
+      "y": "2006",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.2,
+      "blurb": "Loosely connected to Superman: The Animated Series but not considered official DCAU continuity."
     },
     {
       "t": "Superman: Doomsday",
       "y": "2007",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts the Death of Superman storyline; opens the long-running DTV animated line."
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "Adapts the Death of Superman storyline; opens the long-running DC Universe Animated Original Movies line."
+    },
+    {
+      "t": "Justice League: The New Frontier",
+      "y": "2008",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "Based on Darwyn Cooke's DC: The New Frontier, set against the backdrop of the Cold War."
+    },
+    {
+      "t": "Batman: Gotham Knight",
+      "y": "2008",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Nolanverse",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "Six anime-style shorts bridging Batman Begins and The Dark Knight."
     },
     {
       "t": "Wonder Woman",
       "y": "2009",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "An origin story pitting Diana against Ares."
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Wonder Woman"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "An origin story pitting Diana against Ares, loosely based on 'Gods and Mortals'."
+    },
+    {
+      "t": "Green Lantern: First Flight",
+      "y": "2009",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Green Lantern"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "A standalone adaptation of Hal Jordan's induction into the Green Lantern Corps."
+    },
+    {
+      "t": "Superman/Batman: Public Enemies",
+      "y": "2009",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Batman",
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "With the U.S. President framing Superman for murder, Batman and Superman team up on the run."
+    },
+    {
+      "t": "Justice League: Crisis on Two Earths",
+      "y": "2010",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7.5,
+      "blurb": "A parallel-Earth Justice League of evildoers threatens to invade the heroes' world."
     },
     {
       "t": "Batman: Under the Red Hood",
       "y": "2010",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts the comic in which Jason Todd returns as a lethal vigilante."
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 8.1,
+      "blurb": "A resurrected Jason Todd returns as a lethal vigilante challenging Batman's no-kill rule."
+    },
+    {
+      "t": "Superman/Batman: Apocalypse",
+      "y": "2010",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Batman",
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "Supergirl's arrival on Earth draws the attention of Darkseid and Apokolips."
     },
     {
       "t": "All-Star Superman",
       "y": "2011",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "A faithful adaptation of the acclaimed Morrison/Quitely comic."
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 7.8,
+      "blurb": "A faithful adaptation of the acclaimed Morrison/Quitely comic, sending a dying Superman through twelve labors."
     },
     {
-      "t": "Justice League: Doom",
-      "y": "2012",
+      "t": "Green Lantern: Emerald Knights",
+      "y": "2011",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts 'Tower of Babel' — Batman's contingency plans against his own teammates are stolen."
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Green Lantern"
+      ],
+      "rt": null,
+      "imdb": 7.1,
+      "blurb": "An anthology of Green Lantern Corps tales framed by Hal Jordan's training."
     },
     {
-      "t": "Batman: The Dark Knight Returns, Part 1 & 2",
-      "y": "2012–13",
+      "t": "Batman: Year One",
+      "y": "2011",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "A two-part adaptation of Frank Miller's aged-Batman classic."
+      "format": "Direct-to-Video",
+      "connected": "DCUAOM",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.3,
+      "blurb": "A faithful adaptation of Frank Miller and David Mazzucchelli's foundational origin story."
+    },
+    {
+      "t": "Justice League: The Flashpoint Paradox",
+      "y": "2013",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Flash",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7.9,
+      "blurb": "DCAMU film 1 — Barry Allen wakes in an altered timeline after trying to prevent his mother's death."
+    },
+    {
+      "t": "Justice League: War",
+      "y": "2014",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "DCAMU film 2 — a New 52-inspired retelling of the League's first battle against Darkseid."
+    },
+    {
+      "t": "Son of Batman",
+      "y": "2014",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7,
+      "blurb": "DCAMU film 3 — Batman discovers and trains his son, Damian Wayne."
+    },
+    {
+      "t": "Batman: Assault on Arkham",
+      "y": "2014",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Arkhamverse",
+      "hero": [
+        "Batman",
+        "Suicide Squad"
+      ],
+      "rt": null,
+      "imdb": 7.1,
+      "blurb": "Set in the Batman: Arkham video game universe, the Suicide Squad infiltrates Arkham Asylum."
     },
     {
       "t": "Justice League: Throne of Atlantis",
       "y": "2015",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Introduces Aquaman and the war between Atlantis and the surface."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Aquaman",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "DCAMU film 4 — introduces Aquaman and the war between Atlantis and the surface."
+    },
+    {
+      "t": "Batman vs. Robin",
+      "y": "2015",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "DCAMU film 5 — Damian Wayne is lured toward the secret society Court of Owls."
+    },
+    {
+      "t": "Justice League: Gods and Monsters",
+      "y": "2015",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "An alternate-universe Justice League with darker, morally ambiguous origins."
+    },
+    {
+      "t": "Batman: Bad Blood",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "DCAMU film 6 — with Batman missing, Batwoman and Nightwing lead a new Bat-family."
+    },
+    {
+      "t": "Justice League vs. Teen Titans",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Justice League",
+        "Teen Titans"
+      ],
+      "rt": null,
+      "imdb": 6.6,
+      "blurb": "DCAMU film 7 — Damian Wayne joins the Teen Titans while Trigon threatens Earth."
     },
     {
       "t": "Batman: The Killing Joke",
       "y": "2016",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
+      "format": "Theatrical",
+      "connected": "Standalone",
+      "hero": [
+        "Batman",
+        "Joker"
+      ],
+      "rt": 35,
+      "imdb": 6.4,
       "blurb": "An adaptation of Moore/Bolland's Joker-origin one-shot, with an added first act."
+    },
+    {
+      "t": "Batman: Return of the Caped Crusaders",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Theatrical",
+      "connected": "1966 Batman",
+      "hero": [
+        "Batman"
+      ],
+      "rt": 94,
+      "imdb": 6.7,
+      "blurb": "Adam West and Burt Ward reprise their 1960s roles in this animated homage."
     },
     {
       "t": "Justice League Dark",
       "y": "2017",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Constantine assembles DC's magical misfits against a supernatural threat."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Constantine",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "DCAMU film 8 — Constantine assembles DC's magical misfits against a supernatural threat."
+    },
+    {
+      "t": "Teen Titans: The Judas Contract",
+      "y": "2017",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Teen Titans"
+      ],
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "DCAMU film 9 — a new Titan may be a spy for the assassin Deathstroke."
+    },
+    {
+      "t": "Batman and Harley Quinn",
+      "y": "2017",
+      "type": "Animated",
+      "format": "Theatrical",
+      "connected": "DCAU-adjacent",
+      "hero": [
+        "Batman",
+        "Harley Quinn"
+      ],
+      "rt": 50,
+      "imdb": 6.1,
+      "blurb": "Batman and Nightwing reluctantly team with Harley Quinn to stop Poison Ivy and Jason Woodrue."
+    },
+    {
+      "t": "Batman vs. Two-Face",
+      "y": "2017",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "1966 Batman",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.1,
+      "blurb": "Adam West's final performance as Batman, against William Shatner's Two-Face."
+    },
+    {
+      "t": "Scooby-Doo! & Batman: The Brave and the Bold",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Batman: TBATB",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.3,
+      "blurb": "A crossover between the Scooby gang and the Brave and the Bold animated series."
+    },
+    {
+      "t": "Batman: Gotham by Gaslight",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Elseworlds",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.6,
+      "blurb": "A Victorian-era Batman hunts a killer resembling Jack the Ripper — the first Elseworlds story ever adapted."
+    },
+    {
+      "t": "Suicide Squad: Hell to Pay",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Suicide Squad"
+      ],
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "DCAMU film 10 — the Squad races the Blackhawks for powerful magic relics."
+    },
+    {
+      "t": "Batman Ninja",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "An anime reimagining that hurls Batman and his rogues into feudal Japan."
     },
     {
       "t": "The Death of Superman",
       "y": "2018",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "A newer, R-rated adaptation of the Doomsday storyline."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Superman",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7.6,
+      "blurb": "DCAMU film 11 — a newer, more brutal adaptation of the Doomsday storyline."
     },
     {
       "t": "Reign of the Supermen",
       "y": "2019",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "The direct follow-up, adapting the four pretenders to Superman's mantle."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Superman",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "DCAMU film 12 — the direct follow-up, tracking the four pretenders to Superman's mantle."
+    },
+    {
+      "t": "Justice League vs. the Fatal Five",
+      "y": "2019",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Justice League Unlimited",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "Loosely tied to Justice League Unlimited, pitting the League against future villains."
+    },
+    {
+      "t": "Batman vs. Teenage Mutant Ninja Turtles",
+      "y": "2019",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.1,
+      "blurb": "A crossover team-up produced with Nickelodeon, based on the IDW comic."
     },
     {
       "t": "Batman: Hush",
       "y": "2019",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts Loeb/Lee's mystery pitting Batman against nearly his entire rogues gallery."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "DCAMU film 13 — adapts Loeb/Lee's mystery pitting Batman against nearly his entire rogues gallery."
+    },
+    {
+      "t": "Teen Titans Go! vs. Teen Titans",
+      "y": "2019",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Teen Titans Go!",
+      "hero": [
+        "Teen Titans"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "A crossover between the comedic Teen Titans Go! and the original, more serious Teen Titans series."
+    },
+    {
+      "t": "Wonder Woman: Bloodlines",
+      "y": "2019",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Wonder Woman"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "DCAMU film 14 — Diana's origin retold alongside a modern-day threat from Cheetah and Silver Swan."
     },
     {
       "t": "Superman: Red Son",
       "y": "2020",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts the Elseworlds comic where Superman's rocket lands in Soviet Ukraine."
+      "format": "Direct-to-Video",
+      "connected": "Elseworlds",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "Adapts the Elseworlds comic where Superman's rocket lands in Soviet Ukraine instead of Kansas."
     },
     {
       "t": "Justice League Dark: Apokolips War",
       "y": "2020",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "A brutal, continuity-closing finale to the interconnected animated movie line."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 8,
+      "blurb": "DCAMU film 15 — a brutal, continuity-closing finale to the interconnected animated movie line."
     },
     {
-      "t": "Batman: The Long Halloween, Part 1 & 2",
+      "t": "Superman: Man of Tomorrow",
+      "y": "2020",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Superman: MOT continuity",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "A younger, still-adjusting Clark Kent meets Lobo and Parasite in a rebooted animated continuity."
+    },
+    {
+      "t": "Batman: Soul of the Dragon",
       "y": "2021",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts Loeb/Sale's year-spanning murder mystery from early in Batman's career."
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "A martial-arts-flavored '70s throwback pitting young Bruce Wayne's old kung-fu classmates against a demonic threat."
+    },
+    {
+      "t": "Justice Society: World War II",
+      "y": "2021",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Superman: MOT continuity",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "The Flash is thrown back to WWII to fight alongside the Justice Society."
+    },
+    {
+      "t": "Batman: The Long Halloween, Part One",
+      "y": "2021",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.1,
+      "blurb": "Part one of an adaptation of Loeb/Sale's year-spanning murder mystery."
+    },
+    {
+      "t": "Batman: The Long Halloween, Part Two",
+      "y": "2021",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "The concluding half, revealing the killer behind Gotham's holiday murders."
     },
     {
       "t": "Injustice",
       "y": "2021",
       "type": "Animated",
-      "cont": "DC Universe Animated Original Movies",
-      "blurb": "Adapts the alternate-universe video game comic in which Superman becomes a tyrant."
+      "format": "Direct-to-Video",
+      "connected": "Injustice",
+      "hero": [
+        "Superman",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "Adapts the alternate-universe video game/comic in which Superman becomes a tyrant."
     },
     {
-      "t": "My Adventures with Superman: Adventures Continue",
+      "t": "Catwoman: Hunted",
+      "y": "2022",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Young Justice-adjacent",
+      "hero": [
+        "Catwoman"
+      ],
+      "rt": null,
+      "imdb": 5.5,
+      "blurb": "Selina Kyle chases a MacGuffin across Europe in an anime-inflected heist thriller."
+    },
+    {
+      "t": "Teen Titans Go! & DC Super Hero Girls: Mayhem in the Multiverse",
+      "y": "2022",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Teen Titans Go!",
+      "hero": [
+        "Teen Titans"
+      ],
+      "rt": null,
+      "imdb": 6.1,
+      "blurb": "A multiverse-hopping crossover between the two comedic animated lines."
+    },
+    {
+      "t": "Green Lantern: Beware My Power",
+      "y": "2022",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Superman: MOT continuity",
+      "hero": [
+        "Green Lantern"
+      ],
+      "rt": null,
+      "imdb": 6.4,
+      "blurb": "John Stewart becomes Earth's Green Lantern in this rebooted animated continuity."
+    },
+    {
+      "t": "Batman and Superman: Battle of the Super Sons",
+      "y": "2022",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman",
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "Damian Wayne and Jon Kent team up across dimensions against the Gog-driven Superman of Earth-2."
+    },
+    {
+      "t": "Legion of Super-Heroes",
+      "y": "2023",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Superman: MOT continuity",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 6.3,
+      "blurb": "Supergirl joins a 31st-century team of teenage heroes in this continuation of the rebooted animated universe."
+    },
+    {
+      "t": "Batman: The Doom That Came to Gotham",
+      "y": "2023",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Elseworlds",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6,
+      "blurb": "A Lovecraftian Elseworlds tale pitting Batman against cosmic horrors in 1920s Gotham."
+    },
+    {
+      "t": "Justice League: Warworld",
+      "y": "2023",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Superman: MOT continuity",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "The concluding chapter of the rebooted animated continuity's Superman/Legion arc."
+    },
+    {
+      "t": "Merry Little Batman",
+      "y": "2023",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Bat-Fam",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "A young Damian Wayne tries to save Christmas himself while Batman is away."
+    },
+    {
+      "t": "Justice League: Crisis on Infinite Earths – Part One",
       "y": "2024",
       "type": "Animated",
-      "cont": "Standalone",
-      "blurb": "Feature-length material tied to the newer animated series continuity."
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7,
+      "blurb": "DCAMU films 23–25 — adapts the original multiverse-erasing Crisis event, closing out the DCAMU continuity."
+    },
+    {
+      "t": "Justice League: Crisis on Infinite Earths – Part Two",
+      "y": "2024",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "The middle chapter of the DCAMU's Crisis finale."
+    },
+    {
+      "t": "Justice League: Crisis on Infinite Earths – Part Three",
+      "y": "2024",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DCAMU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7.1,
+      "blurb": "The concluding chapter, closing out the 15-year DC Animated Movie Universe continuity."
+    },
+    {
+      "t": "Watchmen Chapter I",
+      "y": "2024",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "A faithful animated adaptation of the first half of Watchmen, produced with Paramount."
+    },
+    {
+      "t": "Watchmen Chapter II",
+      "y": "2024",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "The concluding half of the animated Watchmen adaptation."
+    },
+    {
+      "t": "Batman Ninja vs. Yakuza League",
+      "y": "2025",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman",
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "A sequel to Batman Ninja, pulling the wider Justice League into feudal Japan."
+    },
+    {
+      "t": "Batman: Knightfall – Part 1: Knightfall",
+      "y": "2026",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "The first of a planned trilogy adapting the comics arc where Bane breaks Batman's back."
+    },
+    {
+      "t": "Batman: Knightfall – Part 2: Knightquest",
+      "y": "2026",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "The second chapter of the Knightfall animated trilogy — announced/upcoming."
+    },
+    {
+      "t": "Batman: Knightfall – Part 3: KnightsEnd",
+      "y": "2027",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": null,
+      "blurb": "The concluding chapter of the Knightfall animated trilogy — announced/upcoming."
+    },
+    {
+      "t": "DC Super Hero Girls: Super Hero High",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DC Super Hero Girls",
+      "hero": [],
+      "rt": null,
+      "imdb": 6.2,
+      "blurb": "The pilot feature for the DC Super Hero Girls animated shorts universe."
+    },
+    {
+      "t": "DC Super Hero Girls: Hero of the Year",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DC Super Hero Girls",
+      "hero": [],
+      "rt": null,
+      "imdb": 6.2,
+      "blurb": "The Super Hero High students compete for the title of Hero of the Year."
+    },
+    {
+      "t": "DC Super Hero Girls: Intergalactic Games",
+      "y": "2017",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DC Super Hero Girls",
+      "hero": [],
+      "rt": null,
+      "imdb": 6.1,
+      "blurb": "An intergalactic athletic competition tests the Super Hero High students."
+    },
+    {
+      "t": "DC Super Hero Girls: Legends of Atlantis",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "DC Super Hero Girls",
+      "hero": [],
+      "rt": null,
+      "imdb": 6,
+      "blurb": "The Super Hero Girls dive into an undersea adventure in Atlantis."
+    },
+    {
+      "t": "Lego Batman: The Movie – DC Super Heroes Unite",
+      "y": "2013",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "Based on the Lego Batman 2 video game, Batman teams with Superman against Lex Luthor and the Joker."
+    },
+    {
+      "t": "Lego DC Comics Super Heroes: Justice League vs. Bizarro League",
+      "y": "2015",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.6,
+      "blurb": "Lex Luthor creates evil duplicates of the Justice League using Bizarro's cloning powers."
+    },
+    {
+      "t": "Lego DC Comics Super Heroes: Justice League – Attack of the Legion of Doom",
+      "y": "2015",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "The Legion of Doom assembles to take down the Lego Justice League."
+    },
+    {
+      "t": "Lego DC Comics Super Heroes: Justice League – Cosmic Clash",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 6.6,
+      "blurb": "Brainiac shrinks and bottles cities across the galaxy, including parts of Metropolis."
+    },
+    {
+      "t": "Lego DC Comics Super Heroes: Justice League – Gotham City Breakout",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Justice League",
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.4,
+      "blurb": "Arkham Asylum's inmates escape, forcing Batman to call in the League."
+    },
+    {
+      "t": "Lego DC Comics Super Heroes: The Flash",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Flash"
+      ],
+      "rt": null,
+      "imdb": 6.3,
+      "blurb": "A Lego adventure spotlighting Barry Allen's speedster heroics."
+    },
+    {
+      "t": "Lego DC Comics Super Heroes: Aquaman – Rage of Atlantis",
+      "y": "2018",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Aquaman"
+      ],
+      "rt": null,
+      "imdb": 6.2,
+      "blurb": "A Lego adventure sending Aquaman to defend Atlantis."
+    },
+    {
+      "t": "Lego DC: Batman - Family Matters",
+      "y": "2019",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "A mysterious figure claiming to be Batman's father-in-law arrives in Gotham."
+    },
+    {
+      "t": "Lego DC Shazam!: Magic and Monsters",
+      "y": "2020",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Lego DC",
+      "hero": [
+        "Shazam"
+      ],
+      "rt": null,
+      "imdb": 6.3,
+      "blurb": "A Lego take on Shazam facing off against a resurrected wizard threat."
+    },
+    {
+      "t": "Batman Unlimited: Animal Instincts",
+      "y": "2015",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Batman Unlimited",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6.1,
+      "blurb": "Toyline-based feature where Batman's rogues turn feral thanks to Man-Bat's serum."
+    },
+    {
+      "t": "Batman Unlimited: Monster Mayhem",
+      "y": "2015",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Batman Unlimited",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6,
+      "blurb": "Killer Croc leads a monster-themed rogues gallery against the Bat-family."
+    },
+    {
+      "t": "Batman Unlimited: Mechs vs. Mutants",
+      "y": "2016",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Batman Unlimited",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 6,
+      "blurb": "The Bat-family suits up in mechs against a mutated rogues gallery."
+    },
+    {
+      "t": "Superman: The Last Son of Krypton",
+      "y": "1996",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DCAU",
+      "hero": [
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "A compilation of Superman: The Animated Series' opening episodes, retelling his origin."
+    },
+    {
+      "t": "The Batman/Superman Movie: World's Finest",
+      "y": "1997",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DCAU",
+      "hero": [
+        "Batman",
+        "Superman"
+      ],
+      "rt": null,
+      "imdb": 7.6,
+      "blurb": "A compilation film from the Superman: TAS crossover episodes that first paired the two heroes in the DCAU."
+    },
+    {
+      "t": "Batman Beyond: The Movie",
+      "y": "1999",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "rt": null,
+      "imdb": 7.3,
+      "blurb": "A compilation of Batman Beyond's first two episodes, introducing Terry McGinnis."
+    },
+    {
+      "t": "Justice League: Secret Origins",
+      "y": "2001",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DCAU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 7.5,
+      "blurb": "A compilation of the Justice League animated series' opening episodes."
+    },
+    {
+      "t": "Justice League: Starcrossed",
+      "y": "2004",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DCAU",
+      "hero": [
+        "Justice League"
+      ],
+      "rt": null,
+      "imdb": 8.3,
+      "blurb": "A compilation of the Justice League series finale, in which the Thanagarians invade Earth."
+    },
+    {
+      "t": "Constantine: City of Demons – The Movie",
+      "y": "2018",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DCAMU",
+      "hero": [
+        "Constantine"
+      ],
+      "rt": null,
+      "imdb": 6.8,
+      "blurb": "A compilation of the animated web-series, tied into the DC Animated Movie Universe."
+    },
+    {
+      "t": "DC Super Hero Girls: Sweet Justice",
+      "y": "2019",
+      "type": "Animated",
+      "format": "TV Movie",
+      "connected": "DC Super Hero Girls",
+      "hero": [],
+      "rt": null,
+      "imdb": 5.9,
+      "blurb": "A compilation of the rebooted DC Super Hero Girls series' first episodes."
+    },
+    {
+      "t": "Deathstroke: Knights & Dragons – The Movie",
+      "y": "2020",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Standalone",
+      "hero": [],
+      "rt": null,
+      "imdb": 6.3,
+      "blurb": "A standalone origin story for the mercenary assassin Slade Wilson."
+    },
+    {
+      "t": "Aquaman: King of Atlantis",
+      "y": "2022",
+      "type": "Animated",
+      "format": "Direct-to-Video",
+      "connected": "Aquaman (2018 film)",
+      "hero": [
+        "Aquaman"
+      ],
+      "rt": null,
+      "imdb": 6.4,
+      "blurb": "A miniseries re-edited into a film, serving as a standalone sequel to the 2018 Aquaman film."
     }
   ],
   "series": [
@@ -335,281 +2033,1079 @@
       "t": "Adventures of Superman",
       "y": "1952–1958",
       "type": "Live Action",
-      "cont": "Classic",
+      "connected": "Classic",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 6,
+      "episodes": 104,
+      "rt": null,
+      "imdb": 7.3,
       "blurb": "George Reeves' Superman, the character's first long-running TV incarnation."
     },
     {
       "t": "Batman",
       "y": "1966–1968",
       "type": "Live Action",
-      "cont": "Classic",
+      "connected": "1966 Batman",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 3,
+      "episodes": 120,
+      "rt": null,
+      "imdb": 7.5,
       "blurb": "Adam West's campy, pop-art Batman, a huge cultural phenomenon of its era."
+    },
+    {
+      "t": "Shazam!",
+      "y": "1974–1976",
+      "type": "Live Action",
+      "connected": "Classic",
+      "hero": [
+        "Shazam"
+      ],
+      "seasons": 3,
+      "episodes": 28,
+      "rt": null,
+      "imdb": 6,
+      "blurb": "A live-action Saturday-morning series following Billy Batson's adventures as Captain Marvel."
     },
     {
       "t": "Wonder Woman",
       "y": "1975–1979",
       "type": "Live Action",
-      "cont": "Classic",
+      "connected": "Classic",
+      "hero": [
+        "Wonder Woman"
+      ],
+      "seasons": 3,
+      "episodes": 60,
+      "rt": null,
+      "imdb": 6.7,
       "blurb": "Lynda Carter's star-making turn as Diana Prince."
+    },
+    {
+      "t": "Superboy",
+      "y": "1988–1992",
+      "type": "Live Action",
+      "connected": "Classic",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 4,
+      "episodes": 100,
+      "rt": null,
+      "imdb": 6.4,
+      "blurb": "A young Clark Kent's college years as the fledgling Superboy."
+    },
+    {
+      "t": "Swamp Thing",
+      "y": "1990–1993",
+      "type": "Live Action",
+      "connected": "Standalone",
+      "hero": [
+        "Swamp Thing"
+      ],
+      "seasons": 3,
+      "episodes": 72,
+      "rt": null,
+      "imdb": 5.9,
+      "blurb": "A USA Network continuation of the Swamp Thing film series."
+    },
+    {
+      "t": "The Flash",
+      "y": "1990–1991",
+      "type": "Live Action",
+      "connected": "Classic",
+      "hero": [
+        "Flash"
+      ],
+      "seasons": 1,
+      "episodes": 22,
+      "rt": null,
+      "imdb": 7,
+      "blurb": "Barry Allen's first live-action TV series, a stylish, noir-tinged one-season run."
+    },
+    {
+      "t": "Human Target",
+      "y": "1992",
+      "type": "Live Action",
+      "connected": "Standalone",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 7,
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "An early, short-lived adaptation of the DC crime-thriller character Christopher Chance."
     },
     {
       "t": "Lois & Clark: The New Adventures of Superman",
       "y": "1993–1997",
       "type": "Live Action",
-      "cont": "Classic",
+      "connected": "Classic",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 4,
+      "episodes": 88,
+      "rt": null,
+      "imdb": 6.7,
       "blurb": "A romance-forward take centering the relationship between Clark and Lois."
     },
     {
       "t": "Smallville",
       "y": "2001–2011",
       "type": "Live Action",
-      "cont": "Smallville continuity",
+      "connected": "Smallville",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 10,
+      "episodes": 217,
+      "rt": null,
+      "imdb": 7.5,
       "blurb": "Clark Kent's teenage years in Kansas, running for ten seasons before he becomes Superman."
     },
     {
-      "t": "Gotham",
-      "y": "2014–2019",
+      "t": "Birds of Prey",
+      "y": "2002–2003",
       "type": "Live Action",
-      "cont": "Gothamverse",
-      "blurb": "A young Jim Gordon navigates Gotham's corruption years before Batman exists."
+      "connected": "Standalone",
+      "hero": [
+        "Birds of Prey"
+      ],
+      "seasons": 1,
+      "episodes": 13,
+      "rt": null,
+      "imdb": 6.4,
+      "blurb": "An early, short-lived series following Huntress, Oracle, and Black Canary in New Gotham."
+    },
+    {
+      "t": "Human Target",
+      "y": "2010–2011",
+      "type": "Live Action",
+      "connected": "Standalone",
+      "hero": [],
+      "seasons": 2,
+      "episodes": 25,
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "A second, action-comedy adaptation of the Christopher Chance character."
     },
     {
       "t": "Arrow",
       "y": "2012–2020",
       "type": "Live Action",
-      "cont": "Arrowverse",
+      "connected": "Arrowverse",
+      "hero": [
+        "Green Arrow"
+      ],
+      "seasons": 8,
+      "episodes": 170,
+      "rt": null,
+      "imdb": 7.5,
       "blurb": "Oliver Queen's vigilante origin; the show that launched the interconnected Arrowverse."
     },
     {
       "t": "The Flash",
       "y": "2014–2023",
       "type": "Live Action",
-      "cont": "Arrowverse",
+      "connected": "Arrowverse",
+      "hero": [
+        "Flash"
+      ],
+      "seasons": 9,
+      "episodes": 184,
+      "rt": null,
+      "imdb": 7.5,
       "blurb": "Barry Allen gains super-speed and grapples with time travel and the multiverse."
+    },
+    {
+      "t": "Constantine",
+      "y": "2014–2015",
+      "type": "Live Action",
+      "connected": "Arrowverse",
+      "hero": [
+        "Constantine"
+      ],
+      "seasons": 1,
+      "episodes": 13,
+      "rt": null,
+      "imdb": 7.7,
+      "blurb": "A one-season adaptation of the Hellblazer occult detective, later folded into the Arrowverse via crossover."
     },
     {
       "t": "Supergirl",
       "y": "2015–2021",
       "type": "Live Action",
-      "cont": "Arrowverse",
+      "connected": "Arrowverse",
+      "hero": [
+        "Supergirl"
+      ],
+      "seasons": 6,
+      "episodes": 126,
+      "rt": null,
+      "imdb": 6.4,
       "blurb": "Kara Danvers steps into her own heroics in National City."
     },
     {
       "t": "DC's Legends of Tomorrow",
       "y": "2016–2022",
       "type": "Live Action",
-      "cont": "Arrowverse",
+      "connected": "Arrowverse",
+      "hero": [
+        "Justice League"
+      ],
+      "seasons": 7,
+      "episodes": 110,
+      "rt": null,
+      "imdb": 7.2,
       "blurb": "A time-traveling team of misfit heroes and villains protects history."
+    },
+    {
+      "t": "Powerless",
+      "y": "2017",
+      "type": "Live Action",
+      "connected": "Arrowverse",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 12,
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "A workplace sitcom set at an insurance company that handles superhero collateral damage."
     },
     {
       "t": "Black Lightning",
       "y": "2018–2021",
       "type": "Live Action",
-      "cont": "Arrowverse (loosely)",
+      "connected": "Arrowverse",
+      "hero": [
+        "Black Lightning"
+      ],
+      "seasons": 4,
+      "episodes": 58,
+      "rt": null,
+      "imdb": 6.9,
       "blurb": "A retired hero returns to the fight to protect his community and family."
     },
     {
       "t": "Batwoman",
       "y": "2019–2022",
       "type": "Live Action",
-      "cont": "Arrowverse",
+      "connected": "Arrowverse",
+      "hero": [
+        "Batwoman"
+      ],
+      "seasons": 3,
+      "episodes": 51,
+      "rt": null,
+      "imdb": 5.1,
       "blurb": "Kate Kane takes up a version of the Bat-symbol in Gotham."
+    },
+    {
+      "t": "Stargirl",
+      "y": "2020–2022",
+      "type": "Live Action",
+      "connected": "Arrowverse",
+      "hero": [
+        "Justice League"
+      ],
+      "seasons": 3,
+      "episodes": 39,
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "A teenager inherits the legacy of the Justice Society of America."
     },
     {
       "t": "Superman & Lois",
       "y": "2021–2024",
       "type": "Live Action",
-      "cont": "Arrowverse",
+      "connected": "Arrowverse",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 4,
+      "episodes": 53,
+      "rt": null,
+      "imdb": 7.5,
       "blurb": "A domestic-drama take on Clark and Lois raising twin sons who inherit powers."
+    },
+    {
+      "t": "Naomi",
+      "y": "2022",
+      "type": "Live Action",
+      "connected": "Arrowverse",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 13,
+      "rt": null,
+      "imdb": 5.2,
+      "blurb": "A teenager investigates a mysterious Superman sighting in her town, uncovering ties to a hidden identity."
+    },
+    {
+      "t": "Gotham",
+      "y": "2014–2019",
+      "type": "Live Action",
+      "connected": "Gothamverse",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 5,
+      "episodes": 100,
+      "rt": null,
+      "imdb": 7.8,
+      "blurb": "A young Jim Gordon navigates Gotham's corruption years before Batman exists."
+    },
+    {
+      "t": "Krypton",
+      "y": "2018–2019",
+      "type": "Live Action",
+      "connected": "Gothamverse-adjacent",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 2,
+      "episodes": 20,
+      "rt": null,
+      "imdb": 7.1,
+      "blurb": "Set generations before Superman's birth, following his grandfather on Krypton."
+    },
+    {
+      "t": "Pennyworth",
+      "y": "2019–2022",
+      "type": "Live Action",
+      "connected": "Gothamverse",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 3,
+      "episodes": 30,
+      "rt": null,
+      "imdb": 7.6,
+      "blurb": "A 1960s-set thriller following young Alfred Pennyworth before he meets the Waynes."
     },
     {
       "t": "Titans",
       "y": "2018–2023",
       "type": "Live Action",
-      "cont": "DC Universe/Max continuity",
+      "connected": "Titans continuity",
+      "hero": [
+        "Teen Titans"
+      ],
+      "seasons": 4,
+      "episodes": 49,
+      "rt": null,
+      "imdb": 7.5,
       "blurb": "A grittier, adult take on Dick Grayson and a young Teen Titans lineup."
     },
     {
       "t": "Doom Patrol",
       "y": "2019–2023",
       "type": "Live Action",
-      "cont": "DC Universe/Max continuity",
+      "connected": "Titans continuity",
+      "hero": [],
+      "seasons": 4,
+      "episodes": 46,
+      "rt": null,
+      "imdb": 8,
       "blurb": "A surreal, tragicomic team of outcasts with uncontrollable powers."
     },
     {
-      "t": "Stargirl",
-      "y": "2020–2022",
+      "t": "Swamp Thing",
+      "y": "2019",
       "type": "Live Action",
-      "cont": "Standalone",
-      "blurb": "A teenager inherits the legacy of the Justice Society of America."
-    },
-    {
-      "t": "Pennyworth",
-      "y": "2019–2022",
-      "type": "Live Action",
-      "cont": "Standalone",
-      "blurb": "A 1960s-set thriller following young Alfred Pennyworth before he meets the Waynes."
-    },
-    {
-      "t": "Peacemaker",
-      "y": "2022–",
-      "type": "Live Action",
-      "cont": "DCEU / DCU bridge",
-      "blurb": "James Gunn's spinoff of The Suicide Squad, later folded into the new DCU."
-    },
-    {
-      "t": "Constantine",
-      "y": "2014–2015",
-      "type": "Live Action",
-      "cont": "Standalone",
-      "blurb": "A one-season adaptation of the Hellblazer occult detective."
+      "connected": "Titans continuity",
+      "hero": [
+        "Swamp Thing"
+      ],
+      "seasons": 1,
+      "episodes": 10,
+      "rt": null,
+      "imdb": 7.3,
+      "blurb": "A one-season horror take on the character, cancelled after just two episodes aired."
     },
     {
       "t": "Watchmen",
       "y": "2019",
       "type": "Live Action",
-      "cont": "Elseworlds (sequel)",
+      "connected": "Standalone",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 9,
+      "rt": null,
+      "imdb": 8.6,
       "blurb": "An HBO sequel-remix set decades after the original graphic novel, from Damon Lindelof."
+    },
+    {
+      "t": "Peacemaker",
+      "y": "2022–",
+      "type": "Live Action",
+      "connected": "DCU (Gunnverse)",
+      "hero": [
+        "Suicide Squad"
+      ],
+      "seasons": 2,
+      "episodes": 16,
+      "rt": null,
+      "imdb": 8.2,
+      "blurb": "James Gunn's spinoff of The Suicide Squad, later folded into the new DCU."
+    },
+    {
+      "t": "Gotham Knights",
+      "y": "2023",
+      "type": "Live Action",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 13,
+      "rt": null,
+      "imdb": 5.2,
+      "blurb": "After Batman's death, a group of misfit teens are framed for his murder."
+    },
+    {
+      "t": "The Penguin",
+      "y": "2024",
+      "type": "Live Action",
+      "connected": "Reevesverse",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 8,
+      "rt": null,
+      "imdb": 8.5,
+      "blurb": "A miniseries following Oswald Cobb's rise to power, set in the same universe as The Batman."
+    },
+    {
+      "t": "Lanterns",
+      "y": "2026–",
+      "type": "Live Action",
+      "connected": "DCU (Gunnverse)",
+      "hero": [
+        "Green Lantern"
+      ],
+      "seasons": 1,
+      "episodes": 8,
+      "rt": null,
+      "imdb": null,
+      "blurb": "A detective-thriller take on Hal Jordan and John Stewart, set in the new DC Universe."
+    },
+    {
+      "t": "iZombie",
+      "y": "2015–2019",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 5,
+      "episodes": 71,
+      "rt": null,
+      "imdb": 7.5,
+      "blurb": "A medical resident turned zombie solves crimes by eating victims' brains, based on the Vertigo comic."
+    },
+    {
+      "t": "Lucifer",
+      "y": "2016–2021",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 6,
+      "episodes": 93,
+      "rt": null,
+      "imdb": 8.1,
+      "blurb": "The Devil retires to Los Angeles to run a nightclub and moonlight as a police consultant."
+    },
+    {
+      "t": "Preacher",
+      "y": "2016–2019",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 4,
+      "episodes": 43,
+      "rt": null,
+      "imdb": 8,
+      "blurb": "A small-town preacher gains a mysterious power and sets out to find God, based on Garth Ennis' Vertigo series."
     },
     {
       "t": "Sweet Tooth",
       "y": "2021–2024",
       "type": "Live Action",
-      "cont": "Standalone (Vertigo-based)",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 3,
+      "episodes": 24,
+      "rt": null,
+      "imdb": 8,
       "blurb": "A post-apocalyptic fable about a hybrid deer-boy, adapted from the Vertigo comic."
     },
     {
-      "t": "Creature Commandos",
-      "y": "2024",
-      "type": "Animated",
-      "cont": "DCU Chapter 1",
-      "blurb": "A team of monstrous convicts on black-ops missions; the first release of the new DCU, produced as animation."
+      "t": "Y: The Last Man",
+      "y": "2021",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 10,
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "Every mammal with a Y chromosome dies suddenly except one man and his monkey."
     },
     {
-      "t": "Super Friends",
-      "y": "1973–1986",
-      "type": "Animated",
-      "cont": "Classic",
-      "blurb": "The original Saturday-morning Justice League team-up cartoon."
+      "t": "DMZ",
+      "y": "2022",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 4,
+      "rt": null,
+      "imdb": 5.9,
+      "blurb": "A miniseries set in a demilitarized Manhattan during a second American Civil War."
+    },
+    {
+      "t": "The Sandman",
+      "y": "2022–2025",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 2,
+      "episodes": 23,
+      "rt": null,
+      "imdb": 7.9,
+      "blurb": "Neil Gaiman's saga of Dream and the other Endless, blending myth, horror, and literary fantasy."
+    },
+    {
+      "t": "Bodies",
+      "y": "2023",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 8,
+      "rt": null,
+      "imdb": 7.3,
+      "blurb": "A miniseries following the same corpse investigated by four detectives across four different eras."
+    },
+    {
+      "t": "Dead Boy Detectives",
+      "y": "2024",
+      "type": "Live Action",
+      "connected": "Standalone (Vertigo)",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 8,
+      "rt": null,
+      "imdb": 7.7,
+      "blurb": "Two ghost teenagers solve supernatural mysteries, set in the same universe as The Sandman."
     },
     {
       "t": "Batman: The Animated Series",
       "y": "1992–1995",
       "type": "Animated",
-      "cont": "DCAU",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 2,
+      "episodes": 85,
+      "rt": null,
+      "imdb": 9,
       "blurb": "A stylish, noir-inflected series widely regarded as the definitive animated Batman; the DCAU's foundation."
     },
     {
       "t": "Superman: The Animated Series",
       "y": "1996–2000",
       "type": "Animated",
-      "cont": "DCAU",
+      "connected": "DCAU",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 4,
+      "episodes": 54,
+      "rt": null,
+      "imdb": 8,
       "blurb": "Bruce Timm's follow-up, expanding the shared animated universe to Metropolis."
     },
     {
       "t": "The New Batman Adventures",
       "y": "1997–1999",
       "type": "Animated",
-      "cont": "DCAU",
-      "blurb": "A redesigned, tonally sharper continuation of B:TAS."
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 24,
+      "rt": null,
+      "imdb": 8.5,
+      "blurb": "A redesigned, tonally sharper continuation of Batman: The Animated Series."
     },
     {
       "t": "Batman Beyond",
       "y": "1999–2001",
       "type": "Animated",
-      "cont": "DCAU",
+      "connected": "DCAU",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 3,
+      "episodes": 52,
+      "rt": null,
+      "imdb": 8.2,
       "blurb": "Set decades later, following teenager Terry McGinnis as the new Batman."
+    },
+    {
+      "t": "Static Shock",
+      "y": "2000–2004",
+      "type": "Animated",
+      "connected": "DCAU",
+      "hero": [],
+      "seasons": 4,
+      "episodes": 52,
+      "rt": null,
+      "imdb": 7.6,
+      "blurb": "A teenager with electromagnetic powers balances high school and superheroics in Dakota City."
+    },
+    {
+      "t": "The Zeta Project",
+      "y": "2001–2002",
+      "type": "Animated",
+      "connected": "DCAU",
+      "hero": [],
+      "seasons": 2,
+      "episodes": 26,
+      "rt": null,
+      "imdb": 7.6,
+      "blurb": "A Batman Beyond spin-off following a rogue android on the run."
     },
     {
       "t": "Justice League",
       "y": "2001–2004",
       "type": "Animated",
-      "cont": "DCAU",
+      "connected": "DCAU",
+      "hero": [
+        "Justice League"
+      ],
+      "seasons": 1,
+      "episodes": 52,
+      "rt": null,
+      "imdb": 8.7,
       "blurb": "The DCAU's heroes unite as a formal team against cosmic-scale threats."
     },
     {
       "t": "Justice League Unlimited",
       "y": "2004–2006",
       "type": "Animated",
-      "cont": "DCAU",
-      "blurb": "Expands the roster to dozens of DC characters in rotation."
+      "connected": "DCAU",
+      "hero": [
+        "Justice League"
+      ],
+      "seasons": 3,
+      "episodes": 39,
+      "rt": null,
+      "imdb": 8.7,
+      "blurb": "Expands the roster to dozens of DC characters in rotation; a sequel to Justice League."
     },
     {
       "t": "Teen Titans",
       "y": "2003–2006",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "Teen Titans (2003)",
+      "hero": [
+        "Teen Titans"
+      ],
+      "seasons": 5,
+      "episodes": 65,
+      "rt": null,
+      "imdb": 8.1,
       "blurb": "A stylized, anime-influenced take on the young team, distinct from the DCAU."
     },
     {
       "t": "The Batman",
       "y": "2004–2008",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "The Batman (2004)",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 5,
+      "episodes": 65,
+      "rt": null,
+      "imdb": 7.3,
       "blurb": "A fresh, angular redesign of Batman's world, unconnected to the DCAU."
     },
     {
-      "t": "Legion of Super-Heroes",
+      "t": "Krypto the Superdog",
+      "y": "2005–2006",
+      "type": "Animated",
+      "connected": "Standalone",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 2,
+      "episodes": 39,
+      "rt": null,
+      "imdb": 6.5,
+      "blurb": "A children's series following Superman's dog and his fellow super-pets."
+    },
+    {
+      "t": "Legion of Super Heroes",
       "y": "2006–2008",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "Standalone",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 2,
+      "episodes": 26,
+      "rt": null,
+      "imdb": 7.7,
       "blurb": "A 31st-century team of teenage heroes, with a young Superman as a recurring member."
     },
     {
       "t": "Batman: The Brave and the Bold",
       "y": "2008–2011",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "Batman: TBATB",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 3,
+      "episodes": 65,
+      "rt": null,
+      "imdb": 8,
       "blurb": "A lighthearted, team-up-of-the-week series pulling from DC's deepest cuts."
     },
     {
       "t": "Young Justice",
       "y": "2010–2022",
       "type": "Animated",
-      "cont": "Young Justice continuity",
+      "connected": "Young Justice continuity",
+      "hero": [
+        "Teen Titans"
+      ],
+      "seasons": 4,
+      "episodes": 98,
+      "rt": null,
+      "imdb": 8.4,
       "blurb": "A sidekick-led team series praised for dense, long-form continuity across multiple seasons."
+    },
+    {
+      "t": "Green Lantern: The Animated Series",
+      "y": "2011–2013",
+      "type": "Animated",
+      "connected": "Young Justice-adjacent",
+      "hero": [
+        "Green Lantern"
+      ],
+      "seasons": 1,
+      "episodes": 26,
+      "rt": null,
+      "imdb": 7.8,
+      "blurb": "A CG-animated space epic following Hal Jordan into the farthest reaches of the Green Lantern Corps' territory."
     },
     {
       "t": "Beware the Batman",
       "y": "2013–2014",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 26,
+      "rt": null,
+      "imdb": 6.9,
       "blurb": "A CG-animated series leaning on lesser-used Batman rogues like Anarky and Professor Pyg."
     },
     {
       "t": "Justice League Action",
       "y": "2016–2018",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "Standalone",
+      "hero": [
+        "Justice League"
+      ],
+      "seasons": 1,
+      "episodes": 52,
+      "rt": null,
+      "imdb": 6.9,
       "blurb": "Fast-paced, 11-minute team adventures aimed at a younger audience."
-    },
-    {
-      "t": "Harley Quinn",
-      "y": "2019–",
-      "type": "Animated",
-      "cont": "Standalone (mature)",
-      "blurb": "An adult-animated, comedic reinvention following Harley post-Joker breakup."
     },
     {
       "t": "DC Super Hero Girls",
       "y": "2019–2021",
       "type": "Animated",
-      "cont": "Standalone",
-      "blurb": "A younger-skewing series reimagining DC's heroines as high schoolers."
+      "connected": "DC Super Hero Girls",
+      "hero": [],
+      "seasons": 2,
+      "episodes": 78,
+      "rt": null,
+      "imdb": 6.1,
+      "blurb": "A younger-skewing reboot reimagining DC's heroines as high schoolers, following the earlier web-shorts version."
+    },
+    {
+      "t": "Harley Quinn",
+      "y": "2019–2025",
+      "type": "Animated",
+      "connected": "Harley Quinn (animated)",
+      "hero": [
+        "Harley Quinn"
+      ],
+      "seasons": 5,
+      "episodes": 57,
+      "rt": null,
+      "imdb": 8.5,
+      "blurb": "An adult-animated, comedic reinvention following Harley post-Joker breakup."
+    },
+    {
+      "t": "Aquaman: King of Atlantis",
+      "y": "2021",
+      "type": "Animated",
+      "connected": "Aquaman (2018 film)",
+      "hero": [
+        "Aquaman"
+      ],
+      "seasons": 1,
+      "episodes": 3,
+      "rt": null,
+      "imdb": 6.6,
+      "blurb": "A miniseries sequel to the 2018 Aquaman film, later re-cut into a standalone movie."
+    },
+    {
+      "t": "Suicide Squad Isekai",
+      "y": "2024",
+      "type": "Animated",
+      "connected": "Standalone",
+      "hero": [
+        "Suicide Squad"
+      ],
+      "seasons": 1,
+      "episodes": 10,
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "An anime crossover sending the Suicide Squad into a fantasy isekai world."
+    },
+    {
+      "t": "Kite Man: Hell Yeah!",
+      "y": "2024–",
+      "type": "Animated",
+      "connected": "Harley Quinn (animated)",
+      "hero": [],
+      "seasons": 1,
+      "episodes": null,
+      "rt": null,
+      "imdb": 7.2,
+      "blurb": "A spin-off of the adult-animated Harley Quinn series, centered on the lovable D-list villain Kite Man."
+    },
+    {
+      "t": "Teen Titans Go!",
+      "y": "2013–",
+      "type": "Animated",
+      "connected": "Teen Titans Go!",
+      "hero": [
+        "Teen Titans"
+      ],
+      "seasons": 9,
+      "episodes": 447,
+      "rt": null,
+      "imdb": 5.4,
+      "blurb": "A comedic, stand-alone spin-off of Teen Titans, still ongoing after more than a decade."
+    },
+    {
+      "t": "Batwheels",
+      "y": "2022–",
+      "type": "Animated",
+      "connected": "Standalone",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 3,
+      "episodes": 83,
+      "rt": null,
+      "imdb": 5.7,
+      "blurb": "A preschool-aimed series about the sentient vehicles of the Batman universe."
     },
     {
       "t": "My Adventures with Superman",
       "y": "2023–",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "MAWS continuity",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 3,
+      "episodes": 22,
+      "rt": null,
+      "imdb": 8.4,
       "blurb": "An anime-styled, youthful reinterpretation of Clark, Lois, and Jimmy as young adults."
     },
     {
       "t": "Batman: Caped Crusader",
       "y": "2024–",
       "type": "Animated",
-      "cont": "Standalone",
+      "connected": "Caped Crusader",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 10,
+      "rt": null,
+      "imdb": 8.1,
       "blurb": "A darker reimagining of Batman's early years produced by Bruce Timm, Matt Reeves, and J.J. Abrams."
+    },
+    {
+      "t": "Creature Commandos",
+      "y": "2024–",
+      "type": "Animated",
+      "connected": "DCU (Gunnverse)",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 7,
+      "rt": null,
+      "imdb": 8,
+      "blurb": "A team of monstrous convicts on black-ops missions; the first release of the new DCU."
+    },
+    {
+      "t": "Bat-Fam",
+      "y": "2025–",
+      "type": "Animated",
+      "connected": "Bat-Fam",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 10,
+      "rt": null,
+      "imdb": null,
+      "blurb": "A sequel series to Merry Little Batman, following young Damian Wayne and the extended Bat-family."
+    },
+    {
+      "t": "My Adventures with Green Lantern",
+      "y": "TBA",
+      "type": "Animated",
+      "connected": "MAWS continuity",
+      "hero": [
+        "Green Lantern"
+      ],
+      "seasons": null,
+      "episodes": null,
+      "rt": null,
+      "imdb": null,
+      "blurb": "An announced spin-off of My Adventures with Superman, centered on the Green Lantern Corps."
+    },
+    {
+      "t": "Absolute Batman (animated)",
+      "y": "TBA",
+      "type": "Animated",
+      "connected": "Absolute Universe",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": null,
+      "episodes": null,
+      "rt": null,
+      "imdb": null,
+      "blurb": "An announced animated series based on the Absolute Universe comics line."
+    },
+    {
+      "t": "Mister Miracle",
+      "y": "TBA",
+      "type": "Animated",
+      "connected": "DCU (Gunnverse)",
+      "hero": [],
+      "seasons": null,
+      "episodes": null,
+      "rt": null,
+      "imdb": null,
+      "blurb": "An announced animated series from showrunner Tom King, set in the new DC Universe."
+    },
+    {
+      "t": "Joker: Laugh Riot",
+      "y": "TBA",
+      "type": "Animated",
+      "connected": "Standalone",
+      "hero": [
+        "Joker"
+      ],
+      "seasons": null,
+      "episodes": null,
+      "rt": null,
+      "imdb": null,
+      "blurb": "An announced anime series centered on the Joker."
+    },
+    {
+      "t": "Super Friends",
+      "y": "1973–1986",
+      "type": "Animated",
+      "connected": "Super Friends franchise",
+      "hero": [
+        "Justice League"
+      ],
+      "seasons": 8,
+      "episodes": null,
+      "rt": null,
+      "imdb": 6.9,
+      "blurb": "The original Saturday-morning Justice League team-up cartoon, running across several retitled iterations."
+    },
+    {
+      "t": "The New Adventures of Superman",
+      "y": "1966–1970",
+      "type": "Animated",
+      "connected": "Classic",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 4,
+      "episodes": 68,
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "Filmation's first animated Superman series, paired in its run with segments on Superboy and Aquaman."
+    },
+    {
+      "t": "The New Adventures of Batman",
+      "y": "1977–1978",
+      "type": "Animated",
+      "connected": "Classic",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": null,
+      "rt": null,
+      "imdb": 6.3,
+      "blurb": "A Filmation animated series pairing Batman and Robin with the mysterious alien Bat-Mite."
+    },
+    {
+      "t": "Superman",
+      "y": "1988",
+      "type": "Animated",
+      "connected": "Classic",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 1,
+      "episodes": 13,
+      "rt": null,
+      "imdb": 6.2,
+      "blurb": "A short-lived Ruby-Spears animated series."
+    },
+    {
+      "t": "Swamp Thing",
+      "y": "1990–1991",
+      "type": "Animated",
+      "connected": "Standalone",
+      "hero": [
+        "Swamp Thing"
+      ],
+      "seasons": 5,
+      "episodes": null,
+      "rt": null,
+      "imdb": 6,
+      "blurb": "A DIC Entertainment animated tie-in to the Swamp Thing film series."
     }
   ],
   "games": [
