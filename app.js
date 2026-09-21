@@ -14,8 +14,8 @@ const CATS = [
   {id:"comics", label:"Comics"},
 ];
 const INTRO = {
-  movies:"Every DC film — pick Live Action or Animated, then sort by newest, by hero, by connected timeline, or by rating.",
-  series:"Every DC TV series — pick Live Action or Animated, then sort by newest, by hero, by connected timeline, or by rating.",
+  movies:"Every DC film — pick Live Action or Animated, then sort by newest, by character, by connected timeline, or by rating.",
+  series:"Every DC TV series — pick Live Action or Animated, then sort by newest, by character, by connected timeline, or by rating.",
   games:"Organized by franchise (Arkham, Injustice, LEGO, and so on) rather than platform or year, since that's how most of these actually relate to each other.",
   comics:"Filter by era, canon status, and character line to figure out what's essential, what's a fun detour, and what order to read an arc in."
 };
@@ -161,7 +161,11 @@ function buildFilters(){
     chipRow.innerHTML = `<div class="chip games" data-val="all" data-active="${state.f1==='all'}">All</div>` +
       frs.map(f=>`<div class="chip games" data-val="${f}" data-active="${state.f1===f}">${f}</div>`).join("");
     chipRow.querySelectorAll(".chip").forEach(ch=>{
-      ch.addEventListener("click", ()=>{ state.f1 = ch.dataset.val; renderCards(); });
+      ch.addEventListener("click", ()=>{
+        state.f1 = ch.dataset.val;
+        chipRow.querySelectorAll(".chip").forEach(c=>c.dataset.active = (c.dataset.val===state.f1));
+        renderCards();
+      });
     });
   }
 
@@ -179,7 +183,11 @@ function buildFilters(){
     chipRow.innerHTML = `<div class="chip comics" data-val="all" data-active="${state.chip==='all'}">All lines</div>` +
       lines.map(l=>`<div class="chip comics" data-val="${l}" data-active="${state.chip===l}">${l}</div>`).join("");
     chipRow.querySelectorAll(".chip").forEach(ch=>{
-      ch.addEventListener("click", ()=>{ state.chip = ch.dataset.val; renderCards(); });
+      ch.addEventListener("click", ()=>{
+        state.chip = ch.dataset.val;
+        chipRow.querySelectorAll(".chip").forEach(c=>c.dataset.active = (c.dataset.val===state.chip));
+        renderCards();
+      });
     });
   }
 }
@@ -196,7 +204,7 @@ function buildMovieSeriesFilters(cat){
 
   const modes = [
     {id:"newest", label:"Newest → Oldest"},
-    {id:"hero", label:"By Hero"},
+    {id:"hero", label:"By Character"},
     {id:"story", label:"Connected Story"},
     {id:"rating", label:"By Rating"},
   ];
@@ -204,7 +212,11 @@ function buildMovieSeriesFilters(cat){
     `<div class="chip ${cat}" data-val="${m.id}" data-active="${state.sortMode===m.id}">${m.label}</div>`
   ).join("");
   chipRow.querySelectorAll(".chip").forEach(ch=>{
-    ch.addEventListener("click", ()=>{ state.sortMode = ch.dataset.val; renderCards(); });
+    ch.addEventListener("click", ()=>{
+      state.sortMode = ch.dataset.val;
+      chipRow.querySelectorAll(".chip").forEach(c=>c.dataset.active = (c.dataset.val===state.sortMode));
+      renderCards();
+    });
   });
 }
 
