@@ -1,69 +1,6 @@
 {
   "movies": [
     {
-      "t": "Adventures of Captain Marvel",
-      "y": "1941",
-      "type": "Live Action",
-      "format": "Serial",
-      "connected": "Classic Serials",
-      "hero": [],
-      "rt": null,
-      "imdb": 7.4,
-      "blurb": "12-chapter Republic Pictures serial — the first-ever screen adaptation of a Fawcett/DC hero, decades before Shazam's own solo films."
-    },
-    {
-      "t": "Batman",
-      "y": "1943",
-      "type": "Live Action",
-      "format": "Serial",
-      "connected": "Classic Serials",
-      "hero": [
-        "Batman"
-      ],
-      "rt": null,
-      "imdb": 5.8,
-      "blurb": "Columbia Pictures' 15-chapter serial — the first-ever screen Batman, fighting a wartime Japanese saboteur."
-    },
-    {
-      "t": "Superman",
-      "y": "1948",
-      "type": "Live Action",
-      "format": "Serial",
-      "connected": "Classic Serials",
-      "hero": [
-        "Superman"
-      ],
-      "rt": null,
-      "imdb": 6.7,
-      "blurb": "15-chapter Columbia serial, the first screen Superman, played by Kirk Alyn."
-    },
-    {
-      "t": "Batman and Robin",
-      "y": "1949",
-      "type": "Live Action",
-      "format": "Serial",
-      "connected": "Classic Serials",
-      "hero": [
-        "Batman"
-      ],
-      "rt": null,
-      "imdb": 5.3,
-      "blurb": "Columbia's second Batman serial, introducing the screen's first Robin."
-    },
-    {
-      "t": "Atom Man vs. Superman",
-      "y": "1950",
-      "type": "Live Action",
-      "format": "Serial",
-      "connected": "Classic Serials",
-      "hero": [
-        "Superman"
-      ],
-      "rt": null,
-      "imdb": 6.7,
-      "blurb": "Kirk Alyn's second serial outing as Superman, against Lex Luthor as 'Atom Man'."
-    },
-    {
       "t": "Superman and the Mole Men",
       "y": "1951",
       "type": "Live Action",
@@ -2030,6 +1967,74 @@
   ],
   "series": [
     {
+      "t": "Adventures of Captain Marvel",
+      "y": "1941",
+      "type": "Live Action",
+      "connected": "Classic Serials",
+      "hero": [],
+      "seasons": 1,
+      "episodes": 12,
+      "rt": null,
+      "imdb": 7.4,
+      "blurb": "A 12-chapter Republic Pictures serial — the first-ever screen adaptation of a Fawcett/DC hero, decades before Shazam's own solo films."
+    },
+    {
+      "t": "Batman",
+      "y": "1943",
+      "type": "Live Action",
+      "connected": "Classic Serials",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 15,
+      "rt": null,
+      "imdb": 5.8,
+      "blurb": "Columbia Pictures' 15-chapter serial — the first-ever screen Batman, fighting a wartime Japanese saboteur."
+    },
+    {
+      "t": "Superman",
+      "y": "1948",
+      "type": "Live Action",
+      "connected": "Classic Serials",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 1,
+      "episodes": 15,
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "A 15-chapter Columbia serial, the first screen Superman, played by Kirk Alyn."
+    },
+    {
+      "t": "Batman and Robin",
+      "y": "1949",
+      "type": "Live Action",
+      "connected": "Classic Serials",
+      "hero": [
+        "Batman"
+      ],
+      "seasons": 1,
+      "episodes": 15,
+      "rt": null,
+      "imdb": 5.3,
+      "blurb": "Columbia's second Batman serial, introducing the screen's first Robin."
+    },
+    {
+      "t": "Atom Man vs. Superman",
+      "y": "1950",
+      "type": "Live Action",
+      "connected": "Classic Serials",
+      "hero": [
+        "Superman"
+      ],
+      "seasons": 1,
+      "episodes": 15,
+      "rt": null,
+      "imdb": 6.7,
+      "blurb": "Kirk Alyn's second serial outing as Superman, against Lex Luthor as 'Atom Man'."
+    },
+    {
       "t": "Adventures of Superman",
       "y": "1952–1958",
       "type": "Live Action",
@@ -2435,7 +2440,56 @@
       "episodes": 9,
       "rt": null,
       "imdb": 8.6,
-      "blurb": "An HBO sequel-remix set decades after the original graphic novel, from Damon Lindelof."
+      "blurb": "An HBO sequel-remix set decades after the original graphic novel, from Damon Lindelof.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "It's Summer and We're Running Out of Ice",
+            "d": "2019-10-20"
+          },
+          {
+            "n": 2,
+            "t": "Martial Feats of Comanche Horsemanship",
+            "d": "2019-10-27"
+          },
+          {
+            "n": 3,
+            "t": "She Was Killed by Space Junk",
+            "d": "2019-11-03"
+          },
+          {
+            "n": 4,
+            "t": "If You Don't Like My Story, Write Your Own",
+            "d": "2019-11-10"
+          },
+          {
+            "n": 5,
+            "t": "Little Fear of Lightning",
+            "d": "2019-11-17"
+          },
+          {
+            "n": 6,
+            "t": "This Extraordinary Being",
+            "d": "2019-11-24"
+          },
+          {
+            "n": 7,
+            "t": "An Almost Religious Awe",
+            "d": "2019-12-01"
+          },
+          {
+            "n": 8,
+            "t": "A God Walks into Abar",
+            "d": "2019-12-08"
+          },
+          {
+            "n": 9,
+            "t": "See How They Fly",
+            "d": "2019-12-15"
+          }
+        ]
+      }
     },
     {
       "t": "Peacemaker",
@@ -2449,7 +2503,51 @@
       "episodes": 16,
       "rt": null,
       "imdb": 8.2,
-      "blurb": "James Gunn's spinoff of The Suicide Squad, later folded into the new DCU."
+      "blurb": "James Gunn's spinoff of The Suicide Squad, later folded into the new DCU.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "A Whole New Whirled",
+            "d": "2022-01-13"
+          },
+          {
+            "n": 2,
+            "t": "Best Friends for Never",
+            "d": "2022-01-13"
+          },
+          {
+            "n": 3,
+            "t": "Better Goff Dead",
+            "d": "2022-01-13"
+          },
+          {
+            "n": 4,
+            "t": "The Choad Less Traveled",
+            "d": "2022-01-20"
+          },
+          {
+            "n": 5,
+            "t": "Monkey Dory",
+            "d": "2022-01-27"
+          },
+          {
+            "n": 6,
+            "t": "Murn After Reading",
+            "d": "2022-02-03"
+          },
+          {
+            "n": 7,
+            "t": "Stop Dragon My Heart Around",
+            "d": "2022-02-10"
+          },
+          {
+            "n": 8,
+            "t": "It's Cow or Never",
+            "d": "2022-02-17"
+          }
+        ]
+      }
     },
     {
       "t": "Gotham Knights",
@@ -2967,7 +3065,46 @@
       "episodes": 7,
       "rt": null,
       "imdb": 8,
-      "blurb": "A team of monstrous convicts on black-ops missions; the first release of the new DCU."
+      "blurb": "A team of monstrous convicts on black-ops missions; the first release of the new DCU.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Collywobbles",
+            "d": "2024-12-05"
+          },
+          {
+            "n": 2,
+            "t": "The Tourmaline Necklace",
+            "d": "2024-12-05"
+          },
+          {
+            "n": 3,
+            "t": "Cheers to the Tin Man",
+            "d": "2024-12-12"
+          },
+          {
+            "n": 4,
+            "t": "Chasing Squirrels",
+            "d": "2024-12-19"
+          },
+          {
+            "n": 5,
+            "t": "The Iron Pot",
+            "d": "2024-12-26"
+          },
+          {
+            "n": 6,
+            "t": "Priyatel Skelet",
+            "d": "2025-01-02"
+          },
+          {
+            "n": 7,
+            "t": "A Very Funny Monster",
+            "d": "2025-01-09"
+          }
+        ]
+      }
     },
     {
       "t": "Bat-Fam",
