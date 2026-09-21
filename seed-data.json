@@ -1,0 +1,1376 @@
+{
+  "movies": [
+    {
+      "t": "Superman",
+      "y": "1978",
+      "type": "Live Action",
+      "cont": "Donnerverse",
+      "blurb": "Christopher Reeve's origin-to-icon debut; the film that proved a superhero movie could be prestige cinema."
+    },
+    {
+      "t": "Superman II",
+      "y": "1980",
+      "type": "Live Action",
+      "cont": "Donnerverse",
+      "blurb": "Zod and the Phantom Zone criminals arrive; Superman gives up his powers for Lois, then takes them back."
+    },
+    {
+      "t": "Batman",
+      "y": "1989",
+      "type": "Live Action",
+      "cont": "Burtonverse",
+      "blurb": "Tim Burton's gothic, operatic take on Gotham, with Jack Nicholson's Joker."
+    },
+    {
+      "t": "Batman Returns",
+      "y": "1992",
+      "type": "Live Action",
+      "cont": "Burtonverse",
+      "blurb": "Burton doubles down on the grotesque with Catwoman and Penguin as tragic monsters."
+    },
+    {
+      "t": "Batman Forever",
+      "y": "1995",
+      "type": "Live Action",
+      "cont": "Schumacherverse",
+      "blurb": "Joel Schumacher brightens the tone considerably; Two-Face and the Riddler headline."
+    },
+    {
+      "t": "Batman & Robin",
+      "y": "1997",
+      "type": "Live Action",
+      "cont": "Schumacherverse",
+      "blurb": "Neon camp excess that effectively ended the franchise until Nolan's reboot."
+    },
+    {
+      "t": "Batman Begins",
+      "y": "2005",
+      "type": "Live Action",
+      "cont": "Nolanverse",
+      "blurb": "Christopher Nolan grounds Batman's origin in realism; the start of The Dark Knight Trilogy."
+    },
+    {
+      "t": "The Dark Knight",
+      "y": "2008",
+      "type": "Live Action",
+      "cont": "Nolanverse",
+      "blurb": "Heath Ledger's Joker anchors a crime-thriller take on Batman vs. chaos."
+    },
+    {
+      "t": "The Dark Knight Rises",
+      "y": "2012",
+      "type": "Live Action",
+      "cont": "Nolanverse",
+      "blurb": "Bane and Talia al Ghul close out the trilogy with Gotham under siege."
+    },
+    {
+      "t": "Man of Steel",
+      "y": "2013",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Zack Snyder relaunches Superman as a darker, mythic figure; opens the DC Extended Universe."
+    },
+    {
+      "t": "Batman v Superman: Dawn of Justice",
+      "y": "2016",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Introduces Ben Affleck's Batman and sets up the Justice League; also the first live-action Wonder Woman."
+    },
+    {
+      "t": "Suicide Squad",
+      "y": "2016",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "A team of imprisoned villains is sent on a black-ops mission."
+    },
+    {
+      "t": "Wonder Woman",
+      "y": "2017",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Diana's WWI-set origin, widely seen as a turning point for the DCEU's critical reception."
+    },
+    {
+      "t": "Justice League",
+      "y": "2017",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "The theatrical cut, finished by Joss Whedon after Snyder departed production."
+    },
+    {
+      "t": "Aquaman",
+      "y": "2018",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Arthur Curry claims the throne of Atlantis in a colorful, undersea epic."
+    },
+    {
+      "t": "Shazam!",
+      "y": "2019",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "A foster kid who transforms into an adult hero, played with family-comedy warmth."
+    },
+    {
+      "t": "Birds of Prey",
+      "y": "2020",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Harley Quinn, freshly split from the Joker, teams up with Gotham's other women."
+    },
+    {
+      "t": "Wonder Woman 1984",
+      "y": "2020",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Diana faces a wish-granting artifact in the excess of the Reagan era."
+    },
+    {
+      "t": "Zack Snyder's Justice League",
+      "y": "2021",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "The four-hour director's cut released after years of fan campaigning; a substantially different film from 2017's."
+    },
+    {
+      "t": "The Suicide Squad",
+      "y": "2021",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "James Gunn's R-rated, mostly standalone reboot of the concept."
+    },
+    {
+      "t": "Black Adam",
+      "y": "2022",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Dwayne Johnson's antihero is freed from millennia of imprisonment."
+    },
+    {
+      "t": "Shazam! Fury of the Gods",
+      "y": "2023",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "The Shazam family faces the daughters of Atlas."
+    },
+    {
+      "t": "Aquaman and the Lost Kingdom",
+      "y": "2023",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "The final film released under the original DCEU banner."
+    },
+    {
+      "t": "Blue Beetle",
+      "y": "2023",
+      "type": "Live Action",
+      "cont": "DCEU",
+      "blurb": "Jaime Reyes bonds with an alien scarab; the last new DCEU hero introduced."
+    },
+    {
+      "t": "The Batman",
+      "y": "2022",
+      "type": "Live Action",
+      "cont": "Elseworlds (Reeves)",
+      "blurb": "Matt Reeves' noir detective-thriller take, standalone from the DCEU and DCU."
+    },
+    {
+      "t": "Joker",
+      "y": "2019",
+      "type": "Live Action",
+      "cont": "Elseworlds",
+      "blurb": "A grounded character study of Arthur Fleck's descent, disconnected from any shared DC continuity."
+    },
+    {
+      "t": "Joker: Folie à Deux",
+      "y": "2024",
+      "type": "Live Action",
+      "cont": "Elseworlds",
+      "blurb": "A musical-tinged sequel following Arthur's trial and his bond with Harley Quinn."
+    },
+    {
+      "t": "Superman",
+      "y": "2025",
+      "type": "Live Action",
+      "cont": "DCU Chapter 1",
+      "blurb": "James Gunn's relaunch of the character, opening the new shared DC Universe (DCU)."
+    },
+    {
+      "t": "Batman: Mask of the Phantasm",
+      "y": "1993",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "A feature film extension of Batman: The Animated Series, considered one of the best Batman films in any medium."
+    },
+    {
+      "t": "Batman Beyond: Return of the Joker",
+      "y": "2000",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "An older Bruce Wayne and successor Terry McGinnis confront a resurrected Joker."
+    },
+    {
+      "t": "Superman: Doomsday",
+      "y": "2007",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts the Death of Superman storyline; opens the long-running DTV animated line."
+    },
+    {
+      "t": "Wonder Woman",
+      "y": "2009",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "An origin story pitting Diana against Ares."
+    },
+    {
+      "t": "Batman: Under the Red Hood",
+      "y": "2010",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts the comic in which Jason Todd returns as a lethal vigilante."
+    },
+    {
+      "t": "All-Star Superman",
+      "y": "2011",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "A faithful adaptation of the acclaimed Morrison/Quitely comic."
+    },
+    {
+      "t": "Justice League: Doom",
+      "y": "2012",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts 'Tower of Babel' — Batman's contingency plans against his own teammates are stolen."
+    },
+    {
+      "t": "Batman: The Dark Knight Returns, Part 1 & 2",
+      "y": "2012–13",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "A two-part adaptation of Frank Miller's aged-Batman classic."
+    },
+    {
+      "t": "Justice League: Throne of Atlantis",
+      "y": "2015",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Introduces Aquaman and the war between Atlantis and the surface."
+    },
+    {
+      "t": "Batman: The Killing Joke",
+      "y": "2016",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "An adaptation of Moore/Bolland's Joker-origin one-shot, with an added first act."
+    },
+    {
+      "t": "Justice League Dark",
+      "y": "2017",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Constantine assembles DC's magical misfits against a supernatural threat."
+    },
+    {
+      "t": "The Death of Superman",
+      "y": "2018",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "A newer, R-rated adaptation of the Doomsday storyline."
+    },
+    {
+      "t": "Reign of the Supermen",
+      "y": "2019",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "The direct follow-up, adapting the four pretenders to Superman's mantle."
+    },
+    {
+      "t": "Batman: Hush",
+      "y": "2019",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts Loeb/Lee's mystery pitting Batman against nearly his entire rogues gallery."
+    },
+    {
+      "t": "Superman: Red Son",
+      "y": "2020",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts the Elseworlds comic where Superman's rocket lands in Soviet Ukraine."
+    },
+    {
+      "t": "Justice League Dark: Apokolips War",
+      "y": "2020",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "A brutal, continuity-closing finale to the interconnected animated movie line."
+    },
+    {
+      "t": "Batman: The Long Halloween, Part 1 & 2",
+      "y": "2021",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts Loeb/Sale's year-spanning murder mystery from early in Batman's career."
+    },
+    {
+      "t": "Injustice",
+      "y": "2021",
+      "type": "Animated",
+      "cont": "DC Universe Animated Original Movies",
+      "blurb": "Adapts the alternate-universe video game comic in which Superman becomes a tyrant."
+    },
+    {
+      "t": "My Adventures with Superman: Adventures Continue",
+      "y": "2024",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "Feature-length material tied to the newer animated series continuity."
+    }
+  ],
+  "series": [
+    {
+      "t": "Adventures of Superman",
+      "y": "1952–1958",
+      "type": "Live Action",
+      "cont": "Classic",
+      "blurb": "George Reeves' Superman, the character's first long-running TV incarnation."
+    },
+    {
+      "t": "Batman",
+      "y": "1966–1968",
+      "type": "Live Action",
+      "cont": "Classic",
+      "blurb": "Adam West's campy, pop-art Batman, a huge cultural phenomenon of its era."
+    },
+    {
+      "t": "Wonder Woman",
+      "y": "1975–1979",
+      "type": "Live Action",
+      "cont": "Classic",
+      "blurb": "Lynda Carter's star-making turn as Diana Prince."
+    },
+    {
+      "t": "Lois & Clark: The New Adventures of Superman",
+      "y": "1993–1997",
+      "type": "Live Action",
+      "cont": "Classic",
+      "blurb": "A romance-forward take centering the relationship between Clark and Lois."
+    },
+    {
+      "t": "Smallville",
+      "y": "2001–2011",
+      "type": "Live Action",
+      "cont": "Smallville continuity",
+      "blurb": "Clark Kent's teenage years in Kansas, running for ten seasons before he becomes Superman."
+    },
+    {
+      "t": "Gotham",
+      "y": "2014–2019",
+      "type": "Live Action",
+      "cont": "Gothamverse",
+      "blurb": "A young Jim Gordon navigates Gotham's corruption years before Batman exists."
+    },
+    {
+      "t": "Arrow",
+      "y": "2012–2020",
+      "type": "Live Action",
+      "cont": "Arrowverse",
+      "blurb": "Oliver Queen's vigilante origin; the show that launched the interconnected Arrowverse."
+    },
+    {
+      "t": "The Flash",
+      "y": "2014–2023",
+      "type": "Live Action",
+      "cont": "Arrowverse",
+      "blurb": "Barry Allen gains super-speed and grapples with time travel and the multiverse."
+    },
+    {
+      "t": "Supergirl",
+      "y": "2015–2021",
+      "type": "Live Action",
+      "cont": "Arrowverse",
+      "blurb": "Kara Danvers steps into her own heroics in National City."
+    },
+    {
+      "t": "DC's Legends of Tomorrow",
+      "y": "2016–2022",
+      "type": "Live Action",
+      "cont": "Arrowverse",
+      "blurb": "A time-traveling team of misfit heroes and villains protects history."
+    },
+    {
+      "t": "Black Lightning",
+      "y": "2018–2021",
+      "type": "Live Action",
+      "cont": "Arrowverse (loosely)",
+      "blurb": "A retired hero returns to the fight to protect his community and family."
+    },
+    {
+      "t": "Batwoman",
+      "y": "2019–2022",
+      "type": "Live Action",
+      "cont": "Arrowverse",
+      "blurb": "Kate Kane takes up a version of the Bat-symbol in Gotham."
+    },
+    {
+      "t": "Superman & Lois",
+      "y": "2021–2024",
+      "type": "Live Action",
+      "cont": "Arrowverse",
+      "blurb": "A domestic-drama take on Clark and Lois raising twin sons who inherit powers."
+    },
+    {
+      "t": "Titans",
+      "y": "2018–2023",
+      "type": "Live Action",
+      "cont": "DC Universe/Max continuity",
+      "blurb": "A grittier, adult take on Dick Grayson and a young Teen Titans lineup."
+    },
+    {
+      "t": "Doom Patrol",
+      "y": "2019–2023",
+      "type": "Live Action",
+      "cont": "DC Universe/Max continuity",
+      "blurb": "A surreal, tragicomic team of outcasts with uncontrollable powers."
+    },
+    {
+      "t": "Stargirl",
+      "y": "2020–2022",
+      "type": "Live Action",
+      "cont": "Standalone",
+      "blurb": "A teenager inherits the legacy of the Justice Society of America."
+    },
+    {
+      "t": "Pennyworth",
+      "y": "2019–2022",
+      "type": "Live Action",
+      "cont": "Standalone",
+      "blurb": "A 1960s-set thriller following young Alfred Pennyworth before he meets the Waynes."
+    },
+    {
+      "t": "Peacemaker",
+      "y": "2022–",
+      "type": "Live Action",
+      "cont": "DCEU / DCU bridge",
+      "blurb": "James Gunn's spinoff of The Suicide Squad, later folded into the new DCU."
+    },
+    {
+      "t": "Constantine",
+      "y": "2014–2015",
+      "type": "Live Action",
+      "cont": "Standalone",
+      "blurb": "A one-season adaptation of the Hellblazer occult detective."
+    },
+    {
+      "t": "Watchmen",
+      "y": "2019",
+      "type": "Live Action",
+      "cont": "Elseworlds (sequel)",
+      "blurb": "An HBO sequel-remix set decades after the original graphic novel, from Damon Lindelof."
+    },
+    {
+      "t": "Sweet Tooth",
+      "y": "2021–2024",
+      "type": "Live Action",
+      "cont": "Standalone (Vertigo-based)",
+      "blurb": "A post-apocalyptic fable about a hybrid deer-boy, adapted from the Vertigo comic."
+    },
+    {
+      "t": "Creature Commandos",
+      "y": "2024",
+      "type": "Animated",
+      "cont": "DCU Chapter 1",
+      "blurb": "A team of monstrous convicts on black-ops missions; the first release of the new DCU, produced as animation."
+    },
+    {
+      "t": "Super Friends",
+      "y": "1973–1986",
+      "type": "Animated",
+      "cont": "Classic",
+      "blurb": "The original Saturday-morning Justice League team-up cartoon."
+    },
+    {
+      "t": "Batman: The Animated Series",
+      "y": "1992–1995",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "A stylish, noir-inflected series widely regarded as the definitive animated Batman; the DCAU's foundation."
+    },
+    {
+      "t": "Superman: The Animated Series",
+      "y": "1996–2000",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "Bruce Timm's follow-up, expanding the shared animated universe to Metropolis."
+    },
+    {
+      "t": "The New Batman Adventures",
+      "y": "1997–1999",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "A redesigned, tonally sharper continuation of B:TAS."
+    },
+    {
+      "t": "Batman Beyond",
+      "y": "1999–2001",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "Set decades later, following teenager Terry McGinnis as the new Batman."
+    },
+    {
+      "t": "Justice League",
+      "y": "2001–2004",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "The DCAU's heroes unite as a formal team against cosmic-scale threats."
+    },
+    {
+      "t": "Justice League Unlimited",
+      "y": "2004–2006",
+      "type": "Animated",
+      "cont": "DCAU",
+      "blurb": "Expands the roster to dozens of DC characters in rotation."
+    },
+    {
+      "t": "Teen Titans",
+      "y": "2003–2006",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A stylized, anime-influenced take on the young team, distinct from the DCAU."
+    },
+    {
+      "t": "The Batman",
+      "y": "2004–2008",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A fresh, angular redesign of Batman's world, unconnected to the DCAU."
+    },
+    {
+      "t": "Legion of Super-Heroes",
+      "y": "2006–2008",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A 31st-century team of teenage heroes, with a young Superman as a recurring member."
+    },
+    {
+      "t": "Batman: The Brave and the Bold",
+      "y": "2008–2011",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A lighthearted, team-up-of-the-week series pulling from DC's deepest cuts."
+    },
+    {
+      "t": "Young Justice",
+      "y": "2010–2022",
+      "type": "Animated",
+      "cont": "Young Justice continuity",
+      "blurb": "A sidekick-led team series praised for dense, long-form continuity across multiple seasons."
+    },
+    {
+      "t": "Beware the Batman",
+      "y": "2013–2014",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A CG-animated series leaning on lesser-used Batman rogues like Anarky and Professor Pyg."
+    },
+    {
+      "t": "Justice League Action",
+      "y": "2016–2018",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "Fast-paced, 11-minute team adventures aimed at a younger audience."
+    },
+    {
+      "t": "Harley Quinn",
+      "y": "2019–",
+      "type": "Animated",
+      "cont": "Standalone (mature)",
+      "blurb": "An adult-animated, comedic reinvention following Harley post-Joker breakup."
+    },
+    {
+      "t": "DC Super Hero Girls",
+      "y": "2019–2021",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A younger-skewing series reimagining DC's heroines as high schoolers."
+    },
+    {
+      "t": "My Adventures with Superman",
+      "y": "2023–",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "An anime-styled, youthful reinterpretation of Clark, Lois, and Jimmy as young adults."
+    },
+    {
+      "t": "Batman: Caped Crusader",
+      "y": "2024–",
+      "type": "Animated",
+      "cont": "Standalone",
+      "blurb": "A darker reimagining of Batman's early years produced by Bruce Timm, Matt Reeves, and J.J. Abrams."
+    }
+  ],
+  "games": [
+    {
+      "t": "Batman: Arkham Asylum",
+      "y": "2009",
+      "fr": "Batman: Arkham",
+      "plat": "Multi-platform",
+      "blurb": "A stealth-action game confining Batman to Arkham for one night; set the template for modern superhero games."
+    },
+    {
+      "t": "Batman: Arkham City",
+      "y": "2011",
+      "fr": "Batman: Arkham",
+      "plat": "Multi-platform",
+      "blurb": "Expands the formula into an open, walled-off district of Gotham."
+    },
+    {
+      "t": "Batman: Arkham Origins",
+      "y": "2013",
+      "fr": "Batman: Arkham",
+      "plat": "Multi-platform",
+      "blurb": "A prequel (by a different studio) depicting an early, still-hunted Batman on Christmas Eve."
+    },
+    {
+      "t": "Batman: Arkham Knight",
+      "y": "2015",
+      "fr": "Batman: Arkham",
+      "plat": "Multi-platform",
+      "blurb": "The series finale, introducing a drivable Batmobile and a mysterious new villain."
+    },
+    {
+      "t": "Batman: Arkham VR",
+      "y": "2016",
+      "fr": "Batman: Arkham",
+      "plat": "PS VR",
+      "blurb": "A short, immersive VR side-story set within the Arkhamverse."
+    },
+    {
+      "t": "Suicide Squad: Kill the Justice League",
+      "y": "2024",
+      "fr": "Batman: Arkham",
+      "plat": "Multi-platform",
+      "blurb": "A loot-shooter set in the Arkhamverse, in which the Squad is forced to kill a mind-controlled Justice League."
+    },
+    {
+      "t": "Injustice: Gods Among Us",
+      "y": "2013",
+      "fr": "Injustice",
+      "plat": "Multi-platform",
+      "blurb": "A fighting game set in an alternate timeline where Superman becomes an authoritarian ruler after Joker tricks him into killing Lois."
+    },
+    {
+      "t": "Injustice 2",
+      "y": "2017",
+      "fr": "Injustice",
+      "plat": "Multi-platform",
+      "blurb": "Continues the alternate timeline with a gear-customization system and expanded roster."
+    },
+    {
+      "t": "LEGO Batman: The Videogame",
+      "y": "2008",
+      "fr": "LEGO DC",
+      "plat": "Multi-platform",
+      "blurb": "A comedic, family-friendly take letting players control both heroes and villains."
+    },
+    {
+      "t": "LEGO Batman 2: DC Super Heroes",
+      "y": "2012",
+      "fr": "LEGO DC",
+      "plat": "Multi-platform",
+      "blurb": "Expands beyond Gotham to introduce the wider Justice League in open-world Gotham."
+    },
+    {
+      "t": "LEGO Batman 3: Beyond Gotham",
+      "y": "2014",
+      "fr": "LEGO DC",
+      "plat": "Multi-platform",
+      "blurb": "Sends the cast into space against Brainiac, with a huge roster of DC guest characters."
+    },
+    {
+      "t": "LEGO DC Super-Villains",
+      "y": "2018",
+      "fr": "LEGO DC",
+      "plat": "Multi-platform",
+      "blurb": "Flips the formula to let players build and play as an original villain."
+    },
+    {
+      "t": "DC Universe Online",
+      "y": "2011",
+      "fr": "DC Universe Online",
+      "plat": "Multi-platform (MMO)",
+      "blurb": "An MMORPG in which the player creates an original hero or villain set after Justice Society-era history."
+    },
+    {
+      "t": "Gotham Knights",
+      "y": "2022",
+      "fr": "Gotham Knights",
+      "plat": "Multi-platform",
+      "blurb": "After Batman's death, Nightwing, Red Hood, Batgirl, and Robin defend Gotham together."
+    },
+    {
+      "t": "Batman: The Telltale Series",
+      "y": "2016",
+      "fr": "Telltale Batman",
+      "plat": "Multi-platform",
+      "blurb": "A choice-driven narrative adventure exploring Bruce Wayne's politics and relationships."
+    },
+    {
+      "t": "Batman: The Enemy Within",
+      "y": "2017",
+      "fr": "Telltale Batman",
+      "plat": "Multi-platform",
+      "blurb": "The direct sequel season, centering Batman's fraught relationship with the Joker."
+    },
+    {
+      "t": "Justice League Heroes",
+      "y": "2006",
+      "fr": "Other",
+      "plat": "Multi-platform",
+      "blurb": "A team-based action-RPG letting players switch between Justice League members."
+    },
+    {
+      "t": "Mortal Kombat vs. DC Universe",
+      "y": "2008",
+      "fr": "Other",
+      "plat": "PS3 / Xbox 360",
+      "blurb": "A crossover fighting game merging the two rosters under a toned-down rating."
+    },
+    {
+      "t": "Superman Returns: The Videogame",
+      "y": "2006",
+      "fr": "Other",
+      "plat": "Multi-platform",
+      "blurb": "An open-world Metropolis tie-in to the Bryan Singer film."
+    },
+    {
+      "t": "Watchmen: The End Is Nigh",
+      "y": "2009",
+      "fr": "Other",
+      "plat": "PS3 / Xbox 360",
+      "blurb": "A brawler prequel following Nite Owl and Rorschach, tied to the Watchmen film."
+    },
+    {
+      "t": "MultiVersus",
+      "y": "2022",
+      "fr": "Other",
+      "plat": "Multi-platform",
+      "blurb": "A platform fighter crossing over DC characters with other Warner Bros. IP."
+    }
+  ],
+  "comics": [
+    {
+      "t": "Action Comics #1",
+      "y": "1938",
+      "era": "Golden Age",
+      "canon": "Main Continuity",
+      "line": "Superman",
+      "fmt": "Facsimile Edition, Omnibus (Action Comics Vol. 1)",
+      "ord": "The first appearance of Superman — the start of the entire superhero genre.",
+      "blurb": "Superman's debut, and the birth of the superhero comic as a form."
+    },
+    {
+      "t": "Detective Comics #27",
+      "y": "1939",
+      "era": "Golden Age",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "Facsimile Edition, Batman Chronicles Vol. 1",
+      "ord": "Batman's first appearance, a full year before he gets an origin story.",
+      "blurb": "Batman's debut as a mysterious vigilante, predating Robin, the Batcave, and even a clear origin."
+    },
+    {
+      "t": "All Star Comics #8",
+      "y": "1941",
+      "era": "Golden Age",
+      "canon": "Main Continuity",
+      "line": "Wonder Woman",
+      "fmt": "Wonder Woman Chronicles Vol. 1",
+      "ord": "Introduces Diana before her own solo title begins the following year.",
+      "blurb": "Wonder Woman's first appearance, created by William Moulton Marston."
+    },
+    {
+      "t": "All Star Comics #3",
+      "y": "1940",
+      "era": "Golden Age",
+      "canon": "Main Continuity",
+      "line": "Justice League",
+      "fmt": "JSA: The Golden Age Omnibus",
+      "ord": "The formation of the Justice Society of America, the genre's first superhero team.",
+      "blurb": "DC's earliest heroes — Flash, Green Lantern, Hawkman, and others — unite as the JSA."
+    },
+    {
+      "t": "Showcase #4",
+      "y": "1956",
+      "era": "Silver Age",
+      "canon": "Main Continuity",
+      "line": "Flash",
+      "fmt": "Flash Chronicles / Silver Age Omnibus",
+      "ord": "Introduces Barry Allen, generally considered the start of the Silver Age.",
+      "blurb": "Barry Allen becomes the second Flash, kicking off DC's Silver Age revival of its heroes."
+    },
+    {
+      "t": "Flash #123 — 'Flash of Two Worlds'",
+      "y": "1961",
+      "era": "Silver Age",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "Flash Silver Age Omnibus",
+      "ord": "Introduces the multiverse concept, setting up every future Crisis event.",
+      "blurb": "Barry Allen meets Golden Age Flash Jay Garrick, establishing that DC's eras coexist on parallel Earths."
+    },
+    {
+      "t": "Showcase #22",
+      "y": "1959",
+      "era": "Silver Age",
+      "canon": "Main Continuity",
+      "line": "Green Lantern",
+      "fmt": "Green Lantern Silver Age Omnibus",
+      "ord": "Introduces Hal Jordan as the new Green Lantern.",
+      "blurb": "Test pilot Hal Jordan is chosen by a dying alien to wield the power ring."
+    },
+    {
+      "t": "Justice League of America #1",
+      "y": "1960",
+      "era": "Silver Age",
+      "canon": "Main Continuity",
+      "line": "Justice League",
+      "fmt": "JLA Silver Age Omnibus",
+      "ord": "The formation of the modern Justice League.",
+      "blurb": "Superman, Batman, Flash, Green Lantern, Wonder Woman, and Aquaman unite for the first time as the JLA."
+    },
+    {
+      "t": "Green Lantern/Green Arrow",
+      "y": "1970–1972",
+      "era": "Bronze Age",
+      "canon": "Main Continuity",
+      "line": "Green Lantern",
+      "fmt": "Deluxe Edition, TPB",
+      "ord": "A socially conscious run pairing Hal Jordan's idealism against Oliver Queen's activism.",
+      "blurb": "Denny O'Neil and Neal Adams tackle drug addiction, racism, and poverty through a superhero lens."
+    },
+    {
+      "t": "Superman's Pal Jimmy Olsen (Kirby run)",
+      "y": "1970–1973",
+      "era": "Bronze Age",
+      "canon": "Main Continuity",
+      "line": "Superman",
+      "fmt": "Jack Kirby Omnibus",
+      "ord": "Introduces the New Gods and Darkseid into the DC Universe.",
+      "blurb": "Jack Kirby's cosmic Fourth World mythology begins here, in an unlikely Jimmy Olsen title."
+    },
+    {
+      "t": "The Joker's Five-Way Revenge (Detective Comics #475–476)",
+      "y": "1978",
+      "era": "Bronze Age",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "Batman Bronze Age Omnibus",
+      "ord": "A key story re-establishing Joker as a genuinely lethal threat after the campy '60s tone.",
+      "blurb": "Steve Englehart and Marshall Rogers redefine the Joker as a dangerous, elegant menace."
+    },
+    {
+      "t": "Crisis on Infinite Earths",
+      "y": "1985–1986",
+      "era": "Transitional",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Absolute Edition, Omnibus",
+      "ord": "Collapses the multiverse into one timeline — the hard dividing line between Pre- and Post-Crisis continuity.",
+      "blurb": "DC's original universe-spanning event, erasing decades of divergent continuity into a single Earth."
+    },
+    {
+      "t": "Batman: Year One",
+      "y": "1987",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition, Absolute Edition",
+      "ord": "The definitive post-Crisis origin; read first for any modern Batman reading order.",
+      "blurb": "Frank Miller and David Mazzucchelli retell Bruce Wayne's first year as Batman, alongside Jim Gordon's arrival in Gotham."
+    },
+    {
+      "t": "Man of Steel",
+      "y": "1986",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Superman",
+      "fmt": "TPB, Omnibus",
+      "ord": "John Byrne's post-Crisis reboot of Superman's origin and powers.",
+      "blurb": "Streamlines Superman's mythology and powers, resetting the character for the modern era."
+    },
+    {
+      "t": "The Dark Knight Returns",
+      "y": "1986",
+      "era": "Elseworlds",
+      "canon": "Elseworlds",
+      "line": "Batman",
+      "fmt": "TPB, Absolute Edition, Omnibus",
+      "ord": "Not in main continuity — a possible future in which an aged Bruce Wayne returns to the cowl.",
+      "blurb": "Frank Miller's dystopian future vision reshaped how mainstream comics portrayed Batman for decades."
+    },
+    {
+      "t": "Watchmen",
+      "y": "1986–1987",
+      "era": "Standalone",
+      "canon": "Imprint — Vertigo",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB, Absolute Edition, Deluxe Edition",
+      "ord": "Self-contained; not part of core DCU continuity (later pulled in via Doomsday Clock).",
+      "blurb": "Alan Moore and Dave Gibbons deconstruct the superhero genre through a murder mystery among retired vigilantes."
+    },
+    {
+      "t": "Batman: The Killing Joke",
+      "y": "1988",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition, Absolute Edition",
+      "ord": "Generally treated as in-continuity; establishes the modern Joker/Batman dynamic and Barbara Gordon's paralysis.",
+      "blurb": "Alan Moore and Brian Bolland probe the thin line between Batman's sanity and the Joker's madness."
+    },
+    {
+      "t": "Batman: A Death in the Family",
+      "y": "1988–1989",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "Follows Year One and Batman: Year Three; the death of the second Robin, Jason Todd.",
+      "blurb": "Fans famously voted by phone to let the Joker kill Jason Todd in this arc."
+    },
+    {
+      "t": "The Sandman",
+      "y": "1989–1996",
+      "era": "Standalone",
+      "canon": "Imprint — Vertigo",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB (10 vols.), Absolute Edition, Omnibus",
+      "ord": "Self-contained 75-issue saga; loosely DCU-adjacent via cameos but functions independently.",
+      "blurb": "Neil Gaiman's saga of Dream and the other Endless, blending myth, horror, and literary fantasy."
+    },
+    {
+      "t": "V for Vendetta",
+      "y": "1982–1989",
+      "era": "Standalone",
+      "canon": "Alternate Universe",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "Self-contained; not connected to DCU continuity.",
+      "blurb": "Alan Moore and David Lloyd's dystopian tale of an anarchist vigilante in a fascist near-future Britain."
+    },
+    {
+      "t": "Hellblazer (Constantine begins)",
+      "y": "1988",
+      "era": "Standalone",
+      "canon": "Imprint — Vertigo",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB, Omnibus",
+      "ord": "Spun off from Swamp Thing; the flagship of the Vertigo occult-detective line.",
+      "blurb": "John Constantine's long-running solo series, mixing street-level horror with dark wit."
+    },
+    {
+      "t": "Swamp Thing (Alan Moore run)",
+      "y": "1984–1987",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB, Omnibus",
+      "ord": "DCU-adjacent horror run that effectively seeded what would become the Vertigo imprint.",
+      "blurb": "Moore reimagines Swamp Thing as a plant elemental, redefining the character and horror comics generally."
+    },
+    {
+      "t": "Superman: The Death of Superman",
+      "y": "1992–1993",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Superman",
+      "fmt": "TPB, Omnibus",
+      "ord": "Followed by Funeral for a Friend, then Reign of the Supermen.",
+      "blurb": "Superman dies stopping the rampaging Doomsday — a comics event that made mainstream news."
+    },
+    {
+      "t": "Batman: Knightfall",
+      "y": "1993–1994",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB (3 vols.), Omnibus",
+      "ord": "Bane breaks Batman's back; Jean-Paul Valley takes over as Batman until KnightsEnd.",
+      "blurb": "One of the defining '90s Bat-events, introducing Bane as a top-tier physical threat."
+    },
+    {
+      "t": "Kingdom Come",
+      "y": "1996",
+      "era": "Elseworlds",
+      "canon": "Elseworlds",
+      "line": "Justice League",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "A possible future where an older generation of heroes clashes with an unchecked new one.",
+      "blurb": "Mark Waid and Alex Ross paint a painterly, apocalyptic generational battle for the soul of heroism."
+    },
+    {
+      "t": "Superman: Red Son",
+      "y": "2003",
+      "era": "Elseworlds",
+      "canon": "Elseworlds",
+      "line": "Superman",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "Standalone; not connected to main continuity.",
+      "blurb": "Mark Millar imagines Superman's rocket landing in Soviet Ukraine instead of Kansas."
+    },
+    {
+      "t": "Batman: Dracula — Red Rain",
+      "y": "1991",
+      "era": "Elseworlds",
+      "canon": "Elseworlds",
+      "line": "Batman",
+      "fmt": "TPB (Batman & Dracula omnibus)",
+      "ord": "First of a trilogy (Red Rain, Bloodstorm, Crimson Mist); standalone.",
+      "blurb": "Batman becomes a vampire hunter — and eventually a vampire himself — in Gotham."
+    },
+    {
+      "t": "Batman: Hush",
+      "y": "2002–2003",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "A murder-mystery pulling in nearly Batman's entire rogues gallery.",
+      "blurb": "Jeph Loeb and Jim Lee's blockbuster whodunit, revealing the childhood friend behind the mask of Hush."
+    },
+    {
+      "t": "Batman: The Long Halloween",
+      "y": "1996–1997",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "Set early in Batman's career, following Year One; precedes Dark Victory.",
+      "blurb": "A year-long murder mystery tracking the rise of Two-Face against the backdrop of Gotham's holidays."
+    },
+    {
+      "t": "Identity Crisis",
+      "y": "2004",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Justice League",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "A murder mystery among the Justice League's inner circle with lasting continuity consequences.",
+      "blurb": "A dark, controversial event exposing secrets the JLA's founding members had kept from each other."
+    },
+    {
+      "t": "Infinite Crisis",
+      "y": "2005–2006",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Absolute Edition, Omnibus",
+      "ord": "Sequel to Crisis on Infinite Earths; leads into 52 and the reopening of the multiverse.",
+      "blurb": "Survivors of the original Crisis return to judge — and try to fix — a DCU they see as broken."
+    },
+    {
+      "t": "52",
+      "y": "2006–2007",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB (4 vols.), Omnibus",
+      "ord": "A weekly year-long series bridging Infinite Crisis and the return of the multiverse.",
+      "blurb": "Fills the 'missing year' after Infinite Crisis, following street-level heroes while the icons are absent."
+    },
+    {
+      "t": "All-Star Superman",
+      "y": "2005–2008",
+      "era": "Post-Crisis",
+      "canon": "Elseworlds",
+      "line": "Superman",
+      "fmt": "TPB, Absolute Edition, Omnibus",
+      "ord": "A standalone, out-of-continuity celebration of the character; often ranked among the best Superman stories ever.",
+      "blurb": "Grant Morrison and Frank Quitely send a dying Superman through twelve labors to secure his legacy."
+    },
+    {
+      "t": "Final Crisis",
+      "y": "2008–2009",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "Follows Infinite Crisis and 52; Darkseid's final assault on the DCU.",
+      "blurb": "Grant Morrison's dense, myth-heavy event in which Darkseid nearly conquers Earth outright."
+    },
+    {
+      "t": "Blackest Night",
+      "y": "2009–2010",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Green Lantern",
+      "fmt": "TPB, Absolute Edition, Omnibus",
+      "ord": "The climax of Geoff Johns' Green Lantern run; the dead rise as Black Lanterns.",
+      "blurb": "The emotional spectrum's colored Lantern Corps are pulled into a zombie-apocalypse-scale war."
+    },
+    {
+      "t": "Flashpoint",
+      "y": "2011",
+      "era": "Post-Crisis",
+      "canon": "Main Continuity",
+      "line": "Flash",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "The event that directly triggers the New 52 relaunch.",
+      "blurb": "Barry Allen wakes in an altered timeline, and undoing it reshapes the entire DC Universe."
+    },
+    {
+      "t": "Justice League (New 52) Vol. 1: Origin",
+      "y": "2011–2012",
+      "era": "New 52",
+      "canon": "Main Continuity",
+      "line": "Justice League",
+      "fmt": "TPB, Omnibus",
+      "ord": "The flagship launch title of the New 52 relaunch.",
+      "blurb": "Geoff Johns and Jim Lee retell the League's formation for DC's rebooted continuity."
+    },
+    {
+      "t": "Batman (Snyder run): Court of Owls / Death of the Family / Zero Year / Endgame",
+      "y": "2011–2015",
+      "era": "New 52",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition, Omnibus",
+      "ord": "The defining New 52 Batman run, from a secret society to a reworked origin (Zero Year).",
+      "blurb": "Scott Snyder and Greg Capullo's acclaimed run, widely considered the New 52's standout Bat-era."
+    },
+    {
+      "t": "Action Comics (Morrison run)",
+      "y": "2011–2012",
+      "era": "New 52",
+      "canon": "Main Continuity",
+      "line": "Superman",
+      "fmt": "TPB, Omnibus",
+      "ord": "A reworked, younger and more rebellious early Superman.",
+      "blurb": "Grant Morrison revisits Superman's earliest days with a rougher, more populist edge."
+    },
+    {
+      "t": "Wonder Woman (Azzarello run)",
+      "y": "2011–2014",
+      "era": "New 52",
+      "canon": "Main Continuity",
+      "line": "Wonder Woman",
+      "fmt": "TPB, Omnibus",
+      "ord": "A mythology-heavy reboot leaning into the Greek gods as active, dangerous family.",
+      "blurb": "Brian Azzarello and Cliff Chiang reframe Diana's world as a blood-soaked divine soap opera."
+    },
+    {
+      "t": "Batman: Earth One",
+      "y": "2012–2021",
+      "era": "New 52",
+      "canon": "Elseworlds",
+      "line": "Batman",
+      "fmt": "Hardcover (3 vols.)",
+      "ord": "A standalone, self-contained continuity separate from the mainline New 52.",
+      "blurb": "Geoff Johns reimagines a younger, more fallible Batman's origin from scratch."
+    },
+    {
+      "t": "DC Universe: Rebirth #1",
+      "y": "2016",
+      "era": "Rebirth",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Omnibus",
+      "ord": "Restores legacy and history erased by the New 52; the gateway into the Rebirth era.",
+      "blurb": "Wally West re-emerges to restore lost history — and to warn that Doctor Manhattan is behind it."
+    },
+    {
+      "t": "Batman (Tom King run): I Am Gotham / War of Jokes and Riddles / City of Bane",
+      "y": "2016–2019",
+      "era": "Rebirth",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Omnibus",
+      "ord": "Builds toward a (ultimately unconsummated) wedding to Catwoman, then Bane's takeover of Gotham.",
+      "blurb": "A psychologically dense run exploring Bruce Wayne's relationships and his breaking point."
+    },
+    {
+      "t": "Superman (Rebirth): Son of Superman",
+      "y": "2016–2018",
+      "era": "Rebirth",
+      "canon": "Main Continuity",
+      "line": "Superman",
+      "fmt": "TPB, Omnibus",
+      "ord": "Introduces Jon Kent, Clark and Lois's son, as a central family dynamic.",
+      "blurb": "Tomasi and Gleason ground Superman in fatherhood alongside young son Jon."
+    },
+    {
+      "t": "The Flash (Rebirth): Lightning Strikes Twice",
+      "y": "2016–2018",
+      "era": "Rebirth",
+      "canon": "Main Continuity",
+      "line": "Flash",
+      "fmt": "TPB, Omnibus",
+      "ord": "Joshua Williamson's long Flash run establishing Force-related mythology (Speed Force, Still Force, etc).",
+      "blurb": "Barry Allen mentors a new generation of speedsters while confronting his father-figure, Zoom."
+    },
+    {
+      "t": "Doomsday Clock",
+      "y": "2017–2019",
+      "era": "Rebirth",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Absolute Edition",
+      "ord": "A direct sequel to Watchmen, formally merging its characters into DCU continuity.",
+      "blurb": "Geoff Johns brings Doctor Manhattan and Ozymandias into the mainstream DC Universe."
+    },
+    {
+      "t": "Infinite Frontier",
+      "y": "2021",
+      "era": "Infinite Frontier",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Omnibus",
+      "ord": "Follows Dark Nights: Death Metal; reopens and reorganizes the multiverse again.",
+      "blurb": "A soft-relaunch event restoring an open, playground multiverse after years of restriction."
+    },
+    {
+      "t": "Dark Crisis on Infinite Earths",
+      "y": "2022",
+      "era": "Infinite Frontier",
+      "canon": "Main Continuity",
+      "line": "Multiverse/Crisis Event",
+      "fmt": "TPB, Omnibus",
+      "ord": "Leads directly into the Dawn of DC branding and line-wide relaunch.",
+      "blurb": "With the Justice League dead, a new generation of heroes must hold the multiverse together."
+    },
+    {
+      "t": "Batman (Tynion IV / Williamson runs)",
+      "y": "2021–2023",
+      "era": "Infinite Frontier",
+      "canon": "Main Continuity",
+      "line": "Batman",
+      "fmt": "TPB, Omnibus",
+      "ord": "Covers Fear State and Joker War's aftermath into the Dawn of DC relaunch.",
+      "blurb": "Gotham fractures under Ghost-Maker, Scarecrow's Fear State, and a rebuilt Batman Family."
+    },
+    {
+      "t": "Absolute Batman",
+      "y": "2024–",
+      "era": "Dawn of DC / Absolute Universe",
+      "canon": "Alternate Universe",
+      "line": "Batman",
+      "fmt": "Single issues, TPB",
+      "ord": "Not connected to main continuity — a from-scratch alternate reality launched alongside Absolute Superman and Absolute Wonder Woman.",
+      "blurb": "Scott Snyder reimagines a rawer, working-class Bruce Wayne in a brand-new alternate universe line."
+    },
+    {
+      "t": "Absolute Superman",
+      "y": "2024–",
+      "era": "Dawn of DC / Absolute Universe",
+      "canon": "Alternate Universe",
+      "line": "Superman",
+      "fmt": "Single issues, TPB",
+      "ord": "Part of the same new Absolute Universe imprint as Absolute Batman.",
+      "blurb": "A version of Superman who grew up without the Kents' wealth of the mainline continuity."
+    },
+    {
+      "t": "Absolute Wonder Woman",
+      "y": "2024–",
+      "era": "Dawn of DC / Absolute Universe",
+      "canon": "Alternate Universe",
+      "line": "Wonder Woman",
+      "fmt": "Single issues, TPB",
+      "ord": "Part of the Absolute Universe imprint.",
+      "blurb": "A darker, more mythic reimagining of Diana's origins outside the mainline DCU."
+    },
+    {
+      "t": "Batman: White Knight",
+      "y": "2017–2018",
+      "era": "Standalone",
+      "canon": "Elseworlds",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "Standalone continuity; spawned its own sequel line (Curse of the White Knight, etc).",
+      "blurb": "The Joker is cured of his insanity and turns his intellect toward exposing Batman as the true menace."
+    },
+    {
+      "t": "Batman: Three Jokers",
+      "y": "2020",
+      "era": "Standalone",
+      "canon": "Imprint — Black Label",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "Loosely canon-adjacent; answers a long-running fan theory about multiple Jokers.",
+      "blurb": "Geoff Johns and Jason Fabok explore the idea that three different men have worn the Joker identity."
+    },
+    {
+      "t": "Batman: Damned",
+      "y": "2018–2019",
+      "era": "Standalone",
+      "canon": "Imprint — Black Label",
+      "line": "Batman",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "Ambiguous continuity placement; part of a loose Black Label trilogy with Superman and Wonder Woman entries.",
+      "blurb": "A surreal murder mystery over the Joker's death, painted by Lee Bermejo."
+    },
+    {
+      "t": "Superman: Space Age",
+      "y": "2022–2023",
+      "era": "Standalone",
+      "canon": "Imprint — Black Label",
+      "line": "Superman",
+      "fmt": "TPB, Deluxe Edition",
+      "ord": "Standalone; not connected to main continuity.",
+      "blurb": "A Cold War-era Elseworlds reimagining the Justice League's formative years against real 1970s history."
+    },
+    {
+      "t": "Wonder Woman: Historia — The Amazons",
+      "y": "2021–2023",
+      "era": "Standalone",
+      "canon": "Imprint — Black Label",
+      "line": "Wonder Woman",
+      "fmt": "Hardcover, Oversized Edition",
+      "ord": "Standalone myth-retelling; not connected to main continuity.",
+      "blurb": "Kelly Sue DeConnick reframes the Amazons' founding myth with a harder, more brutal edge."
+    },
+    {
+      "t": "Injustice: Gods Among Us (comic)",
+      "y": "2013–2016",
+      "era": "Standalone",
+      "canon": "Alternate Universe",
+      "line": "Justice League",
+      "fmt": "TPB (10 vols.), Omnibus",
+      "ord": "Direct tie-in prequel/companion to the fighting game's alternate timeline.",
+      "blurb": "Chronicles Superman's fall into tyranny between the game's story beats."
+    },
+    {
+      "t": "Preacher",
+      "y": "1995–2000",
+      "era": "Standalone",
+      "canon": "Imprint — Vertigo",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB (9 vols.), Omnibus",
+      "ord": "Self-contained; unconnected to the DCU.",
+      "blurb": "Garth Ennis's blasphemous road-trip saga about a preacher possessed by a being born of an angel and a demon."
+    },
+    {
+      "t": "Fables",
+      "y": "2002–2015",
+      "era": "Standalone",
+      "canon": "Imprint — Vertigo",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB (22 vols.), Deluxe Edition",
+      "ord": "Self-contained; unconnected to the DCU.",
+      "blurb": "Fairy-tale characters live in exile in modern New York after being driven from their homelands."
+    },
+    {
+      "t": "Y: The Last Man",
+      "y": "2002–2008",
+      "era": "Standalone",
+      "canon": "Imprint — Vertigo",
+      "line": "Vertigo/Mature",
+      "fmt": "TPB (10 vols.), Deluxe Edition",
+      "ord": "Self-contained; unconnected to the DCU.",
+      "blurb": "Every mammal with a Y chromosome dies suddenly except one man and his monkey."
+    }
+  ]
+}

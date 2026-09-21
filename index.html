@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Compendium — DC Movies, Series, Games &amp; Comics</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💥</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-left"><span class="dot"></span><h1>THE COMPENDIUM</h1></div>
+    <button class="admin-toggle" id="adminToggle" title="Admin">🔒</button>
+  </div>
+  <p class="brand-sub">movies · series · games · comics — an unofficial DC reading &amp; watch guide</p>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<p class="intro" id="introText"></p>
+
+<div class="controls">
+  <div class="search-row"><input type="text" id="searchInput" placeholder="Search titles…"></div>
+  <div class="filter-row" id="filterRow"></div>
+  <div class="chip-scroller" id="chipRow"></div>
+</div>
+<div class="result-count" id="resultCount"></div>
+
+<main><div class="grid" id="grid"><div class="skeleton">Loading the compendium…</div></div></main>
+
+<button class="fab" id="fabAdd" data-visible="false">＋</button>
+
+<!-- Detail sheet -->
+<div class="sheet-backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="sheetClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="sheetContent"></div>
+</div>
+
+<!-- Login sheet -->
+<div class="sheet-backdrop" id="loginBackdrop"></div>
+<div class="sheet" id="loginSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="loginClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-eyebrow">ADMIN</div>
+  <h2 id="loginHeading">Sign in</h2>
+  <div id="loginArea">
+    <div class="form-group"><label>Email</label><input type="email" id="loginEmail"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="loginPassword"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="loginCancel">Cancel</button>
+      <button class="btn btn-primary" id="loginSubmit">Sign in</button>
+    </div>
+    <div class="form-msg" id="loginMsg"></div>
+  </div>
+  <div id="signedInArea" style="display:none;">
+    <p class="sheet-body">Signed in as <span id="signedInEmail" style="color:var(--ink);font-weight:600;"></span>.</p>
+    <div class="form-actions"><button class="btn btn-ghost" id="logoutBtn">Sign out</button></div>
+    <div class="sheet-section" style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px;">
+      <div class="sheet-label">ONE-TIME SETUP</div>
+      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Loads the 169 starter entries (movies, series, games, comics) into the database. Safe to run once.</p>
+      <div class="form-actions"><button class="btn btn-ghost" id="importBtn">Import starter data</button></div>
+      <div class="form-msg" id="importMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Add-entry sheet -->
+<div class="sheet-backdrop" id="addBackdrop"></div>
+<div class="sheet" id="addSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="addClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-eyebrow">ADD ENTRY</div>
+  <h2>New title</h2>
+  <div class="form-group">
+    <label>Category</label>
+    <select id="addCategory">
+      <option value="movies">Movies</option>
+      <option value="series">Series</option>
+      <option value="games">Games</option>
+      <option value="comics">Comics</option>
+    </select>
+  </div>
+  <div id="addFormFields"></div>
+  <div class="form-actions">
+    <button class="btn btn-ghost" id="addCancel">Cancel</button>
+    <button class="btn btn-primary" id="addSubmit">Add to compendium</button>
+  </div>
+  <div class="form-msg" id="addMsg"></div>
+</div>
+
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
