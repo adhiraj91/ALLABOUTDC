@@ -2575,7 +2575,51 @@
       "episodes": 8,
       "rt": null,
       "imdb": 8.5,
-      "blurb": "A miniseries following Oswald Cobb's rise to power, set in the same universe as The Batman."
+      "blurb": "A miniseries following Oswald Cobb's rise to power, set in the same universe as The Batman.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "After Hours",
+            "d": "2024-09-19"
+          },
+          {
+            "n": 2,
+            "t": "Inside Man",
+            "d": "2024-09-29"
+          },
+          {
+            "n": 3,
+            "t": "Bliss",
+            "d": "2024-10-06"
+          },
+          {
+            "n": 4,
+            "t": "Cent'anni",
+            "d": "2024-10-13"
+          },
+          {
+            "n": 5,
+            "t": "Homecoming",
+            "d": "2024-10-20"
+          },
+          {
+            "n": 6,
+            "t": "Gold Summit",
+            "d": "2024-10-27"
+          },
+          {
+            "n": 7,
+            "t": "The Rise of Oz",
+            "d": "2024-11-03"
+          },
+          {
+            "n": 8,
+            "t": "A Great or Little Thing",
+            "d": "2024-11-10"
+          }
+        ]
+      }
     },
     {
       "t": "Lanterns",

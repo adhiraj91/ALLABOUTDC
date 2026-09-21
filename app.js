@@ -399,14 +399,14 @@ function renderEpisodeList(d, seasonNum){
   if(!listEl) return;
   const details = d.epDetails && d.epDetails[seasonNum];
   if(details && details.length){
-    listEl.innerHTML = details.map(ep=>`
+    listEl.innerHTML = `<div class="episode-list">` + details.map(ep=>`
       <div class="episode-row">
         <div class="episode-num">E${ep.n}</div>
         <div class="episode-info">
           <div class="episode-title">${ep.t || `Episode ${ep.n}`}</div>
           <div class="episode-date">${formatDate(ep.d) || "Air date not yet added"}</div>
         </div>
-      </div>`).join("");
+      </div>`).join("") + `</div>`;
   } else {
     listEl.innerHTML = `<div class="episode-empty">Episode-by-episode details for Season ${seasonNum} haven't been added yet — ask to have this season researched and I'll add real titles and air dates rather than guessing.</div>`;
   }
@@ -436,7 +436,7 @@ function openSheet(d){
       html += `${d.seasons} season${d.seasons==1?"":"s"}${d.episodes?`, ${d.episodes} episodes total`:""} — tap a season to see episodes</div>`;
       html += `<div class="season-chips">`;
       for(let i=1;i<=d.seasons;i++) html += `<span class="season-chip" data-season="${i}">S${i}</span>`;
-      html += `</div><div class="episode-list" id="episodeList"></div></div>`;
+      html += `</div><div id="episodeList"></div></div>`;
     }
 
     const related = relatedInUniverse(d.connected, cat, d.id);
