@@ -113,6 +113,17 @@ function ratingScore(d){
   if(d.imdb !== null && d.imdb !== undefined && d.imdb !== "") return Number(d.imdb) * 10;
   return null;
 }
+const HERO_PRIORITY = ["Batman","Superman","Wonder Woman","Aquaman","Justice League","Flash","Suicide Squad","Harley Quinn","Joker","Green Lantern","Shazam"];
+function sortHeroNames(heroMap){
+  return Object.keys(heroMap).sort((a,b)=>{
+    const ia = HERO_PRIORITY.indexOf(a), ib = HERO_PRIORITY.indexOf(b);
+    if(ia!==-1 && ib!==-1) return ia-ib;
+    if(ia!==-1) return -1;
+    if(ib!==-1) return 1;
+    const diff = heroMap[b].length - heroMap[a].length;
+    return diff!==0 ? diff : a.localeCompare(b);
+  });
+}
 
 /* ============================= RENDER: TABS ============================= */
 function buildTabs(){
@@ -292,9 +303,9 @@ function renderMovieSeriesCards(){
       if(heroes.length===0){ other.push(d); return; }
       heroes.forEach(h=>{ (heroMap[h] = heroMap[h] || []).push(d); });
     });
-    const heroNames = Object.keys(heroMap).sort();
+    const heroNames = sortHeroNames(heroMap);
     heroNames.forEach(h=>{
-      const list = heroMap[h].sort((a,b)=>firstYear(a.y)-firstYear(b.y));
+      const list = heroMap[h].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
       html += groupHeaderHtml(h, list.length) + list.map(d=>cardHtml(cat,d)).join("");
     });
     if(other.length){
@@ -309,12 +320,12 @@ function renderMovieSeriesCards(){
       (groups[key] = groups[key] || []).push(d);
     });
     const groupNames = Object.keys(groups).sort((a,b)=>{
-      const ea = Math.min(...groups[a].map(d=>firstYear(d.y)||9999));
-      const eb = Math.min(...groups[b].map(d=>firstYear(d.y)||9999));
-      return ea-eb;
+      const la = Math.max(...groups[a].map(d=>firstYear(d.y)||0));
+      const lb = Math.max(...groups[b].map(d=>firstYear(d.y)||0));
+      return lb-la; // newest universe first
     });
     groupNames.forEach(g=>{
-      const list = groups[g].sort((a,b)=>firstYear(a.y)-firstYear(b.y));
+      const list = groups[g].sort((a,b)=>firstYear(a.y)-firstYear(b.y)); // true sequel/chronological order within the universe
       html += groupHeaderHtml(g, list.length) + list.map(d=>cardHtml(cat,d)).join("");
     });
   }
@@ -364,6 +375,31 @@ function render(){ buildTabs(); buildFilters(); renderCards(); }
 /* ============================= DETAIL SHEET ============================= */
 const backdrop = $("#backdrop"), sheet = $("#sheet"), sheetContent = $("#sheetContent");
 
+function formatDate(iso){
+  if(!iso) return null;
+  const d = new Date(iso + "T00:00:00");
+  if(isNaN(d)) return iso;
+  return d.toLocaleDateString(undefined, {year:"numeric", month:"long", day:"numeric"});
+}
+
+function renderEpisodeList(d, seasonNum){
+  const listEl = $("#episodeList");
+  if(!listEl) return;
+  const details = d.epDetails && d.epDetails[seasonNum];
+  if(details && details.length){
+    listEl.innerHTML = details.map(ep=>`
+      <div class="episode-row">
+        <div class="episode-num">E${ep.n}</div>
+        <div class="episode-info">
+          <div class="episode-title">${ep.t || `Episode ${ep.n}`}</div>
+          <div class="episode-date">${formatDate(ep.d) || "Air date not yet added"}</div>
+        </div>
+      </div>`).join("");
+  } else {
+    listEl.innerHTML = `<div class="episode-empty">Episode-by-episode details for Season ${seasonNum} haven't been added yet — ask to have this season researched and I'll add real titles and air dates rather than guessing.</div>`;
+  }
+}
+
 function relatedInUniverse(connected, cat, excludeId){
   if(!connected || connected==="Standalone") return [];
   const results = [];
@@ -385,10 +421,10 @@ function openSheet(d){
 
     if(cat==="series" && d.seasons){
       html += `<div class="sheet-section"><div class="sheet-label">SEASONS</div><div class="sheet-body">`;
-      html += `${d.seasons} season${d.seasons==1?"":"s"}${d.episodes?`, ${d.episodes} episodes total`:""}</div>`;
+      html += `${d.seasons} season${d.seasons==1?"":"s"}${d.episodes?`, ${d.episodes} episodes total`:""} — tap a season to see episodes</div>`;
       html += `<div class="season-chips">`;
-      for(let i=1;i<=d.seasons;i++) html += `<span class="season-chip">S${i}</span>`;
-      html += `</div></div>`;
+      for(let i=1;i<=d.seasons;i++) html += `<span class="season-chip" data-season="${i}">S${i}</span>`;
+      html += `</div><div class="episode-list" id="episodeList"></div></div>`;
     }
 
     const related = relatedInUniverse(d.connected, cat, d.id);
@@ -407,6 +443,15 @@ function openSheet(d){
   }
 
   sheetContent.innerHTML = html;
+
+  sheetContent.querySelectorAll("[data-season]").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      sheetContent.querySelectorAll(".season-chip").forEach(c=>c.dataset.active="false");
+      chip.dataset.active = "true";
+      renderEpisodeList(d, chip.dataset.season);
+    });
+  });
+
   sheetContent.querySelectorAll("[data-related-id]").forEach(row=>{
     row.addEventListener("click", ()=>{
       const rcat = row.dataset.relatedCat, rid = row.dataset.relatedId;
@@ -513,7 +558,7 @@ const replaceBtn = $("#replaceMSBtn");
 const replaceMsg = $("#replaceMSMsg");
 if(replaceBtn){
   replaceBtn.addEventListener("click", async ()=>{
-    if(!confirm(`This deletes all existing Movies and Series entries, then loads the expanded dataset (158 movies, 80 series). Continue?`)) return;
+    if(!confirm(`This deletes all existing Movies and Series entries, then loads the expanded dataset (153 movies, 85 series). Continue?`)) return;
     replaceBtn.disabled = true;
     replaceMsg.className = "form-msg";
     try{
