@@ -542,7 +542,7 @@ importBtn.addEventListener("click", async ()=>{
   importMsg.className = "form-msg";
   try{
     importMsg.textContent = "Fetching seed-data.json…";
-    const res = await fetch("./seed-data.json");
+    const res = await fetch("./seed-data.json", { cache: "no-store" });
     if(!res.ok) throw new Error("seed-data.json not found next to index.html");
     const seed = await res.json();
     for(const cat of Object.keys(seed)){
@@ -575,7 +575,7 @@ if(replaceBtn){
     replaceMsg.className = "form-msg";
     try{
       replaceMsg.textContent = "Fetching expanded dataset…";
-      const res = await fetch("./seed-data.json");
+      const res = await fetch("./seed-data.json", { cache: "no-store" });
       if(!res.ok) throw new Error("seed-data.json not found");
       const seed = await res.json();
 
