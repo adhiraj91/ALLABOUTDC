@@ -32,6 +32,14 @@ const SCHEMA = {
     {key:"rt", label:"Rotten Tomatoes % (blank if none)", type:"text", required:false},
     {key:"imdb", label:"IMDb rating out of 10 (blank if none)", type:"text", required:false},
     {key:"blurb", label:"Summary", type:"textarea", required:true},
+    {key:"director", label:"Director", type:"text", required:false},
+    {key:"cast", label:"Cast", type:"text", required:false, placeholder:"comma-separated lead actors"},
+    {key:"runtime", label:"Runtime", type:"text", required:false, placeholder:"e.g. 143 min"},
+    {key:"plot", label:"Longer plot summary", type:"textarea", required:false},
+    {key:"whereToWatch", label:"Where to watch", type:"text", required:false},
+    {key:"boxOffice", label:"Box office", type:"text", required:false, placeholder:"e.g. Budget ~$X · Gross ~$Y"},
+    {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. PG-13"},
+    {key:"trailer", label:"Trailer YouTube link", type:"text", required:false},
   ],
   series: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -44,13 +52,26 @@ const SCHEMA = {
     {key:"rt", label:"Rotten Tomatoes % (blank if none)", type:"text", required:false},
     {key:"imdb", label:"IMDb rating out of 10 (blank if none)", type:"text", required:false},
     {key:"blurb", label:"Summary", type:"textarea", required:true},
+    {key:"creators", label:"Created by / showrunner", type:"text", required:false},
+    {key:"cast", label:"Cast", type:"text", required:false, placeholder:"comma-separated lead actors"},
+    {key:"runtime", label:"Runtime per episode", type:"text", required:false, placeholder:"e.g. ~45 min"},
+    {key:"plot", label:"Longer plot summary", type:"textarea", required:false},
+    {key:"whereToWatch", label:"Where to watch", type:"text", required:false},
+    {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. TV-MA"},
+    {key:"trailer", label:"Trailer YouTube link (series-wide, if only one exists)", type:"text", required:false},
   ],
   games: [
     {key:"t", label:"Title", type:"text", required:true},
     {key:"y", label:"Year", type:"text", required:true},
-    {key:"fr", label:"Franchise", type:"text", required:true, placeholder:"e.g. Batman: Arkham, Injustice"},
-    {key:"plat", label:"Platform", type:"text", required:true, placeholder:"e.g. Multi-platform"},
+    {key:"fr", label:"Franchise / story group", type:"text", required:true, placeholder:"e.g. Batman: Arkham, Injustice"},
+    {key:"plats", label:"Platforms — comma separated", type:"text", required:true, placeholder:"e.g. PS5, Xbox Series X/S, PC"},
     {key:"blurb", label:"Summary", type:"textarea", required:true},
+    {key:"director", label:"Director", type:"text", required:false},
+    {key:"cast", label:"Cast / voice cast", type:"text", required:false},
+    {key:"plot", label:"Longer plot summary", type:"textarea", required:false},
+    {key:"whereToWatch", label:"Where to buy / play", type:"text", required:false},
+    {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. ESRB T"},
+    {key:"trailer", label:"Trailer YouTube link (longest available)", type:"text", required:false},
   ],
   comics: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -73,6 +94,7 @@ let state = {
   f1:"all", f2:"all", chip:"all",         // games/comics filters (unchanged behavior)
   typeFilter:"Live Action",                // movies/series: Live Action | Animated
   sortMode:"newest",                       // movies/series: newest | hero | story | rating
+  gameMode:"all", gamePlatform:"all",      // games: all | platform | story
 };
 let isAdmin = false;
 let loaded = false;
@@ -136,6 +158,7 @@ function buildTabs(){
       state.cat = btn.dataset.cat;
       state.f1="all"; state.f2="all"; state.chip="all"; state.search="";
       state.sortMode="newest";
+      state.gameMode="all"; state.gamePlatform="all";
       searchInput.value="";
       render();
     });
@@ -157,16 +180,28 @@ function buildFilters(){
   const data = DATA[cat];
 
   if(cat==="games"){
-    const frs = uniq(data.map(d=>d.fr));
-    chipRow.innerHTML = `<div class="chip games" data-val="all" data-active="${state.f1==='all'}">All</div>` +
-      frs.map(f=>`<div class="chip games" data-val="${f}" data-active="${state.f1===f}">${f}</div>`).join("");
+    const modes = [
+      {id:"all", label:"All"},
+      {id:"platform", label:"By Platform"},
+      {id:"story", label:"By Story"},
+    ];
+    chipRow.innerHTML = modes.map(m=>
+      `<div class="chip games" data-val="${m.id}" data-active="${state.gameMode===m.id}">${m.label}</div>`
+    ).join("");
     chipRow.querySelectorAll(".chip").forEach(ch=>{
       ch.addEventListener("click", ()=>{
-        state.f1 = ch.dataset.val;
-        chipRow.querySelectorAll(".chip").forEach(c=>c.dataset.active = (c.dataset.val===state.f1));
+        state.gameMode = ch.dataset.val;
+        buildFilters();
         renderCards();
       });
     });
+
+    if(state.gameMode==="platform"){
+      const allPlats = uniq(data.flatMap(d=>d.plats||[])).sort();
+      filterRow.innerHTML = `<select id="selPlatform"><option value="all">All platforms</option>${allPlats.map(p=>`<option value="${p}">${p}</option>`).join("")}</select>`;
+      $("#selPlatform").addEventListener("change", e=>{ state.gamePlatform = e.target.value; renderCards(); });
+      $("#selPlatform").value = state.gamePlatform;
+    }
   }
 
   if(cat==="comics"){
@@ -227,7 +262,9 @@ function filteredDataGeneric(){
   const q = state.search.trim().toLowerCase();
   return data.filter(d=>{
     if(q && !(d.t||"").toLowerCase().includes(q) && !(d.blurb||"").toLowerCase().includes(q)) return false;
-    if(cat==="games"){ if(state.f1!=="all" && d.fr!==state.f1) return false; }
+    if(cat==="games" && state.gameMode==="platform" && state.gamePlatform!=="all"){
+      if(!(d.plats||[]).includes(state.gamePlatform)) return false;
+    }
     if(cat==="comics"){
       if(state.f1!=="all" && d.era!==state.f1) return false;
       if(state.f2!=="all" && d.canon!==state.f2) return false;
@@ -241,7 +278,10 @@ function canonTagClass(canon){
   return canon==="Main Continuity" ? "canon-main" : "canon-alt";
 }
 function metaTagsGeneric(cat, d){
-  if(cat==="games") return `<span class="tag">${d.fr||""}</span><span class="tag">${d.plat||""}</span>`;
+  if(cat==="games"){
+    const plats = (d.plats||[]).map(p=>`<span class="tag plat">${p}</span>`).join("");
+    return `<span class="tag">${d.fr||""}</span>${plats}`;
+  }
   if(cat==="comics") return `<span class="tag">${d.era||""}</span><span class="tag ${canonTagClass(d.canon)}">${d.canon||""}</span><span class="tag">${d.line||""}</span>`;
   return "";
 }
@@ -373,7 +413,19 @@ function renderGenericCards(){
     gridEl.innerHTML = `<div class="empty">Nothing matches those filters yet.<br>Try clearing a filter or the search.</div>`;
     return;
   }
-  gridEl.innerHTML = items.map(d=>cardHtml(cat,d)).join("");
+  if(cat==="games" && state.gameMode==="story"){
+    const groups = {};
+    items.forEach(d=>{ (groups[d.fr||"Other"] = groups[d.fr||"Other"] || []).push(d); });
+    const groupNames = Object.keys(groups).sort();
+    let html = "";
+    groupNames.forEach(g=>{
+      const list = groups[g].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
+      html += groupHeaderHtml(g, list.length) + list.map(d=>cardHtml(cat,d)).join("");
+    });
+    gridEl.innerHTML = html;
+  } else {
+    gridEl.innerHTML = items.map(d=>cardHtml(cat,d)).join("");
+  }
   attachCardHandlers(cat);
 }
 
@@ -423,6 +475,24 @@ function relatedInUniverse(connected, cat, excludeId){
   return results.sort((a,b)=>firstYear(a.y)-firstYear(b.y));
 }
 
+function extraDetailsHtml(cat, d){
+  let html = "";
+  if(d.trailer) html += `<a class="trailer-btn" href="${d.trailer}" target="_blank" rel="noopener">▶ Watch Trailer</a>`;
+  if(d.plot) html += `<div class="sheet-section"><div class="sheet-label">PLOT</div><div class="sheet-body">${d.plot}</div></div>`;
+  const credits = [];
+  if(cat==="movies" && d.director) credits.push(["DIRECTOR", d.director]);
+  if(cat==="series" && d.creators) credits.push(["CREATED BY", d.creators]);
+  if(d.cast) credits.push(["CAST", d.cast]);
+  if(d.runtime) credits.push(["RUNTIME", d.runtime]);
+  if(d.whereToWatch) credits.push(["WHERE TO WATCH", d.whereToWatch]);
+  if(cat==="movies" && d.boxOffice) credits.push(["BOX OFFICE", d.boxOffice]);
+  if(d.ageRating) credits.push(["AGE RATING", d.ageRating]);
+  credits.forEach(([label,val])=>{
+    html += `<div class="sheet-section"><div class="sheet-label">${label}</div><div class="sheet-body">${val}</div></div>`;
+  });
+  return html;
+}
+
 function openSheet(d){
   const cat = state.cat;
   let html = `<div class="sheet-eyebrow">${cat.toUpperCase()} · ${d.y||""}</div><h2>${d.t}</h2>`;
@@ -430,6 +500,7 @@ function openSheet(d){
   if(cat==="movies"||cat==="series"){
     html += `<div class="sheet-tags">${movieSeriesMetaTags(cat, d)}</div>`;
     html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${d.blurb||""}</div></div>`;
+    html += extraDetailsHtml(cat, d);
 
     if(cat==="series" && d.seasons){
       html += `<div class="sheet-section"><div class="sheet-label">SEASONS</div><div class="sheet-body">`;
@@ -448,6 +519,7 @@ function openSheet(d){
   } else {
     html += `<div class="sheet-tags">${metaTagsGeneric(cat, d)}</div>`;
     html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${d.blurb||""}</div></div>`;
+    if(cat==="games") html += extraDetailsHtml(cat, d);
     if(cat==="comics"){
       html += `<div class="sheet-section"><div class="sheet-label">WHERE IT FITS / READING ORDER</div><div class="sheet-body">${d.ord||""}</div></div>`;
       html += `<div class="sheet-section"><div class="sheet-label">COLLECTED FORMATS</div><div class="sheet-body">${d.fmt||""}</div></div>`;
@@ -570,7 +642,7 @@ const replaceBtn = $("#replaceMSBtn");
 const replaceMsg = $("#replaceMSMsg");
 if(replaceBtn){
   replaceBtn.addEventListener("click", async ()=>{
-    if(!confirm(`This deletes all existing Movies and Series entries, then loads the expanded dataset (153 movies, 85 series). Continue?`)) return;
+    if(!confirm(`This deletes all existing Movies, Series, and Games entries, then loads the expanded dataset (153 movies, 85 series, 21 games). Continue?`)) return;
     replaceBtn.disabled = true;
     replaceMsg.className = "form-msg";
     try{
@@ -579,7 +651,7 @@ if(replaceBtn){
       if(!res.ok) throw new Error("seed-data.json not found");
       const seed = await res.json();
 
-      for(const cat of ["movies","series"]){
+      for(const cat of ["movies","series","games"]){
         const existing = DATA[cat];
         for(let i=0;i<existing.length;i++){
           replaceMsg.textContent = `Deleting old ${cat}: ${i+1} / ${existing.length}…`;
@@ -594,7 +666,7 @@ if(replaceBtn){
           DATA[cat].push({ id: ref.id, ...items[i] });
         }
       }
-      replaceMsg.textContent = "Done — Movies and Series replaced with the expanded dataset.";
+      replaceMsg.textContent = "Done — Movies, Series, and Games replaced with the expanded dataset.";
       replaceMsg.className = "form-msg ok";
       buildTabs();
       renderCards();
@@ -651,6 +723,7 @@ $("#addSubmit").addEventListener("click", async ()=>{
     }
     if(f.key==="hero" && val) val = val.split(",").map(s=>s.trim()).filter(Boolean);
     else if(f.key==="hero") val = [];
+    if(f.key==="plats" && val) val = val.split(",").map(s=>s.trim()).filter(Boolean);
     if((f.key==="rt"||f.key==="imdb"||f.key==="seasons"||f.key==="episodes") && val!=="") val = Number(val);
     entry[f.key] = val;
   }

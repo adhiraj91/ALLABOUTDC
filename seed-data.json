@@ -1,6 +1,14 @@
 {
   "movies": [
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman and the Mole Men",
       "y": "1951",
       "type": "Live Action",
@@ -14,6 +22,14 @@
       "blurb": "George Reeves' first outing as Superman — the first-ever feature film based on a DC character, and the pilot for Adventures of Superman."
     },
     {
+      "director": "James Gunn",
+      "cast": "David Corenswet, Rachel Brosnahan, Nicholas Hoult, Edi Gathegi, Anthony Carrigan",
+      "runtime": "129 min",
+      "plot": "James Gunn's relaunch follows an earlier-in-career Superman balancing his Kryptonian heritage and human upbringing while Lex Luthor manipulates public opinion against him, opening the new shared DC Universe.",
+      "whereToWatch": "HBO Max, digital rental/purchase",
+      "boxOffice": "Budget ~$225M · Worldwide gross ~$614M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Superman",
       "y": "1978",
       "type": "Live Action",
@@ -27,6 +43,14 @@
       "blurb": "Christopher Reeve's origin-to-icon debut; the film that proved a superhero movie could be prestige cinema."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman II",
       "y": "1980",
       "type": "Live Action",
@@ -40,6 +64,14 @@
       "blurb": "Zod and the Phantom Zone criminals arrive; Superman gives up his powers for Lois, then takes them back."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman III",
       "y": "1983",
       "type": "Live Action",
@@ -53,6 +85,14 @@
       "blurb": "A tonal swing toward comedy, pitting Superman against a corrupted version of himself and Richard Pryor's hacker."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Supergirl",
       "y": "1984",
       "type": "Live Action",
@@ -66,6 +106,14 @@
       "blurb": "Kara's solo spin-off from the Superman film series, poorly received on release."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman IV: The Quest for Peace",
       "y": "1987",
       "type": "Live Action",
@@ -79,6 +127,14 @@
       "blurb": "A famously troubled production sees Superman take on nuclear disarmament and Nuclear Man."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman Returns",
       "y": "2006",
       "type": "Live Action",
@@ -92,6 +148,14 @@
       "blurb": "Bryan Singer's spiritual sequel to Superman II, ignoring III and IV, with Brandon Routh as Clark."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Swamp Thing",
       "y": "1982",
       "type": "Live Action",
@@ -105,6 +169,14 @@
       "blurb": "Wes Craven's B-movie take on the muck-monster hero, based on the Len Wein/Bernie Wrightson comic."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Return of Swamp Thing",
       "y": "1989",
       "type": "Live Action",
@@ -118,6 +190,14 @@
       "blurb": "A campier sequel leaning further into B-movie horror-comedy."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman",
       "y": "1989",
       "type": "Live Action",
@@ -131,6 +211,14 @@
       "blurb": "Tim Burton's gothic, operatic take on Gotham, with Jack Nicholson's Joker."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Returns",
       "y": "1992",
       "type": "Live Action",
@@ -144,6 +232,14 @@
       "blurb": "Burton doubles down on the grotesque with Catwoman and Penguin as tragic monsters."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Forever",
       "y": "1995",
       "type": "Live Action",
@@ -157,6 +253,14 @@
       "blurb": "Joel Schumacher brightens the tone considerably; Two-Face and the Riddler headline."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman & Robin",
       "y": "1997",
       "type": "Live Action",
@@ -170,6 +274,14 @@
       "blurb": "Neon camp excess that effectively ended the franchise until Nolan's reboot."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Steel",
       "y": "1997",
       "type": "Live Action",
@@ -181,6 +293,14 @@
       "blurb": "Shaquille O'Neal stars as John Henry Irons, loosely based on the post-Death of Superman hero."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Catwoman",
       "y": "2004",
       "type": "Live Action",
@@ -194,6 +314,14 @@
       "blurb": "Halle Berry stars in a version of Catwoman not directly tied to the comics character."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Constantine",
       "y": "2005",
       "type": "Live Action",
@@ -207,6 +335,14 @@
       "blurb": "Keanu Reeves as a chain-smoking occult detective, loosely based on Hellblazer."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Begins",
       "y": "2005",
       "type": "Live Action",
@@ -220,6 +356,14 @@
       "blurb": "Christopher Nolan grounds Batman's origin in realism; the start of The Dark Knight Trilogy."
     },
     {
+      "director": "Christopher Nolan",
+      "cast": "Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine, Maggie Gyllenhaal, Gary Oldman",
+      "runtime": "152 min",
+      "plot": "With Gotham's underworld in disarray, the Joker emerges as a force of pure chaos, pushing Batman, Jim Gordon, and DA Harvey Dent to their moral limits as they try to save a city that may not deserve saving.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$185M · Worldwide gross ~$1.006B",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "The Dark Knight",
       "y": "2008",
       "type": "Live Action",
@@ -233,6 +377,14 @@
       "blurb": "Heath Ledger's Joker anchors a crime-thriller take on Batman vs. chaos."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Dark Knight Rises",
       "y": "2012",
       "type": "Live Action",
@@ -246,6 +398,14 @@
       "blurb": "Bane and Talia al Ghul close out the trilogy with Gotham under siege."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Watchmen",
       "y": "2009",
       "type": "Live Action",
@@ -257,6 +417,14 @@
       "blurb": "Zack Snyder's dense adaptation of Alan Moore and Dave Gibbons' deconstruction of superheroes."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "V for Vendetta",
       "y": "2006",
       "type": "Live Action",
@@ -268,6 +436,14 @@
       "blurb": "Alan Moore and David Lloyd's dystopian anarchist tale, adapted by the Wachowskis (as writers/producers)."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Stardust",
       "y": "2007",
       "type": "Live Action",
@@ -279,6 +455,14 @@
       "blurb": "A fantasy romance based on Neil Gaiman and Charles Vess' Vertigo miniseries."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Losers",
       "y": "2010",
       "type": "Live Action",
@@ -290,6 +474,14 @@
       "blurb": "A black-ops team framed for a crime they didn't commit, based on the Vertigo series."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Jonah Hex",
       "y": "2010",
       "type": "Live Action",
@@ -301,6 +493,14 @@
       "blurb": "A poorly-received Western adaptation of DC's scarred bounty-hunter antihero."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Red",
       "y": "2010",
       "type": "Live Action",
@@ -312,6 +512,14 @@
       "blurb": "Retired black-ops agents are targeted for elimination, based on Warren Ellis and Cully Hamner's WildStorm miniseries."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Red 2",
       "y": "2013",
       "type": "Live Action",
@@ -323,6 +531,14 @@
       "blurb": "The sequel to Red, sending the retired team on a globe-trotting mission."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Kitchen",
       "y": "2019",
       "type": "Live Action",
@@ -334,6 +550,14 @@
       "blurb": "Three mob wives take over their husbands' Hell's Kitchen rackets, based on the DC Vertigo miniseries."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Road to Perdition",
       "y": "2002",
       "type": "Live Action",
@@ -345,6 +569,14 @@
       "blurb": "A Depression-era mob drama based on Max Allan Collins' graphic novel, published under DC's Paradox Press imprint."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "A History of Violence",
       "y": "2005",
       "type": "Live Action",
@@ -356,6 +588,14 @@
       "blurb": "A diner owner's violent past resurfaces, based on the graphic novel published by DC/Vertigo."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The League of Extraordinary Gentlemen",
       "y": "2003",
       "type": "Live Action",
@@ -367,6 +607,14 @@
       "blurb": "Victorian literary icons team up, based on Alan Moore and Kevin O'Neill's WildStorm series."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Green Lantern",
       "y": "2011",
       "type": "Live Action",
@@ -380,6 +628,14 @@
       "blurb": "Ryan Reynolds' first superhero outing, a critical and commercial disappointment for the character's live-action debut."
     },
     {
+      "director": "Zack Snyder",
+      "cast": "Henry Cavill, Amy Adams, Michael Shannon, Russell Crowe, Kevin Costner, Diane Lane",
+      "runtime": "143 min",
+      "plot": "Clark Kent, unsure of whether the world is ready for a superpowered alien among them, must decide whether to reveal himself as Superman when General Zod and the Kryptonian remnant threaten Earth in search of the Codex Clark's father hid before Krypton's destruction.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$225M · Worldwide gross ~$668M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Man of Steel",
       "y": "2013",
       "type": "Live Action",
@@ -393,6 +649,14 @@
       "blurb": "Zack Snyder relaunches Superman as a darker, mythic figure; opens the DC Extended Universe."
     },
     {
+      "director": "Zack Snyder",
+      "cast": "Ben Affleck, Henry Cavill, Amy Adams, Jesse Eisenberg, Gal Gadot, Diane Lane",
+      "runtime": "151 min (Theatrical) / 182 min (Ultimate Edition)",
+      "plot": "Fearing Superman's power is unchecked and dangerous, Batman goes to war against him while the world debates the hero's place in it — until Lex Luthor manipulates both into becoming pawns of a greater threat.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$263M · Worldwide gross ~$874M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Batman v Superman: Dawn of Justice",
       "y": "2016",
       "type": "Live Action",
@@ -407,6 +671,14 @@
       "blurb": "Introduces Ben Affleck's Batman and sets up the Justice League; also the first live-action Wonder Woman."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Suicide Squad",
       "y": "2016",
       "type": "Live Action",
@@ -421,6 +693,14 @@
       "blurb": "A team of imprisoned villains is sent on a black-ops mission."
     },
     {
+      "director": "Patty Jenkins",
+      "cast": "Gal Gadot, Chris Pine, Robin Wright, Danny Huston, David Thewlis, Connie Nielsen",
+      "runtime": "141 min",
+      "plot": "Diana, an Amazon princess raised on the hidden island of Themyscira, leaves her home to fight in World War I after rescuing an American pilot, discovering the full extent of her powers and heritage along the way.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$149M · Worldwide gross ~$822M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Wonder Woman",
       "y": "2017",
       "type": "Live Action",
@@ -434,6 +714,14 @@
       "blurb": "Diana's WWI-set origin, widely seen as a turning point for the DCEU's critical reception."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League",
       "y": "2017",
       "type": "Live Action",
@@ -447,6 +735,14 @@
       "blurb": "The theatrical cut, finished by Joss Whedon after Snyder departed production."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Zack Snyder's Justice League",
       "y": "2021",
       "type": "Live Action",
@@ -460,6 +756,14 @@
       "blurb": "The four-hour director's cut released after years of fan campaigning; a substantially different film from 2017's."
     },
     {
+      "director": "James Wan",
+      "cast": "Jason Momoa, Amber Heard, Willem Dafoe, Patrick Wilson, Nicole Kidman",
+      "runtime": "143 min",
+      "plot": "Half-human, half-Atlantean Arthur Curry must reluctantly embrace his birthright and unite the underwater kingdoms to stop his power-hungry half-brother Orm from waging war on the surface world.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$160M · Worldwide gross ~$1.148B",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Aquaman",
       "y": "2018",
       "type": "Live Action",
@@ -473,6 +777,14 @@
       "blurb": "Arthur Curry claims the throne of Atlantis in a colorful, undersea epic."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Shazam!",
       "y": "2019",
       "type": "Live Action",
@@ -486,6 +798,14 @@
       "blurb": "A foster kid who transforms into an adult hero, played with family-comedy warmth."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Birds of Prey",
       "y": "2020",
       "type": "Live Action",
@@ -499,6 +819,14 @@
       "blurb": "Harley Quinn, freshly split from the Joker, teams up with Gotham's other women."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Wonder Woman 1984",
       "y": "2020",
       "type": "Live Action",
@@ -512,6 +840,14 @@
       "blurb": "Diana faces a wish-granting artifact in the excess of the Reagan era."
     },
     {
+      "director": "James Gunn",
+      "cast": "Margot Robbie, Idris Elba, John Cena, Joel Kinnaman, Sylvester Stallone (voice), Viola Davis",
+      "runtime": "132 min",
+      "plot": "A new, mostly-expendable lineup of imprisoned supervillains is sent to the island nation of Corto Maltese to destroy a secret Nazi-era research facility before a project called Starro is unleashed.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$185M · Worldwide gross ~$168M",
+      "ageRating": "R",
+      "trailer": "",
       "t": "The Suicide Squad",
       "y": "2021",
       "type": "Live Action",
@@ -526,6 +862,14 @@
       "blurb": "James Gunn's R-rated, mostly standalone reboot of the concept."
     },
     {
+      "director": "Jaume Collet-Serra",
+      "cast": "Dwayne Johnson, Aldis Hodge, Noah Centineo, Sarah Shahi, Pierce Brosnan",
+      "runtime": "125 min",
+      "plot": "Nearly 5,000 years after being bestowed with the almighty powers of the Egyptian gods, Teth-Adam is freed from his earthly tomb, ready to unleash his unique form of justice on the modern world.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$195-260M · Worldwide gross ~$393M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Black Adam",
       "y": "2022",
       "type": "Live Action",
@@ -539,6 +883,14 @@
       "blurb": "Dwayne Johnson's antihero is freed from millennia of imprisonment."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Shazam! Fury of the Gods",
       "y": "2023",
       "type": "Live Action",
@@ -552,6 +904,14 @@
       "blurb": "The Shazam family faces the daughters of Atlas."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Flash",
       "y": "2023",
       "type": "Live Action",
@@ -565,6 +925,14 @@
       "blurb": "Barry Allen's time-travel misadventure, and the effective finale of the Snyderverse continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Blue Beetle",
       "y": "2023",
       "type": "Live Action",
@@ -578,6 +946,14 @@
       "blurb": "Jaime Reyes bonds with an alien scarab; the last new DCEU hero introduced."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Aquaman and the Lost Kingdom",
       "y": "2023",
       "type": "Live Action",
@@ -591,6 +967,14 @@
       "blurb": "The final film released under the original DCEU banner."
     },
     {
+      "director": "Todd Phillips",
+      "cast": "Joaquin Phoenix, Robert De Niro, Zazie Beetz, Frances Conroy",
+      "runtime": "122 min",
+      "plot": "Failed comedian Arthur Fleck, ground down by a city that has abandoned its most vulnerable, undergoes a breakdown that leads him to embrace violence and become an icon of chaos in a decaying Gotham.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$55-70M · Worldwide gross ~$1.074B",
+      "ageRating": "R",
+      "trailer": "",
       "t": "Joker",
       "y": "2019",
       "type": "Live Action",
@@ -604,6 +988,14 @@
       "blurb": "A grounded character study of Arthur Fleck's descent, disconnected from any shared DC continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Joker: Folie à Deux",
       "y": "2024",
       "type": "Live Action",
@@ -617,6 +1009,14 @@
       "blurb": "A musical-tinged sequel following Arthur's trial and his bond with Harley Quinn."
     },
     {
+      "director": "Matt Reeves",
+      "cast": "Robert Pattinson, Zoë Kravitz, Paul Dano, Jeffrey Wright, Colin Farrell, John Turturro",
+      "runtime": "176 min",
+      "plot": "In his second year fighting crime, a reclusive, obsessive Batman uncovers corruption in Gotham's political and criminal elite while hunting the Riddler, a serial killer targeting the city's most powerful figures.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$185M · Worldwide gross ~$770M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "The Batman",
       "y": "2022",
       "type": "Live Action",
@@ -630,6 +1030,14 @@
       "blurb": "Matt Reeves' noir detective-thriller take, standalone from the DCEU and DCU."
     },
     {
+      "director": "James Gunn",
+      "cast": "David Corenswet, Rachel Brosnahan, Nicholas Hoult, Edi Gathegi, Anthony Carrigan",
+      "runtime": "129 min",
+      "plot": "James Gunn's relaunch follows an earlier-in-career Superman balancing his Kryptonian heritage and human upbringing while Lex Luthor manipulates public opinion against him, opening the new shared DC Universe.",
+      "whereToWatch": "HBO Max, digital rental/purchase",
+      "boxOffice": "Budget ~$225M · Worldwide gross ~$614M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Superman",
       "y": "2025",
       "type": "Live Action",
@@ -643,6 +1051,14 @@
       "blurb": "James Gunn's relaunch of the character, opening the new shared DC Universe (DCU)."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Supergirl",
       "y": "2026",
       "type": "Live Action",
@@ -656,6 +1072,14 @@
       "blurb": "Milly Alcock's Kara Zor-El, the second live-action film of the new DCU."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Clayface",
       "y": "2026",
       "type": "Live Action",
@@ -667,6 +1091,14 @@
       "blurb": "A body-horror take on the shapeshifting Batman villain, set in the new DCU."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Man of Tomorrow",
       "y": "2027",
       "type": "Live Action",
@@ -680,6 +1112,14 @@
       "blurb": "The Superman sequel, continuing the DCU's Chapter 1 slate."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Batman: Part II",
       "y": "2028",
       "type": "Live Action",
@@ -693,6 +1133,14 @@
       "blurb": "Matt Reeves' sequel to The Batman, currently filming."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "DC League of Super-Pets",
       "y": "2022",
       "type": "Animated",
@@ -704,6 +1152,14 @@
       "blurb": "Krypto and a shelter-pet squad get powers of their own in this CG animated comedy."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Aztec Batman: Clash of Empires",
       "y": "2025",
       "type": "Animated",
@@ -717,6 +1173,14 @@
       "blurb": "An Aztec-set reimagining of Batman, released theatrically in Mexico."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Mask of the Phantasm",
       "y": "1993",
       "type": "Animated",
@@ -730,6 +1194,14 @@
       "blurb": "A feature film extension of Batman: The Animated Series, considered one of the best Batman films in any medium."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Lego Batman Movie",
       "y": "2017",
       "type": "Animated",
@@ -743,6 +1215,14 @@
       "blurb": "A comedic spin-off of The Lego Movie, sending up decades of Batman media."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Teen Titans Go! To the Movies",
       "y": "2018",
       "type": "Animated",
@@ -756,6 +1236,14 @@
       "blurb": "The chibi Teen Titans satirize the superhero movie genre itself."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman & Mr. Freeze: SubZero",
       "y": "1998",
       "type": "Animated",
@@ -769,6 +1257,14 @@
       "blurb": "Batman and Robin race to save Barbara Gordon after Mr. Freeze kidnaps her for a transfusion."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Beyond: Return of the Joker",
       "y": "2000",
       "type": "Animated",
@@ -782,6 +1278,14 @@
       "blurb": "An older Bruce Wayne and successor Terry McGinnis confront a resurrected Joker."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Mystery of the Batwoman",
       "y": "2003",
       "type": "Animated",
@@ -795,6 +1299,14 @@
       "blurb": "A mysterious new Batwoman appears in Gotham, and Batman must uncover her identity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Batman vs. Dracula",
       "y": "2005",
       "type": "Animated",
@@ -808,6 +1320,14 @@
       "blurb": "Set in The Batman TV series' universe, Dracula rises in Gotham after the Penguin unearths his coffin."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman: Brainiac Attacks",
       "y": "2006",
       "type": "Animated",
@@ -821,6 +1341,14 @@
       "blurb": "Loosely connected to Superman: The Animated Series but not considered official DCAU continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman: Doomsday",
       "y": "2007",
       "type": "Animated",
@@ -834,6 +1362,14 @@
       "blurb": "Adapts the Death of Superman storyline; opens the long-running DC Universe Animated Original Movies line."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: The New Frontier",
       "y": "2008",
       "type": "Animated",
@@ -847,6 +1383,14 @@
       "blurb": "Based on Darwyn Cooke's DC: The New Frontier, set against the backdrop of the Cold War."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Gotham Knight",
       "y": "2008",
       "type": "Animated",
@@ -860,6 +1404,14 @@
       "blurb": "Six anime-style shorts bridging Batman Begins and The Dark Knight."
     },
     {
+      "director": "Patty Jenkins",
+      "cast": "Gal Gadot, Chris Pine, Robin Wright, Danny Huston, David Thewlis, Connie Nielsen",
+      "runtime": "141 min",
+      "plot": "Diana, an Amazon princess raised on the hidden island of Themyscira, leaves her home to fight in World War I after rescuing an American pilot, discovering the full extent of her powers and heritage along the way.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$149M · Worldwide gross ~$822M",
+      "ageRating": "PG-13",
+      "trailer": "",
       "t": "Wonder Woman",
       "y": "2009",
       "type": "Animated",
@@ -873,6 +1425,14 @@
       "blurb": "An origin story pitting Diana against Ares, loosely based on 'Gods and Mortals'."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Green Lantern: First Flight",
       "y": "2009",
       "type": "Animated",
@@ -886,6 +1446,14 @@
       "blurb": "A standalone adaptation of Hal Jordan's induction into the Green Lantern Corps."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman/Batman: Public Enemies",
       "y": "2009",
       "type": "Animated",
@@ -900,6 +1468,14 @@
       "blurb": "With the U.S. President framing Superman for murder, Batman and Superman team up on the run."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Crisis on Two Earths",
       "y": "2010",
       "type": "Animated",
@@ -913,6 +1489,14 @@
       "blurb": "A parallel-Earth Justice League of evildoers threatens to invade the heroes' world."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Under the Red Hood",
       "y": "2010",
       "type": "Animated",
@@ -926,6 +1510,14 @@
       "blurb": "A resurrected Jason Todd returns as a lethal vigilante challenging Batman's no-kill rule."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman/Batman: Apocalypse",
       "y": "2010",
       "type": "Animated",
@@ -940,6 +1532,14 @@
       "blurb": "Supergirl's arrival on Earth draws the attention of Darkseid and Apokolips."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "All-Star Superman",
       "y": "2011",
       "type": "Animated",
@@ -953,6 +1553,14 @@
       "blurb": "A faithful adaptation of the acclaimed Morrison/Quitely comic, sending a dying Superman through twelve labors."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Green Lantern: Emerald Knights",
       "y": "2011",
       "type": "Animated",
@@ -966,6 +1574,14 @@
       "blurb": "An anthology of Green Lantern Corps tales framed by Hal Jordan's training."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Year One",
       "y": "2011",
       "type": "Animated",
@@ -979,6 +1595,14 @@
       "blurb": "A faithful adaptation of Frank Miller and David Mazzucchelli's foundational origin story."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: The Flashpoint Paradox",
       "y": "2013",
       "type": "Animated",
@@ -993,6 +1617,14 @@
       "blurb": "DCAMU film 1 — Barry Allen wakes in an altered timeline after trying to prevent his mother's death."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: War",
       "y": "2014",
       "type": "Animated",
@@ -1006,6 +1638,14 @@
       "blurb": "DCAMU film 2 — a New 52-inspired retelling of the League's first battle against Darkseid."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Son of Batman",
       "y": "2014",
       "type": "Animated",
@@ -1019,6 +1659,14 @@
       "blurb": "DCAMU film 3 — Batman discovers and trains his son, Damian Wayne."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Assault on Arkham",
       "y": "2014",
       "type": "Animated",
@@ -1033,6 +1681,14 @@
       "blurb": "Set in the Batman: Arkham video game universe, the Suicide Squad infiltrates Arkham Asylum."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Throne of Atlantis",
       "y": "2015",
       "type": "Animated",
@@ -1047,6 +1703,14 @@
       "blurb": "DCAMU film 4 — introduces Aquaman and the war between Atlantis and the surface."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman vs. Robin",
       "y": "2015",
       "type": "Animated",
@@ -1060,6 +1724,14 @@
       "blurb": "DCAMU film 5 — Damian Wayne is lured toward the secret society Court of Owls."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Gods and Monsters",
       "y": "2015",
       "type": "Animated",
@@ -1073,6 +1745,14 @@
       "blurb": "An alternate-universe Justice League with darker, morally ambiguous origins."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Bad Blood",
       "y": "2016",
       "type": "Animated",
@@ -1086,6 +1766,14 @@
       "blurb": "DCAMU film 6 — with Batman missing, Batwoman and Nightwing lead a new Bat-family."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League vs. Teen Titans",
       "y": "2016",
       "type": "Animated",
@@ -1100,6 +1788,14 @@
       "blurb": "DCAMU film 7 — Damian Wayne joins the Teen Titans while Trigon threatens Earth."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: The Killing Joke",
       "y": "2016",
       "type": "Animated",
@@ -1114,6 +1810,14 @@
       "blurb": "An adaptation of Moore/Bolland's Joker-origin one-shot, with an added first act."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Return of the Caped Crusaders",
       "y": "2016",
       "type": "Animated",
@@ -1127,6 +1831,14 @@
       "blurb": "Adam West and Burt Ward reprise their 1960s roles in this animated homage."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League Dark",
       "y": "2017",
       "type": "Animated",
@@ -1141,6 +1853,14 @@
       "blurb": "DCAMU film 8 — Constantine assembles DC's magical misfits against a supernatural threat."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Teen Titans: The Judas Contract",
       "y": "2017",
       "type": "Animated",
@@ -1154,6 +1874,14 @@
       "blurb": "DCAMU film 9 — a new Titan may be a spy for the assassin Deathstroke."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman and Harley Quinn",
       "y": "2017",
       "type": "Animated",
@@ -1168,6 +1896,14 @@
       "blurb": "Batman and Nightwing reluctantly team with Harley Quinn to stop Poison Ivy and Jason Woodrue."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman vs. Two-Face",
       "y": "2017",
       "type": "Animated",
@@ -1181,6 +1917,14 @@
       "blurb": "Adam West's final performance as Batman, against William Shatner's Two-Face."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Scooby-Doo! & Batman: The Brave and the Bold",
       "y": "2018",
       "type": "Animated",
@@ -1194,6 +1938,14 @@
       "blurb": "A crossover between the Scooby gang and the Brave and the Bold animated series."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Gotham by Gaslight",
       "y": "2018",
       "type": "Animated",
@@ -1207,6 +1959,14 @@
       "blurb": "A Victorian-era Batman hunts a killer resembling Jack the Ripper — the first Elseworlds story ever adapted."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Suicide Squad: Hell to Pay",
       "y": "2018",
       "type": "Animated",
@@ -1220,6 +1980,14 @@
       "blurb": "DCAMU film 10 — the Squad races the Blackhawks for powerful magic relics."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Ninja",
       "y": "2018",
       "type": "Animated",
@@ -1233,6 +2001,14 @@
       "blurb": "An anime reimagining that hurls Batman and his rogues into feudal Japan."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Death of Superman",
       "y": "2018",
       "type": "Animated",
@@ -1247,6 +2023,14 @@
       "blurb": "DCAMU film 11 — a newer, more brutal adaptation of the Doomsday storyline."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Reign of the Supermen",
       "y": "2019",
       "type": "Animated",
@@ -1261,6 +2045,14 @@
       "blurb": "DCAMU film 12 — the direct follow-up, tracking the four pretenders to Superman's mantle."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League vs. the Fatal Five",
       "y": "2019",
       "type": "Animated",
@@ -1274,6 +2066,14 @@
       "blurb": "Loosely tied to Justice League Unlimited, pitting the League against future villains."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman vs. Teenage Mutant Ninja Turtles",
       "y": "2019",
       "type": "Animated",
@@ -1287,6 +2087,14 @@
       "blurb": "A crossover team-up produced with Nickelodeon, based on the IDW comic."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Hush",
       "y": "2019",
       "type": "Animated",
@@ -1300,6 +2108,14 @@
       "blurb": "DCAMU film 13 — adapts Loeb/Lee's mystery pitting Batman against nearly his entire rogues gallery."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Teen Titans Go! vs. Teen Titans",
       "y": "2019",
       "type": "Animated",
@@ -1313,6 +2129,14 @@
       "blurb": "A crossover between the comedic Teen Titans Go! and the original, more serious Teen Titans series."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Wonder Woman: Bloodlines",
       "y": "2019",
       "type": "Animated",
@@ -1326,6 +2150,14 @@
       "blurb": "DCAMU film 14 — Diana's origin retold alongside a modern-day threat from Cheetah and Silver Swan."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman: Red Son",
       "y": "2020",
       "type": "Animated",
@@ -1339,6 +2171,14 @@
       "blurb": "Adapts the Elseworlds comic where Superman's rocket lands in Soviet Ukraine instead of Kansas."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League Dark: Apokolips War",
       "y": "2020",
       "type": "Animated",
@@ -1352,6 +2192,14 @@
       "blurb": "DCAMU film 15 — a brutal, continuity-closing finale to the interconnected animated movie line."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman: Man of Tomorrow",
       "y": "2020",
       "type": "Animated",
@@ -1365,6 +2213,14 @@
       "blurb": "A younger, still-adjusting Clark Kent meets Lobo and Parasite in a rebooted animated continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Soul of the Dragon",
       "y": "2021",
       "type": "Animated",
@@ -1378,6 +2234,14 @@
       "blurb": "A martial-arts-flavored '70s throwback pitting young Bruce Wayne's old kung-fu classmates against a demonic threat."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice Society: World War II",
       "y": "2021",
       "type": "Animated",
@@ -1391,6 +2255,14 @@
       "blurb": "The Flash is thrown back to WWII to fight alongside the Justice Society."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: The Long Halloween, Part One",
       "y": "2021",
       "type": "Animated",
@@ -1404,6 +2276,14 @@
       "blurb": "Part one of an adaptation of Loeb/Sale's year-spanning murder mystery."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: The Long Halloween, Part Two",
       "y": "2021",
       "type": "Animated",
@@ -1417,6 +2297,14 @@
       "blurb": "The concluding half, revealing the killer behind Gotham's holiday murders."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Injustice",
       "y": "2021",
       "type": "Animated",
@@ -1431,6 +2319,14 @@
       "blurb": "Adapts the alternate-universe video game/comic in which Superman becomes a tyrant."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Catwoman: Hunted",
       "y": "2022",
       "type": "Animated",
@@ -1444,6 +2340,14 @@
       "blurb": "Selina Kyle chases a MacGuffin across Europe in an anime-inflected heist thriller."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Teen Titans Go! & DC Super Hero Girls: Mayhem in the Multiverse",
       "y": "2022",
       "type": "Animated",
@@ -1457,6 +2361,14 @@
       "blurb": "A multiverse-hopping crossover between the two comedic animated lines."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Green Lantern: Beware My Power",
       "y": "2022",
       "type": "Animated",
@@ -1470,6 +2382,14 @@
       "blurb": "John Stewart becomes Earth's Green Lantern in this rebooted animated continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman and Superman: Battle of the Super Sons",
       "y": "2022",
       "type": "Animated",
@@ -1484,6 +2404,14 @@
       "blurb": "Damian Wayne and Jon Kent team up across dimensions against the Gog-driven Superman of Earth-2."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Legion of Super-Heroes",
       "y": "2023",
       "type": "Animated",
@@ -1497,6 +2425,14 @@
       "blurb": "Supergirl joins a 31st-century team of teenage heroes in this continuation of the rebooted animated universe."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: The Doom That Came to Gotham",
       "y": "2023",
       "type": "Animated",
@@ -1510,6 +2446,14 @@
       "blurb": "A Lovecraftian Elseworlds tale pitting Batman against cosmic horrors in 1920s Gotham."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Warworld",
       "y": "2023",
       "type": "Animated",
@@ -1523,6 +2467,14 @@
       "blurb": "The concluding chapter of the rebooted animated continuity's Superman/Legion arc."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Merry Little Batman",
       "y": "2023",
       "type": "Animated",
@@ -1536,6 +2488,14 @@
       "blurb": "A young Damian Wayne tries to save Christmas himself while Batman is away."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Crisis on Infinite Earths – Part One",
       "y": "2024",
       "type": "Animated",
@@ -1549,6 +2509,14 @@
       "blurb": "DCAMU films 23–25 — adapts the original multiverse-erasing Crisis event, closing out the DCAMU continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Crisis on Infinite Earths – Part Two",
       "y": "2024",
       "type": "Animated",
@@ -1562,6 +2530,14 @@
       "blurb": "The middle chapter of the DCAMU's Crisis finale."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Crisis on Infinite Earths – Part Three",
       "y": "2024",
       "type": "Animated",
@@ -1575,6 +2551,14 @@
       "blurb": "The concluding chapter, closing out the 15-year DC Animated Movie Universe continuity."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Watchmen Chapter I",
       "y": "2024",
       "type": "Animated",
@@ -1586,6 +2570,14 @@
       "blurb": "A faithful animated adaptation of the first half of Watchmen, produced with Paramount."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Watchmen Chapter II",
       "y": "2024",
       "type": "Animated",
@@ -1597,6 +2589,14 @@
       "blurb": "The concluding half of the animated Watchmen adaptation."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Ninja vs. Yakuza League",
       "y": "2025",
       "type": "Animated",
@@ -1611,6 +2611,14 @@
       "blurb": "A sequel to Batman Ninja, pulling the wider Justice League into feudal Japan."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Knightfall – Part 1: Knightfall",
       "y": "2026",
       "type": "Animated",
@@ -1624,6 +2632,14 @@
       "blurb": "The first of a planned trilogy adapting the comics arc where Bane breaks Batman's back."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Knightfall – Part 2: Knightquest",
       "y": "2026",
       "type": "Animated",
@@ -1637,6 +2653,14 @@
       "blurb": "The second chapter of the Knightfall animated trilogy — announced/upcoming."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman: Knightfall – Part 3: KnightsEnd",
       "y": "2027",
       "type": "Animated",
@@ -1650,6 +2674,14 @@
       "blurb": "The concluding chapter of the Knightfall animated trilogy — announced/upcoming."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "DC Super Hero Girls: Super Hero High",
       "y": "2016",
       "type": "Animated",
@@ -1661,6 +2693,14 @@
       "blurb": "The pilot feature for the DC Super Hero Girls animated shorts universe."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "DC Super Hero Girls: Hero of the Year",
       "y": "2016",
       "type": "Animated",
@@ -1672,6 +2712,14 @@
       "blurb": "The Super Hero High students compete for the title of Hero of the Year."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "DC Super Hero Girls: Intergalactic Games",
       "y": "2017",
       "type": "Animated",
@@ -1683,6 +2731,14 @@
       "blurb": "An intergalactic athletic competition tests the Super Hero High students."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "DC Super Hero Girls: Legends of Atlantis",
       "y": "2018",
       "type": "Animated",
@@ -1694,6 +2750,14 @@
       "blurb": "The Super Hero Girls dive into an undersea adventure in Atlantis."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego Batman: The Movie – DC Super Heroes Unite",
       "y": "2013",
       "type": "Animated",
@@ -1707,6 +2771,14 @@
       "blurb": "Based on the Lego Batman 2 video game, Batman teams with Superman against Lex Luthor and the Joker."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Comics Super Heroes: Justice League vs. Bizarro League",
       "y": "2015",
       "type": "Animated",
@@ -1720,6 +2792,14 @@
       "blurb": "Lex Luthor creates evil duplicates of the Justice League using Bizarro's cloning powers."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Comics Super Heroes: Justice League – Attack of the Legion of Doom",
       "y": "2015",
       "type": "Animated",
@@ -1733,6 +2813,14 @@
       "blurb": "The Legion of Doom assembles to take down the Lego Justice League."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Comics Super Heroes: Justice League – Cosmic Clash",
       "y": "2016",
       "type": "Animated",
@@ -1746,6 +2834,14 @@
       "blurb": "Brainiac shrinks and bottles cities across the galaxy, including parts of Metropolis."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Comics Super Heroes: Justice League – Gotham City Breakout",
       "y": "2016",
       "type": "Animated",
@@ -1760,6 +2856,14 @@
       "blurb": "Arkham Asylum's inmates escape, forcing Batman to call in the League."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Comics Super Heroes: The Flash",
       "y": "2018",
       "type": "Animated",
@@ -1773,6 +2877,14 @@
       "blurb": "A Lego adventure spotlighting Barry Allen's speedster heroics."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Comics Super Heroes: Aquaman – Rage of Atlantis",
       "y": "2018",
       "type": "Animated",
@@ -1786,6 +2898,14 @@
       "blurb": "A Lego adventure sending Aquaman to defend Atlantis."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC: Batman - Family Matters",
       "y": "2019",
       "type": "Animated",
@@ -1799,6 +2919,14 @@
       "blurb": "A mysterious figure claiming to be Batman's father-in-law arrives in Gotham."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Lego DC Shazam!: Magic and Monsters",
       "y": "2020",
       "type": "Animated",
@@ -1812,6 +2940,14 @@
       "blurb": "A Lego take on Shazam facing off against a resurrected wizard threat."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Unlimited: Animal Instincts",
       "y": "2015",
       "type": "Animated",
@@ -1825,6 +2961,14 @@
       "blurb": "Toyline-based feature where Batman's rogues turn feral thanks to Man-Bat's serum."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Unlimited: Monster Mayhem",
       "y": "2015",
       "type": "Animated",
@@ -1838,6 +2982,14 @@
       "blurb": "Killer Croc leads a monster-themed rogues gallery against the Bat-family."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Unlimited: Mechs vs. Mutants",
       "y": "2016",
       "type": "Animated",
@@ -1851,6 +3003,14 @@
       "blurb": "The Bat-family suits up in mechs against a mutated rogues gallery."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Superman: The Last Son of Krypton",
       "y": "1996",
       "type": "Animated",
@@ -1864,6 +3024,14 @@
       "blurb": "A compilation of Superman: The Animated Series' opening episodes, retelling his origin."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "The Batman/Superman Movie: World's Finest",
       "y": "1997",
       "type": "Animated",
@@ -1878,6 +3046,14 @@
       "blurb": "A compilation film from the Superman: TAS crossover episodes that first paired the two heroes in the DCAU."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Batman Beyond: The Movie",
       "y": "1999",
       "type": "Animated",
@@ -1891,6 +3067,14 @@
       "blurb": "A compilation of Batman Beyond's first two episodes, introducing Terry McGinnis."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Secret Origins",
       "y": "2001",
       "type": "Animated",
@@ -1904,6 +3088,14 @@
       "blurb": "A compilation of the Justice League animated series' opening episodes."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Justice League: Starcrossed",
       "y": "2004",
       "type": "Animated",
@@ -1917,6 +3109,14 @@
       "blurb": "A compilation of the Justice League series finale, in which the Thanagarians invade Earth."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Constantine: City of Demons – The Movie",
       "y": "2018",
       "type": "Animated",
@@ -1930,6 +3130,14 @@
       "blurb": "A compilation of the animated web-series, tied into the DC Animated Movie Universe."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "DC Super Hero Girls: Sweet Justice",
       "y": "2019",
       "type": "Animated",
@@ -1941,6 +3149,14 @@
       "blurb": "A compilation of the rebooted DC Super Hero Girls series' first episodes."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Deathstroke: Knights & Dragons – The Movie",
       "y": "2020",
       "type": "Animated",
@@ -1952,6 +3168,14 @@
       "blurb": "A standalone origin story for the mercenary assassin Slade Wilson."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "boxOffice": "",
+      "ageRating": "",
+      "trailer": "",
       "t": "Aquaman: King of Atlantis",
       "y": "2022",
       "type": "Animated",
@@ -1967,6 +3191,14 @@
   ],
   "series": [
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Adventures of Captain Marvel",
       "y": "1941",
       "type": "Live Action",
@@ -1979,6 +3211,14 @@
       "blurb": "A 12-chapter Republic Pictures serial — the first-ever screen adaptation of a Fawcett/DC hero, decades before Shazam's own solo films."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman",
       "y": "1943",
       "type": "Live Action",
@@ -1993,6 +3233,14 @@
       "blurb": "Columbia Pictures' 15-chapter serial — the first-ever screen Batman, fighting a wartime Japanese saboteur."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Superman",
       "y": "1948",
       "type": "Live Action",
@@ -2007,6 +3255,14 @@
       "blurb": "A 15-chapter Columbia serial, the first screen Superman, played by Kirk Alyn."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman and Robin",
       "y": "1949",
       "type": "Live Action",
@@ -2021,6 +3277,14 @@
       "blurb": "Columbia's second Batman serial, introducing the screen's first Robin."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Atom Man vs. Superman",
       "y": "1950",
       "type": "Live Action",
@@ -2035,6 +3299,14 @@
       "blurb": "Kirk Alyn's second serial outing as Superman, against Lex Luthor as 'Atom Man'."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Adventures of Superman",
       "y": "1952–1958",
       "type": "Live Action",
@@ -2049,6 +3321,14 @@
       "blurb": "George Reeves' Superman, the character's first long-running TV incarnation."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman",
       "y": "1966–1968",
       "type": "Live Action",
@@ -2063,6 +3343,14 @@
       "blurb": "Adam West's campy, pop-art Batman, a huge cultural phenomenon of its era."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Shazam!",
       "y": "1974–1976",
       "type": "Live Action",
@@ -2077,6 +3365,14 @@
       "blurb": "A live-action Saturday-morning series following Billy Batson's adventures as Captain Marvel."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Wonder Woman",
       "y": "1975–1979",
       "type": "Live Action",
@@ -2091,6 +3387,14 @@
       "blurb": "Lynda Carter's star-making turn as Diana Prince."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Superboy",
       "y": "1988–1992",
       "type": "Live Action",
@@ -2105,6 +3409,14 @@
       "blurb": "A young Clark Kent's college years as the fledgling Superboy."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Swamp Thing",
       "y": "1990–1993",
       "type": "Live Action",
@@ -2119,6 +3431,14 @@
       "blurb": "A USA Network continuation of the Swamp Thing film series."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The Flash",
       "y": "1990–1991",
       "type": "Live Action",
@@ -2133,6 +3453,14 @@
       "blurb": "Barry Allen's first live-action TV series, a stylish, noir-tinged one-season run."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Human Target",
       "y": "1992",
       "type": "Live Action",
@@ -2145,6 +3473,14 @@
       "blurb": "An early, short-lived adaptation of the DC crime-thriller character Christopher Chance."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Lois & Clark: The New Adventures of Superman",
       "y": "1993–1997",
       "type": "Live Action",
@@ -2159,6 +3495,14 @@
       "blurb": "A romance-forward take centering the relationship between Clark and Lois."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Smallville",
       "y": "2001–2011",
       "type": "Live Action",
@@ -2173,6 +3517,14 @@
       "blurb": "Clark Kent's teenage years in Kansas, running for ten seasons before he becomes Superman."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Birds of Prey",
       "y": "2002–2003",
       "type": "Live Action",
@@ -2187,6 +3539,14 @@
       "blurb": "An early, short-lived series following Huntress, Oracle, and Black Canary in New Gotham."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Human Target",
       "y": "2010–2011",
       "type": "Live Action",
@@ -2199,6 +3559,14 @@
       "blurb": "A second, action-comedy adaptation of the Christopher Chance character."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Arrow",
       "y": "2012–2020",
       "type": "Live Action",
@@ -2213,6 +3581,14 @@
       "blurb": "Oliver Queen's vigilante origin; the show that launched the interconnected Arrowverse."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The Flash",
       "y": "2014–2023",
       "type": "Live Action",
@@ -2227,6 +3603,14 @@
       "blurb": "Barry Allen gains super-speed and grapples with time travel and the multiverse."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Constantine",
       "y": "2014–2015",
       "type": "Live Action",
@@ -2241,6 +3625,14 @@
       "blurb": "A one-season adaptation of the Hellblazer occult detective, later folded into the Arrowverse via crossover."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Supergirl",
       "y": "2015–2021",
       "type": "Live Action",
@@ -2255,6 +3647,14 @@
       "blurb": "Kara Danvers steps into her own heroics in National City."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "DC's Legends of Tomorrow",
       "y": "2016–2022",
       "type": "Live Action",
@@ -2269,6 +3669,14 @@
       "blurb": "A time-traveling team of misfit heroes and villains protects history."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Powerless",
       "y": "2017",
       "type": "Live Action",
@@ -2281,6 +3689,14 @@
       "blurb": "A workplace sitcom set at an insurance company that handles superhero collateral damage."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Black Lightning",
       "y": "2018–2021",
       "type": "Live Action",
@@ -2295,6 +3711,14 @@
       "blurb": "A retired hero returns to the fight to protect his community and family."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batwoman",
       "y": "2019–2022",
       "type": "Live Action",
@@ -2309,6 +3733,14 @@
       "blurb": "Kate Kane takes up a version of the Bat-symbol in Gotham."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Stargirl",
       "y": "2020–2022",
       "type": "Live Action",
@@ -2323,6 +3755,14 @@
       "blurb": "A teenager inherits the legacy of the Justice Society of America."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Superman & Lois",
       "y": "2021–2024",
       "type": "Live Action",
@@ -2337,6 +3777,14 @@
       "blurb": "A domestic-drama take on Clark and Lois raising twin sons who inherit powers."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Naomi",
       "y": "2022",
       "type": "Live Action",
@@ -2349,6 +3797,14 @@
       "blurb": "A teenager investigates a mysterious Superman sighting in her town, uncovering ties to a hidden identity."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Gotham",
       "y": "2014–2019",
       "type": "Live Action",
@@ -2363,6 +3819,14 @@
       "blurb": "A young Jim Gordon navigates Gotham's corruption years before Batman exists."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Krypton",
       "y": "2018–2019",
       "type": "Live Action",
@@ -2377,6 +3841,14 @@
       "blurb": "Set generations before Superman's birth, following his grandfather on Krypton."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Pennyworth",
       "y": "2019–2022",
       "type": "Live Action",
@@ -2391,6 +3863,14 @@
       "blurb": "A 1960s-set thriller following young Alfred Pennyworth before he meets the Waynes."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Titans",
       "y": "2018–2023",
       "type": "Live Action",
@@ -2405,6 +3885,14 @@
       "blurb": "A grittier, adult take on Dick Grayson and a young Teen Titans lineup."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Doom Patrol",
       "y": "2019–2023",
       "type": "Live Action",
@@ -2417,6 +3905,14 @@
       "blurb": "A surreal, tragicomic team of outcasts with uncontrollable powers."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Swamp Thing",
       "y": "2019",
       "type": "Live Action",
@@ -2431,6 +3927,14 @@
       "blurb": "A one-season horror take on the character, cancelled after just two episodes aired."
     },
     {
+      "creators": "Damon Lindelof (showrunner)",
+      "cast": "Regina King, Jeremy Irons, Don Johnson, Yahya Abdul-Mateen II, Jean Smart, Tim Blake Nelson",
+      "runtime": "~60 min per episode",
+      "plot": "Set decades after the events of the original graphic novel, masked vigilantism has been outlawed and co-opted by both police and a resurgent white-supremacist movement in an alternate present-day Tulsa, forcing detective Angela Abar to confront buried history.",
+      "whereToWatch": "Max",
+      "ageRating": "TV-MA",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Watchmen",
       "y": "2019",
       "type": "Live Action",
@@ -2492,6 +3996,14 @@
       }
     },
     {
+      "creators": "James Gunn",
+      "cast": "John Cena, Danielle Brooks, Freddie Stroma, Chukwudi Iwuji, Jennifer Holland, Steve Agee",
+      "runtime": "~45-60 min per episode",
+      "plot": "Christopher Smith, a peace-obsessed killer who believes in achieving peace 'at any cost,' is recruited into a black-ops task force and must confront his family's violent legacy while uncovering an alien conspiracy.",
+      "whereToWatch": "HBO Max",
+      "ageRating": "TV-MA",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Peacemaker",
       "y": "2022–",
       "type": "Live Action",
@@ -2550,6 +4062,14 @@
       }
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Gotham Knights",
       "y": "2023",
       "type": "Live Action",
@@ -2564,6 +4084,14 @@
       "blurb": "After Batman's death, a group of misfit teens are framed for his murder."
     },
     {
+      "creators": "Lauren LeFranc",
+      "cast": "Colin Farrell, Cristin Milioti, Rhenzy Feliz, Clancy Brown, Deirdre O'Connell",
+      "runtime": "~50-66 min per episode",
+      "plot": "In the power vacuum left by Carmine Falcone's death, Oswald 'Oz' Cobb makes a ruthless play to seize control of Gotham's criminal underworld, set in the same universe as Matt Reeves' The Batman.",
+      "whereToWatch": "HBO Max",
+      "ageRating": "TV-MA",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The Penguin",
       "y": "2024",
       "type": "Live Action",
@@ -2622,6 +4150,14 @@
       }
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Lanterns",
       "y": "2026–",
       "type": "Live Action",
@@ -2636,6 +4172,14 @@
       "blurb": "A detective-thriller take on Hal Jordan and John Stewart, set in the new DC Universe."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "iZombie",
       "y": "2015–2019",
       "type": "Live Action",
@@ -2648,6 +4192,14 @@
       "blurb": "A medical resident turned zombie solves crimes by eating victims' brains, based on the Vertigo comic."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Lucifer",
       "y": "2016–2021",
       "type": "Live Action",
@@ -2660,6 +4212,14 @@
       "blurb": "The Devil retires to Los Angeles to run a nightclub and moonlight as a police consultant."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Preacher",
       "y": "2016–2019",
       "type": "Live Action",
@@ -2672,6 +4232,14 @@
       "blurb": "A small-town preacher gains a mysterious power and sets out to find God, based on Garth Ennis' Vertigo series."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Sweet Tooth",
       "y": "2021–2024",
       "type": "Live Action",
@@ -2684,6 +4252,14 @@
       "blurb": "A post-apocalyptic fable about a hybrid deer-boy, adapted from the Vertigo comic."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Y: The Last Man",
       "y": "2021",
       "type": "Live Action",
@@ -2696,6 +4272,14 @@
       "blurb": "Every mammal with a Y chromosome dies suddenly except one man and his monkey."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "DMZ",
       "y": "2022",
       "type": "Live Action",
@@ -2708,6 +4292,14 @@
       "blurb": "A miniseries set in a demilitarized Manhattan during a second American Civil War."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The Sandman",
       "y": "2022–2025",
       "type": "Live Action",
@@ -2720,6 +4312,14 @@
       "blurb": "Neil Gaiman's saga of Dream and the other Endless, blending myth, horror, and literary fantasy."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Bodies",
       "y": "2023",
       "type": "Live Action",
@@ -2732,6 +4332,14 @@
       "blurb": "A miniseries following the same corpse investigated by four detectives across four different eras."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Dead Boy Detectives",
       "y": "2024",
       "type": "Live Action",
@@ -2744,6 +4352,14 @@
       "blurb": "Two ghost teenagers solve supernatural mysteries, set in the same universe as The Sandman."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman: The Animated Series",
       "y": "1992–1995",
       "type": "Animated",
@@ -2758,6 +4374,14 @@
       "blurb": "A stylish, noir-inflected series widely regarded as the definitive animated Batman; the DCAU's foundation."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Superman: The Animated Series",
       "y": "1996–2000",
       "type": "Animated",
@@ -2772,6 +4396,14 @@
       "blurb": "Bruce Timm's follow-up, expanding the shared animated universe to Metropolis."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The New Batman Adventures",
       "y": "1997–1999",
       "type": "Animated",
@@ -2786,6 +4418,14 @@
       "blurb": "A redesigned, tonally sharper continuation of Batman: The Animated Series."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman Beyond",
       "y": "1999–2001",
       "type": "Animated",
@@ -2800,6 +4440,14 @@
       "blurb": "Set decades later, following teenager Terry McGinnis as the new Batman."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Static Shock",
       "y": "2000–2004",
       "type": "Animated",
@@ -2812,6 +4460,14 @@
       "blurb": "A teenager with electromagnetic powers balances high school and superheroics in Dakota City."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The Zeta Project",
       "y": "2001–2002",
       "type": "Animated",
@@ -2824,6 +4480,14 @@
       "blurb": "A Batman Beyond spin-off following a rogue android on the run."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Justice League",
       "y": "2001–2004",
       "type": "Animated",
@@ -2838,6 +4502,14 @@
       "blurb": "The DCAU's heroes unite as a formal team against cosmic-scale threats."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Justice League Unlimited",
       "y": "2004–2006",
       "type": "Animated",
@@ -2852,6 +4524,14 @@
       "blurb": "Expands the roster to dozens of DC characters in rotation; a sequel to Justice League."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Teen Titans",
       "y": "2003–2006",
       "type": "Animated",
@@ -2866,6 +4546,14 @@
       "blurb": "A stylized, anime-influenced take on the young team, distinct from the DCAU."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The Batman",
       "y": "2004–2008",
       "type": "Animated",
@@ -2880,6 +4568,14 @@
       "blurb": "A fresh, angular redesign of Batman's world, unconnected to the DCAU."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Krypto the Superdog",
       "y": "2005–2006",
       "type": "Animated",
@@ -2894,6 +4590,14 @@
       "blurb": "A children's series following Superman's dog and his fellow super-pets."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Legion of Super Heroes",
       "y": "2006–2008",
       "type": "Animated",
@@ -2908,6 +4612,14 @@
       "blurb": "A 31st-century team of teenage heroes, with a young Superman as a recurring member."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman: The Brave and the Bold",
       "y": "2008–2011",
       "type": "Animated",
@@ -2922,6 +4634,14 @@
       "blurb": "A lighthearted, team-up-of-the-week series pulling from DC's deepest cuts."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Young Justice",
       "y": "2010–2022",
       "type": "Animated",
@@ -2936,6 +4656,14 @@
       "blurb": "A sidekick-led team series praised for dense, long-form continuity across multiple seasons."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Green Lantern: The Animated Series",
       "y": "2011–2013",
       "type": "Animated",
@@ -2950,6 +4678,14 @@
       "blurb": "A CG-animated space epic following Hal Jordan into the farthest reaches of the Green Lantern Corps' territory."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Beware the Batman",
       "y": "2013–2014",
       "type": "Animated",
@@ -2964,6 +4700,14 @@
       "blurb": "A CG-animated series leaning on lesser-used Batman rogues like Anarky and Professor Pyg."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Justice League Action",
       "y": "2016–2018",
       "type": "Animated",
@@ -2978,6 +4722,14 @@
       "blurb": "Fast-paced, 11-minute team adventures aimed at a younger audience."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "DC Super Hero Girls",
       "y": "2019–2021",
       "type": "Animated",
@@ -2990,6 +4742,14 @@
       "blurb": "A younger-skewing reboot reimagining DC's heroines as high schoolers, following the earlier web-shorts version."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Harley Quinn",
       "y": "2019–2025",
       "type": "Animated",
@@ -3004,6 +4764,14 @@
       "blurb": "An adult-animated, comedic reinvention following Harley post-Joker breakup."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Aquaman: King of Atlantis",
       "y": "2021",
       "type": "Animated",
@@ -3018,6 +4786,14 @@
       "blurb": "A miniseries sequel to the 2018 Aquaman film, later re-cut into a standalone movie."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Suicide Squad Isekai",
       "y": "2024",
       "type": "Animated",
@@ -3032,6 +4808,14 @@
       "blurb": "An anime crossover sending the Suicide Squad into a fantasy isekai world."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Kite Man: Hell Yeah!",
       "y": "2024–",
       "type": "Animated",
@@ -3044,6 +4828,14 @@
       "blurb": "A spin-off of the adult-animated Harley Quinn series, centered on the lovable D-list villain Kite Man."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Teen Titans Go!",
       "y": "2013–",
       "type": "Animated",
@@ -3058,6 +4850,14 @@
       "blurb": "A comedic, stand-alone spin-off of Teen Titans, still ongoing after more than a decade."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batwheels",
       "y": "2022–",
       "type": "Animated",
@@ -3072,6 +4872,14 @@
       "blurb": "A preschool-aimed series about the sentient vehicles of the Batman universe."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "My Adventures with Superman",
       "y": "2023–",
       "type": "Animated",
@@ -3086,6 +4894,14 @@
       "blurb": "An anime-styled, youthful reinterpretation of Clark, Lois, and Jimmy as young adults."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Batman: Caped Crusader",
       "y": "2024–",
       "type": "Animated",
@@ -3100,6 +4916,14 @@
       "blurb": "A darker reimagining of Batman's early years produced by Bruce Timm, Matt Reeves, and J.J. Abrams."
     },
     {
+      "creators": "James Gunn",
+      "cast": "Voice cast: Alan Tudyk, Zoe Chao, Steve Agee, Sean Gunn, David Harbour, Frank Grillo, Viola Davis",
+      "runtime": "~30 min per episode",
+      "plot": "Amanda Waller assembles a squad of monstrous, expendable convicts — including a werewolf, a man-fish, and Frankenstein's bride — for black-ops missions, in the first release of the new DC Universe.",
+      "whereToWatch": "HBO Max",
+      "ageRating": "TV-MA",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Creature Commandos",
       "y": "2024–",
       "type": "Animated",
@@ -3151,6 +4975,14 @@
       }
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Bat-Fam",
       "y": "2025–",
       "type": "Animated",
@@ -3165,6 +4997,14 @@
       "blurb": "A sequel series to Merry Little Batman, following young Damian Wayne and the extended Bat-family."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "My Adventures with Green Lantern",
       "y": "TBA",
       "type": "Animated",
@@ -3179,6 +5019,14 @@
       "blurb": "An announced spin-off of My Adventures with Superman, centered on the Green Lantern Corps."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Absolute Batman (animated)",
       "y": "TBA",
       "type": "Animated",
@@ -3193,6 +5041,14 @@
       "blurb": "An announced animated series based on the Absolute Universe comics line."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Mister Miracle",
       "y": "TBA",
       "type": "Animated",
@@ -3205,6 +5061,14 @@
       "blurb": "An announced animated series from showrunner Tom King, set in the new DC Universe."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Joker: Laugh Riot",
       "y": "TBA",
       "type": "Animated",
@@ -3219,6 +5083,14 @@
       "blurb": "An announced anime series centered on the Joker."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Super Friends",
       "y": "1973–1986",
       "type": "Animated",
@@ -3233,6 +5105,14 @@
       "blurb": "The original Saturday-morning Justice League team-up cartoon, running across several retitled iterations."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The New Adventures of Superman",
       "y": "1966–1970",
       "type": "Animated",
@@ -3247,6 +5127,14 @@
       "blurb": "Filmation's first animated Superman series, paired in its run with segments on Superboy and Aquaman."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "The New Adventures of Batman",
       "y": "1977–1978",
       "type": "Animated",
@@ -3261,6 +5149,14 @@
       "blurb": "A Filmation animated series pairing Batman and Robin with the mysterious alien Bat-Mite."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Superman",
       "y": "1988",
       "type": "Animated",
@@ -3275,6 +5171,14 @@
       "blurb": "A short-lived Ruby-Spears animated series."
     },
     {
+      "creators": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
+      "trailer": "",
+      "seasonTrailers": {},
       "t": "Swamp Thing",
       "y": "1990–1991",
       "type": "Animated",
@@ -3291,150 +5195,418 @@
   ],
   "games": [
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: Arkham Asylum",
       "y": "2009",
       "fr": "Batman: Arkham",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS3",
+        "Xbox 360",
+        "PC",
+        "macOS"
+      ],
+      "trailer": "",
       "blurb": "A stealth-action game confining Batman to Arkham for one night; set the template for modern superhero games."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: Arkham City",
       "y": "2011",
       "fr": "Batman: Arkham",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS3",
+        "Xbox 360",
+        "Wii U",
+        "PC",
+        "macOS"
+      ],
+      "trailer": "",
       "blurb": "Expands the formula into an open, walled-off district of Gotham."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: Arkham Origins",
       "y": "2013",
       "fr": "Batman: Arkham",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS3",
+        "Xbox 360",
+        "Wii U",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "A prequel (by a different studio) depicting an early, still-hunted Batman on Christmas Eve."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: Arkham Knight",
       "y": "2015",
       "fr": "Batman: Arkham",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS4",
+        "Xbox One",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "The series finale, introducing a drivable Batmobile and a mysterious new villain."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: Arkham VR",
       "y": "2016",
       "fr": "Batman: Arkham",
-      "plat": "PS VR",
+      "plats": [
+        "PS VR",
+        "PC VR"
+      ],
+      "trailer": "",
       "blurb": "A short, immersive VR side-story set within the Arkhamverse."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Suicide Squad: Kill the Justice League",
       "y": "2024",
       "fr": "Batman: Arkham",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS5",
+        "Xbox Series X/S",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "A loot-shooter set in the Arkhamverse, in which the Squad is forced to kill a mind-controlled Justice League."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Injustice: Gods Among Us",
       "y": "2013",
       "fr": "Injustice",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS3",
+        "Xbox 360",
+        "Wii U",
+        "PC",
+        "iOS"
+      ],
+      "trailer": "",
       "blurb": "A fighting game set in an alternate timeline where Superman becomes an authoritarian ruler after Joker tricks him into killing Lois."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Injustice 2",
       "y": "2017",
       "fr": "Injustice",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS4",
+        "Xbox One",
+        "PC",
+        "iOS",
+        "Android"
+      ],
+      "trailer": "",
       "blurb": "Continues the alternate timeline with a gear-customization system and expanded roster."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "LEGO Batman: The Videogame",
       "y": "2008",
       "fr": "LEGO DC",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS2",
+        "PS3",
+        "Xbox 360",
+        "Wii",
+        "PC",
+        "macOS",
+        "DS",
+        "PSP"
+      ],
+      "trailer": "",
       "blurb": "A comedic, family-friendly take letting players control both heroes and villains."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "LEGO Batman 2: DC Super Heroes",
       "y": "2012",
       "fr": "LEGO DC",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS3",
+        "Xbox 360",
+        "Wii",
+        "Wii U",
+        "PC",
+        "macOS",
+        "3DS",
+        "DS",
+        "PS Vita"
+      ],
+      "trailer": "",
       "blurb": "Expands beyond Gotham to introduce the wider Justice League in open-world Gotham."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "LEGO Batman 3: Beyond Gotham",
       "y": "2014",
       "fr": "LEGO DC",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS3",
+        "PS4",
+        "PS Vita",
+        "Xbox 360",
+        "Xbox One",
+        "Wii U",
+        "PC",
+        "macOS",
+        "3DS"
+      ],
+      "trailer": "",
       "blurb": "Sends the cast into space against Brainiac, with a huge roster of DC guest characters."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "LEGO DC Super-Villains",
       "y": "2018",
       "fr": "LEGO DC",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS4",
+        "Xbox One",
+        "Switch",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "Flips the formula to let players build and play as an original villain."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "DC Universe Online",
       "y": "2011",
       "fr": "DC Universe Online",
-      "plat": "Multi-platform (MMO)",
+      "plats": [
+        "PS3",
+        "PS4",
+        "Xbox One",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "An MMORPG in which the player creates an original hero or villain set after Justice Society-era history."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Gotham Knights",
       "y": "2022",
       "fr": "Gotham Knights",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS5",
+        "Xbox Series X/S",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "After Batman's death, Nightwing, Red Hood, Batgirl, and Robin defend Gotham together."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: The Telltale Series",
       "y": "2016",
       "fr": "Telltale Batman",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS4",
+        "Xbox One",
+        "PC",
+        "iOS",
+        "Android",
+        "Switch"
+      ],
+      "trailer": "",
       "blurb": "A choice-driven narrative adventure exploring Bruce Wayne's politics and relationships."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Batman: The Enemy Within",
       "y": "2017",
       "fr": "Telltale Batman",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS4",
+        "Xbox One",
+        "PC",
+        "iOS",
+        "Android",
+        "Switch"
+      ],
+      "trailer": "",
       "blurb": "The direct sequel season, centering Batman's fraught relationship with the Joker."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Justice League Heroes",
       "y": "2006",
       "fr": "Other",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS2",
+        "Xbox",
+        "PC",
+        "PSP",
+        "DS"
+      ],
+      "trailer": "",
       "blurb": "A team-based action-RPG letting players switch between Justice League members."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Mortal Kombat vs. DC Universe",
       "y": "2008",
       "fr": "Other",
-      "plat": "PS3 / Xbox 360",
+      "plats": [
+        "PS3",
+        "Xbox 360"
+      ],
+      "trailer": "",
       "blurb": "A crossover fighting game merging the two rosters under a toned-down rating."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Superman Returns: The Videogame",
       "y": "2006",
       "fr": "Other",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS2",
+        "Xbox",
+        "Xbox 360",
+        "PC",
+        "GameCube"
+      ],
+      "trailer": "",
       "blurb": "An open-world Metropolis tie-in to the Bryan Singer film."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "Watchmen: The End Is Nigh",
       "y": "2009",
       "fr": "Other",
-      "plat": "PS3 / Xbox 360",
+      "plats": [
+        "PS3",
+        "Xbox 360",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "A brawler prequel following Nite Owl and Rorschach, tied to the Watchmen film."
     },
     {
+      "director": "",
+      "cast": "",
+      "runtime": "",
+      "plot": "",
+      "whereToWatch": "",
+      "ageRating": "",
       "t": "MultiVersus",
       "y": "2022",
       "fr": "Other",
-      "plat": "Multi-platform",
+      "plats": [
+        "PS4",
+        "PS5",
+        "Xbox One",
+        "Xbox Series X/S",
+        "PC"
+      ],
+      "trailer": "",
       "blurb": "A platform fighter crossing over DC characters with other Warner Bros. IP."
     }
   ],

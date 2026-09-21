@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -69,8 +69,8 @@
     </div>
     <div class="sheet-section" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px;">
       <div class="sheet-label">UPDATE</div>
-      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Replaces all Movies and Series entries with the expanded dataset (153 movies, 85 series) — deletes the old ones first, so it's safe to run even if you already imported before.</p>
-      <div class="form-actions"><button class="btn btn-ghost" id="replaceMSBtn">Replace Movies &amp; Series</button></div>
+      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Replaces all Movies, Series, and Games entries with the expanded dataset — deletes the old ones first, so it's safe to run even if you already imported before.</p>
+      <div class="form-actions"><button class="btn btn-ghost" id="replaceMSBtn">Replace Movies, Series & Games</button></div>
       <div class="form-msg" id="replaceMSMsg"></div>
     </div>
   </div>
@@ -101,6 +101,6 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=9"></script>
+<script type="module" src="app.js?v=10"></script>
 </body>
 </html>
