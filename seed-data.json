@@ -3559,12 +3559,12 @@
       "blurb": "A second, action-comedy adaptation of the Christopher Chance character."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Greg Berlanti, Marc Guggenheim, Andrew Kreisberg",
+      "cast": "Stephen Amell, David Ramsey, Katie Cassidy, Emily Bett Rickards, Willa Holland, Paul Blackthorne",
+      "runtime": "~42 min per episode",
+      "plot": "Billionaire playboy Oliver Queen, presumed dead for five years after a shipwreck stranded him on the island of Lian Yu, returns home to Starling City transformed into a lethal, hooded vigilante — waging a private war on the city's corrupt elite while building a found family of allies who eventually become heroes in their own right.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Arrow",
@@ -3578,15 +3578,883 @@
       "episodes": 170,
       "rt": null,
       "imdb": 7.5,
-      "blurb": "Oliver Queen's vigilante origin; the show that launched the interconnected Arrowverse."
+      "blurb": "Oliver Queen's vigilante origin; the show that launched the interconnected Arrowverse.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2012-10-10"
+          },
+          {
+            "n": 2,
+            "t": "Honor Thy Father",
+            "d": "2012-10-17"
+          },
+          {
+            "n": 3,
+            "t": "Lone Gunmen",
+            "d": "2012-10-24"
+          },
+          {
+            "n": 4,
+            "t": "An Innocent Man",
+            "d": "2012-10-31"
+          },
+          {
+            "n": 5,
+            "t": "Damaged",
+            "d": "2012-11-07"
+          },
+          {
+            "n": 6,
+            "t": "Legacies",
+            "d": "2012-11-14"
+          },
+          {
+            "n": 7,
+            "t": "Muse of Fire",
+            "d": "2012-11-28"
+          },
+          {
+            "n": 8,
+            "t": "Vendetta",
+            "d": "2012-12-05"
+          },
+          {
+            "n": 9,
+            "t": "Year's End",
+            "d": "2012-12-12"
+          },
+          {
+            "n": 10,
+            "t": "Burned",
+            "d": "2013-01-16"
+          },
+          {
+            "n": 11,
+            "t": "Trust but Verify",
+            "d": "2013-01-23"
+          },
+          {
+            "n": 12,
+            "t": "Vertigo",
+            "d": "2013-01-30"
+          },
+          {
+            "n": 13,
+            "t": "Betrayal",
+            "d": "2013-02-06"
+          },
+          {
+            "n": 14,
+            "t": "The Odyssey",
+            "d": "2013-02-13"
+          },
+          {
+            "n": 15,
+            "t": "Dodger",
+            "d": "2013-02-20"
+          },
+          {
+            "n": 16,
+            "t": "Dead to Rights",
+            "d": "2013-02-27"
+          },
+          {
+            "n": 17,
+            "t": "The Huntress Returns",
+            "d": "2013-03-20"
+          },
+          {
+            "n": 18,
+            "t": "Salvation",
+            "d": "2013-03-27"
+          },
+          {
+            "n": 19,
+            "t": "Unfinished Business",
+            "d": "2013-04-03"
+          },
+          {
+            "n": 20,
+            "t": "Home Invasion",
+            "d": "2013-04-24"
+          },
+          {
+            "n": 21,
+            "t": "The Undertaking",
+            "d": "2013-05-01"
+          },
+          {
+            "n": 22,
+            "t": "Darkness on the Edge of Town",
+            "d": "2013-05-08"
+          },
+          {
+            "n": 23,
+            "t": "Sacrifice",
+            "d": "2013-05-15"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "City of Heroes",
+            "d": "2013-10-09"
+          },
+          {
+            "n": 2,
+            "t": "Identity",
+            "d": "2013-10-16"
+          },
+          {
+            "n": 3,
+            "t": "Broken Dolls",
+            "d": "2013-10-23"
+          },
+          {
+            "n": 4,
+            "t": "Crucible",
+            "d": "2013-10-30"
+          },
+          {
+            "n": 5,
+            "t": "League of Assassins",
+            "d": "2013-11-06"
+          },
+          {
+            "n": 6,
+            "t": "Keep Your Enemies Closer",
+            "d": "2013-11-13"
+          },
+          {
+            "n": 7,
+            "t": "State v. Queen",
+            "d": "2013-11-20"
+          },
+          {
+            "n": 8,
+            "t": "The Scientist",
+            "d": "2013-12-04"
+          },
+          {
+            "n": 9,
+            "t": "Three Ghosts",
+            "d": "2013-12-11"
+          },
+          {
+            "n": 10,
+            "t": "Blast Radius",
+            "d": "2014-01-15"
+          },
+          {
+            "n": 11,
+            "t": "Blind Spot",
+            "d": "2014-01-22"
+          },
+          {
+            "n": 12,
+            "t": "Tremors",
+            "d": "2014-01-29"
+          },
+          {
+            "n": 13,
+            "t": "Heir to the Demon",
+            "d": "2014-02-05"
+          },
+          {
+            "n": 14,
+            "t": "Time of Death",
+            "d": "2014-02-26"
+          },
+          {
+            "n": 15,
+            "t": "The Promise",
+            "d": "2014-03-05"
+          },
+          {
+            "n": 16,
+            "t": "Suicide Squad",
+            "d": "2014-03-19"
+          },
+          {
+            "n": 17,
+            "t": "Birds of Prey",
+            "d": "2014-03-26"
+          },
+          {
+            "n": 18,
+            "t": "Deathstroke",
+            "d": "2014-04-02"
+          },
+          {
+            "n": 19,
+            "t": "The Man Under the Hood",
+            "d": "2014-04-16"
+          },
+          {
+            "n": 20,
+            "t": "Seeing Red",
+            "d": "2014-04-23"
+          },
+          {
+            "n": 21,
+            "t": "City of Blood",
+            "d": "2014-04-30"
+          },
+          {
+            "n": 22,
+            "t": "Streets of Fire",
+            "d": "2014-05-07"
+          },
+          {
+            "n": 23,
+            "t": "Unthinkable",
+            "d": "2014-05-14"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "The Calm",
+            "d": "2014-10-08"
+          },
+          {
+            "n": 2,
+            "t": "Sara",
+            "d": "2014-10-15"
+          },
+          {
+            "n": 3,
+            "t": "Corto Maltese",
+            "d": "2014-10-22"
+          },
+          {
+            "n": 4,
+            "t": "The Magician",
+            "d": "2014-10-29"
+          },
+          {
+            "n": 5,
+            "t": "The Secret Origin of Felicity Smoak",
+            "d": "2014-11-05"
+          },
+          {
+            "n": 6,
+            "t": "Guilty",
+            "d": "2014-11-12"
+          },
+          {
+            "n": 7,
+            "t": "Draw Back Your Bow",
+            "d": "2014-11-19"
+          },
+          {
+            "n": 8,
+            "t": "The Brave and the Bold",
+            "d": "2014-12-03"
+          },
+          {
+            "n": 9,
+            "t": "The Climb",
+            "d": "2014-12-10"
+          },
+          {
+            "n": 10,
+            "t": "Left Behind",
+            "d": "2015-01-21"
+          },
+          {
+            "n": 11,
+            "t": "Midnight City",
+            "d": "2015-01-28"
+          },
+          {
+            "n": 12,
+            "t": "Uprising",
+            "d": "2015-02-04"
+          },
+          {
+            "n": 13,
+            "t": "Canaries",
+            "d": "2015-02-11"
+          },
+          {
+            "n": 14,
+            "t": "The Return",
+            "d": "2015-02-18"
+          },
+          {
+            "n": 15,
+            "t": "Nanda Parbat",
+            "d": "2015-02-25"
+          },
+          {
+            "n": 16,
+            "t": "The Offer",
+            "d": "2015-03-18"
+          },
+          {
+            "n": 17,
+            "t": "Suicidal Tendencies",
+            "d": "2015-03-25"
+          },
+          {
+            "n": 18,
+            "t": "Public Enemy",
+            "d": "2015-04-01"
+          },
+          {
+            "n": 19,
+            "t": "Broken Arrow",
+            "d": "2015-04-15"
+          },
+          {
+            "n": 20,
+            "t": "The Fallen",
+            "d": "2015-04-22"
+          },
+          {
+            "n": 21,
+            "t": "Al Sah-Him",
+            "d": "2015-04-29"
+          },
+          {
+            "n": 22,
+            "t": "This Is Your Sword",
+            "d": "2015-05-06"
+          },
+          {
+            "n": 23,
+            "t": "My Name Is Oliver Queen",
+            "d": "2015-05-13"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Green Arrow",
+            "d": "2015-10-07"
+          },
+          {
+            "n": 2,
+            "t": "The Candidate",
+            "d": "2015-10-14"
+          },
+          {
+            "n": 3,
+            "t": "Restoration",
+            "d": "2015-10-21"
+          },
+          {
+            "n": 4,
+            "t": "Beyond Redemption",
+            "d": "2015-10-28"
+          },
+          {
+            "n": 5,
+            "t": "Haunted",
+            "d": "2015-11-04"
+          },
+          {
+            "n": 6,
+            "t": "Lost Souls",
+            "d": "2015-11-11"
+          },
+          {
+            "n": 7,
+            "t": "Brotherhood",
+            "d": "2015-11-18"
+          },
+          {
+            "n": 8,
+            "t": "Legends of Yesterday",
+            "d": "2015-12-02"
+          },
+          {
+            "n": 9,
+            "t": "Dark Waters",
+            "d": "2015-12-09"
+          },
+          {
+            "n": 10,
+            "t": "Blood Debts",
+            "d": "2016-01-20"
+          },
+          {
+            "n": 11,
+            "t": "A.W.O.L.",
+            "d": "2016-01-27"
+          },
+          {
+            "n": 12,
+            "t": "Unchained",
+            "d": "2016-02-03"
+          },
+          {
+            "n": 13,
+            "t": "Sins of the Father",
+            "d": "2016-02-10"
+          },
+          {
+            "n": 14,
+            "t": "Code of Silence",
+            "d": "2016-02-17"
+          },
+          {
+            "n": 15,
+            "t": "Taken",
+            "d": "2016-02-24"
+          },
+          {
+            "n": 16,
+            "t": "Broken Hearts",
+            "d": "2016-03-23"
+          },
+          {
+            "n": 17,
+            "t": "Beacon of Hope",
+            "d": "2016-03-30"
+          },
+          {
+            "n": 18,
+            "t": "Eleven-Fifty-Nine",
+            "d": "2016-04-06"
+          },
+          {
+            "n": 19,
+            "t": "Canary Cry",
+            "d": "2016-04-27"
+          },
+          {
+            "n": 20,
+            "t": "Genesis",
+            "d": "2016-05-04"
+          },
+          {
+            "n": 21,
+            "t": "Monument Point",
+            "d": "2016-05-11"
+          },
+          {
+            "n": 22,
+            "t": "Lost in the Flood",
+            "d": "2016-05-18"
+          },
+          {
+            "n": 23,
+            "t": "Schism",
+            "d": "2016-05-25"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Legacy",
+            "d": "2016-10-05"
+          },
+          {
+            "n": 2,
+            "t": "The Recruits",
+            "d": "2016-10-12"
+          },
+          {
+            "n": 3,
+            "t": "A Matter of Trust",
+            "d": "2016-10-19"
+          },
+          {
+            "n": 4,
+            "t": "Penance",
+            "d": "2016-10-26"
+          },
+          {
+            "n": 5,
+            "t": "Human Target",
+            "d": "2016-11-02"
+          },
+          {
+            "n": 6,
+            "t": "So It Begins",
+            "d": "2016-11-09"
+          },
+          {
+            "n": 7,
+            "t": "Vigilante",
+            "d": "2016-11-16"
+          },
+          {
+            "n": 8,
+            "t": "Invasion!",
+            "d": "2016-11-30"
+          },
+          {
+            "n": 9,
+            "t": "What We Leave Behind",
+            "d": "2016-12-07"
+          },
+          {
+            "n": 10,
+            "t": "Who Are You?",
+            "d": "2017-01-25"
+          },
+          {
+            "n": 11,
+            "t": "Second Chances",
+            "d": "2017-02-01"
+          },
+          {
+            "n": 12,
+            "t": "Bratva",
+            "d": "2017-02-08"
+          },
+          {
+            "n": 13,
+            "t": "Spectre of the Gun",
+            "d": "2017-02-15"
+          },
+          {
+            "n": 14,
+            "t": "The Sin-Eater",
+            "d": "2017-02-22"
+          },
+          {
+            "n": 15,
+            "t": "Fighting Fire with Fire",
+            "d": "2017-03-01"
+          },
+          {
+            "n": 16,
+            "t": "Checkmate",
+            "d": "2017-03-15"
+          },
+          {
+            "n": 17,
+            "t": "Kapiushon",
+            "d": "2017-03-22"
+          },
+          {
+            "n": 18,
+            "t": "Disbanded",
+            "d": "2017-03-29"
+          },
+          {
+            "n": 19,
+            "t": "Dangerous Liaisons",
+            "d": "2017-04-26"
+          },
+          {
+            "n": 20,
+            "t": "Underneath",
+            "d": "2017-05-03"
+          },
+          {
+            "n": 21,
+            "t": "Honor Thy Fathers",
+            "d": "2017-05-10"
+          },
+          {
+            "n": 22,
+            "t": "Missing",
+            "d": "2017-05-17"
+          },
+          {
+            "n": 23,
+            "t": "Lian Yu",
+            "d": "2017-05-24"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Fallout",
+            "d": "2017-10-12"
+          },
+          {
+            "n": 2,
+            "t": "Tribute",
+            "d": "2017-10-19"
+          },
+          {
+            "n": 3,
+            "t": "Next of Kin",
+            "d": "2017-10-26"
+          },
+          {
+            "n": 4,
+            "t": "Reversal",
+            "d": "2017-11-02"
+          },
+          {
+            "n": 5,
+            "t": "Deathstroke Returns",
+            "d": "2017-11-09"
+          },
+          {
+            "n": 6,
+            "t": "Promises Kept",
+            "d": "2017-11-16"
+          },
+          {
+            "n": 7,
+            "t": "Thanksgiving",
+            "d": "2017-11-23"
+          },
+          {
+            "n": 8,
+            "t": "Crisis on Earth-X, Part 2",
+            "d": "2017-11-27"
+          },
+          {
+            "n": 9,
+            "t": "Irreconcilable Differences",
+            "d": "2017-12-07"
+          },
+          {
+            "n": 10,
+            "t": "Divided",
+            "d": "2018-01-18"
+          },
+          {
+            "n": 11,
+            "t": "We Fall",
+            "d": "2018-01-25"
+          },
+          {
+            "n": 12,
+            "t": "All for Nothing",
+            "d": "2018-02-01"
+          },
+          {
+            "n": 13,
+            "t": "The Devil's Greatest Trick",
+            "d": "2018-02-08"
+          },
+          {
+            "n": 14,
+            "t": "Collision Course",
+            "d": "2018-03-01"
+          },
+          {
+            "n": 15,
+            "t": "Doppelganger",
+            "d": "2018-03-08"
+          },
+          {
+            "n": 16,
+            "t": "The Thanatos Guild",
+            "d": "2018-03-29"
+          },
+          {
+            "n": 17,
+            "t": "Brothers in Arms",
+            "d": "2018-04-05"
+          },
+          {
+            "n": 18,
+            "t": "Fundamentals",
+            "d": "2018-04-12"
+          },
+          {
+            "n": 19,
+            "t": "The Dragon",
+            "d": "2018-04-19"
+          },
+          {
+            "n": 20,
+            "t": "Shifting Allegiances",
+            "d": "2018-04-26"
+          },
+          {
+            "n": 21,
+            "t": "Docket No. 11-19-41-73",
+            "d": "2018-05-03"
+          },
+          {
+            "n": 22,
+            "t": "The Ties That Bind",
+            "d": "2018-05-10"
+          },
+          {
+            "n": 23,
+            "t": "Life Sentence",
+            "d": "2018-05-17"
+          }
+        ],
+        "7": [
+          {
+            "n": 1,
+            "t": "Inmate 4587",
+            "d": "2018-10-15"
+          },
+          {
+            "n": 2,
+            "t": "The Longbow Hunters",
+            "d": "2018-10-22"
+          },
+          {
+            "n": 3,
+            "t": "Crossing Lines",
+            "d": "2018-10-29"
+          },
+          {
+            "n": 4,
+            "t": "Level Two",
+            "d": "2018-11-05"
+          },
+          {
+            "n": 5,
+            "t": "The Demon",
+            "d": "2018-11-12"
+          },
+          {
+            "n": 6,
+            "t": "Due Process",
+            "d": "2018-11-19"
+          },
+          {
+            "n": 7,
+            "t": "The Slabside Redemption",
+            "d": "2018-11-26"
+          },
+          {
+            "n": 8,
+            "t": "Unmasked",
+            "d": "2018-12-03"
+          },
+          {
+            "n": 9,
+            "t": "Elseworlds, Part 2",
+            "d": "2018-12-10"
+          },
+          {
+            "n": 10,
+            "t": "My Name Is Emiko Queen",
+            "d": "2019-01-21"
+          },
+          {
+            "n": 11,
+            "t": "Past Sins",
+            "d": "2019-01-28"
+          },
+          {
+            "n": 12,
+            "t": "Emerald Archer",
+            "d": "2019-02-04"
+          },
+          {
+            "n": 13,
+            "t": "Star City Slayer",
+            "d": "2019-02-11"
+          },
+          {
+            "n": 14,
+            "t": "Brothers & Sisters",
+            "d": "2019-03-04"
+          },
+          {
+            "n": 15,
+            "t": "Training Day",
+            "d": "2019-03-11"
+          },
+          {
+            "n": 16,
+            "t": "Star City 2040",
+            "d": "2019-03-18"
+          },
+          {
+            "n": 17,
+            "t": "Inheritance",
+            "d": "2019-03-25"
+          },
+          {
+            "n": 18,
+            "t": "Lost Canary",
+            "d": "2019-04-15"
+          },
+          {
+            "n": 19,
+            "t": "Spartan",
+            "d": "2019-04-22"
+          },
+          {
+            "n": 20,
+            "t": "Confessions",
+            "d": "2019-04-29"
+          },
+          {
+            "n": 21,
+            "t": "Living Proof",
+            "d": "2019-05-06"
+          },
+          {
+            "n": 22,
+            "t": "You Have Saved This City",
+            "d": "2019-05-13"
+          }
+        ],
+        "8": [
+          {
+            "n": 1,
+            "t": "Starling City",
+            "d": "2019-10-15"
+          },
+          {
+            "n": 2,
+            "t": "Welcome to Hong Kong",
+            "d": "2019-10-22"
+          },
+          {
+            "n": 3,
+            "t": "Leap of Faith",
+            "d": "2019-10-29"
+          },
+          {
+            "n": 4,
+            "t": "Present Tense",
+            "d": "2019-11-05"
+          },
+          {
+            "n": 5,
+            "t": "Prochnost",
+            "d": "2019-11-19"
+          },
+          {
+            "n": 6,
+            "t": "Reset",
+            "d": "2019-11-26"
+          },
+          {
+            "n": 7,
+            "t": "Purgatory",
+            "d": "2019-12-03"
+          },
+          {
+            "n": 8,
+            "t": "Crisis on Infinite Earths: Part Four",
+            "d": "2020-01-14"
+          },
+          {
+            "n": 9,
+            "t": "Green Arrow & The Canaries",
+            "d": "2020-01-21"
+          },
+          {
+            "n": 10,
+            "t": "Fadeout",
+            "d": "2020-01-28"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Greg Berlanti, Andrew Kreisberg, Geoff Johns",
+      "cast": "Grant Gustin, Candice Patton, Danielle Panabaker, Carlos Valdes, Jesse L. Martin, Tom Cavanagh",
+      "runtime": "~42 min per episode",
+      "plot": "Crime-scene investigator Barry Allen is struck by lightning during a particle-accelerator explosion and wakes from a coma with superhuman speed, becoming the Flash — protecting Central City alongside S.T.A.R. Labs' team of scientists while confronting an ever-expanding rogues gallery, the multiverse, and the consequences of tampering with time.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The Flash",
@@ -3600,7 +4468,947 @@
       "episodes": 184,
       "rt": null,
       "imdb": 7.5,
-      "blurb": "Barry Allen gains super-speed and grapples with time travel and the multiverse."
+      "blurb": "Barry Allen gains super-speed and grapples with time travel and the multiverse.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2014-10-07"
+          },
+          {
+            "n": 2,
+            "t": "Fastest Man Alive",
+            "d": "2014-10-14"
+          },
+          {
+            "n": 3,
+            "t": "Things You Can't Outrun",
+            "d": "2014-10-21"
+          },
+          {
+            "n": 4,
+            "t": "Going Rogue",
+            "d": "2014-10-28"
+          },
+          {
+            "n": 5,
+            "t": "Plastique",
+            "d": "2014-11-11"
+          },
+          {
+            "n": 6,
+            "t": "The Flash Is Born",
+            "d": "2014-11-18"
+          },
+          {
+            "n": 7,
+            "t": "Power Outage",
+            "d": "2014-11-25"
+          },
+          {
+            "n": 8,
+            "t": "Flash vs. Arrow",
+            "d": "2014-12-02"
+          },
+          {
+            "n": 9,
+            "t": "The Man in the Yellow Suit",
+            "d": "2014-12-09"
+          },
+          {
+            "n": 10,
+            "t": "Revenge of the Rogues",
+            "d": "2015-01-20"
+          },
+          {
+            "n": 11,
+            "t": "The Sound and the Fury",
+            "d": "2015-01-27"
+          },
+          {
+            "n": 12,
+            "t": "Crazy for You",
+            "d": "2015-02-03"
+          },
+          {
+            "n": 13,
+            "t": "The Nuclear Man",
+            "d": "2015-02-10"
+          },
+          {
+            "n": 14,
+            "t": "Fallout",
+            "d": "2015-02-17"
+          },
+          {
+            "n": 15,
+            "t": "Out of Time",
+            "d": "2015-03-17"
+          },
+          {
+            "n": 16,
+            "t": "Rogue Time",
+            "d": "2015-03-24"
+          },
+          {
+            "n": 17,
+            "t": "Tricksters",
+            "d": "2015-03-31"
+          },
+          {
+            "n": 18,
+            "t": "All Star Team Up",
+            "d": "2015-04-14"
+          },
+          {
+            "n": 19,
+            "t": "Who Is Harrison Wells?",
+            "d": "2015-04-21"
+          },
+          {
+            "n": 20,
+            "t": "The Trap",
+            "d": "2015-04-28"
+          },
+          {
+            "n": 21,
+            "t": "Grodd Lives",
+            "d": "2015-05-05"
+          },
+          {
+            "n": 22,
+            "t": "Rogue Air",
+            "d": "2015-05-12"
+          },
+          {
+            "n": 23,
+            "t": "Fast Enough",
+            "d": "2015-05-19"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Man Who Saved Central City",
+            "d": "2015-10-06"
+          },
+          {
+            "n": 2,
+            "t": "Flash of Two Worlds",
+            "d": "2015-10-13"
+          },
+          {
+            "n": 3,
+            "t": "Family of Rogues",
+            "d": "2015-10-20"
+          },
+          {
+            "n": 4,
+            "t": "The Fury of Firestorm",
+            "d": "2015-10-27"
+          },
+          {
+            "n": 5,
+            "t": "The Darkness and the Light",
+            "d": "2015-11-03"
+          },
+          {
+            "n": 6,
+            "t": "Enter Zoom",
+            "d": "2015-11-10"
+          },
+          {
+            "n": 7,
+            "t": "Gorilla Warfare",
+            "d": "2015-11-17"
+          },
+          {
+            "n": 8,
+            "t": "Legends of Today",
+            "d": "2015-12-01"
+          },
+          {
+            "n": 9,
+            "t": "Running to Stand Still",
+            "d": "2015-12-08"
+          },
+          {
+            "n": 10,
+            "t": "Potential Energy",
+            "d": "2016-01-19"
+          },
+          {
+            "n": 11,
+            "t": "The Reverse-Flash Returns",
+            "d": "2016-01-26"
+          },
+          {
+            "n": 12,
+            "t": "Fast Lane",
+            "d": "2016-02-02"
+          },
+          {
+            "n": 13,
+            "t": "Welcome to Earth-2",
+            "d": "2016-02-09"
+          },
+          {
+            "n": 14,
+            "t": "Escape from Earth-2",
+            "d": "2016-02-16"
+          },
+          {
+            "n": 15,
+            "t": "King Shark",
+            "d": "2016-02-23"
+          },
+          {
+            "n": 16,
+            "t": "Trajectory",
+            "d": "2016-03-22"
+          },
+          {
+            "n": 17,
+            "t": "Flash Back",
+            "d": "2016-03-29"
+          },
+          {
+            "n": 18,
+            "t": "Versus Zoom",
+            "d": "2016-04-19"
+          },
+          {
+            "n": 19,
+            "t": "Back to Normal",
+            "d": "2016-04-26"
+          },
+          {
+            "n": 20,
+            "t": "Rupture",
+            "d": "2016-05-03"
+          },
+          {
+            "n": 21,
+            "t": "The Runaway Dinosaur",
+            "d": "2016-05-10"
+          },
+          {
+            "n": 22,
+            "t": "Invincible",
+            "d": "2016-05-17"
+          },
+          {
+            "n": 23,
+            "t": "The Race of His Life",
+            "d": "2016-05-24"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Flashpoint",
+            "d": "2016-10-04"
+          },
+          {
+            "n": 2,
+            "t": "Paradox",
+            "d": "2016-10-11"
+          },
+          {
+            "n": 3,
+            "t": "Magenta",
+            "d": "2016-10-18"
+          },
+          {
+            "n": 4,
+            "t": "The New Rogues",
+            "d": "2016-10-25"
+          },
+          {
+            "n": 5,
+            "t": "Monster",
+            "d": "2016-11-01"
+          },
+          {
+            "n": 6,
+            "t": "Shade",
+            "d": "2016-11-15"
+          },
+          {
+            "n": 7,
+            "t": "Killer Frost",
+            "d": "2016-11-22"
+          },
+          {
+            "n": 8,
+            "t": "Invasion!",
+            "d": "2016-11-29"
+          },
+          {
+            "n": 9,
+            "t": "The Present",
+            "d": "2016-12-06"
+          },
+          {
+            "n": 10,
+            "t": "Borrowing Problems from the Future",
+            "d": "2017-01-24"
+          },
+          {
+            "n": 11,
+            "t": "Dead or Alive",
+            "d": "2017-01-31"
+          },
+          {
+            "n": 12,
+            "t": "Untouchable",
+            "d": "2017-02-07"
+          },
+          {
+            "n": 13,
+            "t": "Attack on Gorilla City",
+            "d": "2017-02-21"
+          },
+          {
+            "n": 14,
+            "t": "Attack on Central City",
+            "d": "2017-02-28"
+          },
+          {
+            "n": 15,
+            "t": "The Wrath of Savitar",
+            "d": "2017-03-07"
+          },
+          {
+            "n": 16,
+            "t": "Into the Speed Force",
+            "d": "2017-03-14"
+          },
+          {
+            "n": 17,
+            "t": "Duet",
+            "d": "2017-03-21"
+          },
+          {
+            "n": 18,
+            "t": "Abra Kadabra",
+            "d": "2017-03-28"
+          },
+          {
+            "n": 19,
+            "t": "The Once and Future Flash",
+            "d": "2017-04-25"
+          },
+          {
+            "n": 20,
+            "t": "I Know Who You Are",
+            "d": "2017-05-02"
+          },
+          {
+            "n": 21,
+            "t": "Cause and Effect",
+            "d": "2017-05-09"
+          },
+          {
+            "n": 22,
+            "t": "Infantino Street",
+            "d": "2017-05-16"
+          },
+          {
+            "n": 23,
+            "t": "Finish Line",
+            "d": "2017-05-23"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "The Flash Reborn",
+            "d": "2017-10-10"
+          },
+          {
+            "n": 2,
+            "t": "Mixed Signals",
+            "d": "2017-10-17"
+          },
+          {
+            "n": 3,
+            "t": "Luck Be a Lady",
+            "d": "2017-10-24"
+          },
+          {
+            "n": 4,
+            "t": "Elongated Journey Into Night",
+            "d": "2017-10-31"
+          },
+          {
+            "n": 5,
+            "t": "Girls Night Out",
+            "d": "2017-11-07"
+          },
+          {
+            "n": 6,
+            "t": "When Harry Met Harry…",
+            "d": "2017-11-14"
+          },
+          {
+            "n": 7,
+            "t": "Therefore I Am",
+            "d": "2017-11-21"
+          },
+          {
+            "n": 8,
+            "t": "Crisis on Earth-X, Part 3",
+            "d": "2017-11-28"
+          },
+          {
+            "n": 9,
+            "t": "Don't Run",
+            "d": "2017-12-05"
+          },
+          {
+            "n": 10,
+            "t": "The Trial of the Flash",
+            "d": "2018-01-16"
+          },
+          {
+            "n": 11,
+            "t": "The Elongated Knight Rises",
+            "d": "2018-01-23"
+          },
+          {
+            "n": 12,
+            "t": "Honey, I Shrunk Team Flash",
+            "d": "2018-01-30"
+          },
+          {
+            "n": 13,
+            "t": "True Colors",
+            "d": "2018-02-06"
+          },
+          {
+            "n": 14,
+            "t": "Subject 9",
+            "d": "2018-02-27"
+          },
+          {
+            "n": 15,
+            "t": "Enter Flashtime",
+            "d": "2018-03-06"
+          },
+          {
+            "n": 16,
+            "t": "Run, Iris, Run",
+            "d": "2018-03-13"
+          },
+          {
+            "n": 17,
+            "t": "Null and Annoyed",
+            "d": "2018-04-10"
+          },
+          {
+            "n": 18,
+            "t": "Lose Yourself",
+            "d": "2018-04-17"
+          },
+          {
+            "n": 19,
+            "t": "Fury Rogue",
+            "d": "2018-04-24"
+          },
+          {
+            "n": 20,
+            "t": "Therefore She Is",
+            "d": "2018-05-01"
+          },
+          {
+            "n": 21,
+            "t": "Harry and the Harrisons",
+            "d": "2018-05-08"
+          },
+          {
+            "n": 22,
+            "t": "Think Fast",
+            "d": "2018-05-15"
+          },
+          {
+            "n": 23,
+            "t": "We Are the Flash",
+            "d": "2018-05-22"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Nora",
+            "d": "2018-10-09"
+          },
+          {
+            "n": 2,
+            "t": "Blocked",
+            "d": "2018-10-16"
+          },
+          {
+            "n": 3,
+            "t": "The Death of Vibe",
+            "d": "2018-10-23"
+          },
+          {
+            "n": 4,
+            "t": "News Flash",
+            "d": "2018-10-30"
+          },
+          {
+            "n": 5,
+            "t": "All Doll'd Up",
+            "d": "2018-11-13"
+          },
+          {
+            "n": 6,
+            "t": "The Icicle Cometh",
+            "d": "2018-11-20"
+          },
+          {
+            "n": 7,
+            "t": "O Come, All Ye Thankful",
+            "d": "2018-11-27"
+          },
+          {
+            "n": 8,
+            "t": "What's Past Is Prologue",
+            "d": "2018-12-04"
+          },
+          {
+            "n": 9,
+            "t": "Elseworlds, Part 1",
+            "d": "2018-12-09"
+          },
+          {
+            "n": 10,
+            "t": "The Flash & The Furious",
+            "d": "2019-01-15"
+          },
+          {
+            "n": 11,
+            "t": "Seeing Red",
+            "d": "2019-01-22"
+          },
+          {
+            "n": 12,
+            "t": "Memorabilia",
+            "d": "2019-01-29"
+          },
+          {
+            "n": 13,
+            "t": "Goldfaced",
+            "d": "2019-02-05"
+          },
+          {
+            "n": 14,
+            "t": "Cause and XS",
+            "d": "2019-02-12"
+          },
+          {
+            "n": 15,
+            "t": "King Shark vs. Gorilla Grodd",
+            "d": "2019-03-05"
+          },
+          {
+            "n": 16,
+            "t": "Failure Is an Orphan",
+            "d": "2019-03-12"
+          },
+          {
+            "n": 17,
+            "t": "Time Bomb",
+            "d": "2019-03-19"
+          },
+          {
+            "n": 18,
+            "t": "Godspeed",
+            "d": "2019-04-16"
+          },
+          {
+            "n": 19,
+            "t": "Snow Pack",
+            "d": "2019-04-23"
+          },
+          {
+            "n": 20,
+            "t": "Gone Rogue",
+            "d": "2019-04-30"
+          },
+          {
+            "n": 21,
+            "t": "The Girl with the Red Lightning",
+            "d": "2019-05-07"
+          },
+          {
+            "n": 22,
+            "t": "Legacy",
+            "d": "2019-05-14"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Into the Void",
+            "d": "2019-10-08"
+          },
+          {
+            "n": 2,
+            "t": "A Flash of the Lightning",
+            "d": "2019-10-15"
+          },
+          {
+            "n": 3,
+            "t": "Dead Man Running",
+            "d": "2019-10-22"
+          },
+          {
+            "n": 4,
+            "t": "There Will Be Blood",
+            "d": "2019-10-29"
+          },
+          {
+            "n": 5,
+            "t": "Kiss Kiss Breach Breach",
+            "d": "2019-11-05"
+          },
+          {
+            "n": 6,
+            "t": "License to Elongate",
+            "d": "2019-11-19"
+          },
+          {
+            "n": 7,
+            "t": "The Last Temptation of Barry Allen, Part 1",
+            "d": "2019-11-26"
+          },
+          {
+            "n": 8,
+            "t": "The Last Temptation of Barry Allen, Part 2",
+            "d": "2019-12-03"
+          },
+          {
+            "n": 9,
+            "t": "Crisis on Infinite Earths: Part Three",
+            "d": "2019-12-10"
+          },
+          {
+            "n": 10,
+            "t": "Marathon",
+            "d": "2020-02-04"
+          },
+          {
+            "n": 11,
+            "t": "Love Is a Battlefield",
+            "d": "2020-02-11"
+          },
+          {
+            "n": 12,
+            "t": "A Girl Named Sue",
+            "d": "2020-02-18"
+          },
+          {
+            "n": 13,
+            "t": "Grodd Friended Me",
+            "d": "2020-02-25"
+          },
+          {
+            "n": 14,
+            "t": "Death of the Speed Force",
+            "d": "2020-03-10"
+          },
+          {
+            "n": 15,
+            "t": "The Exorcism of Nash Wells",
+            "d": "2020-03-17"
+          },
+          {
+            "n": 16,
+            "t": "So Long and Goodnight",
+            "d": "2020-04-21"
+          },
+          {
+            "n": 17,
+            "t": "Liberation",
+            "d": "2020-04-28"
+          },
+          {
+            "n": 18,
+            "t": "Pay the Piper",
+            "d": "2020-05-05"
+          },
+          {
+            "n": 19,
+            "t": "Success Is Assured",
+            "d": "2020-05-12"
+          }
+        ],
+        "7": [
+          {
+            "n": 1,
+            "t": "All's Well That Ends Wells",
+            "d": "2021-03-02"
+          },
+          {
+            "n": 2,
+            "t": "The Speed of Thought",
+            "d": "2021-03-09"
+          },
+          {
+            "n": 3,
+            "t": "Mother",
+            "d": "2021-03-16"
+          },
+          {
+            "n": 4,
+            "t": "Central City Strong",
+            "d": "2021-03-23"
+          },
+          {
+            "n": 5,
+            "t": "Fear Me",
+            "d": "2021-03-30"
+          },
+          {
+            "n": 6,
+            "t": "The One with the Nineties",
+            "d": "2021-04-06"
+          },
+          {
+            "n": 7,
+            "t": "Growing Pains",
+            "d": "2021-04-13"
+          },
+          {
+            "n": 8,
+            "t": "The People v. Killer Frost",
+            "d": "2021-05-04"
+          },
+          {
+            "n": 9,
+            "t": "Timeless",
+            "d": "2021-05-11"
+          },
+          {
+            "n": 10,
+            "t": "Family Matters, Part 1",
+            "d": "2021-05-18"
+          },
+          {
+            "n": 11,
+            "t": "Family Matters, Part 2",
+            "d": "2021-05-25"
+          },
+          {
+            "n": 12,
+            "t": "Good-Bye Vibrations",
+            "d": "2021-06-08"
+          },
+          {
+            "n": 13,
+            "t": "Masquerade",
+            "d": "2021-06-15"
+          },
+          {
+            "n": 14,
+            "t": "Rayo de Luz",
+            "d": "2021-06-22"
+          },
+          {
+            "n": 15,
+            "t": "Enemy at the Gates",
+            "d": "2021-06-29"
+          },
+          {
+            "n": 16,
+            "t": "P.O.W.",
+            "d": "2021-07-06"
+          },
+          {
+            "n": 17,
+            "t": "Heart of the Matter, Part 1",
+            "d": "2021-07-13"
+          },
+          {
+            "n": 18,
+            "t": "Heart of the Matter, Part 2",
+            "d": "2021-07-20"
+          }
+        ],
+        "8": [
+          {
+            "n": 1,
+            "t": "Armageddon, Part 1",
+            "d": "2021-11-16"
+          },
+          {
+            "n": 2,
+            "t": "Armageddon, Part 2",
+            "d": "2021-11-23"
+          },
+          {
+            "n": 3,
+            "t": "Armageddon, Part 3",
+            "d": "2021-11-30"
+          },
+          {
+            "n": 4,
+            "t": "Armageddon, Part 4",
+            "d": "2021-12-07"
+          },
+          {
+            "n": 5,
+            "t": "Armageddon, Part 5",
+            "d": "2021-12-14"
+          },
+          {
+            "n": 6,
+            "t": "Impulsive Excessive Disorder",
+            "d": "2022-03-09"
+          },
+          {
+            "n": 7,
+            "t": "Lockdown",
+            "d": "2022-03-16"
+          },
+          {
+            "n": 8,
+            "t": "The Fire Next Time",
+            "d": "2022-03-23"
+          },
+          {
+            "n": 9,
+            "t": "Phantoms",
+            "d": "2022-03-30"
+          },
+          {
+            "n": 10,
+            "t": "Reckless",
+            "d": "2022-04-06"
+          },
+          {
+            "n": 11,
+            "t": "Resurrection",
+            "d": "2022-04-13"
+          },
+          {
+            "n": 12,
+            "t": "Death Rises",
+            "d": "2022-04-27"
+          },
+          {
+            "n": 13,
+            "t": "Death Falls",
+            "d": "2022-05-04"
+          },
+          {
+            "n": 14,
+            "t": "Funeral for a Friend",
+            "d": "2022-05-11"
+          },
+          {
+            "n": 15,
+            "t": "Into the Still Force",
+            "d": "2022-05-18"
+          },
+          {
+            "n": 16,
+            "t": "The Curious Case of Bartholomew Allen",
+            "d": "2022-05-25"
+          },
+          {
+            "n": 17,
+            "t": "Keep It Dark",
+            "d": "2022-06-08"
+          },
+          {
+            "n": 18,
+            "t": "The Man in the Yellow Tie",
+            "d": "2022-06-15"
+          },
+          {
+            "n": 19,
+            "t": "Negative, Part One",
+            "d": "2022-06-22"
+          },
+          {
+            "n": 20,
+            "t": "Negative, Part Two",
+            "d": "2022-06-29"
+          }
+        ],
+        "9": [
+          {
+            "n": 1,
+            "t": "Wednesday Ever After",
+            "d": "2023-02-08"
+          },
+          {
+            "n": 2,
+            "t": "Hear No Evil",
+            "d": "2023-02-15"
+          },
+          {
+            "n": 3,
+            "t": "Rogues of War",
+            "d": "2023-02-22"
+          },
+          {
+            "n": 4,
+            "t": "The Mask of the Red Death, Part One",
+            "d": "2023-03-01"
+          },
+          {
+            "n": 5,
+            "t": "The Mask of the Red Death, Part Two",
+            "d": "2023-03-08"
+          },
+          {
+            "n": 6,
+            "t": "The Good, the Bad, and the Lucky",
+            "d": "2023-03-15"
+          },
+          {
+            "n": 7,
+            "t": "Wildest Dreams",
+            "d": "2023-03-29"
+          },
+          {
+            "n": 8,
+            "t": "Partners in Time",
+            "d": "2023-04-05"
+          },
+          {
+            "n": 9,
+            "t": "It's My Party and I'll Die If I Want To",
+            "d": "2023-04-26"
+          },
+          {
+            "n": 10,
+            "t": "A New World, Part 1: Reunions",
+            "d": "2023-05-03"
+          },
+          {
+            "n": 11,
+            "t": "A New World, Part 2: The Blues",
+            "d": "2023-05-10"
+          },
+          {
+            "n": 12,
+            "t": "A New World, Part 3: Changes",
+            "d": "2023-05-17"
+          },
+          {
+            "n": 13,
+            "t": "A New World, Part 4: Finale",
+            "d": "2023-05-24"
+          }
+        ]
+      }
     },
     {
       "creators": "Daniel Cerone, David S. Goyer",
