@@ -506,6 +506,7 @@ function openSheet(d){
       html += `<div class="sheet-section"><div class="sheet-label">SEASONS</div><div class="sheet-body">`;
       html += `${d.seasons} season${d.seasons==1?"":"s"}${d.episodes?`, ${d.episodes} episodes total`:""} — tap a season to see episodes</div>`;
       html += `<div class="season-chips">`;
+      if(d.epDetails && d.epDetails["0"]) html += `<span class="season-chip" data-season="0">Shorts</span>`;
       for(let i=1;i<=d.seasons;i++) html += `<span class="season-chip" data-season="${i}">S${i}</span>`;
       html += `</div><div id="episodeList"></div></div>`;
     }

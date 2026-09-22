@@ -1,13 +1,13 @@
 {
   "movies": [
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Lee Sholem",
+      "cast": "George Reeves, Phyllis Coates, Jeff Corey",
+      "runtime": "58 min",
+      "plot": "Superman must protect a pair of small, harmless alien beings unearthed by an oil-drilling operation from a fearful, torch-wielding mob.",
+      "whereToWatch": "Digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "NR",
       "trailer": "",
       "t": "Superman and the Mole Men",
       "y": "1951",
@@ -22,13 +22,13 @@
       "blurb": "George Reeves' first outing as Superman — the first-ever feature film based on a DC character, and the pilot for Adventures of Superman."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Richard Donner",
+      "cast": "Christopher Reeve, Margot Kidder, Gene Hackman, Marlon Brando",
+      "runtime": "143 min",
+      "plot": "Sent to Earth as an infant from the dying planet Krypton, Kal-El grows up as Clark Kent and becomes the costumed hero Superman, facing his first great test against the criminal mastermind Lex Luthor.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$55M · Worldwide gross ~$300M",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Superman",
       "y": "1978",
@@ -43,13 +43,13 @@
       "blurb": "Christopher Reeve's origin-to-icon debut; the film that proved a superhero movie could be prestige cinema."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Richard Lester",
+      "cast": "Christopher Reeve, Margot Kidder, Terence Stamp, Gene Hackman",
+      "runtime": "127 min",
+      "plot": "Three escaped Kryptonian criminals led by General Zod arrive on Earth demanding submission, forcing Superman to weigh giving up his powers for a life with Lois against defending the planet.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$54M · Worldwide gross ~$190M",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Superman II",
       "y": "1980",
@@ -64,13 +64,13 @@
       "blurb": "Zod and the Phantom Zone criminals arrive; Superman gives up his powers for Lois, then takes them back."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Richard Lester",
+      "cast": "Christopher Reeve, Richard Pryor, Margot Kidder, Annette O'Toole",
+      "runtime": "125 min",
+      "plot": "A computer-programming con man's synthetic kryptonite splits Superman into a good and an evil version of himself, while a corrupt businessman schemes to corner the world's oil market.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$39M · Worldwide gross ~$80M",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Superman III",
       "y": "1983",
@@ -85,13 +85,13 @@
       "blurb": "A tonal swing toward comedy, pitting Superman against a corrupted version of himself and Richard Pryor's hacker."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Jeannot Szwarc",
+      "cast": "Helen Slater, Faye Dunaway, Peter O'Toole, Mia Farrow",
+      "runtime": "124 min",
+      "plot": "Kara Zor-El leaves the Kryptonian survivor colony of Argo City to retrieve a lost artifact on Earth, where she must stop an ambitious witch from harnessing its power.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$35M · Worldwide gross ~$14M",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Supergirl",
       "y": "1984",
@@ -106,13 +106,13 @@
       "blurb": "Kara's solo spin-off from the Superman film series, poorly received on release."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Sidney J. Furie",
+      "cast": "Christopher Reeve, Gene Hackman, Margot Kidder, Jon Cryer",
+      "runtime": "90 min",
+      "plot": "Superman takes it upon himself to rid the world of nuclear weapons, only for Lex Luthor to create a powerful solar-charged adversary called Nuclear Man to stop him.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$17-36M · Worldwide gross ~$15.7M",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Superman IV: The Quest for Peace",
       "y": "1987",
@@ -127,13 +127,13 @@
       "blurb": "A famously troubled production sees Superman take on nuclear disarmament and Nuclear Man."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Bryan Singer",
+      "cast": "Brandon Routh, Kate Bosworth, Kevin Spacey, James Marsden",
+      "runtime": "154 min",
+      "plot": "Superman returns to Earth after a years-long absence to find Lois Lane engaged to another man and Lex Luthor plotting a real-estate scheme powered by stolen Kryptonian crystal technology.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$270M · Worldwide gross ~$391M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Superman Returns",
       "y": "2006",
@@ -148,13 +148,13 @@
       "blurb": "Bryan Singer's spiritual sequel to Superman II, ignoring III and IV, with Brandon Routh as Clark."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Wes Craven",
+      "cast": "Louis Jourdan, Adrienne Barbeau, Ray Wise",
+      "runtime": "91 min",
+      "plot": "A scientist transformed into a plant-based creature by his own experiment must protect a government agent and a stolen bio-restorative formula from a power-hungry rival.",
+      "whereToWatch": "Digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "R",
       "trailer": "",
       "t": "Swamp Thing",
       "y": "1982",
@@ -169,13 +169,13 @@
       "blurb": "Wes Craven's B-movie take on the muck-monster hero, based on the Len Wein/Bernie Wrightson comic."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Jim Wynorski",
+      "cast": "Louis Jourdan, Heather Locklear, Sarah Douglas",
+      "runtime": "88 min",
+      "plot": "A campier sequel finding Swamp Thing protecting the stepdaughter of his old nemesis from being used in further monstrous experiments.",
+      "whereToWatch": "Digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "The Return of Swamp Thing",
       "y": "1989",
@@ -190,13 +190,13 @@
       "blurb": "A campier sequel leaning further into B-movie horror-comedy."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Tim Burton",
+      "cast": "Michael Keaton, Jack Nicholson, Kim Basinger, Robert Wuhl",
+      "runtime": "126 min",
+      "plot": "Billionaire Bruce Wayne's masked alter-ego faces off against the Joker, a disfigured gangster who terrorizes Gotham City with a garish, murderous sense of showmanship.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$35M · Worldwide gross ~$411M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman",
       "y": "1989",
@@ -211,13 +211,13 @@
       "blurb": "Tim Burton's gothic, operatic take on Gotham, with Jack Nicholson's Joker."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Tim Burton",
+      "cast": "Michael Keaton, Danny DeVito, Michelle Pfeiffer, Christopher Walken",
+      "runtime": "126 min",
+      "plot": "Batman contends with the grotesque Penguin's mayoral ambitions and a vengeful Catwoman, both manipulated by a corrupt businessman with his own designs on Gotham.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$80M · Worldwide gross ~$267M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman Returns",
       "y": "1992",
@@ -232,13 +232,13 @@
       "blurb": "Burton doubles down on the grotesque with Catwoman and Penguin as tragic monsters."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Joel Schumacher",
+      "cast": "Val Kilmer, Tommy Lee Jones, Jim Carrey, Nicole Kidman, Chris O'Donnell",
+      "runtime": "121 min",
+      "plot": "Batman contends with the dual threat of Two-Face and the Riddler while taking in a new ward, Dick Grayson, who becomes his first cinematic Robin.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$100M · Worldwide gross ~$336M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman Forever",
       "y": "1995",
@@ -253,13 +253,13 @@
       "blurb": "Joel Schumacher brightens the tone considerably; Two-Face and the Riddler headline."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Joel Schumacher",
+      "cast": "George Clooney, Arnold Schwarzenegger, Chris O'Donnell, Uma Thurman, Alicia Silverstone",
+      "runtime": "125 min",
+      "plot": "Batman and Robin, joined by Barbara Wilson as Batgirl, face the icy Mr. Freeze and the seductive Poison Ivy in Gotham's campiest, most colorful chapter.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$125M · Worldwide gross ~$238M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman & Robin",
       "y": "1997",
@@ -274,13 +274,13 @@
       "blurb": "Neon camp excess that effectively ended the franchise until Nolan's reboot."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Kenneth Johnson",
+      "cast": "Shaquille O'Neal, Annabeth Gish, Judd Nelson, Richard Roundtree",
+      "runtime": "98 min",
+      "plot": "A military weapons designer builds a suit of armor to become the vigilante Steel after a rogue former colleague sells his illegal weapons designs to criminals on the street.",
+      "whereToWatch": "Digital rental/purchase",
+      "boxOffice": "Budget ~$16M · Worldwide gross ~$1.7M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Steel",
       "y": "1997",
@@ -293,13 +293,13 @@
       "blurb": "Shaquille O'Neal stars as John Henry Irons, loosely based on the post-Death of Superman hero."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Pitof",
+      "cast": "Halle Berry, Benjamin Bratt, Sharon Stone, Lambert Wilson",
+      "runtime": "104 min",
+      "plot": "A meek graphic designer is murdered after discovering her cosmetics company's dangerous secret, then resurrected with feline powers and a new identity as the vigilante Catwoman.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$100M · Worldwide gross ~$82M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Catwoman",
       "y": "2004",
@@ -314,13 +314,13 @@
       "blurb": "Halle Berry stars in a version of Catwoman not directly tied to the comics character."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Francis Lawrence",
+      "cast": "Keanu Reeves, Rachel Weisz, Shia LaBeouf, Tilda Swinton",
+      "runtime": "121 min",
+      "plot": "A cynical occult detective who can see angels and demons investigates a supernatural conspiracy behind a police detective's sister's suicide, uncovering a scheme to bring Hell to Earth.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$100M · Worldwide gross ~$231M",
+      "ageRating": "R",
       "trailer": "",
       "t": "Constantine",
       "y": "2005",
@@ -335,13 +335,13 @@
       "blurb": "Keanu Reeves as a chain-smoking occult detective, loosely based on Hellblazer."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Christopher Nolan",
+      "cast": "Christian Bale, Michael Caine, Liam Neeson, Katie Holmes, Gary Oldman, Cillian Murphy",
+      "runtime": "140 min",
+      "plot": "After training with the mysterious League of Shadows, Bruce Wayne returns to a crime-ridden Gotham to become Batman, confronting the corrupt underworld and a plot by his former mentor to destroy the city.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$150M · Worldwide gross ~$373M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman Begins",
       "y": "2005",
@@ -377,13 +377,13 @@
       "blurb": "Heath Ledger's Joker anchors a crime-thriller take on Batman vs. chaos."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Christopher Nolan",
+      "cast": "Christian Bale, Tom Hardy, Anne Hathaway, Joseph Gordon-Levitt, Marion Cotillard",
+      "runtime": "164 min",
+      "plot": "Eight years after taking the blame for Harvey Dent's crimes, a broken Bruce Wayne returns as Batman to face Bane, a masked mercenary threatening to level Gotham City.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$250M · Worldwide gross ~$1.081B",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "The Dark Knight Rises",
       "y": "2012",
@@ -398,13 +398,13 @@
       "blurb": "Bane and Talia al Ghul close out the trilogy with Gotham under siege."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Zack Snyder",
+      "cast": "Jackie Earle Haley, Patrick Wilson, Malin Åkerman, Billy Crudup, Matthew Goode, Jeffrey Dean Morgan",
+      "runtime": "162 min (Theatrical) / 186 min (Director's Cut)",
+      "plot": "In an alternate 1985 where masked vigilantes are outlawed, the murder of a government-sponsored former hero draws his estranged colleagues out of retirement and into a conspiracy tied to the looming threat of nuclear war.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$130M · Worldwide gross ~$185M",
+      "ageRating": "R",
       "trailer": "",
       "t": "Watchmen",
       "y": "2009",
@@ -417,13 +417,13 @@
       "blurb": "Zack Snyder's dense adaptation of Alan Moore and Dave Gibbons' deconstruction of superheroes."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "James McTeigue",
+      "cast": "Hugo Weaving, Natalie Portman, Stephen Rea, Stephen Fry",
+      "runtime": "132 min",
+      "plot": "In a dystopian, fascist near-future Britain, a masked anarchist known as V wages a personal war of terrorism and inspiration against the totalitarian government, drawing a young woman into his crusade.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$54M · Worldwide gross ~$132M",
+      "ageRating": "R",
       "trailer": "",
       "t": "V for Vendetta",
       "y": "2006",
@@ -436,13 +436,13 @@
       "blurb": "Alan Moore and David Lloyd's dystopian anarchist tale, adapted by the Wachowskis (as writers/producers)."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Matthew Vaughn",
+      "cast": "Charlie Cox, Claire Danes, Michelle Pfeiffer, Robert De Niro",
+      "runtime": "127 min",
+      "plot": "A young man ventures into a magical kingdom to retrieve a fallen star for the woman he loves, discovering the star is a living being pursued by witches and princes alike, based on Neil Gaiman's Vertigo miniseries.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$70M · Worldwide gross ~$135M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Stardust",
       "y": "2007",
@@ -455,13 +455,13 @@
       "blurb": "A fantasy romance based on Neil Gaiman and Charles Vess' Vertigo miniseries."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Sylvain White",
+      "cast": "Jeffrey Dean Morgan, Zoe Saldana, Chris Evans, Idris Elba",
+      "runtime": "97 min",
+      "plot": "A black-ops team framed for a crime they didn't commit goes rogue to take down the CIA operative who betrayed them, based on the Vertigo series.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$25M · Worldwide gross ~$28M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "The Losers",
       "y": "2010",
@@ -474,13 +474,13 @@
       "blurb": "A black-ops team framed for a crime they didn't commit, based on the Vertigo series."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Jimmy Hayward",
+      "cast": "Josh Brolin, Megan Fox, John Malkovich",
+      "runtime": "81 min",
+      "plot": "A scarred, supernaturally-touched bounty hunter is recruited by the U.S. government to stop a Confederate general from unleashing a devastating superweapon.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$47M · Worldwide gross ~$11M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Jonah Hex",
       "y": "2010",
@@ -493,13 +493,13 @@
       "blurb": "A poorly-received Western adaptation of DC's scarred bounty-hunter antihero."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Robert Schwentke",
+      "cast": "Bruce Willis, Morgan Freeman, John Malkovich, Helen Mirren",
+      "runtime": "111 min",
+      "plot": "A retired black-ops agent reassembles his old team of equally 'Retired, Extremely Dangerous' operatives after becoming the target of a assassination plot.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$58M · Worldwide gross ~$199M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Red",
       "y": "2010",
@@ -512,13 +512,13 @@
       "blurb": "Retired black-ops agents are targeted for elimination, based on Warren Ellis and Cully Hamner's WildStorm miniseries."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Dean Parisot",
+      "cast": "Bruce Willis, John Malkovich, Mary-Louise Parker, Helen Mirren, Catherine Zeta-Jones",
+      "runtime": "116 min",
+      "plot": "The retired team reunites for a globe-trotting mission to track down a portable nuclear device before it falls into the wrong hands.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$84M · Worldwide gross ~$148M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Red 2",
       "y": "2013",
@@ -531,13 +531,13 @@
       "blurb": "The sequel to Red, sending the retired team on a globe-trotting mission."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Andrea Berloff",
+      "cast": "Melissa McCarthy, Tiffany Haddish, Elisabeth Moss",
+      "runtime": "102 min",
+      "plot": "Three mob wives take over their imprisoned husbands' Hell's Kitchen rackets in 1978, becoming more ruthless than the men they replaced, based on the DC Vertigo miniseries.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$38M · Worldwide gross ~$16.6M",
+      "ageRating": "R",
       "trailer": "",
       "t": "The Kitchen",
       "y": "2019",
@@ -550,13 +550,13 @@
       "blurb": "Three mob wives take over their husbands' Hell's Kitchen rackets, based on the DC Vertigo miniseries."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Sam Mendes",
+      "cast": "Tom Hanks, Paul Newman, Jude Law, Daniel Craig",
+      "runtime": "117 min",
+      "plot": "A Depression-era Irish mob enforcer goes on the run with his young son after a betrayal costs him his family, seeking revenge against the men responsible.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$80M · Worldwide gross ~$181M",
+      "ageRating": "R",
       "trailer": "",
       "t": "Road to Perdition",
       "y": "2002",
@@ -569,13 +569,13 @@
       "blurb": "A Depression-era mob drama based on Max Allan Collins' graphic novel, published under DC's Paradox Press imprint."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "David Cronenberg",
+      "cast": "Viggo Mortensen, Maria Bello, Ed Harris, William Hurt",
+      "runtime": "96 min",
+      "plot": "A small-town diner owner's act of self-defense against armed robbers thrusts him into the spotlight, drawing the attention of mobsters who claim to recognize him from a violent past.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$32M · Worldwide gross ~$60M",
+      "ageRating": "R",
       "trailer": "",
       "t": "A History of Violence",
       "y": "2005",
@@ -588,13 +588,13 @@
       "blurb": "A diner owner's violent past resurfaces, based on the graphic novel published by DC/Vertigo."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Stephen Norrington",
+      "cast": "Sean Connery, Naseeruddin Shah, Peta Wilson, Stuart Townsend",
+      "runtime": "110 min",
+      "plot": "A team of Victorian literary icons — including Allan Quatermain, Captain Nemo, and the Invisible Man — assembles to stop a mysterious mastermind from igniting a world war.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$78M · Worldwide gross ~$179M",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "The League of Extraordinary Gentlemen",
       "y": "2003",
@@ -1072,13 +1072,13 @@
       "blurb": "Milly Alcock's Kara Zor-El, the second live-action film of the new DCU."
     },
     {
-      "director": "",
+      "director": "James Watkins",
       "cast": "",
       "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "plot": "A body-horror take on the shapeshifting Batman villain, following a struggling actor whose desperate use of an experimental cosmetic compound transforms him into the monstrous Clayface. Set in the new DCU; still upcoming, with most casting and plot details unconfirmed at time of writing.",
+      "whereToWatch": "Theatrical (upcoming)",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TBD",
       "trailer": "",
       "t": "Clayface",
       "y": "2026",
@@ -1091,13 +1091,13 @@
       "blurb": "A body-horror take on the shapeshifting Batman villain, set in the new DCU."
     },
     {
-      "director": "",
+      "director": "James Gunn",
       "cast": "",
       "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "plot": "The direct sequel to 2025's Superman, continuing the DCU's Chapter 1 slate. Still upcoming, with cast and plot details largely unconfirmed at time of writing.",
+      "whereToWatch": "Theatrical (upcoming)",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TBD",
       "trailer": "",
       "t": "Man of Tomorrow",
       "y": "2027",
@@ -1112,13 +1112,13 @@
       "blurb": "The Superman sequel, continuing the DCU's Chapter 1 slate."
     },
     {
-      "director": "",
-      "cast": "",
+      "director": "Matt Reeves",
+      "cast": "Robert Pattinson, Zoë Kravitz",
       "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "plot": "Matt Reeves' sequel to The Batman, currently in production. Plot details largely unconfirmed at time of writing.",
+      "whereToWatch": "Theatrical (upcoming)",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TBD",
       "trailer": "",
       "t": "The Batman: Part II",
       "y": "2028",
@@ -1173,13 +1173,13 @@
       "blurb": "An Aztec-set reimagining of Batman, released theatrically in Mexico."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "boxOffice": "",
-      "ageRating": "",
+      "director": "Eric Radomski, Bruce Timm",
+      "cast": "Kevin Conroy, Dana Delany, Hart Bochner, Mark Hamill",
+      "runtime": "76 min",
+      "plot": "A feature extension of Batman: The Animated Series, in which Batman is framed for a string of mob killings actually committed by a masked vigilante tied to his own past.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "boxOffice": "Budget ~$6M · Worldwide gross ~$5.6M",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Batman: Mask of the Phantasm",
       "y": "1993",
@@ -1236,13 +1236,13 @@
       "blurb": "The chibi Teen Titans satirize the superhero movie genre itself."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Boyd Kirkland",
+      "cast": "Kevin Conroy, Michael Ansara, Loren Lester, Mary Kay Bergman",
+      "runtime": "67 min",
+      "plot": "Batman and Robin race to save Barbara Gordon after Mr. Freeze kidnaps her, needing a blood transfusion to save his cryogenically-frozen wife's life.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Batman & Mr. Freeze: SubZero",
       "y": "1998",
@@ -1257,13 +1257,13 @@
       "blurb": "Batman and Robin race to save Barbara Gordon after Mr. Freeze kidnaps her for a transfusion."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Curt Geda",
+      "cast": "Will Friedle, Kevin Conroy, Mark Hamill",
+      "runtime": "76 min",
+      "plot": "An older Bruce Wayne and his successor Terry McGinnis confront a resurrected Joker, whose return unearths a dark secret from Bruce's past with the original Robin, Tim Drake.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman Beyond: Return of the Joker",
       "y": "2000",
@@ -1278,13 +1278,13 @@
       "blurb": "An older Bruce Wayne and successor Terry McGinnis confront a resurrected Joker."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Curt Geda",
+      "cast": "Kevin Conroy, Kyra Sedgwick, Elisa Gabrielli, Kevin Michael Richardson",
+      "runtime": "73 min",
+      "plot": "A mysterious new Batwoman appears in Gotham, forcing Batman to determine whether she's an ally or a dangerous vigilante — and to uncover which of three women is hiding behind the mask.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Batman: Mystery of the Batwoman",
       "y": "2003",
@@ -1299,13 +1299,13 @@
       "blurb": "A mysterious new Batwoman appears in Gotham, and Batman must uncover her identity."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Michael Goguen, Butch Lukic",
+      "cast": "Rino Romano, Peter Stormare, Alimi Ballard",
+      "runtime": "79 min",
+      "plot": "Set in The Batman's animated continuity, the Penguin's grave-robbing scheme accidentally resurrects Count Dracula, forcing Batman to become a vampire hunter.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "The Batman vs. Dracula",
       "y": "2005",
@@ -1320,13 +1320,13 @@
       "blurb": "Set in The Batman TV series' universe, Dracula rises in Gotham after the Penguin unearths his coffin."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Toshihiko Masuda",
+      "cast": "George Newbern, Dana Delany, Powers Boothe, Christina Ricci",
+      "runtime": "71 min",
+      "plot": "Loosely connected to Superman: The Animated Series but not considered official DCAU canon, pitting Superman and Lex Luthor against an invading Brainiac.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Superman: Brainiac Attacks",
       "y": "2006",
@@ -1341,13 +1341,13 @@
       "blurb": "Loosely connected to Superman: The Animated Series but not considered official DCAU continuity."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Lauren Montgomery, Brandon Vietti, Bruce Timm",
+      "cast": "Adam Baldwin, Anne Heche, James Marsters",
+      "runtime": "78 min",
+      "plot": "An animated adaptation of the Death of Superman storyline, as the unstoppable creature Doomsday rampages toward Metropolis and Superman gives everything to stop it.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Superman: Doomsday",
       "y": "2007",
@@ -1362,13 +1362,13 @@
       "blurb": "Adapts the Death of Superman storyline; opens the long-running DC Universe Animated Original Movies line."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Dave Bullock",
+      "cast": "Kyle MacLachlan, Jeremy Sisto, Lucy Lawless, Miguel Ferrer",
+      "runtime": "75 min",
+      "plot": "Based on Darwyn Cooke's DC: The New Frontier, tracking a new generation of heroes emerging against a Cold War backdrop and uniting against a mysterious, world-threatening force.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Justice League: The New Frontier",
       "y": "2008",
@@ -1383,13 +1383,13 @@
       "blurb": "Based on Darwyn Cooke's DC: The New Frontier, set against the backdrop of the Cold War."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Various (anthology)",
+      "cast": "Kevin Conroy",
+      "runtime": "76 min",
+      "plot": "Six anime-style animated shorts by different directors, bridging the gap between Batman Begins and The Dark Knight as Bruce Wayne refines his approach to crimefighting.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman: Gotham Knight",
       "y": "2008",
@@ -1404,13 +1404,13 @@
       "blurb": "Six anime-style shorts bridging Batman Begins and The Dark Knight."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Lauren Montgomery",
+      "cast": "Keri Russell, Nathan Fillion, Alfred Molina, Rosario Dawson",
+      "runtime": "74 min",
+      "plot": "An origin story loosely based on 'Gods and Mortals,' pitting a young Diana against the god of war Ares after a downed pilot crash-lands on Themyscira.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Wonder Woman",
       "y": "2009",
@@ -1425,13 +1425,13 @@
       "blurb": "An origin story pitting Diana against Ares, loosely based on 'Gods and Mortals'."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Lauren Montgomery",
+      "cast": "Christopher Meloni, Victor Garber, Michael Madsen",
+      "runtime": "76 min",
+      "plot": "Test pilot Hal Jordan's induction into the Green Lantern Corps, uncovering a conspiracy of corruption within the ranks of his new intergalactic peacekeeping force.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Green Lantern: First Flight",
       "y": "2009",
@@ -1446,13 +1446,13 @@
       "blurb": "A standalone adaptation of Hal Jordan's induction into the Green Lantern Corps."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu",
+      "cast": "Tim Daly, Kevin Conroy, Clancy Brown, Allison Mack",
+      "runtime": "65 min",
+      "plot": "With the U.S. President framing Superman for murder and a kryptonite meteor bearing down on Earth, Batman and Superman go on the run together as fugitives.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Superman/Batman: Public Enemies",
       "y": "2009",
@@ -1468,13 +1468,13 @@
       "blurb": "With the U.S. President framing Superman for murder, Batman and Superman team up on the run."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu, Lauren Montgomery",
+      "cast": "James Woods, Mark Harmon, Chris Noth, Gina Torres",
+      "runtime": "76 min",
+      "plot": "A parallel-Earth Justice League of evildoers, the Crime Syndicate, threatens to invade the heroes' world after overthrowing their own.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Justice League: Crisis on Two Earths",
       "y": "2010",
@@ -1489,13 +1489,13 @@
       "blurb": "A parallel-Earth Justice League of evildoers threatens to invade the heroes' world."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Brandon Vietti",
+      "cast": "Bruce Greenwood, Jensen Ackles, John DiMaggio, Neil Patrick Harris",
+      "runtime": "75 min",
+      "plot": "A resurrected Jason Todd returns to Gotham as the lethal vigilante Red Hood, challenging Batman's no-kill code and demanding he finally deal with the Joker.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman: Under the Red Hood",
       "y": "2010",
@@ -1510,13 +1510,13 @@
       "blurb": "A resurrected Jason Todd returns as a lethal vigilante challenging Batman's no-kill rule."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Lauren Montgomery",
+      "cast": "Tim Daly, Kevin Conroy, Summer Glau, Andre Braugher",
+      "runtime": "76 min",
+      "plot": "Supergirl's arrival on Earth draws the attention of Darkseid and Apokolips, forcing Superman and Batman to protect her from being conscripted into Darkseid's army.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Superman/Batman: Apocalypse",
       "y": "2010",
@@ -1532,13 +1532,13 @@
       "blurb": "Supergirl's arrival on Earth draws the attention of Darkseid and Apokolips."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu",
+      "cast": "James Denton, Christina Hendricks, Anthony LaPaglia, Ed Asner",
+      "runtime": "76 min",
+      "plot": "A faithful adaptation of the acclaimed Morrison/Quitely comic, sending a dying Superman through twelve labors to secure his legacy before his powers fail him for good.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "All-Star Superman",
       "y": "2011",
@@ -1553,13 +1553,13 @@
       "blurb": "A faithful adaptation of the acclaimed Morrison/Quitely comic, sending a dying Superman through twelve labors."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Jay Oliva, Christopher Berkeley",
+      "cast": "Nathan Fillion, Elisabeth Moss, Henry Rollins",
+      "runtime": "72 min",
+      "plot": "An anthology of Green Lantern Corps tales, framed by Hal Jordan learning the history of the ring he now wears from past and present Lanterns.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Green Lantern: Emerald Knights",
       "y": "2011",
@@ -1574,13 +1574,13 @@
       "blurb": "An anthology of Green Lantern Corps tales framed by Hal Jordan's training."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu, Lauren Montgomery",
+      "cast": "Ben McKenzie, Bryan Cranston, Eliza Dushku, Jon Polito",
+      "runtime": "64 min",
+      "plot": "A faithful adaptation of Frank Miller and David Mazzucchelli's foundational origin story, following Bruce Wayne's first year as Batman alongside Jim Gordon's arrival in a corrupt Gotham.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman: Year One",
       "y": "2011",
@@ -1724,13 +1724,13 @@
       "blurb": "DCAMU film 5 — Damian Wayne is lured toward the secret society Court of Owls."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu",
+      "cast": "Benjamin Bratt, Michael C. Hall, Tamara Taylor, C. Thomas Howell",
+      "runtime": "74 min",
+      "plot": "An alternate-universe Justice League with darker origins — Superman raised by Zod, Batman a vampire, Wonder Woman a New God — must earn the public's trust after being framed for murder.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Justice League: Gods and Monsters",
       "y": "2015",
@@ -1766,13 +1766,13 @@
       "blurb": "DCAMU film 6 — with Batman missing, Batwoman and Nightwing lead a new Bat-family."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu",
+      "cast": "Jason O'Mara, Taissa Farmiga, Stuart Allan, Jake T. Austin",
+      "runtime": "75 min",
+      "plot": "Damian Wayne is sent to join the Teen Titans while the rest of the Justice League confronts Trigon, whose demonic influence is spreading through the League's own members.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Justice League vs. Teen Titans",
       "y": "2016",
@@ -1810,13 +1810,13 @@
       "blurb": "An adaptation of Moore/Bolland's Joker-origin one-shot, with an added first act."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Rick Morales",
+      "cast": "Adam West, Burt Ward, Julie Newmar",
+      "runtime": "73 min",
+      "plot": "Adam West and Burt Ward reprise their 1960s roles in this animated homage, as the Dynamic Duo face off against Penguin, Joker, Riddler, and Catwoman.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Batman: Return of the Caped Crusaders",
       "y": "2016",
@@ -1874,13 +1874,13 @@
       "blurb": "DCAMU film 9 — a new Titan may be a spy for the assassin Deathstroke."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu",
+      "cast": "Loren Lester, Melissa Rauch, Kevin Michael Richardson, Paget Brewster",
+      "runtime": "87 min",
+      "plot": "Batman and Nightwing reluctantly team with a reformed-ish Harley Quinn to stop Poison Ivy and Jason Woodrue's plan to eliminate humanity to save the planet.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman and Harley Quinn",
       "y": "2017",
@@ -1896,13 +1896,13 @@
       "blurb": "Batman and Nightwing reluctantly team with Harley Quinn to stop Poison Ivy and Jason Woodrue."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Rick Morales",
+      "cast": "Adam West, Burt Ward, William Shatner, Steven Weber",
+      "runtime": "73 min",
+      "plot": "Adam West's final performance as Batman, teaming with Robin and Batgirl to stop William Shatner's Two-Face and a united rogues gallery from taking over Gotham.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Batman vs. Two-Face",
       "y": "2017",
@@ -2045,13 +2045,13 @@
       "blurb": "DCAMU film 12 — the direct follow-up, tracking the four pretenders to Superman's mantle."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Sam Liu",
+      "cast": "Kevin Conroy, Stuart Allan, Kevin Michael Richardson, Amy Acker",
+      "runtime": "78 min",
+      "plot": "Loosely tied to Justice League Unlimited continuity, three fugitives from the future — the Fatal Five — arrive in the present, pursued by a fractured Star Boy seeking Batman's help.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Justice League vs. the Fatal Five",
       "y": "2019",
@@ -2066,13 +2066,13 @@
       "blurb": "Loosely tied to Justice League Unlimited, pitting the League against future villains."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Jake Castorena, Zamo Cardenas",
+      "cast": "Troy Baker, Eric Bauza, Ben Giroux",
+      "runtime": "82 min",
+      "plot": "A crossover team-up sending Batman to New York to investigate the Foot Clan's ties to Ra's al Ghul, teaming him with the Teenage Mutant Ninja Turtles.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman vs. Teenage Mutant Ninja Turtles",
       "y": "2019",
@@ -2087,13 +2087,13 @@
       "blurb": "A crossover team-up produced with Nickelodeon, based on the IDW comic."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Justin Copeland",
+      "cast": "Jason O'Mara, Jennifer Morrison, Jerry O'Connell, Sean Maher",
+      "runtime": "82 min",
+      "plot": "Adapts Loeb/Lee's murder-mystery arc, pitting Batman against nearly his entire rogues gallery while chasing the identity of the mysterious, bandage-wrapped villain Hush.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG-13",
       "trailer": "",
       "t": "Batman: Hush",
       "y": "2019",
@@ -2108,13 +2108,13 @@
       "blurb": "DCAMU film 13 — adapts Loeb/Lee's mystery pitting Batman against nearly his entire rogues gallery."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Peter Rida Michail, Aaron Horvath",
+      "cast": "Greg Cipes, Scott Menville, Khary Payton, Tara Strong, Hynden Walch",
+      "runtime": "74 min",
+      "plot": "A crossover pitting the comedic Teen Titans Go! cast against their more serious original-series counterparts after the two teams meet in Tokyo.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Teen Titans Go! vs. Teen Titans",
       "y": "2019",
@@ -2340,13 +2340,13 @@
       "blurb": "Selina Kyle chases a MacGuffin across Europe in an anime-inflected heist thriller."
     },
     {
-      "director": "",
+      "director": "Ben Jones",
       "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "runtime": "76 min",
+      "plot": "A multiverse-hopping crossover between the comedic Teen Titans Go! cast and the DC Super Hero Girls, teaming up against a shared threat.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Teen Titans Go! & DC Super Hero Girls: Mayhem in the Multiverse",
       "y": "2022",
@@ -2614,10 +2614,10 @@
       "director": "",
       "cast": "",
       "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "plot": "The first chapter of an animated trilogy adapting the classic comics arc in which Bane systematically breaks down Batman both mentally and physically before finally breaking his back.",
+      "whereToWatch": "Digital rental/purchase (upcoming)",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TBD",
       "trailer": "",
       "t": "Batman: Knightfall – Part 1: Knightfall",
       "y": "2026",
@@ -2635,10 +2635,10 @@
       "director": "",
       "cast": "",
       "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "plot": "The second chapter of the animated Knightfall trilogy, adapting the arc in which Jean-Paul Valley takes over as a more violent, unstable Batman after Bane breaks Bruce Wayne's back. Still upcoming; details largely unconfirmed at time of writing.",
+      "whereToWatch": "Digital rental/purchase (upcoming)",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TBD",
       "trailer": "",
       "t": "Batman: Knightfall – Part 2: Knightquest",
       "y": "2026",
@@ -2656,10 +2656,10 @@
       "director": "",
       "cast": "",
       "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "plot": "The concluding chapter of the animated Knightfall trilogy, adapting Bruce Wayne's recovery and reclamation of the Batman mantle from Jean-Paul Valley. Still upcoming; details largely unconfirmed at time of writing.",
+      "whereToWatch": "Digital rental/purchase (upcoming)",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TBD",
       "trailer": "",
       "t": "Batman: Knightfall – Part 3: KnightsEnd",
       "y": "2027",
@@ -2750,13 +2750,13 @@
       "blurb": "The Super Hero Girls dive into an undersea adventure in Atlantis."
     },
     {
-      "director": "",
+      "director": "Jon Burton",
       "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "runtime": "71 min",
+      "plot": "When Lex Luthor and the Joker form an uneasy alliance to seize control of Gotham and Metropolis, Batman is forced to set aside his solo instincts and team up with Superman and the wider Justice League.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Lego Batman: The Movie – DC Super Heroes Unite",
       "y": "2013",
@@ -3003,13 +3003,13 @@
       "blurb": "The Bat-family suits up in mechs against a mutated rogues gallery."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Curt Geda, Dan Riba, Toshihiko Masuda",
+      "cast": "Tim Daly, Dana Delany, Clancy Brown",
+      "runtime": "120 min",
+      "plot": "A compilation of Superman: The Animated Series' opening episodes, retelling Krypton's destruction and Clark Kent's earliest days as Superman in Metropolis.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Superman: The Last Son of Krypton",
       "y": "1996",
@@ -3024,13 +3024,13 @@
       "blurb": "A compilation of Superman: The Animated Series' opening episodes, retelling his origin."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Toshihiko Masuda, Curt Geda, Dan Riba",
+      "cast": "Tim Daly, Kevin Conroy, Clancy Brown, Dean Cain",
+      "runtime": "82 min",
+      "plot": "A compilation of the Superman: The Animated Series crossover episodes that first paired Batman and Superman on screen in the DCAU, against the Joker and Lex Luthor's uneasy alliance.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "The Batman/Superman Movie: World's Finest",
       "y": "1997",
@@ -3046,13 +3046,13 @@
       "blurb": "A compilation film from the Superman: TAS crossover episodes that first paired the two heroes in the DCAU."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Yuichiro Yano, Curt Geda, Dan Riba",
+      "cast": "Will Friedle, Kevin Conroy",
+      "runtime": "88 min",
+      "plot": "A compilation of Batman Beyond's opening episodes, introducing teenager Terry McGinnis as the new, tech-suited Batman decades after Bruce Wayne's retirement.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Batman Beyond: The Movie",
       "y": "1999",
@@ -3067,13 +3067,13 @@
       "blurb": "A compilation of Batman Beyond's first two episodes, introducing Terry McGinnis."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Dan Riba, Butch Lukic",
+      "cast": "George Newbern, Susan Eisenberg, Carl Lumbly",
+      "runtime": "66 min",
+      "plot": "A compilation of the Justice League animated series' opening episodes, chronicling the team's formation against an alien invasion.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Justice League: Secret Origins",
       "y": "2001",
@@ -3088,13 +3088,13 @@
       "blurb": "A compilation of the Justice League animated series' opening episodes."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Dan Riba, Butch Lukic, Joaquim Dos Santos",
+      "cast": "George Newbern, Susan Eisenberg, Carl Lumbly",
+      "runtime": "133 min",
+      "plot": "A compilation of the Justice League animated series finale, in which the Thanagarians reveal their plan to invade and sterilize Earth.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Justice League: Starcrossed",
       "y": "2004",
@@ -3109,13 +3109,13 @@
       "blurb": "A compilation of the Justice League series finale, in which the Thanagarians invade Earth."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Doug Murphy",
+      "cast": "Matt Ryan, Damian O'Hare, Emily O'Brien",
+      "runtime": "76 min",
+      "plot": "A compilation of the animated web-series, following John Constantine's search for a cure for a young girl trapped in a coma by a demon, tied into the DC Animated Movie Universe.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TV-MA",
       "trailer": "",
       "t": "Constantine: City of Demons – The Movie",
       "y": "2018",
@@ -3130,13 +3130,13 @@
       "blurb": "A compilation of the animated web-series, tied into the DC Animated Movie Universe."
     },
     {
-      "director": "",
+      "director": "Cecilia Aranovich",
       "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "runtime": "65 min",
+      "plot": "A compilation of the rebooted DC Super Hero Girls series' first episodes, introducing the Super Hero High cast in their new continuity.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "t": "DC Super Hero Girls: Sweet Justice",
       "y": "2019",
@@ -3168,13 +3168,13 @@
       "blurb": "A standalone origin story for the mercenary assassin Slade Wilson."
     },
     {
-      "director": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
+      "director": "Victor Courtright, Marly Halpern-Graser",
+      "cast": "Cooper Andrews, Gillian Jacobs, Thomas Lennon, Dana Snyder",
+      "runtime": "66 min (compiled)",
+      "plot": "A theatrical/home-video compilation of the 3-episode miniseries, following Arthur Curry's first day as King of Atlantis.",
+      "whereToWatch": "Max, digital rental/purchase",
       "boxOffice": "",
-      "ageRating": "",
+      "ageRating": "PG",
       "trailer": "",
       "t": "Aquaman: King of Atlantis",
       "y": "2022",
@@ -3694,12 +3694,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Ali Adler, Greg Berlanti, Andrew Kreisberg",
+      "cast": "Melissa Benoist, Mehcad Brooks, Chyler Leigh, Jeremy Jordan, David Harewood, Chris Wood",
+      "runtime": "~42-45 min per episode",
+      "plot": "Kara Zor-El, Superman's cousin, steps out of her cousin's shadow and her secret identity as a mild-mannered CatCo assistant to become Supergirl, protecting National City alongside the secret alien-monitoring agency the DEO.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Supergirl",
@@ -3713,15 +3713,659 @@
       "episodes": 126,
       "rt": null,
       "imdb": 6.4,
-      "blurb": "Kara Danvers steps into her own heroics in National City."
+      "blurb": "Kara Danvers steps into her own heroics in National City.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2015-10-26"
+          },
+          {
+            "n": 2,
+            "t": "Stronger Together",
+            "d": "2015-11-02"
+          },
+          {
+            "n": 3,
+            "t": "Fight or Flight",
+            "d": "2015-11-09"
+          },
+          {
+            "n": 4,
+            "t": "How Does She Do It?",
+            "d": "2015-11-23"
+          },
+          {
+            "n": 5,
+            "t": "Livewire",
+            "d": "2015-11-16"
+          },
+          {
+            "n": 6,
+            "t": "Red Faced",
+            "d": "2015-11-30"
+          },
+          {
+            "n": 7,
+            "t": "Human for a Day",
+            "d": "2015-12-07"
+          },
+          {
+            "n": 8,
+            "t": "Hostile Takeover",
+            "d": "2015-12-14"
+          },
+          {
+            "n": 9,
+            "t": "Blood Bonds",
+            "d": "2016-01-04"
+          },
+          {
+            "n": 10,
+            "t": "Childish Things",
+            "d": "2016-01-18"
+          },
+          {
+            "n": 11,
+            "t": "Strange Visitor from Another Planet",
+            "d": "2016-01-25"
+          },
+          {
+            "n": 12,
+            "t": "Bizarro",
+            "d": "2016-02-01"
+          },
+          {
+            "n": 13,
+            "t": "For the Girl Who Has Everything",
+            "d": "2016-02-08"
+          },
+          {
+            "n": 14,
+            "t": "Truth, Justice and the American Way",
+            "d": "2016-02-22"
+          },
+          {
+            "n": 15,
+            "t": "Solitude",
+            "d": "2016-02-29"
+          },
+          {
+            "n": 16,
+            "t": "Falling",
+            "d": "2016-03-14"
+          },
+          {
+            "n": 17,
+            "t": "Manhunter",
+            "d": "2016-03-21"
+          },
+          {
+            "n": 18,
+            "t": "Worlds Finest",
+            "d": "2016-03-28"
+          },
+          {
+            "n": 19,
+            "t": "Myriad",
+            "d": "2016-04-11"
+          },
+          {
+            "n": 20,
+            "t": "Better Angels",
+            "d": "2016-04-18"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Adventures of Supergirl",
+            "d": "2016-10-10"
+          },
+          {
+            "n": 2,
+            "t": "The Last Children of Krypton",
+            "d": "2016-10-17"
+          },
+          {
+            "n": 3,
+            "t": "Welcome to Earth",
+            "d": "2016-10-24"
+          },
+          {
+            "n": 4,
+            "t": "Survivors",
+            "d": "2016-10-31"
+          },
+          {
+            "n": 5,
+            "t": "Crossfire",
+            "d": "2016-11-07"
+          },
+          {
+            "n": 6,
+            "t": "Changing",
+            "d": "2016-11-14"
+          },
+          {
+            "n": 7,
+            "t": "The Darkest Place",
+            "d": "2016-11-21"
+          },
+          {
+            "n": 8,
+            "t": "Medusa",
+            "d": "2016-11-28"
+          },
+          {
+            "n": 9,
+            "t": "Supergirl Lives",
+            "d": "2017-01-23"
+          },
+          {
+            "n": 10,
+            "t": "We Can Be Heroes",
+            "d": "2017-01-30"
+          },
+          {
+            "n": 11,
+            "t": "The Martian Chronicles",
+            "d": "2017-02-06"
+          },
+          {
+            "n": 12,
+            "t": "Luthors",
+            "d": "2017-02-13"
+          },
+          {
+            "n": 13,
+            "t": "Mr. & Mrs. Mxyzptlk",
+            "d": "2017-02-20"
+          },
+          {
+            "n": 14,
+            "t": "Homecoming",
+            "d": "2017-02-27"
+          },
+          {
+            "n": 15,
+            "t": "Exodus",
+            "d": "2017-03-06"
+          },
+          {
+            "n": 16,
+            "t": "Star-Crossed",
+            "d": "2017-03-20"
+          },
+          {
+            "n": 17,
+            "t": "Distant Sun",
+            "d": "2017-03-27"
+          },
+          {
+            "n": 18,
+            "t": "Ace Reporter",
+            "d": "2017-04-24"
+          },
+          {
+            "n": 19,
+            "t": "Alex",
+            "d": "2017-05-01"
+          },
+          {
+            "n": 20,
+            "t": "City of Lost Children",
+            "d": "2017-05-08"
+          },
+          {
+            "n": 21,
+            "t": "Resist",
+            "d": "2017-05-15"
+          },
+          {
+            "n": 22,
+            "t": "Nevertheless, She Persisted",
+            "d": "2017-05-22"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Girl of Steel",
+            "d": "2017-10-09"
+          },
+          {
+            "n": 2,
+            "t": "Triggers",
+            "d": "2017-10-16"
+          },
+          {
+            "n": 3,
+            "t": "Far from the Tree",
+            "d": "2017-10-23"
+          },
+          {
+            "n": 4,
+            "t": "The Faithful",
+            "d": "2017-10-30"
+          },
+          {
+            "n": 5,
+            "t": "Damage",
+            "d": "2017-11-06"
+          },
+          {
+            "n": 6,
+            "t": "Midvale",
+            "d": "2017-11-13"
+          },
+          {
+            "n": 7,
+            "t": "Wake Up",
+            "d": "2017-11-20"
+          },
+          {
+            "n": 8,
+            "t": "Crisis on Earth-X, Part 1",
+            "d": "2017-11-27"
+          },
+          {
+            "n": 9,
+            "t": "Reign",
+            "d": "2017-12-04"
+          },
+          {
+            "n": 10,
+            "t": "Legion of Superheroes",
+            "d": "2018-01-15"
+          },
+          {
+            "n": 11,
+            "t": "Fort Rozz",
+            "d": "2018-01-22"
+          },
+          {
+            "n": 12,
+            "t": "For Good",
+            "d": "2018-01-29"
+          },
+          {
+            "n": 13,
+            "t": "Both Sides Now",
+            "d": "2018-02-05"
+          },
+          {
+            "n": 14,
+            "t": "Schott Through the Heart",
+            "d": "2018-04-16"
+          },
+          {
+            "n": 15,
+            "t": "In Search of Lost Time",
+            "d": "2018-04-23"
+          },
+          {
+            "n": 16,
+            "t": "Of Two Minds",
+            "d": "2018-04-30"
+          },
+          {
+            "n": 17,
+            "t": "Trinity",
+            "d": "2018-05-07"
+          },
+          {
+            "n": 18,
+            "t": "Shelter from the Storm",
+            "d": "2018-05-14"
+          },
+          {
+            "n": 19,
+            "t": "The Fanatical",
+            "d": "2018-05-21"
+          },
+          {
+            "n": 20,
+            "t": "Dark Side of the Moon",
+            "d": "2018-05-28"
+          },
+          {
+            "n": 21,
+            "t": "Not Kansas",
+            "d": "2018-06-04"
+          },
+          {
+            "n": 22,
+            "t": "Make it Reign",
+            "d": "2018-06-11"
+          },
+          {
+            "n": 23,
+            "t": "Battles Lost and Won",
+            "d": "2018-06-18"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "American Alien",
+            "d": "2018-10-14"
+          },
+          {
+            "n": 2,
+            "t": "Fallout",
+            "d": "2018-10-21"
+          },
+          {
+            "n": 3,
+            "t": "Man of Steel",
+            "d": "2018-10-28"
+          },
+          {
+            "n": 4,
+            "t": "Ahimsa",
+            "d": "2018-11-04"
+          },
+          {
+            "n": 5,
+            "t": "Parasite Lost",
+            "d": "2018-11-11"
+          },
+          {
+            "n": 6,
+            "t": "Call to Action",
+            "d": "2018-11-18"
+          },
+          {
+            "n": 7,
+            "t": "Rather the Fallen Angel",
+            "d": "2018-11-25"
+          },
+          {
+            "n": 8,
+            "t": "Bunker Hill",
+            "d": "2018-12-02"
+          },
+          {
+            "n": 9,
+            "t": "Elseworlds, Part 3",
+            "d": "2018-12-11"
+          },
+          {
+            "n": 10,
+            "t": "Suspicious Minds",
+            "d": "2019-01-20"
+          },
+          {
+            "n": 11,
+            "t": "Blood Memory",
+            "d": "2019-01-27"
+          },
+          {
+            "n": 12,
+            "t": "Menagerie",
+            "d": "2019-02-17"
+          },
+          {
+            "n": 13,
+            "t": "What's So Funny About Truth, Justice, and the American Way?",
+            "d": "2019-03-03"
+          },
+          {
+            "n": 14,
+            "t": "Stand and Deliver",
+            "d": "2019-03-10"
+          },
+          {
+            "n": 15,
+            "t": "O Brother, Where Art Thou?",
+            "d": "2019-03-17"
+          },
+          {
+            "n": 16,
+            "t": "The House of L",
+            "d": "2019-03-24"
+          },
+          {
+            "n": 17,
+            "t": "All About Eve",
+            "d": "2019-03-31"
+          },
+          {
+            "n": 18,
+            "t": "Crime and Punishment",
+            "d": "2019-04-21"
+          },
+          {
+            "n": 19,
+            "t": "American Dreamer",
+            "d": "2019-04-28"
+          },
+          {
+            "n": 20,
+            "t": "Will the Real Miss Tessmacher Please Stand Up?",
+            "d": "2019-05-05"
+          },
+          {
+            "n": 21,
+            "t": "Red Dawn",
+            "d": "2019-05-12"
+          },
+          {
+            "n": 22,
+            "t": "The Quest for Peace",
+            "d": "2019-05-19"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Event Horizon",
+            "d": "2019-10-06"
+          },
+          {
+            "n": 2,
+            "t": "Stranger Beside Me",
+            "d": "2019-10-13"
+          },
+          {
+            "n": 3,
+            "t": "Blurred Lines",
+            "d": "2019-10-20"
+          },
+          {
+            "n": 4,
+            "t": "In Plain Sight",
+            "d": "2019-10-27"
+          },
+          {
+            "n": 5,
+            "t": "Dangerous Liaisons",
+            "d": "2019-11-03"
+          },
+          {
+            "n": 6,
+            "t": "Confidence Women",
+            "d": "2019-11-10"
+          },
+          {
+            "n": 7,
+            "t": "Tremors",
+            "d": "2019-11-17"
+          },
+          {
+            "n": 8,
+            "t": "The Wrath of Rama Khan",
+            "d": "2019-12-01"
+          },
+          {
+            "n": 9,
+            "t": "Crisis on Infinite Earths: Part One",
+            "d": "2019-12-08"
+          },
+          {
+            "n": 10,
+            "t": "The Bottle Episode",
+            "d": "2020-01-19"
+          },
+          {
+            "n": 11,
+            "t": "Back from the Future – Part One",
+            "d": "2020-01-26"
+          },
+          {
+            "n": 12,
+            "t": "Back from the Future – Part Two",
+            "d": "2020-02-16"
+          },
+          {
+            "n": 13,
+            "t": "It's a Super Life",
+            "d": "2020-02-23"
+          },
+          {
+            "n": 14,
+            "t": "The Bodyguard",
+            "d": "2020-03-08"
+          },
+          {
+            "n": 15,
+            "t": "Reality Bytes",
+            "d": "2020-03-15"
+          },
+          {
+            "n": 16,
+            "t": "Alex in Wonderland",
+            "d": "2020-03-22"
+          },
+          {
+            "n": 17,
+            "t": "Deus Lex Machina",
+            "d": "2020-05-03"
+          },
+          {
+            "n": 18,
+            "t": "The Missing Link",
+            "d": "2020-05-10"
+          },
+          {
+            "n": 19,
+            "t": "Immortal Kombat",
+            "d": "2020-05-17"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Rebirth",
+            "d": "2021-03-30"
+          },
+          {
+            "n": 2,
+            "t": "A Few Good Women",
+            "d": "2021-04-06"
+          },
+          {
+            "n": 3,
+            "t": "Phantom Menaces",
+            "d": "2021-04-13"
+          },
+          {
+            "n": 4,
+            "t": "Lost Souls",
+            "d": "2021-04-20"
+          },
+          {
+            "n": 5,
+            "t": "Prom Night!",
+            "d": "2021-04-27"
+          },
+          {
+            "n": 6,
+            "t": "Prom Again!",
+            "d": "2021-05-04"
+          },
+          {
+            "n": 7,
+            "t": "Fear Knot",
+            "d": "2021-05-11"
+          },
+          {
+            "n": 8,
+            "t": "Welcome Back, Kara",
+            "d": "2021-08-24"
+          },
+          {
+            "n": 9,
+            "t": "Dream Weaver",
+            "d": "2021-08-31"
+          },
+          {
+            "n": 10,
+            "t": "Still I Rise",
+            "d": "2021-09-07"
+          },
+          {
+            "n": 11,
+            "t": "Mxy in the Middle",
+            "d": "2021-09-14"
+          },
+          {
+            "n": 12,
+            "t": "Blind Spots",
+            "d": "2021-09-21"
+          },
+          {
+            "n": 13,
+            "t": "The Gauntlet",
+            "d": "2021-09-28"
+          },
+          {
+            "n": 14,
+            "t": "Magical Thinking",
+            "d": "2021-10-05"
+          },
+          {
+            "n": 15,
+            "t": "Hope for Tomorrow",
+            "d": "2021-10-12"
+          },
+          {
+            "n": 16,
+            "t": "Nightmare in National City",
+            "d": "2021-10-19"
+          },
+          {
+            "n": 17,
+            "t": "I Believe in a Thing Called Love",
+            "d": "2021-10-26"
+          },
+          {
+            "n": 18,
+            "t": "Truth or Consequences",
+            "d": "2021-11-02"
+          },
+          {
+            "n": 19,
+            "t": "The Last Gauntlet",
+            "d": "2021-11-09"
+          },
+          {
+            "n": 20,
+            "t": "Kara",
+            "d": "2021-11-09"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Greg Berlanti, Marc Guggenheim, Phil Klemmer, Andrew Kreisberg",
+      "cast": "Caity Lotz, Brandon Routh, Victor Garber, Dominic Purcell, Nick Zano, Tala Ashe",
+      "runtime": "~42 min per episode",
+      "plot": "A ragtag team of B-list heroes and reformed villains — including White Canary, Atom, and Heat Wave — is recruited by time-traveler Rip Hunter to stop the immortal Vandal Savage from conquering history, and keeps saving (and breaking) time from increasingly absurd threats long after.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "DC's Legends of Tomorrow",
@@ -3735,7 +4379,573 @@
       "episodes": 110,
       "rt": null,
       "imdb": 7.2,
-      "blurb": "A time-traveling team of misfit heroes and villains protects history."
+      "blurb": "A time-traveling team of misfit heroes and villains protects history.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot, Part 1",
+            "d": "2016-01-21"
+          },
+          {
+            "n": 2,
+            "t": "Pilot, Part 2",
+            "d": "2016-01-28"
+          },
+          {
+            "n": 3,
+            "t": "Blood Ties",
+            "d": "2016-02-04"
+          },
+          {
+            "n": 4,
+            "t": "White Knights",
+            "d": "2016-02-11"
+          },
+          {
+            "n": 5,
+            "t": "Fail-Safe",
+            "d": "2016-02-18"
+          },
+          {
+            "n": 6,
+            "t": "Star City 2046",
+            "d": "2016-02-25"
+          },
+          {
+            "n": 7,
+            "t": "Marooned",
+            "d": "2016-03-03"
+          },
+          {
+            "n": 8,
+            "t": "Night of the Hawk",
+            "d": "2016-03-10"
+          },
+          {
+            "n": 9,
+            "t": "Left Behind",
+            "d": "2016-03-31"
+          },
+          {
+            "n": 10,
+            "t": "Progeny",
+            "d": "2016-04-07"
+          },
+          {
+            "n": 11,
+            "t": "The Magnificent Eight",
+            "d": "2016-04-14"
+          },
+          {
+            "n": 12,
+            "t": "Last Refuge",
+            "d": "2016-04-21"
+          },
+          {
+            "n": 13,
+            "t": "Leviathan",
+            "d": "2016-04-28"
+          },
+          {
+            "n": 14,
+            "t": "River of Time",
+            "d": "2016-05-05"
+          },
+          {
+            "n": 15,
+            "t": "Destiny",
+            "d": "2016-05-12"
+          },
+          {
+            "n": 16,
+            "t": "Legendary",
+            "d": "2016-05-19"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Out of Time",
+            "d": "2016-10-13"
+          },
+          {
+            "n": 2,
+            "t": "The Justice Society of America",
+            "d": "2016-10-20"
+          },
+          {
+            "n": 3,
+            "t": "Shogun",
+            "d": "2016-10-27"
+          },
+          {
+            "n": 4,
+            "t": "Abominations",
+            "d": "2016-11-03"
+          },
+          {
+            "n": 5,
+            "t": "Compromised",
+            "d": "2016-11-10"
+          },
+          {
+            "n": 6,
+            "t": "Outlaw Country",
+            "d": "2016-11-17"
+          },
+          {
+            "n": 7,
+            "t": "Invasion!",
+            "d": "2016-12-01"
+          },
+          {
+            "n": 8,
+            "t": "The Chicago Way",
+            "d": "2016-12-08"
+          },
+          {
+            "n": 9,
+            "t": "Raiders of the Lost Art",
+            "d": "2017-01-24"
+          },
+          {
+            "n": 10,
+            "t": "The Legion of Doom",
+            "d": "2017-01-31"
+          },
+          {
+            "n": 11,
+            "t": "Turncoat",
+            "d": "2017-02-07"
+          },
+          {
+            "n": 12,
+            "t": "Camelot/3000",
+            "d": "2017-02-21"
+          },
+          {
+            "n": 13,
+            "t": "Land of the Lost",
+            "d": "2017-03-07"
+          },
+          {
+            "n": 14,
+            "t": "Moonshot",
+            "d": "2017-03-14"
+          },
+          {
+            "n": 15,
+            "t": "Fellowship of the Spear",
+            "d": "2017-03-21"
+          },
+          {
+            "n": 16,
+            "t": "Doomworld",
+            "d": "2017-03-28"
+          },
+          {
+            "n": 17,
+            "t": "Aruba",
+            "d": "2017-04-04"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Aruba-Con",
+            "d": "2017-10-10"
+          },
+          {
+            "n": 2,
+            "t": "Freakshow",
+            "d": "2017-10-17"
+          },
+          {
+            "n": 3,
+            "t": "Zari",
+            "d": "2017-10-24"
+          },
+          {
+            "n": 4,
+            "t": "Phone Home",
+            "d": "2017-10-31"
+          },
+          {
+            "n": 5,
+            "t": "Return of the Mack",
+            "d": "2017-11-07"
+          },
+          {
+            "n": 6,
+            "t": "Helen Hunt",
+            "d": "2017-11-14"
+          },
+          {
+            "n": 7,
+            "t": "Welcome to the Jungle",
+            "d": "2017-11-21"
+          },
+          {
+            "n": 8,
+            "t": "Crisis on Earth-X, Part 4",
+            "d": "2017-11-28"
+          },
+          {
+            "n": 9,
+            "t": "Beebo the God of War",
+            "d": "2017-12-05"
+          },
+          {
+            "n": 10,
+            "t": "Daddy Darhkest",
+            "d": "2018-02-12"
+          },
+          {
+            "n": 11,
+            "t": "Here I Go Again",
+            "d": "2018-02-19"
+          },
+          {
+            "n": 12,
+            "t": "The Curse of the Earth Totem",
+            "d": "2018-02-26"
+          },
+          {
+            "n": 13,
+            "t": "No Country for Old Dads",
+            "d": "2018-03-05"
+          },
+          {
+            "n": 14,
+            "t": "Amazing Grace",
+            "d": "2018-03-12"
+          },
+          {
+            "n": 15,
+            "t": "Necromancing the Stone",
+            "d": "2018-03-19"
+          },
+          {
+            "n": 16,
+            "t": "I, Ava",
+            "d": "2018-03-26"
+          },
+          {
+            "n": 17,
+            "t": "Guest Starring John Noble",
+            "d": "2018-04-02"
+          },
+          {
+            "n": 18,
+            "t": "The Good, the Bad and the Cuddly",
+            "d": "2018-04-09"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "The Virgin Gary",
+            "d": "2018-10-22"
+          },
+          {
+            "n": 2,
+            "t": "Witch Hunt",
+            "d": "2018-10-29"
+          },
+          {
+            "n": 3,
+            "t": "Dancing Queen",
+            "d": "2018-11-05"
+          },
+          {
+            "n": 4,
+            "t": "Wet Hot American Bummer",
+            "d": "2018-11-12"
+          },
+          {
+            "n": 5,
+            "t": "Tagumo Attacks!!!",
+            "d": "2018-11-19"
+          },
+          {
+            "n": 6,
+            "t": "Tender is the Nate",
+            "d": "2018-11-26"
+          },
+          {
+            "n": 7,
+            "t": "Hell No, Dolly!",
+            "d": "2018-12-03"
+          },
+          {
+            "n": 8,
+            "t": "Legends of To-Meow-Meow",
+            "d": "2018-12-10"
+          },
+          {
+            "n": 9,
+            "t": "Lucha De Apuestas",
+            "d": "2019-04-01"
+          },
+          {
+            "n": 10,
+            "t": "The Getaway",
+            "d": "2019-04-08"
+          },
+          {
+            "n": 11,
+            "t": "Séance and Sensibility",
+            "d": "2019-04-15"
+          },
+          {
+            "n": 12,
+            "t": "The Eggplant, the Witch & the Wardrobe",
+            "d": "2019-04-22"
+          },
+          {
+            "n": 13,
+            "t": "Egg MacGuffin",
+            "d": "2019-04-29"
+          },
+          {
+            "n": 14,
+            "t": "Nip/Stuck",
+            "d": "2019-05-06"
+          },
+          {
+            "n": 15,
+            "t": "Terms of Service",
+            "d": "2019-05-13"
+          },
+          {
+            "n": 16,
+            "t": "Hey, World!",
+            "d": "2019-05-20"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Crisis on Infinite Earths: Part Five",
+            "d": "2020-01-14"
+          },
+          {
+            "n": 2,
+            "t": "Meet the Legends",
+            "d": "2020-01-21"
+          },
+          {
+            "n": 3,
+            "t": "Miss Me, Kiss Me, Love Me",
+            "d": "2020-02-04"
+          },
+          {
+            "n": 4,
+            "t": "Slay Anything",
+            "d": "2020-02-11"
+          },
+          {
+            "n": 5,
+            "t": "A Head of Her Time",
+            "d": "2020-02-18"
+          },
+          {
+            "n": 6,
+            "t": "Mortal Khanbat",
+            "d": "2020-02-25"
+          },
+          {
+            "n": 7,
+            "t": "Mr. Parker's Cul-De-Sac",
+            "d": "2020-03-10"
+          },
+          {
+            "n": 8,
+            "t": "Romeo V. Juliet: Dawn of Justness",
+            "d": "2020-03-17"
+          },
+          {
+            "n": 9,
+            "t": "Zari, Not Zari",
+            "d": "2020-04-21"
+          },
+          {
+            "n": 10,
+            "t": "The Great British Fake Off",
+            "d": "2020-04-28"
+          },
+          {
+            "n": 11,
+            "t": "Ship Broken",
+            "d": "2020-05-05"
+          },
+          {
+            "n": 12,
+            "t": "Freaks and Greeks",
+            "d": "2020-05-12"
+          },
+          {
+            "n": 13,
+            "t": "I Am Legends",
+            "d": "2020-05-19"
+          },
+          {
+            "n": 14,
+            "t": "The One Where We're Trapped on TV",
+            "d": "2020-05-26"
+          },
+          {
+            "n": 15,
+            "t": "Swan Thong",
+            "d": "2020-06-02"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Ground Control to Sara Lance",
+            "d": "2021-05-02"
+          },
+          {
+            "n": 2,
+            "t": "Meat: The Legends",
+            "d": "2021-05-09"
+          },
+          {
+            "n": 3,
+            "t": "The Ex-Factor",
+            "d": "2021-05-16"
+          },
+          {
+            "n": 4,
+            "t": "Bay of Squids",
+            "d": "2021-05-23"
+          },
+          {
+            "n": 5,
+            "t": "The Satanist's Apprentice",
+            "d": "2021-06-06"
+          },
+          {
+            "n": 6,
+            "t": "Bishop's Gambit",
+            "d": "2021-06-13"
+          },
+          {
+            "n": 7,
+            "t": "Back to the Finale Part II",
+            "d": "2021-06-20"
+          },
+          {
+            "n": 8,
+            "t": "Stressed Western",
+            "d": "2021-06-27"
+          },
+          {
+            "n": 9,
+            "t": "This Is Gus",
+            "d": "2021-07-11"
+          },
+          {
+            "n": 10,
+            "t": "Bad Blood",
+            "d": "2021-07-18"
+          },
+          {
+            "n": 11,
+            "t": "The Final Frame",
+            "d": "2021-08-08"
+          },
+          {
+            "n": 12,
+            "t": "Bored on Board Onboard",
+            "d": "2021-08-15"
+          },
+          {
+            "n": 13,
+            "t": "Silence of the Sonograms",
+            "d": "2021-08-22"
+          },
+          {
+            "n": 14,
+            "t": "There Will Be Brood",
+            "d": "2021-08-29"
+          },
+          {
+            "n": 15,
+            "t": "The Fungus Amongus",
+            "d": "2021-09-05"
+          }
+        ],
+        "7": [
+          {
+            "n": 1,
+            "t": "The Bullet Blondes",
+            "d": "2021-10-13"
+          },
+          {
+            "n": 2,
+            "t": "The Need for Speed",
+            "d": "2021-10-20"
+          },
+          {
+            "n": 3,
+            "t": "WVRDR_ERROR_100 Not Found",
+            "d": "2021-10-27"
+          },
+          {
+            "n": 4,
+            "t": "Speakeasy Does It",
+            "d": "2021-11-03"
+          },
+          {
+            "n": 5,
+            "t": "It's a Mad, Mad, Mad, Mad Scientist",
+            "d": "2021-11-10"
+          },
+          {
+            "n": 6,
+            "t": "Deus Ex Latrina",
+            "d": "2021-11-17"
+          },
+          {
+            "n": 7,
+            "t": "A Woman's Place Is in the War Effort!",
+            "d": "2021-11-24"
+          },
+          {
+            "n": 8,
+            "t": "Paranoid Android",
+            "d": "2022-01-12"
+          },
+          {
+            "n": 9,
+            "t": "Lowest Common Denominator",
+            "d": "2022-01-19"
+          },
+          {
+            "n": 10,
+            "t": "The Fixed Point",
+            "d": "2022-01-26"
+          },
+          {
+            "n": 11,
+            "t": "Rage Against the Machines",
+            "d": "2022-02-02"
+          },
+          {
+            "n": 12,
+            "t": "Too Legit to Quit",
+            "d": "2022-02-23"
+          },
+          {
+            "n": 13,
+            "t": "Knocked Down, Knocked Up",
+            "d": "2022-03-02"
+          }
+        ]
+      }
     },
     {
       "creators": "Ben Queen",
@@ -4767,12 +5977,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Bruno Heller",
+      "cast": "Ben McKenzie, Donal Logue, David Mazouz, Robin Lord Taylor, Sean Pertwee, Camren Bicondova",
+      "runtime": "~42-45 min per episode",
+      "plot": "Idealistic young detective Jim Gordon arrives at a corrupt Gotham City Police Department in the years following the murder of Thomas and Martha Wayne, working to protect their orphaned son Bruce while the city's future rogues gallery — Penguin, Riddler, Catwoman, and more — begin their own rise to power.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Gotham",
@@ -4786,7 +5996,519 @@
       "episodes": 100,
       "rt": null,
       "imdb": 7.8,
-      "blurb": "A young Jim Gordon navigates Gotham's corruption years before Batman exists."
+      "blurb": "A young Jim Gordon navigates Gotham's corruption years before Batman exists.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2014-09-22"
+          },
+          {
+            "n": 2,
+            "t": "Selina Kyle",
+            "d": "2014-09-29"
+          },
+          {
+            "n": 3,
+            "t": "The Balloonman",
+            "d": "2014-10-06"
+          },
+          {
+            "n": 4,
+            "t": "Arkham",
+            "d": "2014-10-13"
+          },
+          {
+            "n": 5,
+            "t": "Viper",
+            "d": "2014-10-20"
+          },
+          {
+            "n": 6,
+            "t": "Spirit of the Goat",
+            "d": "2014-10-27"
+          },
+          {
+            "n": 7,
+            "t": "Penguin's Umbrella",
+            "d": "2014-11-03"
+          },
+          {
+            "n": 8,
+            "t": "The Mask",
+            "d": "2014-11-10"
+          },
+          {
+            "n": 9,
+            "t": "Harvey Dent",
+            "d": "2014-11-17"
+          },
+          {
+            "n": 10,
+            "t": "Lovecraft",
+            "d": "2014-11-24"
+          },
+          {
+            "n": 11,
+            "t": "Rogues' Gallery",
+            "d": "2015-01-05"
+          },
+          {
+            "n": 12,
+            "t": "What the Little Bird Told Him",
+            "d": "2015-01-19"
+          },
+          {
+            "n": 13,
+            "t": "Welcome Back, Jim Gordon",
+            "d": "2015-01-26"
+          },
+          {
+            "n": 14,
+            "t": "The Fearsome Dr. Crane",
+            "d": "2015-02-02"
+          },
+          {
+            "n": 15,
+            "t": "The Scarecrow",
+            "d": "2015-02-09"
+          },
+          {
+            "n": 16,
+            "t": "The Blind Fortune Teller",
+            "d": "2015-02-16"
+          },
+          {
+            "n": 17,
+            "t": "Red Hood",
+            "d": "2015-02-23"
+          },
+          {
+            "n": 18,
+            "t": "Everyone Has a Cobblepot",
+            "d": "2015-03-02"
+          },
+          {
+            "n": 19,
+            "t": "Beasts of Prey",
+            "d": "2015-04-13"
+          },
+          {
+            "n": 20,
+            "t": "Under the Knife",
+            "d": "2015-04-20"
+          },
+          {
+            "n": 21,
+            "t": "The Anvil or the Hammer",
+            "d": "2015-04-27"
+          },
+          {
+            "n": 22,
+            "t": "All Happy Families Are Alike",
+            "d": "2015-05-04"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Damned If You Do...",
+            "d": "2015-09-21"
+          },
+          {
+            "n": 2,
+            "t": "Knock, Knock",
+            "d": "2015-09-28"
+          },
+          {
+            "n": 3,
+            "t": "The Last Laugh",
+            "d": "2015-10-05"
+          },
+          {
+            "n": 4,
+            "t": "Strike Force",
+            "d": "2015-10-12"
+          },
+          {
+            "n": 5,
+            "t": "Scarification",
+            "d": "2015-10-19"
+          },
+          {
+            "n": 6,
+            "t": "By Fire",
+            "d": "2015-10-26"
+          },
+          {
+            "n": 7,
+            "t": "Mommy's Little Monster",
+            "d": "2015-11-02"
+          },
+          {
+            "n": 8,
+            "t": "Tonight's the Night",
+            "d": "2015-11-09"
+          },
+          {
+            "n": 9,
+            "t": "A Bitter Pill to Swallow",
+            "d": "2015-11-16"
+          },
+          {
+            "n": 10,
+            "t": "The Son of Gotham",
+            "d": "2015-11-23"
+          },
+          {
+            "n": 11,
+            "t": "Worse Than a Crime",
+            "d": "2015-11-30"
+          },
+          {
+            "n": 12,
+            "t": "Mr. Freeze",
+            "d": "2016-02-29"
+          },
+          {
+            "n": 13,
+            "t": "A Dead Man Feels No Cold",
+            "d": "2016-03-07"
+          },
+          {
+            "n": 14,
+            "t": "This Ball of Mud and Meanness",
+            "d": "2016-03-14"
+          },
+          {
+            "n": 15,
+            "t": "Mad Grey Dawn",
+            "d": "2016-03-21"
+          },
+          {
+            "n": 16,
+            "t": "Prisoners",
+            "d": "2016-03-28"
+          },
+          {
+            "n": 17,
+            "t": "Into the Woods",
+            "d": "2016-04-11"
+          },
+          {
+            "n": 18,
+            "t": "Pinewood",
+            "d": "2016-04-18"
+          },
+          {
+            "n": 19,
+            "t": "Azrael",
+            "d": "2016-05-02"
+          },
+          {
+            "n": 20,
+            "t": "Unleashed",
+            "d": "2016-05-09"
+          },
+          {
+            "n": 21,
+            "t": "A Legion of Horribles",
+            "d": "2016-05-16"
+          },
+          {
+            "n": 22,
+            "t": "Transference",
+            "d": "2016-05-23"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Better to Reign in Hell...",
+            "d": "2016-09-19"
+          },
+          {
+            "n": 2,
+            "t": "Burn the Witch",
+            "d": "2016-09-26"
+          },
+          {
+            "n": 3,
+            "t": "Look into My Eyes",
+            "d": "2016-10-03"
+          },
+          {
+            "n": 4,
+            "t": "New Day Rising",
+            "d": "2016-10-10"
+          },
+          {
+            "n": 5,
+            "t": "Anything for You",
+            "d": "2016-10-17"
+          },
+          {
+            "n": 6,
+            "t": "Follow the White Rabbit",
+            "d": "2016-10-24"
+          },
+          {
+            "n": 7,
+            "t": "Red Queen",
+            "d": "2016-10-31"
+          },
+          {
+            "n": 8,
+            "t": "Blood Rush",
+            "d": "2016-11-07"
+          },
+          {
+            "n": 9,
+            "t": "The Executioner",
+            "d": "2016-11-14"
+          },
+          {
+            "n": 10,
+            "t": "Time Bomb",
+            "d": "2016-11-21"
+          },
+          {
+            "n": 11,
+            "t": "Beware the Green-Eyed Monster",
+            "d": "2016-11-28"
+          },
+          {
+            "n": 12,
+            "t": "Ghosts",
+            "d": "2017-01-16"
+          },
+          {
+            "n": 13,
+            "t": "Smile Like You Mean It",
+            "d": "2017-01-23"
+          },
+          {
+            "n": 14,
+            "t": "The Gentle Art of Making Enemies",
+            "d": "2017-01-30"
+          },
+          {
+            "n": 15,
+            "t": "How the Riddler Got His Name",
+            "d": "2017-04-24"
+          },
+          {
+            "n": 16,
+            "t": "These Delicate and Dark Obsessions",
+            "d": "2017-05-01"
+          },
+          {
+            "n": 17,
+            "t": "The Primal Riddle",
+            "d": "2017-05-08"
+          },
+          {
+            "n": 18,
+            "t": "Light the Wick",
+            "d": "2017-05-15"
+          },
+          {
+            "n": 19,
+            "t": "All Will Be Judged",
+            "d": "2017-05-22"
+          },
+          {
+            "n": 20,
+            "t": "Pretty Hate Machine",
+            "d": "2017-05-29"
+          },
+          {
+            "n": 21,
+            "t": "Destiny Calling",
+            "d": "2017-06-05"
+          },
+          {
+            "n": 22,
+            "t": "Heavydirtysoul",
+            "d": "2017-06-05"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Pax Penguina",
+            "d": "2017-09-21"
+          },
+          {
+            "n": 2,
+            "t": "The Fear Reaper",
+            "d": "2017-09-28"
+          },
+          {
+            "n": 3,
+            "t": "They Who Hide Behind Masks",
+            "d": "2017-10-05"
+          },
+          {
+            "n": 4,
+            "t": "The Demon's Head",
+            "d": "2017-10-12"
+          },
+          {
+            "n": 5,
+            "t": "The Blade's Path",
+            "d": "2017-10-19"
+          },
+          {
+            "n": 6,
+            "t": "Hog Day Afternoon",
+            "d": "2017-10-26"
+          },
+          {
+            "n": 7,
+            "t": "A Day in the Narrows",
+            "d": "2017-11-02"
+          },
+          {
+            "n": 8,
+            "t": "Stop Hitting Yourself",
+            "d": "2017-11-09"
+          },
+          {
+            "n": 9,
+            "t": "Let Them Eat Pie",
+            "d": "2017-11-16"
+          },
+          {
+            "n": 10,
+            "t": "Things That Go Boom",
+            "d": "2017-11-30"
+          },
+          {
+            "n": 11,
+            "t": "Queen Takes Knight",
+            "d": "2017-12-07"
+          },
+          {
+            "n": 12,
+            "t": "Pieces of a Broken Mirror",
+            "d": "2018-03-01"
+          },
+          {
+            "n": 13,
+            "t": "A Beautiful Darkness",
+            "d": "2018-03-08"
+          },
+          {
+            "n": 14,
+            "t": "Reunion",
+            "d": "2018-03-15"
+          },
+          {
+            "n": 15,
+            "t": "The Sinking Ship the Grand Applause",
+            "d": "2018-03-22"
+          },
+          {
+            "n": 16,
+            "t": "One of My Three Soups",
+            "d": "2018-03-29"
+          },
+          {
+            "n": 17,
+            "t": "Mandatory Brunch Meeting",
+            "d": "2018-04-05"
+          },
+          {
+            "n": 18,
+            "t": "That's Entertainment",
+            "d": "2018-04-12"
+          },
+          {
+            "n": 19,
+            "t": "To Our Deaths and Beyond",
+            "d": "2018-04-19"
+          },
+          {
+            "n": 20,
+            "t": "That Old Corpse",
+            "d": "2018-05-03"
+          },
+          {
+            "n": 21,
+            "t": "One Bad Day",
+            "d": "2018-05-10"
+          },
+          {
+            "n": 22,
+            "t": "No Man's Land",
+            "d": "2018-05-17"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Year Zero",
+            "d": "2019-01-03"
+          },
+          {
+            "n": 2,
+            "t": "Trespassers",
+            "d": "2019-01-10"
+          },
+          {
+            "n": 3,
+            "t": "Penguin, Our Hero",
+            "d": "2019-01-17"
+          },
+          {
+            "n": 4,
+            "t": "Ruin",
+            "d": "2019-01-24"
+          },
+          {
+            "n": 5,
+            "t": "Pena Dura",
+            "d": "2019-01-31"
+          },
+          {
+            "n": 6,
+            "t": "13 Stitches",
+            "d": "2019-02-14"
+          },
+          {
+            "n": 7,
+            "t": "Ace Chemicals",
+            "d": "2019-02-21"
+          },
+          {
+            "n": 8,
+            "t": "Nothing's Shocking",
+            "d": "2019-02-28"
+          },
+          {
+            "n": 9,
+            "t": "The Trial of Jim Gordon",
+            "d": "2019-03-07"
+          },
+          {
+            "n": 10,
+            "t": "I Am Bane",
+            "d": "2019-03-21"
+          },
+          {
+            "n": 11,
+            "t": "They Did What?",
+            "d": "2019-04-18"
+          },
+          {
+            "n": 12,
+            "t": "The Beginning...",
+            "d": "2019-04-25"
+          }
+        ]
+      }
     },
     {
       "creators": "David S. Goyer, Damian Kindler",
@@ -5173,6 +6895,202 @@
             "n": 11,
             "t": "Dick Grayson",
             "d": "2018-12-21"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Trigon",
+            "d": "2019-09-06"
+          },
+          {
+            "n": 2,
+            "t": "Rose",
+            "d": "2019-09-13"
+          },
+          {
+            "n": 3,
+            "t": "Ghosts",
+            "d": "2019-09-20"
+          },
+          {
+            "n": 4,
+            "t": "Aqualad",
+            "d": "2019-09-27"
+          },
+          {
+            "n": 5,
+            "t": "Deathstroke",
+            "d": "2019-10-04"
+          },
+          {
+            "n": 6,
+            "t": "Conner",
+            "d": "2019-10-11"
+          },
+          {
+            "n": 7,
+            "t": "Bruce Wayne",
+            "d": "2019-10-18"
+          },
+          {
+            "n": 8,
+            "t": "Jericho",
+            "d": "2019-10-25"
+          },
+          {
+            "n": 9,
+            "t": "Atonement",
+            "d": "2019-11-01"
+          },
+          {
+            "n": 10,
+            "t": "Fallen",
+            "d": "2019-11-08"
+          },
+          {
+            "n": 11,
+            "t": "E.L._.O.",
+            "d": "2019-11-15"
+          },
+          {
+            "n": 12,
+            "t": "Faux Hawk",
+            "d": "2019-11-22"
+          },
+          {
+            "n": 13,
+            "t": "Nightwing",
+            "d": "2019-11-29"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Barbara Gordon",
+            "d": "2021-08-12"
+          },
+          {
+            "n": 2,
+            "t": "Red Hood",
+            "d": "2021-08-12"
+          },
+          {
+            "n": 3,
+            "t": "Hank & Dove",
+            "d": "2021-08-12"
+          },
+          {
+            "n": 4,
+            "t": "Blackfire",
+            "d": "2021-08-19"
+          },
+          {
+            "n": 5,
+            "t": "Lazarus",
+            "d": "2021-08-26"
+          },
+          {
+            "n": 6,
+            "t": "Lady Vic",
+            "d": "2021-09-02"
+          },
+          {
+            "n": 7,
+            "t": "51%",
+            "d": "2021-09-09"
+          },
+          {
+            "n": 8,
+            "t": "Home",
+            "d": "2021-09-16"
+          },
+          {
+            "n": 9,
+            "t": "Souls",
+            "d": "2021-09-23"
+          },
+          {
+            "n": 10,
+            "t": "Troubled Water",
+            "d": "2021-09-30"
+          },
+          {
+            "n": 11,
+            "t": "The Call Is Coming From Inside the House",
+            "d": "2021-10-07"
+          },
+          {
+            "n": 12,
+            "t": "Prodigal",
+            "d": "2021-10-14"
+          },
+          {
+            "n": 13,
+            "t": "Purple Rain",
+            "d": "2021-10-21"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Lex Luthor",
+            "d": "2022-11-03"
+          },
+          {
+            "n": 2,
+            "t": "Mother Mayhem",
+            "d": "2022-11-03"
+          },
+          {
+            "n": 3,
+            "t": "Jinx",
+            "d": "2022-11-10"
+          },
+          {
+            "n": 4,
+            "t": "Super Super Mart",
+            "d": "2022-11-17"
+          },
+          {
+            "n": 5,
+            "t": "Inside Man",
+            "d": "2022-11-24"
+          },
+          {
+            "n": 6,
+            "t": "Brother Blood",
+            "d": "2022-12-01"
+          },
+          {
+            "n": 7,
+            "t": "Caul's Folly",
+            "d": "2023-04-13"
+          },
+          {
+            "n": 8,
+            "t": "Dick & Carol & Ted & Kory",
+            "d": "2023-04-13"
+          },
+          {
+            "n": 9,
+            "t": "Dude, Where's My Gar",
+            "d": "2023-04-20"
+          },
+          {
+            "n": 10,
+            "t": "Game Over",
+            "d": "2023-04-27"
+          },
+          {
+            "n": 11,
+            "t": "Project Starfire",
+            "d": "2023-05-04"
+          },
+          {
+            "n": 12,
+            "t": "Titans Forever",
+            "d": "2023-05-11"
           }
         ]
       }
@@ -5644,6 +7562,48 @@
             "n": 8,
             "t": "It's Cow or Never",
             "d": "2022-02-17"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Ties That Grind",
+            "d": "2025-08-21"
+          },
+          {
+            "n": 2,
+            "t": "A Man Is Only As Good As His Bird",
+            "d": "2025-08-28"
+          },
+          {
+            "n": 3,
+            "t": "Another Rick Up My Sleeve",
+            "d": "2025-09-04"
+          },
+          {
+            "n": 4,
+            "t": "Need I Say Door",
+            "d": "2025-09-11"
+          },
+          {
+            "n": 5,
+            "t": "Back to the Suture",
+            "d": "2025-09-18"
+          },
+          {
+            "n": 6,
+            "t": "Ignorance Is Chris",
+            "d": "2025-09-25"
+          },
+          {
+            "n": 7,
+            "t": "Like a Keith in the Night",
+            "d": "2025-10-02"
+          },
+          {
+            "n": 8,
+            "t": "Full Nelson",
+            "d": "2025-10-09"
           }
         ]
       }
@@ -6192,12 +8152,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Tom Kapinos",
+      "cast": "Tom Ellis, Lauren German, Kevin Alejandro, D.B. Woodside, Lesley-Ann Brandt, Aimee Garcia",
+      "runtime": "~42-50 min per episode",
+      "plot": "Bored with ruling Hell, Lucifer Morningstar abandons his throne to run a Los Angeles nightclub, where he begins moonlighting as a civilian LAPD consultant alongside detective Chloe Decker — the one human whose presence strips away his powers, and whom he slowly comes to love — while grappling with his family, his father, and what it means to seek redemption.",
+      "whereToWatch": "Netflix",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Lucifer",
@@ -6209,7 +8169,486 @@
       "episodes": 93,
       "rt": null,
       "imdb": 8.1,
-      "blurb": "The Devil retires to Los Angeles to run a nightclub and moonlight as a police consultant."
+      "blurb": "The Devil retires to Los Angeles to run a nightclub and moonlight as a police consultant.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2016-01-25"
+          },
+          {
+            "n": 2,
+            "t": "Lucifer, Stay. Good Devil.",
+            "d": "2016-02-01"
+          },
+          {
+            "n": 3,
+            "t": "The Would-Be Prince of Darkness",
+            "d": "2016-02-08"
+          },
+          {
+            "n": 4,
+            "t": "Manly Whatnots",
+            "d": "2016-02-15"
+          },
+          {
+            "n": 5,
+            "t": "Sweet Kicks",
+            "d": "2016-02-22"
+          },
+          {
+            "n": 6,
+            "t": "Favorite Son",
+            "d": "2016-02-29"
+          },
+          {
+            "n": 7,
+            "t": "Wingman",
+            "d": "2016-03-07"
+          },
+          {
+            "n": 8,
+            "t": "Et Tu, Doctor?",
+            "d": "2016-03-14"
+          },
+          {
+            "n": 9,
+            "t": "A Priest Walks into a Bar",
+            "d": "2016-03-21"
+          },
+          {
+            "n": 10,
+            "t": "Pops",
+            "d": "2016-03-28"
+          },
+          {
+            "n": 11,
+            "t": "St. Lucifer",
+            "d": "2016-04-11"
+          },
+          {
+            "n": 12,
+            "t": "#TeamLucifer",
+            "d": "2016-04-18"
+          },
+          {
+            "n": 13,
+            "t": "Take Me Back to Hell",
+            "d": "2016-04-25"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Everything's Coming Up Lucifer",
+            "d": "2016-09-19"
+          },
+          {
+            "n": 2,
+            "t": "Liar, Liar, Slutty Dress on Fire",
+            "d": "2016-10-03"
+          },
+          {
+            "n": 3,
+            "t": "Sin-Eater",
+            "d": "2016-10-10"
+          },
+          {
+            "n": 4,
+            "t": "Lady Parts",
+            "d": "2016-10-17"
+          },
+          {
+            "n": 5,
+            "t": "Weaponizer",
+            "d": "2016-10-24"
+          },
+          {
+            "n": 6,
+            "t": "Monster",
+            "d": "2016-10-31"
+          },
+          {
+            "n": 7,
+            "t": "My Little Monkey",
+            "d": "2016-11-07"
+          },
+          {
+            "n": 8,
+            "t": "Trip to Stabby Town",
+            "d": "2016-11-14"
+          },
+          {
+            "n": 9,
+            "t": "Homewrecker",
+            "d": "2016-11-21"
+          },
+          {
+            "n": 10,
+            "t": "Quid Pro Ho",
+            "d": "2016-11-28"
+          },
+          {
+            "n": 11,
+            "t": "Stewardess Interruptus",
+            "d": "2017-01-16"
+          },
+          {
+            "n": 12,
+            "t": "Love Handles",
+            "d": "2017-01-23"
+          },
+          {
+            "n": 13,
+            "t": "A Good Day to Die",
+            "d": "2017-01-30"
+          },
+          {
+            "n": 14,
+            "t": "Candy Morningstar",
+            "d": "2017-05-01"
+          },
+          {
+            "n": 15,
+            "t": "Deceptive Little Parasite",
+            "d": "2017-05-08"
+          },
+          {
+            "n": 16,
+            "t": "God Johnson",
+            "d": "2017-05-15"
+          },
+          {
+            "n": 17,
+            "t": "Sympathy for the Goddess",
+            "d": "2017-05-22"
+          },
+          {
+            "n": 18,
+            "t": "The Good, the Bad, and the Crispy",
+            "d": "2017-05-29"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "They're Back, Aren't They?",
+            "d": "2017-10-02"
+          },
+          {
+            "n": 2,
+            "t": "The One with the Baby Carrot",
+            "d": "2017-10-09"
+          },
+          {
+            "n": 3,
+            "t": "Mr. & Mrs. Mazikeen Smith",
+            "d": "2017-10-16"
+          },
+          {
+            "n": 4,
+            "t": "What Would Lucifer Do?",
+            "d": "2017-10-23"
+          },
+          {
+            "n": 5,
+            "t": "Welcome Back, Charlotte Richards",
+            "d": "2017-10-30"
+          },
+          {
+            "n": 6,
+            "t": "Vegas with Some Radish",
+            "d": "2017-11-06"
+          },
+          {
+            "n": 7,
+            "t": "Off the Record",
+            "d": "2017-11-13"
+          },
+          {
+            "n": 8,
+            "t": "Chloe Does Lucifer",
+            "d": "2017-11-20"
+          },
+          {
+            "n": 9,
+            "t": "The Sinnerman",
+            "d": "2017-12-04"
+          },
+          {
+            "n": 10,
+            "t": "The Sin Bin",
+            "d": "2017-12-11"
+          },
+          {
+            "n": 11,
+            "t": "City of Angels?",
+            "d": "2018-01-01"
+          },
+          {
+            "n": 12,
+            "t": "All About Her",
+            "d": "2018-01-22"
+          },
+          {
+            "n": 13,
+            "t": "'Til Death Do Us Part",
+            "d": "2018-01-29"
+          },
+          {
+            "n": 14,
+            "t": "My Brother's Keeper",
+            "d": "2018-02-05"
+          },
+          {
+            "n": 15,
+            "t": "High School Poppycock",
+            "d": "2018-02-26"
+          },
+          {
+            "n": 16,
+            "t": "Infernal Guinea Pig",
+            "d": "2018-03-05"
+          },
+          {
+            "n": 17,
+            "t": "Let Pinhead Sing!",
+            "d": "2018-03-12"
+          },
+          {
+            "n": 18,
+            "t": "The Last Heartbreak",
+            "d": "2018-03-19"
+          },
+          {
+            "n": 19,
+            "t": "Orange Is the New Maze",
+            "d": "2018-03-26"
+          },
+          {
+            "n": 20,
+            "t": "The Angel of San Bernardino",
+            "d": "2018-04-16"
+          },
+          {
+            "n": 21,
+            "t": "Anything Pierce Can Do I Can Do Better",
+            "d": "2018-04-23"
+          },
+          {
+            "n": 22,
+            "t": "All Hands on Decker",
+            "d": "2018-04-30"
+          },
+          {
+            "n": 23,
+            "t": "Quintessential Deckerstar",
+            "d": "2018-05-07"
+          },
+          {
+            "n": 24,
+            "t": "A Devil of My Word",
+            "d": "2018-05-14"
+          },
+          {
+            "n": 25,
+            "t": "Boo Normal",
+            "d": "2018-05-28"
+          },
+          {
+            "n": 26,
+            "t": "Once Upon a Time",
+            "d": "2018-05-28"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Everything's Okay",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 2,
+            "t": "Somebody's Been Reading Dante's Inferno",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 3,
+            "t": "O, Ye of Little Faith, Father",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 4,
+            "t": "All About Eve",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 5,
+            "t": "Expire Erect",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 6,
+            "t": "Orgy Pants to Work",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 7,
+            "t": "Devil Is as Devil Does",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 8,
+            "t": "Super Bad Boyfriend",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 9,
+            "t": "Save Lucifer",
+            "d": "2019-05-08"
+          },
+          {
+            "n": 10,
+            "t": "Who's da New King of Hell?",
+            "d": "2019-05-08"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Really Sad Devil Guy",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 2,
+            "t": "Lucifer! Lucifer! Lucifer!",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 3,
+            "t": "¡Diablo!",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 4,
+            "t": "It Never Ends Well for the Chicken",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 5,
+            "t": "Detective Amenadiel",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 6,
+            "t": "BlueBallz",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 7,
+            "t": "Our Mojo",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 8,
+            "t": "Spoiler Alert",
+            "d": "2020-08-21"
+          },
+          {
+            "n": 9,
+            "t": "Family Dinner",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 10,
+            "t": "Bloody Celestial Karaoke Jam",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 11,
+            "t": "Resting Devil Face",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 12,
+            "t": "Daniel Espinoza: Naked and Afraid",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 13,
+            "t": "A Little Harmless Stalking",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 14,
+            "t": "Nothing Lasts Forever",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 15,
+            "t": "Is This Really How It's Going to End?!",
+            "d": "2021-05-28"
+          },
+          {
+            "n": 16,
+            "t": "A Chance at a Happy Ending",
+            "d": "2021-05-28"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Nothing Ever Changes Around Here",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 2,
+            "t": "Buckets of Baggage",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 3,
+            "t": "Yabba Dabba Do Me",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 4,
+            "t": "Pin the Tail on the Daddy",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 5,
+            "t": "The Murder of Lucifer Morningstar",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 6,
+            "t": "A Lot Dirtier Than That",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 7,
+            "t": "My Best Fiend's Wedding",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 8,
+            "t": "Save the Devil, Save the World",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 9,
+            "t": "Goodbye, Lucifer",
+            "d": "2021-09-10"
+          },
+          {
+            "n": 10,
+            "t": "Partners 'Til the End",
+            "d": "2021-09-10"
+          }
+        ]
+      }
     },
     {
       "creators": "Sam Catlin, Evan Goldberg, Seth Rogen",
@@ -7608,12 +10047,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Butch Lukic, Alan Burnett, Jim Krieg",
+      "cast": "Kevin Conroy, Mark Hamill, Diedrich Bader, James Woods, Rachel Kimsey",
+      "runtime": "~11 min per episode",
+      "plot": "A fast-paced, quarter-hour take on the Justice League, rotating through a huge roster of heroes — Batman, Superman, Wonder Woman, Flash, Green Arrow, Zatanna, and dozens more — as they defend Earth from an equally sprawling rogues gallery of magical, alien, and mad-scientist threats.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Justice League Action",
@@ -7627,15 +10066,279 @@
       "episodes": 52,
       "rt": null,
       "imdb": 6.9,
-      "blurb": "Fast-paced, 11-minute team adventures aimed at a younger audience."
+      "blurb": "Fast-paced, 11-minute team adventures aimed at a younger audience.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Classic Rock (Shazam Slam: Part 1)",
+            "d": "2016-12-16"
+          },
+          {
+            "n": 2,
+            "t": "Power Outage (Shazam Slam: Part 2)",
+            "d": "2016-12-16"
+          },
+          {
+            "n": 3,
+            "t": "Night of the Bat (Shazam Slam: Part 3)",
+            "d": "2016-12-16"
+          },
+          {
+            "n": 4,
+            "t": "Abate and Switch (Shazam Slam: Part 4)",
+            "d": "2016-12-16"
+          },
+          {
+            "n": 5,
+            "t": "Follow That Space Cab!",
+            "d": "2017-01-21"
+          },
+          {
+            "n": 6,
+            "t": "Nuclear Family Values",
+            "d": "2017-01-28"
+          },
+          {
+            "n": 7,
+            "t": "Zombie King",
+            "d": "2017-02-04"
+          },
+          {
+            "n": 8,
+            "t": "Galaxy Jest",
+            "d": "2017-02-11"
+          },
+          {
+            "n": 9,
+            "t": "Time Share",
+            "d": "2017-02-18"
+          },
+          {
+            "n": 10,
+            "t": "Under a Red Sun",
+            "d": "2017-02-25"
+          },
+          {
+            "n": 11,
+            "t": "Play Date",
+            "d": "2017-03-04"
+          },
+          {
+            "n": 12,
+            "t": "Repulse!",
+            "d": "2017-03-11"
+          },
+          {
+            "n": 13,
+            "t": "Trick or Threat",
+            "d": "2017-03-18"
+          },
+          {
+            "n": 14,
+            "t": "Speed Demon",
+            "d": "2017-03-25"
+          },
+          {
+            "n": 15,
+            "t": "Hat Trick",
+            "d": "2017-04-08"
+          },
+          {
+            "n": 16,
+            "t": "Luthor in Paradise",
+            "d": "2017-04-29"
+          },
+          {
+            "n": 17,
+            "t": "Plastic Man Saves the World",
+            "d": "2017-05-06"
+          },
+          {
+            "n": 18,
+            "t": "Field Trip",
+            "d": "2017-05-13"
+          },
+          {
+            "n": 19,
+            "t": "Rage of the Red Lanterns",
+            "d": "2017-05-20"
+          },
+          {
+            "n": 20,
+            "t": "Freezer Burn",
+            "d": "2017-05-27"
+          },
+          {
+            "n": 21,
+            "t": "Inside Job",
+            "d": "2017-06-03"
+          },
+          {
+            "n": 22,
+            "t": "The Trouble with Truth",
+            "d": "2017-06-03"
+          },
+          {
+            "n": 23,
+            "t": "Double Cross",
+            "d": "2017-06-10"
+          },
+          {
+            "n": 24,
+            "t": "Battle for the Bottled City",
+            "d": "2017-06-17"
+          },
+          {
+            "n": 25,
+            "t": "Garden of Evil",
+            "d": "2017-06-24"
+          },
+          {
+            "n": 26,
+            "t": "All Aboard the Space Train",
+            "d": "2017-07-01"
+          },
+          {
+            "n": 27,
+            "t": "Time Out",
+            "d": "2017-07-08"
+          },
+          {
+            "n": 28,
+            "t": "The Fatal Fare",
+            "d": "2017-07-15"
+          },
+          {
+            "n": 29,
+            "t": "Mxy's Mix-Up",
+            "d": "2017-07-22"
+          },
+          {
+            "n": 30,
+            "t": "Supernatural Adventures in Babysitting",
+            "d": "2017-07-29"
+          },
+          {
+            "n": 31,
+            "t": "Booster's Gold",
+            "d": "2017-08-12"
+          },
+          {
+            "n": 32,
+            "t": "Boo-ray for Bizarro",
+            "d": "2017-08-19"
+          },
+          {
+            "n": 33,
+            "t": "Best Day Ever",
+            "d": "2017-08-26"
+          },
+          {
+            "n": 34,
+            "t": "The Cube Root",
+            "d": "2017-09-02"
+          },
+          {
+            "n": 35,
+            "t": "Superman's Pal, Sid Sharp",
+            "d": "2017-09-09"
+          },
+          {
+            "n": 36,
+            "t": "Superman Red vs. Superman Blue",
+            "d": "2017-09-16"
+          },
+          {
+            "n": 37,
+            "t": "The Ringer",
+            "d": "2017-09-23"
+          },
+          {
+            "n": 38,
+            "t": "Forget Me Not",
+            "d": "2017-09-30"
+          },
+          {
+            "n": 39,
+            "t": "The Brain Buster",
+            "d": "2017-10-07"
+          },
+          {
+            "n": 40,
+            "t": "E. Nigma, Consulting Detective",
+            "d": "2017-10-14"
+          },
+          {
+            "n": 41,
+            "t": "Harley Goes Ape!",
+            "d": "2017-10-21"
+          },
+          {
+            "n": 42,
+            "t": "Phased and Confused",
+            "d": "2017-10-28"
+          },
+          {
+            "n": 43,
+            "t": "It'll Take a Miracle!",
+            "d": "2017-11-04"
+          },
+          {
+            "n": 44,
+            "t": "System Error",
+            "d": "2017-11-11"
+          },
+          {
+            "n": 45,
+            "t": "Race Against Crime",
+            "d": "2017-11-18"
+          },
+          {
+            "n": 46,
+            "t": "Party Animal",
+            "d": "2017-12-02"
+          },
+          {
+            "n": 47,
+            "t": "Watchtower Tours",
+            "d": "2018-05-29"
+          },
+          {
+            "n": 48,
+            "t": "Barehanded",
+            "d": "2018-05-30"
+          },
+          {
+            "n": 49,
+            "t": "Captain Bamboozle",
+            "d": "2018-05-31"
+          },
+          {
+            "n": 50,
+            "t": "Keeping Up with the Kryptonians",
+            "d": "2018-06-01"
+          },
+          {
+            "n": 51,
+            "t": "Unleashed",
+            "d": "2018-06-02"
+          },
+          {
+            "n": 52,
+            "t": "She Wore Red Velvet",
+            "d": "2018-06-03"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Lauren Faust",
+      "cast": "Grey Griffin, Tara Strong, Nicole Sullivan, Kari Wahlgren, Myrna Velasco, Kimberly Brooks",
+      "runtime": "~11-15 min per episode",
+      "plot": "Teenage versions of Wonder Woman, Batgirl, Supergirl, Bumblebee, Green Lantern, and Zatanna balance ordinary high school life at Metropolis High with fighting a rotating cast of equally teenage supervillains, in hashtag-titled episodes styled after social media posts.",
+      "whereToWatch": "Max, Cartoon Network",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "DC Super Hero Girls",
@@ -7647,7 +10350,403 @@
       "episodes": 78,
       "rt": null,
       "imdb": 6.1,
-      "blurb": "A younger-skewing reboot reimagining DC's heroines as high schoolers, following the earlier web-shorts version."
+      "blurb": "A younger-skewing reboot reimagining DC's heroines as high schoolers, following the earlier web-shorts version.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "#SuperSleeper",
+            "d": "2019-01-17"
+          },
+          {
+            "n": 2,
+            "t": "#BatCatcher",
+            "d": "2019-01-24"
+          },
+          {
+            "n": 3,
+            "t": "#HamsterConQueso",
+            "d": "2019-01-31"
+          },
+          {
+            "n": 4,
+            "t": "#HashtagFrownyFace",
+            "d": "2019-02-07"
+          },
+          {
+            "n": 5,
+            "t": "#StreetStyle",
+            "d": "2019-02-14"
+          },
+          {
+            "n": 6,
+            "t": "#BatAndSwitch",
+            "d": "2019-02-21"
+          },
+          {
+            "n": 7,
+            "t": "#PlightOfTheBumblebee",
+            "d": "2019-02-28"
+          },
+          {
+            "n": 8,
+            "t": "#FaultyPowers",
+            "d": "2019-03-07"
+          },
+          {
+            "n": 9,
+            "t": "#PackBat",
+            "d": "2019-03-14"
+          },
+          {
+            "n": 10,
+            "t": "#Buzzkill",
+            "d": "2019-03-21"
+          },
+          {
+            "n": 11,
+            "t": "#GoFish",
+            "d": "2019-03-28"
+          },
+          {
+            "n": 12,
+            "t": "#KaraCare",
+            "d": "2019-04-04"
+          },
+          {
+            "n": 13,
+            "t": "#SpeedyDelivery",
+            "d": "2019-04-11"
+          },
+          {
+            "n": 14,
+            "t": "#TacoTuesday",
+            "d": "2019-04-18"
+          },
+          {
+            "n": 15,
+            "t": "#SilverScream",
+            "d": "2019-04-25"
+          },
+          {
+            "n": 16,
+            "t": "#PrizeFighter",
+            "d": "2019-05-02"
+          },
+          {
+            "n": 17,
+            "t": "#HardRock",
+            "d": "2019-05-09"
+          },
+          {
+            "n": 18,
+            "t": "#PictureDaze",
+            "d": "2019-05-16"
+          },
+          {
+            "n": 19,
+            "t": "#LetThemEatPie",
+            "d": "2019-05-23"
+          },
+          {
+            "n": 20,
+            "t": "#WasabiWar",
+            "d": "2019-05-30"
+          },
+          {
+            "n": 21,
+            "t": "#RemoteUncontrolled",
+            "d": "2019-06-06"
+          },
+          {
+            "n": 22,
+            "t": "#TheSlowAndTheFurious",
+            "d": "2019-06-13"
+          },
+          {
+            "n": 23,
+            "t": "#BigScreenBully",
+            "d": "2019-06-20"
+          },
+          {
+            "n": 24,
+            "t": "#EqualTights",
+            "d": "2019-06-27"
+          },
+          {
+            "n": 25,
+            "t": "#DyeHarder",
+            "d": "2019-07-04"
+          },
+          {
+            "n": 26,
+            "t": "#LostAndFound",
+            "d": "2019-07-11"
+          },
+          {
+            "n": 27,
+            "t": "#StainedFighter",
+            "d": "2019-07-18"
+          },
+          {
+            "n": 28,
+            "t": "#CruzControl",
+            "d": "2019-07-25"
+          },
+          {
+            "n": 29,
+            "t": "#BabsGirl",
+            "d": "2019-08-01"
+          },
+          {
+            "n": 30,
+            "t": "#AdBlockers",
+            "d": "2019-08-08"
+          },
+          {
+            "n": 31,
+            "t": "#ArtificialIntelligence",
+            "d": "2019-08-15"
+          },
+          {
+            "n": 32,
+            "t": "#AsteroidBelter",
+            "d": "2019-08-22"
+          },
+          {
+            "n": 33,
+            "t": "#CandyCrushed",
+            "d": "2019-08-29"
+          },
+          {
+            "n": 34,
+            "t": "#VanityInsanity",
+            "d": "2019-09-05"
+          },
+          {
+            "n": 35,
+            "t": "#PhotoOops",
+            "d": "2019-09-12"
+          },
+          {
+            "n": 36,
+            "t": "#Vegecide",
+            "d": "2019-09-19"
+          },
+          {
+            "n": 37,
+            "t": "#StressTest",
+            "d": "2019-09-26"
+          },
+          {
+            "n": 38,
+            "t": "#Booked",
+            "d": "2019-10-03"
+          },
+          {
+            "n": 39,
+            "t": "#ComicGone",
+            "d": "2019-10-17"
+          },
+          {
+            "n": 40,
+            "t": "#SoulTaken",
+            "d": "2019-10-31"
+          },
+          {
+            "n": 41,
+            "t": "#ToughCrowd",
+            "d": "2019-11-14"
+          },
+          {
+            "n": 42,
+            "t": "#BoothBoot",
+            "d": "2019-11-28"
+          },
+          {
+            "n": 43,
+            "t": "#SofaSoGood",
+            "d": "2019-12-03"
+          },
+          {
+            "n": 44,
+            "t": "#TheBeeStandsAlone",
+            "d": "2019-12-03"
+          },
+          {
+            "n": 45,
+            "t": "#VeggieBurritoBucket",
+            "d": "2019-12-03"
+          },
+          {
+            "n": 46,
+            "t": "#SuckerPunch",
+            "d": "2020-01-09"
+          },
+          {
+            "n": 47,
+            "t": "#PurseScratcher",
+            "d": "2020-01-24"
+          },
+          {
+            "n": 48,
+            "t": "#StarStruck",
+            "d": "2020-02-06"
+          },
+          {
+            "n": 49,
+            "t": "#FlashForwardFlashback",
+            "d": "2020-02-20"
+          },
+          {
+            "n": 50,
+            "t": "#ShellShock",
+            "d": "2020-03-05"
+          },
+          {
+            "n": 51,
+            "t": "#TheCommute",
+            "d": "2020-03-19"
+          },
+          {
+            "n": 52,
+            "t": "#AbraKachoo",
+            "d": "2019-10-27"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "#AmBatgirl, Part 1",
+            "d": "2021-06-06"
+          },
+          {
+            "n": 2,
+            "t": "#AmBatgirl, Part 2",
+            "d": "2021-06-06"
+          },
+          {
+            "n": 3,
+            "t": "#DoubleDanvers",
+            "d": "2021-06-13"
+          },
+          {
+            "n": 4,
+            "t": "#AccordingToGarth",
+            "d": "2021-06-13"
+          },
+          {
+            "n": 5,
+            "t": "#SuperWonderBatBeeZeeLanternMobile",
+            "d": "2021-06-27"
+          },
+          {
+            "n": 6,
+            "t": "#SirensConch",
+            "d": "2021-06-27"
+          },
+          {
+            "n": 7,
+            "t": "#AngerManagement",
+            "d": "2021-07-04"
+          },
+          {
+            "n": 8,
+            "t": "#HappyBirthdayZee",
+            "d": "2021-07-04"
+          },
+          {
+            "n": 9,
+            "t": "#TheGreenRoom",
+            "d": "2021-07-11"
+          },
+          {
+            "n": 10,
+            "t": "#EnterNightSting",
+            "d": "2021-07-11"
+          },
+          {
+            "n": 11,
+            "t": "#WorldsFinest",
+            "d": "2021-07-18"
+          },
+          {
+            "n": 12,
+            "t": "#WorkingStiff",
+            "d": "2021-07-18"
+          },
+          {
+            "n": 13,
+            "t": "#MultipliciZee",
+            "d": "2021-07-25"
+          },
+          {
+            "n": 14,
+            "t": "#TheMinus",
+            "d": "2021-07-25"
+          },
+          {
+            "n": 15,
+            "t": "#Powerless",
+            "d": "2021-08-01"
+          },
+          {
+            "n": 16,
+            "t": "#AcceptNoSubstitute",
+            "d": "2021-08-01"
+          },
+          {
+            "n": 17,
+            "t": "#TheWarriorAndTheJester",
+            "d": "2021-08-08"
+          },
+          {
+            "n": 18,
+            "t": "#MotherKnowsBest",
+            "d": "2021-08-08"
+          },
+          {
+            "n": 19,
+            "t": "#DetentionClub",
+            "d": "2021-10-03"
+          },
+          {
+            "n": 20,
+            "t": "#SmallVictories",
+            "d": "2021-10-03"
+          },
+          {
+            "n": 21,
+            "t": "#CruzControl (Election)",
+            "d": "2021-10-10"
+          },
+          {
+            "n": 22,
+            "t": "#WhySoBlue",
+            "d": "2021-10-10"
+          },
+          {
+            "n": 23,
+            "t": "#OneEnchantedEvening",
+            "d": "2021-10-17"
+          },
+          {
+            "n": 24,
+            "t": "#TheAquamanCometh",
+            "d": "2021-10-17"
+          },
+          {
+            "n": 25,
+            "t": "#NightmareInGotham, Part 1",
+            "d": "2021-10-24"
+          },
+          {
+            "n": 26,
+            "t": "#NightmareInGotham, Part 2",
+            "d": "2021-10-24"
+          }
+        ]
+      }
     },
     {
       "creators": "Justin Halpern, Patrick Schumacker, Dean Lorey",
@@ -8129,11 +11228,11 @@
     },
     {
       "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "cast": "Jacob Bertrand, Noah Kaye Bentley, Madigan Kacmar, Lilimar, Titus Blake, Ethan Hawke",
+      "runtime": "~11-22 min per episode",
+      "plot": "A preschool-aimed spin-off starring the Batwheels — sentient, kid-friendly versions of Batman's vehicles, including the Batmobile 'Bam' and Batgirl's motorbike 'Bibi' — as they learn teamwork while helping Batman and Robin keep Gotham safe.",
+      "whereToWatch": "Max, Cartoon Network",
+      "ageRating": "TV-Y",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batwheels",
@@ -8144,10 +11243,610 @@
         "Batman"
       ],
       "seasons": 3,
-      "episodes": 83,
+      "episodes": 118,
       "rt": null,
       "imdb": 5.7,
-      "blurb": "A preschool-aimed series about the sentient vehicles of the Batman universe."
+      "blurb": "A preschool-aimed series about the sentient vehicles of the Batman universe. Season 3 is still airing (current through September 2026); episode count will keep rising.",
+      "epDetails": {
+        "0": [
+          {
+            "n": 1,
+            "t": "Meet the Batwheels",
+            "d": "2022-09-12"
+          },
+          {
+            "n": 2,
+            "t": "Calling All Batwheels",
+            "d": "2022-09-12"
+          },
+          {
+            "n": 3,
+            "t": "Bam!",
+            "d": "2022-09-19"
+          },
+          {
+            "n": 4,
+            "t": "Buff Tuff",
+            "d": "2022-09-26"
+          },
+          {
+            "n": 5,
+            "t": "Faster",
+            "d": "2022-10-03"
+          },
+          {
+            "n": 6,
+            "t": "Fly",
+            "d": "2022-10-10"
+          },
+          {
+            "n": 7,
+            "t": "Spooky Batcave",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 8,
+            "t": "Robin's Ride",
+            "d": "2022-10-18"
+          },
+          {
+            "n": 9,
+            "t": "Bam's Bubble Trouble",
+            "d": "2022-10-18"
+          },
+          {
+            "n": 10,
+            "t": "Wheelin' and Dealin'",
+            "d": "2022-10-18"
+          },
+          {
+            "n": 11,
+            "t": "Interview with a Crime-Fighter",
+            "d": "2022-10-18"
+          },
+          {
+            "n": 12,
+            "t": "Rockin' Robin",
+            "d": "2023-04-24"
+          },
+          {
+            "n": 13,
+            "t": "The Best Present in the World",
+            "d": "2022-12-05"
+          },
+          {
+            "n": 14,
+            "t": "Silly Stowaway",
+            "d": "2023-01-10"
+          },
+          {
+            "n": 15,
+            "t": "The Knight Shift",
+            "d": "2023-02-13"
+          },
+          {
+            "n": 16,
+            "t": "Bibi Bops",
+            "d": "2023-04-24"
+          },
+          {
+            "n": 17,
+            "t": "Batwingin' It",
+            "d": "2023-05-15"
+          },
+          {
+            "n": 18,
+            "t": "Bad to the Chrome",
+            "d": "2023-05-15"
+          },
+          {
+            "n": 19,
+            "t": "A Joking Matter",
+            "d": "2023-07-03"
+          },
+          {
+            "n": 20,
+            "t": "Parking Problems",
+            "d": "2023-08-07"
+          },
+          {
+            "n": 21,
+            "t": "Bat Surfin'",
+            "d": "2023-09-04"
+          },
+          {
+            "n": 22,
+            "t": "I'll Be Your Shelter",
+            "d": "2024-01-01"
+          },
+          {
+            "n": 23,
+            "t": "Jet Set",
+            "d": "2024-01-01"
+          },
+          {
+            "n": 24,
+            "t": "Bad Day",
+            "d": "2024-01-01"
+          }
+        ],
+        "1": [
+          {
+            "n": 1,
+            "t": "Secret Origin of the Batwheels",
+            "d": "2022-09-17"
+          },
+          {
+            "n": 2,
+            "t": "Stop That Ducky!",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 3,
+            "t": "Buff's BFF",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 4,
+            "t": "Up in the Air",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 5,
+            "t": "Bibi's Do-Over",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 6,
+            "t": "Sidekicked to the Curb",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 7,
+            "t": "Keep Calm and Roll On",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 8,
+            "t": "Bam's Upgrade",
+            "d": "2022-10-17"
+          },
+          {
+            "n": 9,
+            "t": "Redbird's Bogus Beach Day",
+            "d": "2022-11-07"
+          },
+          {
+            "n": 10,
+            "t": "Cave Sweet Cave",
+            "d": "2022-11-07"
+          },
+          {
+            "n": 11,
+            "t": "Scaredy-Bat",
+            "d": "2022-11-14"
+          },
+          {
+            "n": 12,
+            "t": "Riddle Me This",
+            "d": "2022-11-14"
+          },
+          {
+            "n": 13,
+            "t": "Zoomsday",
+            "d": "2022-11-21"
+          },
+          {
+            "n": 14,
+            "t": "Rev and Let Rev",
+            "d": "2022-11-21"
+          },
+          {
+            "n": 15,
+            "t": "Batcomputer for a Day",
+            "d": "2022-11-28"
+          },
+          {
+            "n": 16,
+            "t": "Grass is Greener",
+            "d": "2022-11-28"
+          },
+          {
+            "n": 17,
+            "t": "Holidays on Ice",
+            "d": "2022-12-05"
+          },
+          {
+            "n": 18,
+            "t": "Bam's Clawful Mistake",
+            "d": "2023-05-01"
+          },
+          {
+            "n": 19,
+            "t": "Harley Did It",
+            "d": "2023-05-01"
+          },
+          {
+            "n": 20,
+            "t": "Buff in a China Shop",
+            "d": "2023-05-01"
+          },
+          {
+            "n": 21,
+            "t": "A Tale of Two Bibis",
+            "d": "2023-05-01"
+          },
+          {
+            "n": 22,
+            "t": "Batty Race",
+            "d": "2023-05-01"
+          },
+          {
+            "n": 23,
+            "t": "When You're a Jet",
+            "d": "2023-07-03"
+          },
+          {
+            "n": 24,
+            "t": "Ride Along",
+            "d": "2023-07-10"
+          },
+          {
+            "n": 25,
+            "t": "Wheels Just Wanna Have Fun",
+            "d": "2023-07-17"
+          },
+          {
+            "n": 26,
+            "t": "Tough Buff Blues",
+            "d": "2023-07-25"
+          },
+          {
+            "n": 27,
+            "t": "Wheel Side Story",
+            "d": "2023-08-01"
+          },
+          {
+            "n": 28,
+            "t": "Ace in the Hole",
+            "d": "2023-09-11"
+          },
+          {
+            "n": 29,
+            "t": "Mechanic Panic",
+            "d": "2023-09-12"
+          },
+          {
+            "n": 30,
+            "t": "Improvise My Ride",
+            "d": "2023-09-13"
+          },
+          {
+            "n": 31,
+            "t": "Dynamic Du-Oh-No",
+            "d": "2023-09-14"
+          },
+          {
+            "n": 32,
+            "t": "To the Batmobile!",
+            "d": "2023-09-15"
+          },
+          {
+            "n": 33,
+            "t": "The Dark Night",
+            "d": "2023-09-16"
+          },
+          {
+            "n": 34,
+            "t": "License to Joke",
+            "d": "2023-09-16"
+          },
+          {
+            "n": 35,
+            "t": "Bibi's Bad Day",
+            "d": "2023-09-16"
+          },
+          {
+            "n": 36,
+            "t": "A Jet Out of Water",
+            "d": "2023-09-16"
+          },
+          {
+            "n": 37,
+            "t": "Batty Body Swap",
+            "d": "2023-09-16"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Nightbike",
+            "d": "2024-01-12"
+          },
+          {
+            "n": 2,
+            "t": "Bat-Light Blow-Out",
+            "d": "2024-01-12"
+          },
+          {
+            "n": 3,
+            "t": "Kitty's Sleepover",
+            "d": "2024-01-12"
+          },
+          {
+            "n": 4,
+            "t": "Mission: Stuffed Animal",
+            "d": "2024-01-12"
+          },
+          {
+            "n": 5,
+            "t": "Follow the Bouncing Bam",
+            "d": "2024-01-12"
+          },
+          {
+            "n": 6,
+            "t": "Big Rig Bam",
+            "d": "2024-05-03"
+          },
+          {
+            "n": 7,
+            "t": "Air-Show, Don't Tell",
+            "d": "2024-05-03"
+          },
+          {
+            "n": 8,
+            "t": "Monster Truck Amok",
+            "d": "2024-05-03"
+          },
+          {
+            "n": 9,
+            "t": "Razzle Dazzle Frazzle",
+            "d": "2024-05-03"
+          },
+          {
+            "n": 10,
+            "t": "Multi-MOE",
+            "d": "2024-05-03"
+          },
+          {
+            "n": 11,
+            "t": "The Ulti-Bat Rises",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 12,
+            "t": "A T-Rexcellent Adventure",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 13,
+            "t": "Bats in Show",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 14,
+            "t": "The Gotham Guardians",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 15,
+            "t": "Save the Bat Dance for Me",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 16,
+            "t": "Nightbike's Noisy Night",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 17,
+            "t": "Bite-Sized Buff",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 18,
+            "t": "Redbird-O-Flage",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 19,
+            "t": "Pumpkin Panic",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 20,
+            "t": "The Wizard of Bats",
+            "d": "2024-09-21"
+          },
+          {
+            "n": 21,
+            "t": "The Great Christmas Caper",
+            "d": "2024-12-06"
+          },
+          {
+            "n": 22,
+            "t": "The Batgirlmobile",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 23,
+            "t": "Music Meister Mayhem",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 24,
+            "t": "Batwing and the Nets",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 25,
+            "t": "Clay Date",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 26,
+            "t": "Wish Upon a Car",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 27,
+            "t": "Bibi's Bat-Belt Blunder",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 28,
+            "t": "Lend Me Your Volunteer",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 29,
+            "t": "Condiment Chaos!",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 30,
+            "t": "Bat-Blast-Off!",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 31,
+            "t": "Flight of the Kitty",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 32,
+            "t": "The Bestah Way",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 33,
+            "t": "MOE Alone",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 34,
+            "t": "Bat-Buds Forever",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 35,
+            "t": "Banebuggy",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 36,
+            "t": "Spiffledipped",
+            "d": "2024-12-13"
+          },
+          {
+            "n": 37,
+            "t": "Bibi and the Bad Seed",
+            "d": "2024-12-13"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Gotham, We Have a Problem",
+            "d": "2025-12-05"
+          },
+          {
+            "n": 2,
+            "t": "Betterwheels",
+            "d": "2025-12-05"
+          },
+          {
+            "n": 3,
+            "t": "The Tumbler Begins",
+            "d": "2025-12-05"
+          },
+          {
+            "n": 4,
+            "t": "Sizzie Strong",
+            "d": "2025-12-05"
+          },
+          {
+            "n": 5,
+            "t": "Kitty Kong",
+            "d": "2026-02-06"
+          },
+          {
+            "n": 6,
+            "t": "Sidecar Chaos",
+            "d": "2026-02-06"
+          },
+          {
+            "n": 7,
+            "t": "Flight Night",
+            "d": "2026-02-06"
+          },
+          {
+            "n": 8,
+            "t": "It's My Bat Birthday Too, Yeah",
+            "d": "2026-02-06"
+          },
+          {
+            "n": 9,
+            "t": "Batdraft",
+            "d": "2026-02-06"
+          },
+          {
+            "n": 10,
+            "t": "Presto Change-o",
+            "d": "2026-05-22"
+          },
+          {
+            "n": 11,
+            "t": "Caped Crusader Caper",
+            "d": "2026-05-22"
+          },
+          {
+            "n": 12,
+            "t": "Aqua-Wheels",
+            "d": "2026-05-22"
+          },
+          {
+            "n": 13,
+            "t": "You Talkin' to Me?",
+            "d": "2026-05-22"
+          },
+          {
+            "n": 14,
+            "t": "The Butler Did It",
+            "d": "2026-05-22"
+          },
+          {
+            "n": 15,
+            "t": "A Purr-fect Pair",
+            "d": "2026-07-17"
+          },
+          {
+            "n": 16,
+            "t": "Third Wheel",
+            "d": "2026-07-17"
+          },
+          {
+            "n": 17,
+            "t": "Skatin' Ace",
+            "d": "2026-07-17"
+          },
+          {
+            "n": 18,
+            "t": "Bats of Clay",
+            "d": "2026-07-17"
+          },
+          {
+            "n": 19,
+            "t": "Double Trouble",
+            "d": "2026-07-17"
+          },
+          {
+            "n": 20,
+            "t": "Episode 20",
+            "d": "2026-09-19"
+          }
+        ]
+      }
     },
     {
       "creators": "Jake Wyatt, Brendan Clogher",
