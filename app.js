@@ -39,7 +39,7 @@ const SCHEMA = {
     {key:"whereToWatch", label:"Where to watch", type:"text", required:false},
     {key:"boxOffice", label:"Box office", type:"text", required:false, placeholder:"e.g. Budget ~$X · Gross ~$Y"},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. PG-13"},
-    {key:"trailer", label:"Trailer YouTube link", type:"text", required:false},
+    {key:"trailer", label:"Trailer — YouTube video ID (e.g. TQfATDZY5Y4, not the full link)", type:"text", required:false},
   ],
   series: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -58,7 +58,7 @@ const SCHEMA = {
     {key:"plot", label:"Longer plot summary", type:"textarea", required:false},
     {key:"whereToWatch", label:"Where to watch", type:"text", required:false},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. TV-MA"},
-    {key:"trailer", label:"Trailer YouTube link (series-wide, if only one exists)", type:"text", required:false},
+    {key:"trailer", label:"Trailer — YouTube video ID (series-wide, e.g. TQfATDZY5Y4)", type:"text", required:false},
   ],
   games: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -71,7 +71,7 @@ const SCHEMA = {
     {key:"plot", label:"Longer plot summary", type:"textarea", required:false},
     {key:"whereToWatch", label:"Where to buy / play", type:"text", required:false},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. ESRB T"},
-    {key:"trailer", label:"Trailer YouTube link (longest available)", type:"text", required:false},
+    {key:"trailer", label:"Trailer — YouTube video ID", type:"text", required:false},
   ],
   comics: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -497,7 +497,7 @@ function relatedInUniverse(connected, cat, excludeId){
 
 function extraDetailsHtml(cat, d){
   let html = "";
-  if(d.trailer) html += `<a class="trailer-btn" href="${d.trailer}" target="_blank" rel="noopener">▶ Watch Trailer</a>`;
+  if(d.trailer) html += `<button class="trailer-btn" data-yt="${d.trailer}">▶ Watch Trailer</button><div class="trailer-embed" id="trailerEmbed"></div>`;
   if(d.plot) html += `<div class="sheet-section"><div class="sheet-label">PLOT</div><div class="sheet-body">${d.plot}</div></div>`;
   const credits = [];
   if(cat==="movies" && d.director) credits.push(["DIRECTOR", d.director]);
@@ -559,6 +559,17 @@ function openSheet(d){
   }
 
   sheetContent.innerHTML = html;
+
+  const trailerBtn = sheetContent.querySelector(".trailer-btn");
+  if(trailerBtn){
+    trailerBtn.addEventListener("click", ()=>{
+      const vid = trailerBtn.dataset.yt;
+      const embed = $("#trailerEmbed");
+      embed.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1" title="Trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      embed.dataset.active = "true";
+      trailerBtn.style.display = "none";
+    });
+  }
 
   sheetContent.querySelectorAll("[data-season]").forEach(chip=>{
     chip.addEventListener("click", ()=>{
