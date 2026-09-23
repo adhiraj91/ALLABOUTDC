@@ -3409,12 +3409,12 @@
       "blurb": "A young Clark Kent's college years as the fledgling Superboy."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Joseph Stefano",
+      "cast": "Dick Durock, Mark Lindsay Chapman, Carrell Myers, Scott Garrison, Kari Wuhrer",
+      "runtime": "~30 min per episode",
+      "plot": "A USA Network continuation of the Swamp Thing films, following the muck-encrusted, plant-based hero as he protects the Louisiana bayou and a found family of allies from the recurring schemes of his nemesis, the mad scientist Dr. Anton Arcane.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Swamp Thing",
@@ -3428,15 +3428,383 @@
       "episodes": 72,
       "rt": null,
       "imdb": 5.9,
-      "blurb": "A USA Network continuation of the Swamp Thing film series."
+      "blurb": "A USA Network continuation of the Swamp Thing film series.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Emerald Heart",
+            "d": "1990-07-27"
+          },
+          {
+            "n": 2,
+            "t": "The Living Image",
+            "d": "1990-09-07"
+          },
+          {
+            "n": 3,
+            "t": "The Death of Dr. Arcane",
+            "d": "1990-09-14"
+          },
+          {
+            "n": 4,
+            "t": "Legend of the Swamp Maiden",
+            "d": "1990-09-21"
+          },
+          {
+            "n": 5,
+            "t": "Spirit of the Swamp",
+            "d": "1990-09-28"
+          },
+          {
+            "n": 6,
+            "t": "Blood Wind",
+            "d": "1990-10-05"
+          },
+          {
+            "n": 7,
+            "t": "Grotesquery",
+            "d": "1990-10-12"
+          },
+          {
+            "n": 8,
+            "t": "Natural Enemy",
+            "d": "1990-10-19"
+          },
+          {
+            "n": 9,
+            "t": "Treasure",
+            "d": "1990-10-26"
+          },
+          {
+            "n": 10,
+            "t": "New Acquaintance",
+            "d": "1990-11-02"
+          },
+          {
+            "n": 11,
+            "t": "Falco",
+            "d": "1990-11-09"
+          },
+          {
+            "n": 12,
+            "t": "From Beyond the Grave",
+            "d": "1990-11-16"
+          },
+          {
+            "n": 13,
+            "t": "The Shipment",
+            "d": "1990-11-23"
+          },
+          {
+            "n": 14,
+            "t": "Birth Marks",
+            "d": "1991-02-01"
+          },
+          {
+            "n": 15,
+            "t": "Dark Side of the Mirror",
+            "d": "1991-02-08"
+          },
+          {
+            "n": 16,
+            "t": "Silent Screams",
+            "d": "1991-02-15"
+          },
+          {
+            "n": 17,
+            "t": "Walk a Mile In My Shoots",
+            "d": "1991-02-22"
+          },
+          {
+            "n": 18,
+            "t": "The Watchers",
+            "d": "1991-03-01"
+          },
+          {
+            "n": 19,
+            "t": "The Hunt",
+            "d": "1991-03-08"
+          },
+          {
+            "n": 20,
+            "t": "Touch of Death",
+            "d": "1991-03-15"
+          },
+          {
+            "n": 21,
+            "t": "Tremors of the Heart",
+            "d": "1991-03-22"
+          },
+          {
+            "n": 22,
+            "t": "The Prometheus Parabola",
+            "d": "1991-04-05"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Night of the Dying",
+            "d": "1992-01-03"
+          },
+          {
+            "n": 2,
+            "t": "Love Lost",
+            "d": "1992-01-10"
+          },
+          {
+            "n": 3,
+            "t": "Mist Demeanor",
+            "d": "1992-01-17"
+          },
+          {
+            "n": 4,
+            "t": "A Nightmare on Jackson Street",
+            "d": "1992-01-24"
+          },
+          {
+            "n": 5,
+            "t": "Better Angels",
+            "d": "1992-01-31"
+          },
+          {
+            "n": 6,
+            "t": "Children of the Fool",
+            "d": "1992-02-07"
+          },
+          {
+            "n": 7,
+            "t": "A Jury of His Fears",
+            "d": "1992-02-14"
+          },
+          {
+            "n": 8,
+            "t": "Poisonous",
+            "d": "1992-02-21"
+          },
+          {
+            "n": 9,
+            "t": "Smoke and Mirrors",
+            "d": "1992-02-28"
+          },
+          {
+            "n": 10,
+            "t": "This Old House of Mayan",
+            "d": "1992-03-06"
+          },
+          {
+            "n": 11,
+            "t": "Sonata",
+            "d": "1992-03-20"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Dead and Married",
+            "d": "1992-07-10"
+          },
+          {
+            "n": 2,
+            "t": "Powers of Darkness",
+            "d": "1992-07-17"
+          },
+          {
+            "n": 3,
+            "t": "Special Request",
+            "d": "1992-07-24"
+          },
+          {
+            "n": 4,
+            "t": "What Goes Around, Comes Around",
+            "d": "1992-07-31"
+          },
+          {
+            "n": 5,
+            "t": "Fear Itself",
+            "d": "1992-08-07"
+          },
+          {
+            "n": 6,
+            "t": "Changes",
+            "d": "1992-08-14"
+          },
+          {
+            "n": 7,
+            "t": "Destiny",
+            "d": "1992-08-21"
+          },
+          {
+            "n": 8,
+            "t": "Tatania",
+            "d": "1992-08-28"
+          },
+          {
+            "n": 9,
+            "t": "Mirador's Brain",
+            "d": "1992-09-11"
+          },
+          {
+            "n": 10,
+            "t": "Lesser of Two Evils",
+            "d": "1992-09-19"
+          },
+          {
+            "n": 11,
+            "t": "Revelations",
+            "d": "1992-09-26"
+          },
+          {
+            "n": 12,
+            "t": "Easy Prey",
+            "d": "1992-10-03"
+          },
+          {
+            "n": 13,
+            "t": "The Handyman",
+            "d": "1992-10-10"
+          },
+          {
+            "n": 14,
+            "t": "Future Tense",
+            "d": "1992-10-17"
+          },
+          {
+            "n": 15,
+            "t": "Hide in the Night",
+            "d": "1992-10-24"
+          },
+          {
+            "n": 16,
+            "t": "Pay Day",
+            "d": "1992-10-31"
+          },
+          {
+            "n": 17,
+            "t": "The Return of LaRoche",
+            "d": "1992-11-07"
+          },
+          {
+            "n": 18,
+            "t": "Rites of Passage",
+            "d": "1992-11-14"
+          },
+          {
+            "n": 19,
+            "t": "Never Alone",
+            "d": "1992-11-21"
+          },
+          {
+            "n": 20,
+            "t": "A Most Bitter Pill",
+            "d": "1992-12-05"
+          },
+          {
+            "n": 21,
+            "t": "The Curse",
+            "d": "1992-12-12"
+          },
+          {
+            "n": 22,
+            "t": "Judgment Day",
+            "d": "1992-12-19"
+          },
+          {
+            "n": 23,
+            "t": "Eye of the Storm",
+            "d": "1993-01-09"
+          },
+          {
+            "n": 24,
+            "t": "Vendetta",
+            "d": "1993-01-16"
+          },
+          {
+            "n": 25,
+            "t": "The Hurting",
+            "d": "1993-01-23"
+          },
+          {
+            "n": 26,
+            "t": "The Burning Times",
+            "d": "1993-01-30"
+          },
+          {
+            "n": 27,
+            "t": "The Specter of Death",
+            "d": "1993-02-06"
+          },
+          {
+            "n": 28,
+            "t": "Cross-Fired",
+            "d": "1993-02-13"
+          },
+          {
+            "n": 29,
+            "t": "Patient Zero",
+            "d": "1993-02-20"
+          },
+          {
+            "n": 30,
+            "t": "The Chains of Forever",
+            "d": "1993-02-27"
+          },
+          {
+            "n": 31,
+            "t": "In the Beginning",
+            "d": "1993-03-06"
+          },
+          {
+            "n": 32,
+            "t": "Brotherly Love",
+            "d": "1993-03-13"
+          },
+          {
+            "n": 33,
+            "t": "An Eye for an Eye",
+            "d": "1993-03-20"
+          },
+          {
+            "n": 34,
+            "t": "Yo Ho Ho",
+            "d": "1993-03-27"
+          },
+          {
+            "n": 35,
+            "t": "Heart of Stone",
+            "d": "1993-04-03"
+          },
+          {
+            "n": 36,
+            "t": "Romancing Arcane",
+            "d": "1993-04-10"
+          },
+          {
+            "n": 37,
+            "t": "Swamp of Dreams",
+            "d": "1993-04-17"
+          },
+          {
+            "n": 38,
+            "t": "Heart of the Mantis",
+            "d": "1993-04-24"
+          },
+          {
+            "n": 39,
+            "t": "That's a Wrap",
+            "d": "1993-05-01"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Danny Bilson, Paul De Meo",
+      "cast": "John Wesley Shipp, Amanda Pays, Alex Désert, Mike Genovese, Biff Manard",
+      "runtime": "~45-48 min per episode (94 min pilot)",
+      "plot": "Central City police scientist Barry Allen is struck by lightning and doused in chemicals, gaining superhuman speed. Aided by S.T.A.R. Labs scientist Tina McGee, he becomes the crimson-suited Flash, waging a noir-tinged war on the gang that killed his brother and the growing rogues gallery drawn to Central City.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The Flash",
@@ -3450,15 +3818,129 @@
       "episodes": 22,
       "rt": null,
       "imdb": 7,
-      "blurb": "Barry Allen's first live-action TV series, a stylish, noir-tinged one-season run."
+      "blurb": "Barry Allen's first live-action TV series, a stylish, noir-tinged one-season run.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "1990-09-20"
+          },
+          {
+            "n": 2,
+            "t": "Out of Control",
+            "d": "1990-10-14"
+          },
+          {
+            "n": 3,
+            "t": "Watching the Detectives",
+            "d": "1990-10-18"
+          },
+          {
+            "n": 4,
+            "t": "Honor Among Thieves",
+            "d": "1990-10-25"
+          },
+          {
+            "n": 5,
+            "t": "Double Vision",
+            "d": "1990-11-01"
+          },
+          {
+            "n": 6,
+            "t": "Sins of the Father",
+            "d": "1990-11-08"
+          },
+          {
+            "n": 7,
+            "t": "Child's Play",
+            "d": "1990-11-15"
+          },
+          {
+            "n": 8,
+            "t": "Shroud of Death",
+            "d": "1990-11-29"
+          },
+          {
+            "n": 9,
+            "t": "Ghost in the Machine",
+            "d": "1990-12-13"
+          },
+          {
+            "n": 10,
+            "t": "Sight Unseen",
+            "d": "1991-01-10"
+          },
+          {
+            "n": 11,
+            "t": "Beat the Clock",
+            "d": "1991-01-31"
+          },
+          {
+            "n": 12,
+            "t": "The Trickster",
+            "d": "1991-02-07"
+          },
+          {
+            "n": 13,
+            "t": "Tina, Is That You?",
+            "d": "1991-02-14"
+          },
+          {
+            "n": 14,
+            "t": "Be My Baby",
+            "d": "1991-02-21"
+          },
+          {
+            "n": 15,
+            "t": "Fast Forward",
+            "d": "1991-02-27"
+          },
+          {
+            "n": 16,
+            "t": "Deadly Nightshade",
+            "d": "1991-03-30"
+          },
+          {
+            "n": 17,
+            "t": "Captain Cold",
+            "d": "1991-04-06"
+          },
+          {
+            "n": 18,
+            "t": "Twin Streaks",
+            "d": "1991-04-13"
+          },
+          {
+            "n": 19,
+            "t": "Done with Mirrors",
+            "d": "1991-04-27"
+          },
+          {
+            "n": 20,
+            "t": "Good Night, Central City",
+            "d": "1991-05-04"
+          },
+          {
+            "n": 21,
+            "t": "Alpha",
+            "d": "1991-05-11"
+          },
+          {
+            "n": 22,
+            "t": "The Trial of the Trickster",
+            "d": "1991-05-18"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Danny Bilson, Paul De Meo",
+      "cast": "Rick Springfield, Kirk Baltz, Sami Chester, Signy Coleman",
+      "runtime": "~60 min per episode",
+      "plot": "Vietnam veteran turned bodyguard Christopher Chance uses elaborate disguises and makeup to impersonate his endangered clients, drawing assassins and threats onto himself in their place.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Human Target",
@@ -3470,15 +3952,54 @@
       "episodes": 7,
       "rt": null,
       "imdb": 6.5,
-      "blurb": "An early, short-lived adaptation of the DC crime-thriller character Christopher Chance."
+      "blurb": "An early, short-lived adaptation of the DC crime-thriller character Christopher Chance.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "1992-07-20"
+          },
+          {
+            "n": 2,
+            "t": "Second Chance",
+            "d": "1992-07-25"
+          },
+          {
+            "n": 3,
+            "t": "Designed by Chance",
+            "d": "1992-08-01"
+          },
+          {
+            "n": 4,
+            "t": "Mirror Image",
+            "d": "1992-08-08"
+          },
+          {
+            "n": 5,
+            "t": "Cool Hand Chance",
+            "d": "1992-08-15"
+          },
+          {
+            "n": 6,
+            "t": "Going Home",
+            "d": "1992-08-22"
+          },
+          {
+            "n": 7,
+            "t": "Chances Are",
+            "d": "1992-08-29"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Deborah Joy LeVine",
+      "cast": "Dean Cain, Teri Hatcher, Lane Smith, John Shea, K Callan",
+      "runtime": "~44-45 min per episode",
+      "plot": "A more romance-forward retelling of Superman's early years in Metropolis, centering the slow-burn will-they-won't-they relationship between mild-mannered Daily Planet reporter Clark Kent and his ambitious colleague Lois Lane, who doesn't yet know he's also the Man of Steel.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Lois & Clark: The New Adventures of Superman",
@@ -3492,7 +4013,457 @@
       "episodes": 88,
       "rt": null,
       "imdb": 6.7,
-      "blurb": "A romance-forward take centering the relationship between Clark and Lois."
+      "blurb": "A romance-forward take centering the relationship between Clark and Lois.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot, Part 1",
+            "d": "1993-09-12"
+          },
+          {
+            "n": 2,
+            "t": "Pilot, Part 2",
+            "d": "1993-09-12"
+          },
+          {
+            "n": 3,
+            "t": "Strange Visitor (from Another Planet)",
+            "d": "1993-09-26"
+          },
+          {
+            "n": 4,
+            "t": "Neverending Battle",
+            "d": "1993-10-03"
+          },
+          {
+            "n": 5,
+            "t": "I'm Looking Through You",
+            "d": "1993-10-10"
+          },
+          {
+            "n": 6,
+            "t": "Requiem for a Superhero",
+            "d": "1993-10-17"
+          },
+          {
+            "n": 7,
+            "t": "I've Got a Crush on You",
+            "d": "1993-10-24"
+          },
+          {
+            "n": 8,
+            "t": "Smart Kids",
+            "d": "1993-10-31"
+          },
+          {
+            "n": 9,
+            "t": "The Green, Green Glow of Home",
+            "d": "1993-11-14"
+          },
+          {
+            "n": 10,
+            "t": "The Man of Steel Bars",
+            "d": "1993-11-21"
+          },
+          {
+            "n": 11,
+            "t": "Pheromone, My Lovely",
+            "d": "1993-11-28"
+          },
+          {
+            "n": 12,
+            "t": "Honeymoon in Metropolis",
+            "d": "1993-12-12"
+          },
+          {
+            "n": 13,
+            "t": "All Shook Up",
+            "d": "1994-01-02"
+          },
+          {
+            "n": 14,
+            "t": "Witness",
+            "d": "1994-01-09"
+          },
+          {
+            "n": 15,
+            "t": "Illusions of Grandeur",
+            "d": "1994-01-23"
+          },
+          {
+            "n": 16,
+            "t": "The Ides of Metropolis",
+            "d": "1994-02-06"
+          },
+          {
+            "n": 17,
+            "t": "Foundling",
+            "d": "1994-02-20"
+          },
+          {
+            "n": 18,
+            "t": "The Rival",
+            "d": "1994-02-27"
+          },
+          {
+            "n": 19,
+            "t": "Vatman",
+            "d": "1994-03-13"
+          },
+          {
+            "n": 20,
+            "t": "Fly Hard",
+            "d": "1994-03-27"
+          },
+          {
+            "n": 21,
+            "t": "Barbarians at the Planet",
+            "d": "1994-05-01"
+          },
+          {
+            "n": 22,
+            "t": "The House of Luthor",
+            "d": "1994-05-08"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Madame Ex",
+            "d": "1994-09-18"
+          },
+          {
+            "n": 2,
+            "t": "Wall of Sound",
+            "d": "1994-09-25"
+          },
+          {
+            "n": 3,
+            "t": "The Source",
+            "d": "1994-10-02"
+          },
+          {
+            "n": 4,
+            "t": "The Prankster",
+            "d": "1994-10-09"
+          },
+          {
+            "n": 5,
+            "t": "Church of Metropolis",
+            "d": "1994-10-23"
+          },
+          {
+            "n": 6,
+            "t": "Operation Blackout",
+            "d": "1994-10-30"
+          },
+          {
+            "n": 7,
+            "t": "That Old Gang of Mine",
+            "d": "1994-11-13"
+          },
+          {
+            "n": 8,
+            "t": "A Bolt from the Blue",
+            "d": "1994-11-20"
+          },
+          {
+            "n": 9,
+            "t": "Season's Greedings",
+            "d": "1994-12-04"
+          },
+          {
+            "n": 10,
+            "t": "Metallo",
+            "d": "1995-01-01"
+          },
+          {
+            "n": 11,
+            "t": "Chi of Steel",
+            "d": "1995-01-08"
+          },
+          {
+            "n": 12,
+            "t": "The Eyes Have It",
+            "d": "1995-01-22"
+          },
+          {
+            "n": 13,
+            "t": "The Phoenix",
+            "d": "1995-02-12"
+          },
+          {
+            "n": 14,
+            "t": "Top Copy",
+            "d": "1995-02-19"
+          },
+          {
+            "n": 15,
+            "t": "Return of the Prankster",
+            "d": "1995-02-26"
+          },
+          {
+            "n": 16,
+            "t": "Lucky Leon",
+            "d": "1995-03-12"
+          },
+          {
+            "n": 17,
+            "t": "Resurrection",
+            "d": "1995-03-19"
+          },
+          {
+            "n": 18,
+            "t": "Tempus Fugitive",
+            "d": "1995-03-26"
+          },
+          {
+            "n": 19,
+            "t": "Target: Jimmy Olsen!",
+            "d": "1995-04-02"
+          },
+          {
+            "n": 20,
+            "t": "Individual Responsibility",
+            "d": "1995-04-16"
+          },
+          {
+            "n": 21,
+            "t": "Whine, Whine, Whine",
+            "d": "1995-05-14"
+          },
+          {
+            "n": 22,
+            "t": "And the Answer Is...",
+            "d": "1995-05-21"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "...We Have a Lot to Talk About",
+            "d": "1995-09-17"
+          },
+          {
+            "n": 2,
+            "t": "Ordinary People",
+            "d": "1995-09-24"
+          },
+          {
+            "n": 3,
+            "t": "Contact",
+            "d": "1995-10-01"
+          },
+          {
+            "n": 4,
+            "t": "When Irish Eyes Are Killing",
+            "d": "1995-10-15"
+          },
+          {
+            "n": 5,
+            "t": "Just Say Noah",
+            "d": "1995-10-22"
+          },
+          {
+            "n": 6,
+            "t": "Don't Tug on Superman's Cape",
+            "d": "1995-11-05"
+          },
+          {
+            "n": 7,
+            "t": "Ultra Woman",
+            "d": "1995-11-12"
+          },
+          {
+            "n": 8,
+            "t": "Chip Off the Old Clark",
+            "d": "1995-11-19"
+          },
+          {
+            "n": 9,
+            "t": "Super Mann",
+            "d": "1995-11-26"
+          },
+          {
+            "n": 10,
+            "t": "Virtually Destroyed",
+            "d": "1995-12-10"
+          },
+          {
+            "n": 11,
+            "t": "Home Is Where the Hurt Is",
+            "d": "1995-12-17"
+          },
+          {
+            "n": 12,
+            "t": "Never on Sunday",
+            "d": "1996-01-07"
+          },
+          {
+            "n": 13,
+            "t": "The Dad Who Came in from the Cold",
+            "d": "1996-01-14"
+          },
+          {
+            "n": 14,
+            "t": "Tempus, Anyone?",
+            "d": "1996-01-21"
+          },
+          {
+            "n": 15,
+            "t": "I Now Pronounce You...",
+            "d": "1996-02-11"
+          },
+          {
+            "n": 16,
+            "t": "Double Jeopardy",
+            "d": "1996-02-18"
+          },
+          {
+            "n": 17,
+            "t": "Seconds",
+            "d": "1996-02-25"
+          },
+          {
+            "n": 18,
+            "t": "Forget Me Not",
+            "d": "1996-03-10"
+          },
+          {
+            "n": 19,
+            "t": "Oedipus Wrecks",
+            "d": "1996-03-24"
+          },
+          {
+            "n": 20,
+            "t": "It's a Small World After All",
+            "d": "1996-04-28"
+          },
+          {
+            "n": 21,
+            "t": "Through a Glass, Darkly",
+            "d": "1996-05-05"
+          },
+          {
+            "n": 22,
+            "t": "Big Girls Don't Fly",
+            "d": "1996-05-12"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Lord of the Flys",
+            "d": "1996-09-22"
+          },
+          {
+            "n": 2,
+            "t": "Battleground Earth",
+            "d": "1996-09-29"
+          },
+          {
+            "n": 3,
+            "t": "Swear to God, This Time We're Not Kidding",
+            "d": "1996-10-06"
+          },
+          {
+            "n": 4,
+            "t": "Soul Mates",
+            "d": "1996-10-13"
+          },
+          {
+            "n": 5,
+            "t": "Brutal Youth",
+            "d": "1996-10-20"
+          },
+          {
+            "n": 6,
+            "t": "The People vs. Lois Lane",
+            "d": "1996-10-27"
+          },
+          {
+            "n": 7,
+            "t": "Dead Lois Walking",
+            "d": "1996-11-10"
+          },
+          {
+            "n": 8,
+            "t": "Bob and Carol and Lois and Clark",
+            "d": "1996-11-17"
+          },
+          {
+            "n": 9,
+            "t": "Ghosts",
+            "d": "1996-11-24"
+          },
+          {
+            "n": 10,
+            "t": "Stop the Presses",
+            "d": "1996-12-08"
+          },
+          {
+            "n": 11,
+            "t": "'Twas the Night Before Mxymas",
+            "d": "1996-12-15"
+          },
+          {
+            "n": 12,
+            "t": "Lethal Weapon",
+            "d": "1997-01-05"
+          },
+          {
+            "n": 13,
+            "t": "Sex, Lies and Videotape",
+            "d": "1997-01-19"
+          },
+          {
+            "n": 14,
+            "t": "Meet John Doe",
+            "d": "1997-03-02"
+          },
+          {
+            "n": 15,
+            "t": "Lois and Clarks",
+            "d": "1997-03-09"
+          },
+          {
+            "n": 16,
+            "t": "AKA Superman",
+            "d": "1997-03-16"
+          },
+          {
+            "n": 17,
+            "t": "Faster Than a Speeding Vixen",
+            "d": "1997-04-12"
+          },
+          {
+            "n": 18,
+            "t": "Shadow of a Doubt",
+            "d": "1997-04-19"
+          },
+          {
+            "n": 19,
+            "t": "Voice from the Past",
+            "d": "1997-04-26"
+          },
+          {
+            "n": 20,
+            "t": "I've Got You Under My Skin",
+            "d": "1997-05-31"
+          },
+          {
+            "n": 21,
+            "t": "Toy Story",
+            "d": "1997-06-07"
+          },
+          {
+            "n": 22,
+            "t": "The Family Hour",
+            "d": "1997-06-14"
+          }
+        ]
+      }
     },
     {
       "creators": "",
@@ -3517,12 +4488,12 @@
       "blurb": "Clark Kent's teenage years in Kansas, running for ten seasons before he becomes Superman."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Laurie Iker, Bryce Zabel",
+      "cast": "Ashley Scott, Dina Meyer, Rachel Skarsten, Shemar Moore, Ian Abercrombie",
+      "runtime": "~42-60 min per episode",
+      "plot": "Years after Batman has vanished and the Joker's revenge left Batgirl paralyzed and Catwoman dead, their daughter Huntress, the now-wheelchair-bound Oracle, and a young metahuman named Dinah protect a crime-ridden New Gotham City as the Birds of Prey.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Birds of Prey",
@@ -3536,15 +4507,84 @@
       "episodes": 13,
       "rt": null,
       "imdb": 6.4,
-      "blurb": "An early, short-lived series following Huntress, Oracle, and Black Canary in New Gotham."
+      "blurb": "An early, short-lived series following Huntress, Oracle, and Black Canary in New Gotham.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2002-10-09"
+          },
+          {
+            "n": 2,
+            "t": "Slick",
+            "d": "2002-10-16"
+          },
+          {
+            "n": 3,
+            "t": "Prey for the Hunter",
+            "d": "2002-10-23"
+          },
+          {
+            "n": 4,
+            "t": "Three Birds and a Baby",
+            "d": "2002-10-30"
+          },
+          {
+            "n": 5,
+            "t": "Sins of the Mother",
+            "d": "2002-11-06"
+          },
+          {
+            "n": 6,
+            "t": "Primal Scream",
+            "d": "2002-11-13"
+          },
+          {
+            "n": 7,
+            "t": "Split",
+            "d": "2002-11-20"
+          },
+          {
+            "n": 8,
+            "t": "Lady Shiva",
+            "d": "2002-11-27"
+          },
+          {
+            "n": 9,
+            "t": "Nature of the Beast",
+            "d": "2002-12-18"
+          },
+          {
+            "n": 10,
+            "t": "Gladiatrix",
+            "d": "2003-01-08"
+          },
+          {
+            "n": 11,
+            "t": "Reunion",
+            "d": "2003-01-08"
+          },
+          {
+            "n": 12,
+            "t": "Feat of Clay",
+            "d": "2003-02-19"
+          },
+          {
+            "n": 13,
+            "t": "Devil's Eyes",
+            "d": "2003-02-19"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Jonathan E. Steinberg",
+      "cast": "Mark Valley, Chi McBride, Jackie Earle Haley, Indira Varma, Janet Montgomery",
+      "runtime": "~43-45 min per episode",
+      "plot": "Christopher Chance, a mysterious bodyguard-for-hire who becomes the literal human target in place of his clients, takes on dangerous protection jobs across the globe with the help of his tech-savvy partner Winston and volatile former hitman Guerrero.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Human Target",
@@ -3556,7 +4596,138 @@
       "episodes": 25,
       "rt": null,
       "imdb": 7.4,
-      "blurb": "A second, action-comedy adaptation of the Christopher Chance character."
+      "blurb": "A second, action-comedy adaptation of the Christopher Chance character.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2010-01-17"
+          },
+          {
+            "n": 2,
+            "t": "Rewind",
+            "d": "2010-01-20"
+          },
+          {
+            "n": 3,
+            "t": "Embassy Row",
+            "d": "2010-01-26"
+          },
+          {
+            "n": 4,
+            "t": "Sanctuary",
+            "d": "2010-02-17"
+          },
+          {
+            "n": 5,
+            "t": "Run",
+            "d": "2010-02-10"
+          },
+          {
+            "n": 6,
+            "t": "Lockdown",
+            "d": "2010-02-24"
+          },
+          {
+            "n": 7,
+            "t": "Salvage and Reclamation",
+            "d": "2010-03-10"
+          },
+          {
+            "n": 8,
+            "t": "Baptiste",
+            "d": "2010-03-17"
+          },
+          {
+            "n": 9,
+            "t": "Corner Man",
+            "d": "2010-03-24"
+          },
+          {
+            "n": 10,
+            "t": "Tanarak",
+            "d": "2010-03-31"
+          },
+          {
+            "n": 11,
+            "t": "Victoria",
+            "d": "2010-04-07"
+          },
+          {
+            "n": 12,
+            "t": "Christopher Chance",
+            "d": "2010-04-14"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Ilsa Pucci",
+            "d": "2010-11-17"
+          },
+          {
+            "n": 2,
+            "t": "The Wife's Tale",
+            "d": "2010-11-24"
+          },
+          {
+            "n": 3,
+            "t": "Taking Ames",
+            "d": "2010-12-01"
+          },
+          {
+            "n": 4,
+            "t": "The Return of Baptiste",
+            "d": "2010-12-08"
+          },
+          {
+            "n": 5,
+            "t": "Dead Head",
+            "d": "2010-12-15"
+          },
+          {
+            "n": 6,
+            "t": "The Other Side of the Mall",
+            "d": "2010-12-22"
+          },
+          {
+            "n": 7,
+            "t": "A Problem Like Maria (1)",
+            "d": "2011-01-05"
+          },
+          {
+            "n": 8,
+            "t": "Communication Breakdown (2)",
+            "d": "2011-01-05"
+          },
+          {
+            "n": 9,
+            "t": "Imbroglio",
+            "d": "2011-01-14"
+          },
+          {
+            "n": 10,
+            "t": "Cool Hand Guerrero",
+            "d": "2011-01-14"
+          },
+          {
+            "n": 11,
+            "t": "Kill Bob",
+            "d": "2011-01-31"
+          },
+          {
+            "n": 12,
+            "t": "The Trouble with Harry",
+            "d": "2011-02-02"
+          },
+          {
+            "n": 13,
+            "t": "Marshall Pucci",
+            "d": "2011-02-09"
+          }
+        ]
+      }
     },
     {
       "creators": "Greg Berlanti, Marc Guggenheim, Andrew Kreisberg",
@@ -7162,12 +8333,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Caroline Dries",
+      "cast": "Ruby Rose, Javicia Leslie, Camrus Johnson, Nicole Kang, Rachel Skarsten, Meagan Tandy",
+      "runtime": "~42 min per episode",
+      "plot": "With Batman missing from Gotham, Kate Kane — Bruce Wayne's cousin — takes up a version of the Bat-symbol as Batwoman, fighting the city's escalating crime and her own estranged sister, Alice. After Kate's disappearance, paramedic and former foster kid Ryan Wilder finds the batsuit and takes up the mantle in her own right.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-14",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batwoman",
@@ -7181,7 +8352,270 @@
       "episodes": 51,
       "rt": null,
       "imdb": 5.1,
-      "blurb": "Kate Kane takes up a version of the Bat-symbol in Gotham."
+      "blurb": "Kate Kane takes up a version of the Bat-symbol in Gotham.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2019-10-06"
+          },
+          {
+            "n": 2,
+            "t": "The Rabbit Hole",
+            "d": "2019-10-13"
+          },
+          {
+            "n": 3,
+            "t": "Down, Down, Down",
+            "d": "2019-10-20"
+          },
+          {
+            "n": 4,
+            "t": "Who Are You?",
+            "d": "2019-10-27"
+          },
+          {
+            "n": 5,
+            "t": "Mine Is a Long and a Sad Tale",
+            "d": "2019-11-03"
+          },
+          {
+            "n": 6,
+            "t": "I'll Be Judge, I'll Be Jury",
+            "d": "2019-11-10"
+          },
+          {
+            "n": 7,
+            "t": "Tell Me the Truth",
+            "d": "2019-11-17"
+          },
+          {
+            "n": 8,
+            "t": "A Mad Tea-Party",
+            "d": "2019-12-01"
+          },
+          {
+            "n": 9,
+            "t": "Crisis on Infinite Earths: Part Two",
+            "d": "2019-12-09"
+          },
+          {
+            "n": 10,
+            "t": "How Queer Everything Is Today!",
+            "d": "2020-01-19"
+          },
+          {
+            "n": 11,
+            "t": "An Un-Birthday Present",
+            "d": "2020-01-26"
+          },
+          {
+            "n": 12,
+            "t": "Take Your Choice",
+            "d": "2020-02-16"
+          },
+          {
+            "n": 13,
+            "t": "Drink Me",
+            "d": "2020-02-23"
+          },
+          {
+            "n": 14,
+            "t": "Grinning from Ear to Ear",
+            "d": "2020-03-08"
+          },
+          {
+            "n": 15,
+            "t": "Off with Her Head",
+            "d": "2020-03-15"
+          },
+          {
+            "n": 16,
+            "t": "Through the Looking-Glass",
+            "d": "2020-03-22"
+          },
+          {
+            "n": 17,
+            "t": "A Narrow Escape",
+            "d": "2020-04-26"
+          },
+          {
+            "n": 18,
+            "t": "If You Believe in Me, I'll Believe in You",
+            "d": "2020-05-03"
+          },
+          {
+            "n": 19,
+            "t": "A Secret Kept from All the Rest",
+            "d": "2020-05-10"
+          },
+          {
+            "n": 20,
+            "t": "O, Mouse!",
+            "d": "2020-05-17"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Whatever Happened to Kate Kane?",
+            "d": "2021-01-17"
+          },
+          {
+            "n": 2,
+            "t": "Prior Criminal History",
+            "d": "2021-01-24"
+          },
+          {
+            "n": 3,
+            "t": "Bat Girl Magic!",
+            "d": "2021-01-31"
+          },
+          {
+            "n": 4,
+            "t": "Fair Skin, Blue Eyes",
+            "d": "2021-02-14"
+          },
+          {
+            "n": 5,
+            "t": "Gore on Canvas",
+            "d": "2021-02-21"
+          },
+          {
+            "n": 6,
+            "t": "Do Not Resuscitate",
+            "d": "2021-02-28"
+          },
+          {
+            "n": 7,
+            "t": "It's Best You Stop Digging",
+            "d": "2021-03-14"
+          },
+          {
+            "n": 8,
+            "t": "Survived Much Worse",
+            "d": "2021-03-21"
+          },
+          {
+            "n": 9,
+            "t": "Rule #1",
+            "d": "2021-03-28"
+          },
+          {
+            "n": 10,
+            "t": "Time Off for Good Behavior",
+            "d": "2021-04-11"
+          },
+          {
+            "n": 11,
+            "t": "Arrive Alive",
+            "d": "2021-04-18"
+          },
+          {
+            "n": 12,
+            "t": "Initiate Self-Destruct",
+            "d": "2021-05-02"
+          },
+          {
+            "n": 13,
+            "t": "I'll Give You a Clue",
+            "d": "2021-05-09"
+          },
+          {
+            "n": 14,
+            "t": "And Justice For All",
+            "d": "2021-05-16"
+          },
+          {
+            "n": 15,
+            "t": "Armed and Dangerous",
+            "d": "2021-06-06"
+          },
+          {
+            "n": 16,
+            "t": "Rebirth",
+            "d": "2021-06-13"
+          },
+          {
+            "n": 17,
+            "t": "Kane, Kate",
+            "d": "2021-06-20"
+          },
+          {
+            "n": 18,
+            "t": "Power",
+            "d": "2021-06-27"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Mad as a Hatter",
+            "d": "2021-10-13"
+          },
+          {
+            "n": 2,
+            "t": "Loose Tooth",
+            "d": "2021-10-20"
+          },
+          {
+            "n": 3,
+            "t": "Freeze",
+            "d": "2021-10-27"
+          },
+          {
+            "n": 4,
+            "t": "Antifreeze",
+            "d": "2021-11-03"
+          },
+          {
+            "n": 5,
+            "t": "A Lesson from Professor Pyg",
+            "d": "2021-11-10"
+          },
+          {
+            "n": 6,
+            "t": "How Does Your Garden Grow?",
+            "d": "2021-11-17"
+          },
+          {
+            "n": 7,
+            "t": "Pick Your Poison",
+            "d": "2021-11-24"
+          },
+          {
+            "n": 8,
+            "t": "Trust Destiny",
+            "d": "2022-01-12"
+          },
+          {
+            "n": 9,
+            "t": "Meet Your Maker",
+            "d": "2022-01-19"
+          },
+          {
+            "n": 10,
+            "t": "Toxic",
+            "d": "2022-01-26"
+          },
+          {
+            "n": 11,
+            "t": "Broken Toys",
+            "d": "2022-02-02"
+          },
+          {
+            "n": 12,
+            "t": "We're All Mad Here",
+            "d": "2022-02-23"
+          },
+          {
+            "n": 13,
+            "t": "We Having Fun Yet?",
+            "d": "2022-03-02"
+          }
+        ]
+      }
     },
     {
       "creators": "Geoff Johns",
@@ -9890,6 +11324,73 @@
             "d": "2017-06-27"
           }
         ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Are You Ready for Some Zombies?",
+            "d": "2018-02-26"
+          },
+          {
+            "n": 2,
+            "t": "Blue Bloody",
+            "d": "2018-03-05"
+          },
+          {
+            "n": 3,
+            "t": "Brainless in Seattle (1)",
+            "d": "2018-03-12"
+          },
+          {
+            "n": 4,
+            "t": "Brainless in Seattle (2)",
+            "d": "2018-03-19"
+          },
+          {
+            "n": 5,
+            "t": "Goon Struck",
+            "d": "2018-03-26"
+          },
+          {
+            "n": 6,
+            "t": "My Really Fair Lady",
+            "d": "2018-04-09"
+          },
+          {
+            "n": 7,
+            "t": "Don't Hate the Player, Hate the Brain",
+            "d": "2018-04-16"
+          },
+          {
+            "n": 8,
+            "t": "Chivalry Is Dead",
+            "d": "2018-04-23"
+          },
+          {
+            "n": 9,
+            "t": "Mac-Liv-Moore",
+            "d": "2018-04-30"
+          },
+          {
+            "n": 10,
+            "t": "Yipee Ki Brain, Motherscratcher!",
+            "d": "2018-05-07"
+          },
+          {
+            "n": 11,
+            "t": "Insane in the Germ Brain",
+            "d": "2018-05-14"
+          },
+          {
+            "n": 12,
+            "t": "You've Got to Hide Your Liv Away",
+            "d": "2018-05-21"
+          },
+          {
+            "n": 13,
+            "t": "And He Shall Be a Good Man",
+            "d": "2018-05-28"
+          }
+        ],
         "5": [
           {
             "n": 1,
@@ -11239,12 +12740,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Eric Radomski, Bruce Timm",
+      "cast": "Kevin Conroy, Efrem Zimbalist Jr., Bob Hastings, Loren Lester, Mark Hamill",
+      "runtime": "~22 min per episode",
+      "plot": "A moody, Art Deco-inflected retelling of Batman's crusade against Gotham's rogues gallery, deepening the psychology of villains like the Joker, Two-Face, and Mr. Freeze with a level of pathos and craft that set the standard for superhero animation.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batman: The Animated Series",
@@ -11258,15 +12759,446 @@
       "episodes": 85,
       "rt": null,
       "imdb": 9,
-      "blurb": "A stylish, noir-inflected series widely regarded as the definitive animated Batman; the DCAU's foundation."
+      "blurb": "A stylish, noir-inflected series widely regarded as the definitive animated Batman; the DCAU's foundation.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "On Leather Wings",
+            "d": "1992-09-06"
+          },
+          {
+            "n": 2,
+            "t": "Christmas with the Joker",
+            "d": "1992-11-13"
+          },
+          {
+            "n": 3,
+            "t": "Nothing to Fear",
+            "d": "1992-09-15"
+          },
+          {
+            "n": 4,
+            "t": "The Last Laugh",
+            "d": "1992-09-22"
+          },
+          {
+            "n": 5,
+            "t": "Pretty Poison",
+            "d": "1992-09-14"
+          },
+          {
+            "n": 6,
+            "t": "The Underdwellers",
+            "d": "1992-10-21"
+          },
+          {
+            "n": 7,
+            "t": "P.O.V.",
+            "d": "1992-09-18"
+          },
+          {
+            "n": 8,
+            "t": "The Forgotten",
+            "d": "1992-10-08"
+          },
+          {
+            "n": 9,
+            "t": "Be a Clown",
+            "d": "1992-09-16"
+          },
+          {
+            "n": 10,
+            "t": "Two-Face, Part 1",
+            "d": "1992-09-25"
+          },
+          {
+            "n": 11,
+            "t": "Two-Face, Part 2",
+            "d": "1992-09-28"
+          },
+          {
+            "n": 12,
+            "t": "It's Never Too Late",
+            "d": "1992-09-10"
+          },
+          {
+            "n": 13,
+            "t": "I've Got Batman in My Basement",
+            "d": "1992-09-30"
+          },
+          {
+            "n": 14,
+            "t": "Heart of Ice",
+            "d": "1992-09-07"
+          },
+          {
+            "n": 15,
+            "t": "The Cat and the Claw: Part 1",
+            "d": "1992-09-05"
+          },
+          {
+            "n": 16,
+            "t": "The Cat and the Claw: Part 2",
+            "d": "1992-09-12"
+          },
+          {
+            "n": 17,
+            "t": "See No Evil",
+            "d": "1993-02-24"
+          },
+          {
+            "n": 18,
+            "t": "Beware the Gray Ghost",
+            "d": "1992-11-04"
+          },
+          {
+            "n": 19,
+            "t": "Prophecy of Doom",
+            "d": "1992-10-06"
+          },
+          {
+            "n": 20,
+            "t": "Feat of Clay: Part 1",
+            "d": "1992-09-08"
+          },
+          {
+            "n": 21,
+            "t": "Feat of Clay: Part 2",
+            "d": "1992-09-09"
+          },
+          {
+            "n": 22,
+            "t": "Joker's Favor",
+            "d": "1992-09-11"
+          },
+          {
+            "n": 23,
+            "t": "Vendetta",
+            "d": "1992-10-05"
+          },
+          {
+            "n": 24,
+            "t": "Fear of Victory",
+            "d": "1992-09-29"
+          },
+          {
+            "n": 25,
+            "t": "The Clock King",
+            "d": "1992-09-21"
+          },
+          {
+            "n": 26,
+            "t": "Appointment in Crime Alley",
+            "d": "1992-09-17"
+          },
+          {
+            "n": 27,
+            "t": "Mad as a Hatter",
+            "d": "1992-10-12"
+          },
+          {
+            "n": 28,
+            "t": "Dreams in Darkness",
+            "d": "1992-11-03"
+          },
+          {
+            "n": 29,
+            "t": "Eternal Youth",
+            "d": "1992-09-23"
+          },
+          {
+            "n": 30,
+            "t": "Perchance to Dream",
+            "d": "1992-10-19"
+          },
+          {
+            "n": 31,
+            "t": "The Cape and Cowl Conspiracy",
+            "d": "1992-10-14"
+          },
+          {
+            "n": 32,
+            "t": "Robin's Reckoning, Part 1",
+            "d": "1993-02-07"
+          },
+          {
+            "n": 33,
+            "t": "Robin's Reckoning, Part 2",
+            "d": "1993-02-14"
+          },
+          {
+            "n": 34,
+            "t": "The Laughing Fish",
+            "d": "1993-01-10"
+          },
+          {
+            "n": 35,
+            "t": "Night of the Ninja",
+            "d": "1992-10-26"
+          },
+          {
+            "n": 36,
+            "t": "Cat Scratch Fever",
+            "d": "1992-11-05"
+          },
+          {
+            "n": 37,
+            "t": "The Strange Secret of Bruce Wayne",
+            "d": "1992-10-29"
+          },
+          {
+            "n": 38,
+            "t": "Heart of Steel: Part 1",
+            "d": "1992-11-16"
+          },
+          {
+            "n": 39,
+            "t": "Heart of Steel: Part 2",
+            "d": "1992-11-17"
+          },
+          {
+            "n": 40,
+            "t": "If You're So Smart, Why Aren't You Rich?",
+            "d": "1992-11-18"
+          },
+          {
+            "n": 41,
+            "t": "Joker's Wild",
+            "d": "1992-11-19"
+          },
+          {
+            "n": 42,
+            "t": "Tyger Tyger",
+            "d": "1992-10-30"
+          },
+          {
+            "n": 43,
+            "t": "Moon of the Wolf",
+            "d": "1992-11-11"
+          },
+          {
+            "n": 44,
+            "t": "Day of the Samurai",
+            "d": "1993-02-23"
+          },
+          {
+            "n": 45,
+            "t": "Terror in the Sky",
+            "d": "1992-11-12"
+          },
+          {
+            "n": 46,
+            "t": "Almost Got 'Im",
+            "d": "1992-11-10"
+          },
+          {
+            "n": 47,
+            "t": "Birds of a Feather",
+            "d": "1993-02-08"
+          },
+          {
+            "n": 48,
+            "t": "What Is Reality?",
+            "d": "1992-11-24"
+          },
+          {
+            "n": 49,
+            "t": "I Am the Night",
+            "d": "1992-11-09"
+          },
+          {
+            "n": 50,
+            "t": "Off Balance",
+            "d": "1992-11-23"
+          },
+          {
+            "n": 51,
+            "t": "The Man Who Killed Batman",
+            "d": "1993-02-01"
+          },
+          {
+            "n": 52,
+            "t": "Mudslide",
+            "d": "1993-09-15"
+          },
+          {
+            "n": 53,
+            "t": "Paging the Crime Doctor",
+            "d": "1993-09-17"
+          },
+          {
+            "n": 54,
+            "t": "Zatanna",
+            "d": "1993-02-02"
+          },
+          {
+            "n": 55,
+            "t": "The Mechanic",
+            "d": "1993-01-24"
+          },
+          {
+            "n": 56,
+            "t": "Harley and Ivy",
+            "d": "1993-01-18"
+          },
+          {
+            "n": 57,
+            "t": "Shadow of the Bat: Part 1",
+            "d": "1993-09-13"
+          },
+          {
+            "n": 58,
+            "t": "Shadow of the Bat: Part 2",
+            "d": "1993-09-14"
+          },
+          {
+            "n": 59,
+            "t": "Blind as a Bat",
+            "d": "1993-02-22"
+          },
+          {
+            "n": 60,
+            "t": "The Demon's Quest: Part 1",
+            "d": "1993-05-03"
+          },
+          {
+            "n": 61,
+            "t": "The Demon's Quest: Part 2",
+            "d": "1993-05-04"
+          },
+          {
+            "n": 62,
+            "t": "His Silicon Soul",
+            "d": "1992-11-20"
+          },
+          {
+            "n": 63,
+            "t": "Fire from Olympus",
+            "d": "1993-05-24"
+          },
+          {
+            "n": 64,
+            "t": "Read My Lips",
+            "d": "1993-05-10"
+          },
+          {
+            "n": 65,
+            "t": "The Worry Men",
+            "d": "1993-09-16"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Sideshow",
+            "d": "1994-05-03"
+          },
+          {
+            "n": 2,
+            "t": "A Bullet for Bullock",
+            "d": "1995-09-14"
+          },
+          {
+            "n": 3,
+            "t": "Trial",
+            "d": "1994-05-16"
+          },
+          {
+            "n": 4,
+            "t": "Avatar",
+            "d": "1994-05-09"
+          },
+          {
+            "n": 5,
+            "t": "House & Garden",
+            "d": "1994-05-02"
+          },
+          {
+            "n": 6,
+            "t": "The Terrible Trio",
+            "d": "1995-09-11"
+          },
+          {
+            "n": 7,
+            "t": "Harlequinade",
+            "d": "1994-05-23"
+          },
+          {
+            "n": 8,
+            "t": "Time Out of Joint",
+            "d": "1994-10-08"
+          },
+          {
+            "n": 9,
+            "t": "Catwalk",
+            "d": "1995-09-13"
+          },
+          {
+            "n": 10,
+            "t": "Bane",
+            "d": "1994-09-10"
+          },
+          {
+            "n": 11,
+            "t": "Baby-Doll",
+            "d": "1994-10-01"
+          },
+          {
+            "n": 12,
+            "t": "The Lion and the Unicorn",
+            "d": "1995-09-15"
+          },
+          {
+            "n": 13,
+            "t": "Showdown",
+            "d": "1995-09-12"
+          },
+          {
+            "n": 14,
+            "t": "Riddler's Reform",
+            "d": "1994-09-24"
+          },
+          {
+            "n": 15,
+            "t": "Second Chance",
+            "d": "1994-09-17"
+          },
+          {
+            "n": 16,
+            "t": "Harley's Holiday",
+            "d": "1994-10-15"
+          },
+          {
+            "n": 17,
+            "t": "Lock-Up",
+            "d": "1994-11-19"
+          },
+          {
+            "n": 18,
+            "t": "Make 'Em Laugh",
+            "d": "1994-11-05"
+          },
+          {
+            "n": 19,
+            "t": "Deep Freeze",
+            "d": "1994-11-26"
+          },
+          {
+            "n": 20,
+            "t": "Batgirl Returns",
+            "d": "1994-11-12"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Bruce Timm, Alan Burnett, Paul Dini",
+      "cast": "Tim Daly, Dana Delany, Clancy Brown, David Kaufman, George Dzundza",
+      "runtime": "~22 min per episode",
+      "plot": "A young Kal-El, the sole survivor of Krypton's destruction, grows up in Smallville before moving to Metropolis to become both mild-mannered Daily Planet reporter Clark Kent and the superhero Superman, contending with Lex Luthor's schemes and an ever-widening rogues gallery of Kryptonian and alien threats.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Superman: The Animated Series",
@@ -11280,15 +13212,295 @@
       "episodes": 54,
       "rt": null,
       "imdb": 8,
-      "blurb": "Bruce Timm's follow-up, expanding the shared animated universe to Metropolis."
+      "blurb": "Bruce Timm's follow-up, expanding the shared animated universe to Metropolis.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Last Son of Krypton, Part I",
+            "d": "1996-09-06"
+          },
+          {
+            "n": 2,
+            "t": "The Last Son of Krypton, Part II",
+            "d": "1996-09-06"
+          },
+          {
+            "n": 3,
+            "t": "The Last Son of Krypton, Part III",
+            "d": "1996-09-06"
+          },
+          {
+            "n": 4,
+            "t": "Fun and Games",
+            "d": "1996-09-07"
+          },
+          {
+            "n": 5,
+            "t": "A Little Piece of Home",
+            "d": "1996-09-14"
+          },
+          {
+            "n": 6,
+            "t": "Feeding Time",
+            "d": "1996-09-21"
+          },
+          {
+            "n": 7,
+            "t": "The Way of All Flesh",
+            "d": "1996-10-19"
+          },
+          {
+            "n": 8,
+            "t": "Stolen Memories",
+            "d": "1996-11-02"
+          },
+          {
+            "n": 9,
+            "t": "The Main Man, Part I",
+            "d": "1996-11-09"
+          },
+          {
+            "n": 10,
+            "t": "The Main Man, Part II",
+            "d": "1996-11-16"
+          },
+          {
+            "n": 11,
+            "t": "My Girl",
+            "d": "1996-11-23"
+          },
+          {
+            "n": 12,
+            "t": "Tools of the Trade",
+            "d": "1997-02-01"
+          },
+          {
+            "n": 13,
+            "t": "Two's a Crowd",
+            "d": "1997-02-15"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Blasts from the Past, Part I",
+            "d": "1997-09-08"
+          },
+          {
+            "n": 2,
+            "t": "Blasts from the Past, Part II",
+            "d": "1997-09-09"
+          },
+          {
+            "n": 3,
+            "t": "The Prometheon",
+            "d": "1997-09-12"
+          },
+          {
+            "n": 4,
+            "t": "Speed Demons",
+            "d": "1997-09-13"
+          },
+          {
+            "n": 5,
+            "t": "Livewire",
+            "d": "1997-09-13"
+          },
+          {
+            "n": 6,
+            "t": "Identity Crisis",
+            "d": "1997-09-15"
+          },
+          {
+            "n": 7,
+            "t": "Target",
+            "d": "1997-09-19"
+          },
+          {
+            "n": 8,
+            "t": "Mxyzpixilated",
+            "d": "1997-09-20"
+          },
+          {
+            "n": 9,
+            "t": "Action Figures",
+            "d": "1997-09-20"
+          },
+          {
+            "n": 10,
+            "t": "Double Dose",
+            "d": "1997-09-22"
+          },
+          {
+            "n": 11,
+            "t": "Solar Power",
+            "d": "1997-09-26"
+          },
+          {
+            "n": 12,
+            "t": "Brave New Metropolis",
+            "d": "1997-09-27"
+          },
+          {
+            "n": 13,
+            "t": "Monkey Fun",
+            "d": "1997-09-27"
+          },
+          {
+            "n": 14,
+            "t": "Ghost in the Machine",
+            "d": "1997-09-29"
+          },
+          {
+            "n": 15,
+            "t": "Father's Day",
+            "d": "1997-10-03"
+          },
+          {
+            "n": 16,
+            "t": "World's Finest, Part I",
+            "d": "1997-10-04"
+          },
+          {
+            "n": 17,
+            "t": "World's Finest, Part II",
+            "d": "1997-10-04"
+          },
+          {
+            "n": 18,
+            "t": "World's Finest, Part III",
+            "d": "1997-10-04"
+          },
+          {
+            "n": 19,
+            "t": "Bizarro's World",
+            "d": "1997-10-10"
+          },
+          {
+            "n": 20,
+            "t": "The Hand of Fate",
+            "d": "1997-10-11"
+          },
+          {
+            "n": 21,
+            "t": "Prototype",
+            "d": "1997-10-11"
+          },
+          {
+            "n": 22,
+            "t": "The Late Mr. Kent",
+            "d": "1997-11-01"
+          },
+          {
+            "n": 23,
+            "t": "Heavy Metal",
+            "d": "1997-11-08"
+          },
+          {
+            "n": 24,
+            "t": "Warrior Queen",
+            "d": "1997-11-22"
+          },
+          {
+            "n": 25,
+            "t": "Apokolips... Now!, Part I",
+            "d": "1998-02-07"
+          },
+          {
+            "n": 26,
+            "t": "Apokolips... Now!, Part II",
+            "d": "1998-02-14"
+          },
+          {
+            "n": 27,
+            "t": "Little Girl Lost, Part I",
+            "d": "1998-05-02"
+          },
+          {
+            "n": 28,
+            "t": "Little Girl Lost, Part II",
+            "d": "1998-05-02"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Where There's Smoke",
+            "d": "1998-09-19"
+          },
+          {
+            "n": 2,
+            "t": "Knight Time",
+            "d": "1998-10-10"
+          },
+          {
+            "n": 3,
+            "t": "New Kids in Town",
+            "d": "1998-10-31"
+          },
+          {
+            "n": 4,
+            "t": "Obsession",
+            "d": "1998-11-14"
+          },
+          {
+            "n": 5,
+            "t": "Little Big Head Man",
+            "d": "1998-11-21"
+          },
+          {
+            "n": 6,
+            "t": "Absolute Power",
+            "d": "1999-01-16"
+          },
+          {
+            "n": 7,
+            "t": "In Brightest Day...",
+            "d": "1999-02-06"
+          },
+          {
+            "n": 8,
+            "t": "Superman's Pal",
+            "d": "1999-02-20"
+          },
+          {
+            "n": 9,
+            "t": "A Fish Story",
+            "d": "1999-05-08"
+          },
+          {
+            "n": 10,
+            "t": "Unity",
+            "d": "1999-05-15"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "The Demon Reborn",
+            "d": "1999-09-18"
+          },
+          {
+            "n": 2,
+            "t": "Legacy, Part I",
+            "d": "2000-02-05"
+          },
+          {
+            "n": 3,
+            "t": "Legacy, Part II",
+            "d": "2000-02-12"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Bruce Timm, Paul Dini, Alan Burnett",
+      "cast": "Kevin Conroy, Efrem Zimbalist Jr., Loren Lester, Tara Strong, Mathew Valencia",
+      "runtime": "~22 min per episode",
+      "plot": "Picking up two years after Batman: The Animated Series with a sleeker visual redesign, Batman now works alongside a fuller Bat-family — Robin (Tim Drake), Nightwing, and Batgirl — against a rogues gallery that includes deeper explorations of Harley Quinn and the Joker's toxic relationship.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The New Batman Adventures",
@@ -11298,19 +13510,145 @@
       "hero": [
         "Batman"
       ],
-      "seasons": 1,
+      "seasons": 2,
       "episodes": 24,
       "rt": null,
       "imdb": 8.5,
-      "blurb": "A redesigned, tonally sharper continuation of Batman: The Animated Series."
+      "blurb": "A redesigned, tonally sharper continuation of Batman: The Animated Series.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Holiday Knights",
+            "d": "1997-09-13"
+          },
+          {
+            "n": 2,
+            "t": "Sins of the Father",
+            "d": "1997-09-20"
+          },
+          {
+            "n": 3,
+            "t": "Cold Comfort",
+            "d": "1997-10-11"
+          },
+          {
+            "n": 4,
+            "t": "Double Talk",
+            "d": "1997-11-22"
+          },
+          {
+            "n": 5,
+            "t": "You Scratch My Back",
+            "d": "1997-11-15"
+          },
+          {
+            "n": 6,
+            "t": "Never Fear",
+            "d": "1997-11-01"
+          },
+          {
+            "n": 7,
+            "t": "Joker's Millions",
+            "d": "1998-02-21"
+          },
+          {
+            "n": 8,
+            "t": "Growing Pains",
+            "d": "1998-02-28"
+          },
+          {
+            "n": 9,
+            "t": "Love Is a Croc",
+            "d": "1998-07-11"
+          },
+          {
+            "n": 10,
+            "t": "Torch Song",
+            "d": "1998-06-13"
+          },
+          {
+            "n": 11,
+            "t": "The Ultimate Thrill",
+            "d": "1998-09-14"
+          },
+          {
+            "n": 12,
+            "t": "Over the Edge",
+            "d": "1998-05-23"
+          },
+          {
+            "n": 13,
+            "t": "Mean Seasons",
+            "d": "1998-04-25"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Critters",
+            "d": "1998-09-19"
+          },
+          {
+            "n": 2,
+            "t": "Cult of the Cat",
+            "d": "1998-09-18"
+          },
+          {
+            "n": 3,
+            "t": "Animal Act",
+            "d": "1998-09-26"
+          },
+          {
+            "n": 4,
+            "t": "Old Wounds",
+            "d": "1998-10-03"
+          },
+          {
+            "n": 5,
+            "t": "The Demon Within",
+            "d": "1998-05-09"
+          },
+          {
+            "n": 6,
+            "t": "Legends of the Dark Knight",
+            "d": "1998-10-10"
+          },
+          {
+            "n": 7,
+            "t": "Girls' Night Out",
+            "d": "1998-10-17"
+          },
+          {
+            "n": 8,
+            "t": "Mad Love",
+            "d": "1999-01-16"
+          },
+          {
+            "n": 9,
+            "t": "Chemistry",
+            "d": "1998-10-24"
+          },
+          {
+            "n": 10,
+            "t": "Beware the Creeper",
+            "d": "1998-11-07"
+          },
+          {
+            "n": 11,
+            "t": "Judgment Day",
+            "d": "1998-10-31"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Bruce Timm, Alan Burnett, Paul Dini",
+      "cast": "Will Friedle, Kevin Conroy, Stockard Channing, Lauren Tom, Teri Garr",
+      "runtime": "~22 min per episode",
+      "plot": "Decades in the future, an elderly, retired Bruce Wayne mentors troubled teenager Terry McGinnis, who discovers his identity and takes up a high-tech Batsuit to become the new, tech-savvy Batman protecting a neon-lit Neo-Gotham from a fresh rogues gallery.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batman Beyond",
@@ -11324,15 +13662,283 @@
       "episodes": 52,
       "rt": null,
       "imdb": 8.2,
-      "blurb": "Set decades later, following teenager Terry McGinnis as the new Batman."
+      "blurb": "Set decades later, following teenager Terry McGinnis as the new Batman.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Rebirth, Part 1",
+            "d": "1999-01-10"
+          },
+          {
+            "n": 2,
+            "t": "Rebirth, Part 2",
+            "d": "1999-01-10"
+          },
+          {
+            "n": 3,
+            "t": "Black Out",
+            "d": "1999-01-30"
+          },
+          {
+            "n": 4,
+            "t": "Golem",
+            "d": "1999-02-06"
+          },
+          {
+            "n": 5,
+            "t": "The Winning Edge",
+            "d": "1999-04-10"
+          },
+          {
+            "n": 6,
+            "t": "Dead Man's Hand",
+            "d": "1999-03-20"
+          },
+          {
+            "n": 7,
+            "t": "Meltdown",
+            "d": "1999-02-13"
+          },
+          {
+            "n": 8,
+            "t": "Heroes",
+            "d": "1999-02-20"
+          },
+          {
+            "n": 9,
+            "t": "Spellbound",
+            "d": "1999-05-01"
+          },
+          {
+            "n": 10,
+            "t": "Shriek",
+            "d": "1999-03-13"
+          },
+          {
+            "n": 11,
+            "t": "A Touch of Curaré",
+            "d": "1999-05-15"
+          },
+          {
+            "n": 12,
+            "t": "Disappearing Inque",
+            "d": "1999-05-08"
+          },
+          {
+            "n": 13,
+            "t": "Ascension",
+            "d": "1999-05-22"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Splicers",
+            "d": "1999-09-18"
+          },
+          {
+            "n": 2,
+            "t": "Earth Mover",
+            "d": "1999-09-25"
+          },
+          {
+            "n": 3,
+            "t": "Joyride",
+            "d": "1999-10-02"
+          },
+          {
+            "n": 4,
+            "t": "Lost Soul",
+            "d": "1999-10-09"
+          },
+          {
+            "n": 5,
+            "t": "Bloodsport",
+            "d": "1999-10-23"
+          },
+          {
+            "n": 6,
+            "t": "Hidden Agenda",
+            "d": "1999-10-16"
+          },
+          {
+            "n": 7,
+            "t": "Once Burned",
+            "d": "1999-11-06"
+          },
+          {
+            "n": 8,
+            "t": "Hooked Up",
+            "d": "1999-11-13"
+          },
+          {
+            "n": 9,
+            "t": "Rats",
+            "d": "1999-11-20"
+          },
+          {
+            "n": 10,
+            "t": "Mind Games",
+            "d": "1999-12-04"
+          },
+          {
+            "n": 11,
+            "t": "Revenant",
+            "d": "1999-12-11"
+          },
+          {
+            "n": 12,
+            "t": "Babel",
+            "d": "2000-01-08"
+          },
+          {
+            "n": 13,
+            "t": "Terry's Friend Dates a Robot",
+            "d": "2000-01-15"
+          },
+          {
+            "n": 14,
+            "t": "Eyewitness",
+            "d": "2000-01-22"
+          },
+          {
+            "n": 15,
+            "t": "Zeta",
+            "d": "2000-04-08"
+          },
+          {
+            "n": 16,
+            "t": "The Last Resort",
+            "d": "2000-03-04"
+          },
+          {
+            "n": 17,
+            "t": "Final Cut",
+            "d": "2000-02-05"
+          },
+          {
+            "n": 18,
+            "t": "Armory",
+            "d": "2000-03-11"
+          },
+          {
+            "n": 19,
+            "t": "Sneak Peek",
+            "d": "2000-03-25"
+          },
+          {
+            "n": 20,
+            "t": "Plague",
+            "d": "2000-04-15"
+          },
+          {
+            "n": 21,
+            "t": "The Eggbaby",
+            "d": "2000-04-01"
+          },
+          {
+            "n": 22,
+            "t": "April Moon",
+            "d": "2000-04-22"
+          },
+          {
+            "n": 23,
+            "t": "Payback",
+            "d": "2000-05-13"
+          },
+          {
+            "n": 24,
+            "t": "Sentries of the Last Cosmos",
+            "d": "2000-05-06"
+          },
+          {
+            "n": 25,
+            "t": "Big Time",
+            "d": "2000-10-07"
+          },
+          {
+            "n": 26,
+            "t": "Untouchable",
+            "d": "2000-09-23"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Where's Terry?",
+            "d": "2000-05-27"
+          },
+          {
+            "n": 2,
+            "t": "Ace in the Hole",
+            "d": "2000-08-19"
+          },
+          {
+            "n": 3,
+            "t": "King's Ransom",
+            "d": "2000-09-16"
+          },
+          {
+            "n": 4,
+            "t": "Betrayal",
+            "d": "2000-12-09"
+          },
+          {
+            "n": 5,
+            "t": "Out of the Past",
+            "d": "2000-10-21"
+          },
+          {
+            "n": 6,
+            "t": "Speak No Evil",
+            "d": "2000-11-04"
+          },
+          {
+            "n": 7,
+            "t": "Inqueling",
+            "d": "2000-09-30"
+          },
+          {
+            "n": 8,
+            "t": "Unmasked",
+            "d": "2001-12-18"
+          },
+          {
+            "n": 9,
+            "t": "Curse of the Kobra, Part 1",
+            "d": "2001-02-03"
+          },
+          {
+            "n": 10,
+            "t": "Curse of the Kobra, Part 2",
+            "d": "2001-02-10"
+          },
+          {
+            "n": 11,
+            "t": "The Call, Part 1",
+            "d": "2000-11-11"
+          },
+          {
+            "n": 12,
+            "t": "The Call, Part 2",
+            "d": "2000-11-18"
+          },
+          {
+            "n": 13,
+            "t": "Countdown",
+            "d": "2001-04-07"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Dwayne McDuffie, Denys Cowan, Christopher Simmons",
+      "cast": "Phil LaMarr, Jason Marsden, Kevin Michael Richardson, Michele Morgan",
+      "runtime": "~22 min per episode",
+      "plot": "After a gang-fight-gone-wrong exposes him to a mutagenic gas, teenager Virgil Hawkins gains electromagnetic superpowers and becomes Static, balancing typical high school life in Dakota City with fighting a growing population of similarly mutated 'Bang Babies' — while the DC Animated Universe's Batman and Justice League occasionally lend a hand.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Static Shock",
@@ -11344,15 +13950,285 @@
       "episodes": 52,
       "rt": null,
       "imdb": 7.6,
-      "blurb": "A teenager with electromagnetic powers balances high school and superheroics in Dakota City."
+      "blurb": "A teenager with electromagnetic powers balances high school and superheroics in Dakota City.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Shock to the System",
+            "d": "2000-09-23"
+          },
+          {
+            "n": 2,
+            "t": "Aftershock",
+            "d": "2000-09-30"
+          },
+          {
+            "n": 3,
+            "t": "The Breed",
+            "d": "2000-10-07"
+          },
+          {
+            "n": 4,
+            "t": "Grounded",
+            "d": "2000-10-14"
+          },
+          {
+            "n": 5,
+            "t": "They're Playing My Song",
+            "d": "2000-11-11"
+          },
+          {
+            "n": 6,
+            "t": "The New Kid",
+            "d": "2000-11-18"
+          },
+          {
+            "n": 7,
+            "t": "Child's Play",
+            "d": "2000-12-02"
+          },
+          {
+            "n": 8,
+            "t": "Sons of the Fathers",
+            "d": "2000-12-09"
+          },
+          {
+            "n": 9,
+            "t": "Winds of Change",
+            "d": "2000-12-16"
+          },
+          {
+            "n": 10,
+            "t": "Bent Out of Shape",
+            "d": "2001-01-27"
+          },
+          {
+            "n": 11,
+            "t": "Junior",
+            "d": "2001-02-10"
+          },
+          {
+            "n": 12,
+            "t": "Replay",
+            "d": "2001-03-03"
+          },
+          {
+            "n": 13,
+            "t": "Tantrum",
+            "d": "2001-05-12"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Big Leagues",
+            "d": "2002-01-26"
+          },
+          {
+            "n": 2,
+            "t": "Power Play",
+            "d": "2002-02-02"
+          },
+          {
+            "n": 3,
+            "t": "Brother-Sister Act",
+            "d": "2002-02-09"
+          },
+          {
+            "n": 4,
+            "t": "Static Shaq",
+            "d": "2002-02-16"
+          },
+          {
+            "n": 5,
+            "t": "Frozen Out",
+            "d": "2002-02-23"
+          },
+          {
+            "n": 6,
+            "t": "Sunspots",
+            "d": "2002-03-02"
+          },
+          {
+            "n": 7,
+            "t": "Pop's Girlfriend",
+            "d": "2002-03-09"
+          },
+          {
+            "n": 8,
+            "t": "Bad Stretch",
+            "d": "2002-03-23"
+          },
+          {
+            "n": 9,
+            "t": "Attack of the Living Brain Puppets",
+            "d": "2002-04-06"
+          },
+          {
+            "n": 10,
+            "t": "Duped",
+            "d": "2002-04-27"
+          },
+          {
+            "n": 11,
+            "t": "Jimmy",
+            "d": "2002-05-04"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Hard as Nails",
+            "d": "2003-01-25"
+          },
+          {
+            "n": 2,
+            "t": "Gear",
+            "d": "2003-02-01"
+          },
+          {
+            "n": 3,
+            "t": "Static in Africa",
+            "d": "2003-02-08"
+          },
+          {
+            "n": 4,
+            "t": "Shebang",
+            "d": "2003-02-15"
+          },
+          {
+            "n": 5,
+            "t": "The Usual Suspect",
+            "d": "2003-02-22"
+          },
+          {
+            "n": 6,
+            "t": "A League of Their Own (1)",
+            "d": "2003-03-01"
+          },
+          {
+            "n": 7,
+            "t": "A League of Their Own (2)",
+            "d": "2003-03-08"
+          },
+          {
+            "n": 8,
+            "t": "Showtime",
+            "d": "2003-03-22"
+          },
+          {
+            "n": 9,
+            "t": "Consequences",
+            "d": "2003-04-05"
+          },
+          {
+            "n": 10,
+            "t": "Romeo in the Mix",
+            "d": "2003-04-19"
+          },
+          {
+            "n": 11,
+            "t": "Trouble Squared",
+            "d": "2003-04-26"
+          },
+          {
+            "n": 12,
+            "t": "Toys in the Hood",
+            "d": "2003-05-03"
+          },
+          {
+            "n": 13,
+            "t": "The Parent Trap",
+            "d": "2003-05-24"
+          },
+          {
+            "n": 14,
+            "t": "Flashback",
+            "d": "2003-06-07"
+          },
+          {
+            "n": 15,
+            "t": "Blast from the Past",
+            "d": "2003-06-21"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Future Shock",
+            "d": "2004-01-17"
+          },
+          {
+            "n": 2,
+            "t": "She-Back!",
+            "d": "2004-01-24"
+          },
+          {
+            "n": 3,
+            "t": "Out of Africa",
+            "d": "2004-01-31"
+          },
+          {
+            "n": 4,
+            "t": "Fallen Hero",
+            "d": "2004-02-07"
+          },
+          {
+            "n": 5,
+            "t": "Army of Darkness",
+            "d": "2004-02-14"
+          },
+          {
+            "n": 6,
+            "t": "No Man's an Island",
+            "d": "2004-02-21"
+          },
+          {
+            "n": 7,
+            "t": "Hoop Squad",
+            "d": "2004-02-28"
+          },
+          {
+            "n": 8,
+            "t": "Now You See Him...",
+            "d": "2004-03-13"
+          },
+          {
+            "n": 9,
+            "t": "Where the Rubber Meets the Road",
+            "d": "2004-03-27"
+          },
+          {
+            "n": 10,
+            "t": "Linked",
+            "d": "2004-05-01"
+          },
+          {
+            "n": 11,
+            "t": "Wet and Wild",
+            "d": "2004-05-08"
+          },
+          {
+            "n": 12,
+            "t": "Kidnapped",
+            "d": "2004-05-15"
+          },
+          {
+            "n": 13,
+            "t": "Power Outage",
+            "d": "2004-05-22"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Robert Goodman",
+      "cast": "Diedrich Bader, Julie Nathanson, Kurtwood Smith, Michael Rosenbaum",
+      "runtime": "~21 min per episode",
+      "plot": "A Batman Beyond spin-off following Infiltration Unit Zeta, a government assassin android who goes rogue after refusing to kill an innocent target, fleeing across America with a street-smart teenage runaway named Ro while pursued by the NSA agent convinced he's been compromised.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The Zeta Project",
@@ -11364,15 +14240,151 @@
       "episodes": 26,
       "rt": null,
       "imdb": 7.6,
-      "blurb": "A Batman Beyond spin-off following a rogue android on the run."
+      "blurb": "A Batman Beyond spin-off following a rogue android on the run.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Accomplice",
+            "d": "2001-01-27"
+          },
+          {
+            "n": 2,
+            "t": "His Maker's Name",
+            "d": "2001-02-03"
+          },
+          {
+            "n": 3,
+            "t": "Remote Control",
+            "d": "2001-02-10"
+          },
+          {
+            "n": 4,
+            "t": "Change of Heart",
+            "d": "2001-02-17"
+          },
+          {
+            "n": 5,
+            "t": "The Next Gen",
+            "d": "2001-02-24"
+          },
+          {
+            "n": 6,
+            "t": "West Bound",
+            "d": "2001-03-10"
+          },
+          {
+            "n": 7,
+            "t": "Hicksburg",
+            "d": "2001-03-31"
+          },
+          {
+            "n": 8,
+            "t": "Shadows",
+            "d": "2001-04-07"
+          },
+          {
+            "n": 9,
+            "t": "Crime Waves",
+            "d": "2001-04-14"
+          },
+          {
+            "n": 10,
+            "t": "Taffy Time",
+            "d": "2001-05-05"
+          },
+          {
+            "n": 11,
+            "t": "Kid Genius",
+            "d": "2001-08-11"
+          },
+          {
+            "n": 12,
+            "t": "Ro's Reunion",
+            "d": "2001-05-12"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Absolute Zero",
+            "d": "2002-03-23"
+          },
+          {
+            "n": 2,
+            "t": "Wired: Part One",
+            "d": "2002-03-30"
+          },
+          {
+            "n": 3,
+            "t": "Wired: Part Two",
+            "d": "2002-04-06"
+          },
+          {
+            "n": 4,
+            "t": "Resume Mission",
+            "d": "2002-04-13"
+          },
+          {
+            "n": 5,
+            "t": "Hunt in the Hub",
+            "d": "2002-04-20"
+          },
+          {
+            "n": 6,
+            "t": "Ro's Gift",
+            "d": "2002-04-27"
+          },
+          {
+            "n": 7,
+            "t": "Lost and Found",
+            "d": "2002-05-11"
+          },
+          {
+            "n": 8,
+            "t": "Eye of the Storm",
+            "d": "2002-05-18"
+          },
+          {
+            "n": 9,
+            "t": "Quality Time",
+            "d": "2002-07-13"
+          },
+          {
+            "n": 10,
+            "t": "On the Wire",
+            "d": "2002-07-20"
+          },
+          {
+            "n": 11,
+            "t": "Cabin Pressure",
+            "d": "2002-07-27"
+          },
+          {
+            "n": 12,
+            "t": "The Wrong Morph",
+            "d": "2002-08-17"
+          },
+          {
+            "n": 13,
+            "t": "The River Rising",
+            "d": "2002-08-03"
+          },
+          {
+            "n": 14,
+            "t": "The Hologram Man",
+            "d": "2002-08-10"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Bruce Timm",
+      "cast": "Kevin Conroy, George Newbern, Susan Eisenberg, Phil LaMarr, Michael Rosenbaum, Carl Lumbly",
+      "runtime": "~21-22 min per episode",
+      "plot": "Superman, Batman, Wonder Woman, Green Lantern, the Flash, Martian Manhunter, and Hawkgirl formally unite as the Justice League, operating from an orbiting Watchtower to defend Earth from threats too large for any one hero — alien invasions, ancient sorcery, and their own darkest alternate selves.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Justice League",
@@ -11382,19 +14394,285 @@
       "hero": [
         "Justice League"
       ],
-      "seasons": 1,
+      "seasons": 2,
       "episodes": 52,
       "rt": null,
       "imdb": 8.7,
-      "blurb": "The DCAU's heroes unite as a formal team against cosmic-scale threats."
+      "blurb": "The DCAU's heroes unite as a formal team against cosmic-scale threats.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Secret Origins, Part 1",
+            "d": "2001-11-17"
+          },
+          {
+            "n": 2,
+            "t": "Secret Origins, Part 2",
+            "d": "2001-11-17"
+          },
+          {
+            "n": 3,
+            "t": "Secret Origins, Part 3",
+            "d": "2001-11-17"
+          },
+          {
+            "n": 4,
+            "t": "In Blackest Night, Part 1",
+            "d": "2001-11-19"
+          },
+          {
+            "n": 5,
+            "t": "In Blackest Night, Part 2",
+            "d": "2001-11-26"
+          },
+          {
+            "n": 6,
+            "t": "The Enemy Below, Part 1",
+            "d": "2001-12-03"
+          },
+          {
+            "n": 7,
+            "t": "The Enemy Below, Part 2",
+            "d": "2001-12-10"
+          },
+          {
+            "n": 8,
+            "t": "Paradise Lost, Part 1",
+            "d": "2002-01-21"
+          },
+          {
+            "n": 9,
+            "t": "Paradise Lost, Part 2",
+            "d": "2002-01-28"
+          },
+          {
+            "n": 10,
+            "t": "War World, Part 1",
+            "d": "2002-02-24"
+          },
+          {
+            "n": 11,
+            "t": "War World, Part 2",
+            "d": "2002-03-03"
+          },
+          {
+            "n": 12,
+            "t": "The Brave and the Bold, Part 1",
+            "d": "2002-03-10"
+          },
+          {
+            "n": 13,
+            "t": "The Brave and the Bold, Part 2",
+            "d": "2002-03-17"
+          },
+          {
+            "n": 14,
+            "t": "Fury, Part 1",
+            "d": "2002-04-07"
+          },
+          {
+            "n": 15,
+            "t": "Fury, Part 2",
+            "d": "2002-04-14"
+          },
+          {
+            "n": 16,
+            "t": "Legends, Part 1",
+            "d": "2002-04-21"
+          },
+          {
+            "n": 17,
+            "t": "Legends, Part 2",
+            "d": "2002-04-28"
+          },
+          {
+            "n": 18,
+            "t": "Injustice for All, Part 1",
+            "d": "2002-09-06"
+          },
+          {
+            "n": 19,
+            "t": "Injustice for All, Part 2",
+            "d": "2002-09-13"
+          },
+          {
+            "n": 20,
+            "t": "A Knight of Shadows, Part 1",
+            "d": "2002-09-20"
+          },
+          {
+            "n": 21,
+            "t": "A Knight of Shadows, Part 2",
+            "d": "2002-09-27"
+          },
+          {
+            "n": 22,
+            "t": "Metamorphosis, Part 1",
+            "d": "2002-10-04"
+          },
+          {
+            "n": 23,
+            "t": "Metamorphosis, Part 2",
+            "d": "2002-10-11"
+          },
+          {
+            "n": 24,
+            "t": "The Savage Time, Part 1",
+            "d": "2002-11-09"
+          },
+          {
+            "n": 25,
+            "t": "The Savage Time, Part 2",
+            "d": "2002-11-09"
+          },
+          {
+            "n": 26,
+            "t": "The Savage Time, Part 3",
+            "d": "2002-11-09"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Twilight, Part 1",
+            "d": "2003-07-05"
+          },
+          {
+            "n": 2,
+            "t": "Twilight, Part 2",
+            "d": "2003-07-05"
+          },
+          {
+            "n": 3,
+            "t": "Tabula Rasa, Part 1",
+            "d": "2003-10-04"
+          },
+          {
+            "n": 4,
+            "t": "Tabula Rasa, Part 2",
+            "d": "2003-10-04"
+          },
+          {
+            "n": 5,
+            "t": "Only a Dream, Part 1",
+            "d": "2003-10-04"
+          },
+          {
+            "n": 6,
+            "t": "Only a Dream, Part 2",
+            "d": "2003-10-11"
+          },
+          {
+            "n": 7,
+            "t": "Maid of Honor, Part 1",
+            "d": "2003-10-18"
+          },
+          {
+            "n": 8,
+            "t": "Maid of Honor, Part 2",
+            "d": "2003-10-18"
+          },
+          {
+            "n": 9,
+            "t": "Hearts and Minds, Part 1",
+            "d": "2003-10-25"
+          },
+          {
+            "n": 10,
+            "t": "Hearts and Minds, Part 2",
+            "d": "2003-10-25"
+          },
+          {
+            "n": 11,
+            "t": "A Better World, Part 1",
+            "d": "2003-11-01"
+          },
+          {
+            "n": 12,
+            "t": "A Better World, Part 2",
+            "d": "2003-11-01"
+          },
+          {
+            "n": 13,
+            "t": "Eclipsed, Part 1",
+            "d": "2003-11-08"
+          },
+          {
+            "n": 14,
+            "t": "Eclipsed, Part 2",
+            "d": "2003-11-08"
+          },
+          {
+            "n": 15,
+            "t": "The Terror Beyond, Part 1",
+            "d": "2003-11-15"
+          },
+          {
+            "n": 16,
+            "t": "The Terror Beyond, Part 2",
+            "d": "2003-11-15"
+          },
+          {
+            "n": 17,
+            "t": "The Secret Society, Part 1",
+            "d": "2003-11-22"
+          },
+          {
+            "n": 18,
+            "t": "The Secret Society, Part 2",
+            "d": "2003-11-22"
+          },
+          {
+            "n": 19,
+            "t": "Hereafter, Part 1",
+            "d": "2003-11-29"
+          },
+          {
+            "n": 20,
+            "t": "Hereafter, Part 2",
+            "d": "2003-11-29"
+          },
+          {
+            "n": 21,
+            "t": "Wild Card, Part 1",
+            "d": "2003-12-07"
+          },
+          {
+            "n": 22,
+            "t": "Wild Card, Part 2",
+            "d": "2003-12-07"
+          },
+          {
+            "n": 23,
+            "t": "Comfort and Joy",
+            "d": "2003-12-13"
+          },
+          {
+            "n": 24,
+            "t": "Starcrossed, Part 1",
+            "d": "2004-05-29"
+          },
+          {
+            "n": 25,
+            "t": "Starcrossed, Part 2",
+            "d": "2004-05-29"
+          },
+          {
+            "n": 26,
+            "t": "Starcrossed, Part 3",
+            "d": "2004-05-29"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Bruce Timm, Dwayne McDuffie",
+      "cast": "Kevin Conroy, George Newbern, Susan Eisenberg, Carl Lumbly, Michael Rosenbaum",
+      "runtime": "~22-24 min per episode",
+      "plot": "A direct sequel to Justice League, dramatically expanding the roster to dozens of rotating DC heroes — from Green Arrow and Black Canary to the Question and Booster Gold — as the League confronts the secretive government conspiracy Project Cadmus, a growing Secret Society of villains, and ultimately Darkseid himself, in the final chapter of the DC Animated Universe.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Justice League Unlimited",
@@ -11408,15 +14686,218 @@
       "episodes": 39,
       "rt": null,
       "imdb": 8.7,
-      "blurb": "Expands the roster to dozens of DC characters in rotation; a sequel to Justice League."
+      "blurb": "Expands the roster to dozens of DC characters in rotation; a sequel to Justice League.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Initiation",
+            "d": "2004-07-31"
+          },
+          {
+            "n": 2,
+            "t": "For the Man Who Has Everything",
+            "d": "2004-08-07"
+          },
+          {
+            "n": 3,
+            "t": "Hawk and Dove",
+            "d": "2004-08-21"
+          },
+          {
+            "n": 4,
+            "t": "Fearful Symmetry",
+            "d": "2004-09-04"
+          },
+          {
+            "n": 5,
+            "t": "Kid Stuff",
+            "d": "2004-08-14"
+          },
+          {
+            "n": 6,
+            "t": "This Little Piggy",
+            "d": "2004-08-28"
+          },
+          {
+            "n": 7,
+            "t": "The Greatest Story Never Told",
+            "d": "2004-09-11"
+          },
+          {
+            "n": 8,
+            "t": "The Return",
+            "d": "2004-09-18"
+          },
+          {
+            "n": 9,
+            "t": "Ultimatum",
+            "d": "2004-12-04"
+          },
+          {
+            "n": 10,
+            "t": "Dark Heart",
+            "d": "2004-12-11"
+          },
+          {
+            "n": 11,
+            "t": "Wake the Dead",
+            "d": "2004-12-18"
+          },
+          {
+            "n": 12,
+            "t": "The Once and Future Thing, Part One: Weird Western Tales",
+            "d": "2005-01-22"
+          },
+          {
+            "n": 13,
+            "t": "The Once and Future Thing, Part Two: Time, Warped",
+            "d": "2005-01-29"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Cat and the Canary",
+            "d": "2005-02-05"
+          },
+          {
+            "n": 2,
+            "t": "The Ties That Bind",
+            "d": "2005-02-12"
+          },
+          {
+            "n": 3,
+            "t": "The Doomsday Sanction",
+            "d": "2005-02-19"
+          },
+          {
+            "n": 4,
+            "t": "Task Force X",
+            "d": "2005-05-21"
+          },
+          {
+            "n": 5,
+            "t": "The Balance",
+            "d": "2005-05-28"
+          },
+          {
+            "n": 6,
+            "t": "Double Date",
+            "d": "2005-06-04"
+          },
+          {
+            "n": 7,
+            "t": "Clash",
+            "d": "2005-06-11"
+          },
+          {
+            "n": 8,
+            "t": "Hunter's Moon",
+            "d": "2005-06-18"
+          },
+          {
+            "n": 9,
+            "t": "Question Authority",
+            "d": "2005-06-25"
+          },
+          {
+            "n": 10,
+            "t": "Flashpoint",
+            "d": "2005-07-02"
+          },
+          {
+            "n": 11,
+            "t": "Panic in the Sky",
+            "d": "2005-07-09"
+          },
+          {
+            "n": 12,
+            "t": "Divided We Fall",
+            "d": "2005-07-16"
+          },
+          {
+            "n": 13,
+            "t": "Epilogue",
+            "d": "2005-07-23"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "I Am Legion",
+            "d": "2005-09-17"
+          },
+          {
+            "n": 2,
+            "t": "Shadow of the Hawk",
+            "d": "2005-09-17"
+          },
+          {
+            "n": 3,
+            "t": "Chaos at the Earth's Core",
+            "d": "2005-09-24"
+          },
+          {
+            "n": 4,
+            "t": "To Another Shore",
+            "d": "2005-09-24"
+          },
+          {
+            "n": 5,
+            "t": "Flash and Substance",
+            "d": "2006-02-11"
+          },
+          {
+            "n": 6,
+            "t": "Dead Reckoning",
+            "d": "2006-02-18"
+          },
+          {
+            "n": 7,
+            "t": "Patriot Act",
+            "d": "2006-02-25"
+          },
+          {
+            "n": 8,
+            "t": "The Great Brain Robbery",
+            "d": "2006-03-04"
+          },
+          {
+            "n": 9,
+            "t": "Grudge Match",
+            "d": "2006-03-11"
+          },
+          {
+            "n": 10,
+            "t": "Far from Home",
+            "d": "2006-04-15"
+          },
+          {
+            "n": 11,
+            "t": "Ancient History",
+            "d": "2006-04-29"
+          },
+          {
+            "n": 12,
+            "t": "Alive!",
+            "d": "2006-05-06"
+          },
+          {
+            "n": 13,
+            "t": "Destroyer",
+            "d": "2006-05-13"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Glen Murakami, Sam Register, David Slack",
+      "cast": "Scott Menville, Hynden Walch, Khary Payton, Tara Strong, Greg Cipes",
+      "runtime": "~22-25 min per episode",
+      "plot": "A stylized, anime-influenced take on Robin, Starfire, Cyborg, Raven, and Beast Boy as a team of teenage superheroes, blending lighthearted comedy with surprisingly dark, serialized arcs centered each season on a different team member's personal struggles.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Teen Titans",
@@ -11430,15 +14911,352 @@
       "episodes": 65,
       "rt": null,
       "imdb": 8.1,
-      "blurb": "A stylized, anime-influenced take on the young team, distinct from the DCAU."
+      "blurb": "A stylized, anime-influenced take on the young team, distinct from the DCAU.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Final Exam",
+            "d": "2003-07-19"
+          },
+          {
+            "n": 2,
+            "t": "Sisters",
+            "d": "2003-07-26"
+          },
+          {
+            "n": 3,
+            "t": "Divide and Conquer",
+            "d": "2003-08-02"
+          },
+          {
+            "n": 4,
+            "t": "Forces of Nature",
+            "d": "2003-08-16"
+          },
+          {
+            "n": 5,
+            "t": "The Sum of His Parts",
+            "d": "2003-08-23"
+          },
+          {
+            "n": 6,
+            "t": "Nevermore",
+            "d": "2003-08-30"
+          },
+          {
+            "n": 7,
+            "t": "Switched",
+            "d": "2003-09-06"
+          },
+          {
+            "n": 8,
+            "t": "Deep Six",
+            "d": "2003-09-13"
+          },
+          {
+            "n": 9,
+            "t": "Masks",
+            "d": "2003-09-20"
+          },
+          {
+            "n": 10,
+            "t": "Mad Mod",
+            "d": "2003-09-27"
+          },
+          {
+            "n": 11,
+            "t": "Apprentice, Part 1",
+            "d": "2003-10-04"
+          },
+          {
+            "n": 12,
+            "t": "Apprentice, Part 2",
+            "d": "2003-10-11"
+          },
+          {
+            "n": 13,
+            "t": "Car Trouble",
+            "d": "2003-11-11"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "How Long Is Forever?",
+            "d": "2004-01-10"
+          },
+          {
+            "n": 2,
+            "t": "Every Dog Has His Day",
+            "d": "2004-01-17"
+          },
+          {
+            "n": 3,
+            "t": "Terra",
+            "d": "2004-01-24"
+          },
+          {
+            "n": 4,
+            "t": "Only Human",
+            "d": "2004-01-31"
+          },
+          {
+            "n": 5,
+            "t": "Fear Itself",
+            "d": "2004-02-07"
+          },
+          {
+            "n": 6,
+            "t": "Date with Destiny",
+            "d": "2004-02-14"
+          },
+          {
+            "n": 7,
+            "t": "Transformation",
+            "d": "2004-02-21"
+          },
+          {
+            "n": 8,
+            "t": "Titan Rising",
+            "d": "2004-02-28"
+          },
+          {
+            "n": 9,
+            "t": "Winner Take All",
+            "d": "2004-03-06"
+          },
+          {
+            "n": 10,
+            "t": "Betrayal",
+            "d": "2004-07-31"
+          },
+          {
+            "n": 11,
+            "t": "Fractured",
+            "d": "2004-08-07"
+          },
+          {
+            "n": 12,
+            "t": "Aftershock, Part 1",
+            "d": "2004-08-14"
+          },
+          {
+            "n": 13,
+            "t": "Aftershock, Part 2",
+            "d": "2004-08-21"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Deception",
+            "d": "2004-08-28"
+          },
+          {
+            "n": 2,
+            "t": "X",
+            "d": "2004-09-04"
+          },
+          {
+            "n": 3,
+            "t": "Betrothed",
+            "d": "2004-09-11"
+          },
+          {
+            "n": 4,
+            "t": "Crash",
+            "d": "2004-09-18"
+          },
+          {
+            "n": 5,
+            "t": "Haunted",
+            "d": "2004-10-02"
+          },
+          {
+            "n": 6,
+            "t": "Spellbound",
+            "d": "2004-10-09"
+          },
+          {
+            "n": 7,
+            "t": "Revolution",
+            "d": "2004-10-16"
+          },
+          {
+            "n": 8,
+            "t": "Wavelength",
+            "d": "2004-10-23"
+          },
+          {
+            "n": 9,
+            "t": "The Beast Within",
+            "d": "2004-10-30"
+          },
+          {
+            "n": 10,
+            "t": "Can I Keep Him?",
+            "d": "2004-11-06"
+          },
+          {
+            "n": 11,
+            "t": "Bunny Raven... or... How to Make a Titananimal Disappear",
+            "d": "2005-01-08"
+          },
+          {
+            "n": 12,
+            "t": "Titans East, Part 1",
+            "d": "2005-01-15"
+          },
+          {
+            "n": 13,
+            "t": "Titans East, Part 2",
+            "d": "2005-01-22"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Don't Touch That Dial",
+            "d": "2005-01-17"
+          },
+          {
+            "n": 2,
+            "t": "The Quest",
+            "d": "2005-01-29"
+          },
+          {
+            "n": 3,
+            "t": "Birthmark",
+            "d": "2005-02-05"
+          },
+          {
+            "n": 4,
+            "t": "Cyborg the Barbarian",
+            "d": "2005-02-12"
+          },
+          {
+            "n": 5,
+            "t": "Employee of the Month",
+            "d": "2005-02-19"
+          },
+          {
+            "n": 6,
+            "t": "Troq",
+            "d": "2005-05-09"
+          },
+          {
+            "n": 7,
+            "t": "The Prophecy",
+            "d": "2005-06-04"
+          },
+          {
+            "n": 8,
+            "t": "Stranded",
+            "d": "2005-06-11"
+          },
+          {
+            "n": 9,
+            "t": "Overdrive",
+            "d": "2005-06-18"
+          },
+          {
+            "n": 10,
+            "t": "Mother Mae-Eye",
+            "d": "2005-06-25"
+          },
+          {
+            "n": 11,
+            "t": "The End, Part 1",
+            "d": "2005-07-02"
+          },
+          {
+            "n": 12,
+            "t": "The End, Part 2",
+            "d": "2005-07-09"
+          },
+          {
+            "n": 13,
+            "t": "The End, Part 3",
+            "d": "2005-07-16"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Homecoming, Part 1",
+            "d": "2005-09-24"
+          },
+          {
+            "n": 2,
+            "t": "Homecoming, Part 2",
+            "d": "2005-10-01"
+          },
+          {
+            "n": 3,
+            "t": "Trust",
+            "d": "2005-10-08"
+          },
+          {
+            "n": 4,
+            "t": "For Real",
+            "d": "2005-10-15"
+          },
+          {
+            "n": 5,
+            "t": "Snowblind",
+            "d": "2005-10-29"
+          },
+          {
+            "n": 6,
+            "t": "Kole",
+            "d": "2005-11-05"
+          },
+          {
+            "n": 7,
+            "t": "Hide and Seek",
+            "d": "2005-11-12"
+          },
+          {
+            "n": 8,
+            "t": "Lightspeed",
+            "d": "2005-12-03"
+          },
+          {
+            "n": 9,
+            "t": "Revved Up",
+            "d": "2005-12-10"
+          },
+          {
+            "n": 10,
+            "t": "Go!",
+            "d": "2005-12-17"
+          },
+          {
+            "n": 11,
+            "t": "Calling All Titans",
+            "d": "2006-01-07"
+          },
+          {
+            "n": 12,
+            "t": "Titans Together",
+            "d": "2006-01-14"
+          },
+          {
+            "n": 13,
+            "t": "Things Change",
+            "d": "2006-01-16"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Duane Capizzi, Alan Burnett",
+      "cast": "Rino Romano, Alastair Duncan, Ryan Colley, Danielle Judovits, Mitch Pileggi",
+      "runtime": "~22 min per episode",
+      "plot": "An angular, redesigned take on a younger Batman early in his career, unconnected to the DCAU, that gradually builds out his supporting cast — from Batgirl to Robin to a young Justice League — while battling an evolving rogues gallery across Gotham City.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The Batman",
@@ -11452,7 +15270,344 @@
       "episodes": 65,
       "rt": null,
       "imdb": 7.3,
-      "blurb": "A fresh, angular redesign of Batman's world, unconnected to the DCAU."
+      "blurb": "A fresh, angular redesign of Batman's world, unconnected to the DCAU.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Bat in the Belfry",
+            "d": "2004-09-11"
+          },
+          {
+            "n": 2,
+            "t": "Traction",
+            "d": "2004-09-18"
+          },
+          {
+            "n": 3,
+            "t": "Call of the Cobblepot",
+            "d": "2004-09-25"
+          },
+          {
+            "n": 4,
+            "t": "The Man Who Would Be Bat",
+            "d": "2004-10-02"
+          },
+          {
+            "n": 5,
+            "t": "The Big Chill",
+            "d": "2004-10-30"
+          },
+          {
+            "n": 6,
+            "t": "The Cat and the Bat",
+            "d": "2004-11-06"
+          },
+          {
+            "n": 7,
+            "t": "The Big Heat",
+            "d": "2004-11-13"
+          },
+          {
+            "n": 8,
+            "t": "Q&A",
+            "d": "2004-11-20"
+          },
+          {
+            "n": 9,
+            "t": "The Big Dummy",
+            "d": "2004-11-27"
+          },
+          {
+            "n": 10,
+            "t": "Topsy Turvy",
+            "d": "2005-02-05"
+          },
+          {
+            "n": 11,
+            "t": "Bird of Prey",
+            "d": "2005-02-12"
+          },
+          {
+            "n": 12,
+            "t": "The Rubberface of Comedy",
+            "d": "2005-04-30"
+          },
+          {
+            "n": 13,
+            "t": "The Clayface of Tragedy",
+            "d": "2005-05-07"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Cat, the Bat, and the Very Ugly",
+            "d": "2005-05-14"
+          },
+          {
+            "n": 2,
+            "t": "Riddled",
+            "d": "2005-05-21"
+          },
+          {
+            "n": 3,
+            "t": "Fire & Ice",
+            "d": "2005-05-28"
+          },
+          {
+            "n": 4,
+            "t": "The Laughing Bat",
+            "d": "2005-06-04"
+          },
+          {
+            "n": 5,
+            "t": "Swamped",
+            "d": "2005-06-11"
+          },
+          {
+            "n": 6,
+            "t": "Pets",
+            "d": "2005-06-18"
+          },
+          {
+            "n": 7,
+            "t": "Meltdown",
+            "d": "2005-06-25"
+          },
+          {
+            "n": 8,
+            "t": "JTV",
+            "d": "2005-07-09"
+          },
+          {
+            "n": 9,
+            "t": "Ragdolls to Riches",
+            "d": "2005-07-16"
+          },
+          {
+            "n": 10,
+            "t": "The Butler Did It",
+            "d": "2005-08-20"
+          },
+          {
+            "n": 11,
+            "t": "Grundy's Night",
+            "d": "2005-08-27"
+          },
+          {
+            "n": 12,
+            "t": "Strange Minds",
+            "d": "2005-09-03"
+          },
+          {
+            "n": 13,
+            "t": "Night and the City",
+            "d": "2005-09-10"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Batgirl Begins, Part One",
+            "d": "2005-09-17"
+          },
+          {
+            "n": 2,
+            "t": "Batgirl Begins, Part Two",
+            "d": "2005-09-24"
+          },
+          {
+            "n": 3,
+            "t": "A Dark Knight to Remember",
+            "d": "2005-10-01"
+          },
+          {
+            "n": 4,
+            "t": "A Fistful of Felt",
+            "d": "2005-10-08"
+          },
+          {
+            "n": 5,
+            "t": "RPM",
+            "d": "2005-11-05"
+          },
+          {
+            "n": 6,
+            "t": "Brawn",
+            "d": "2005-11-12"
+          },
+          {
+            "n": 7,
+            "t": "The Laughing Cats",
+            "d": "2005-11-19"
+          },
+          {
+            "n": 8,
+            "t": "Fleurs du Mal",
+            "d": "2005-11-26"
+          },
+          {
+            "n": 9,
+            "t": "Cash for Toys",
+            "d": "2006-02-04"
+          },
+          {
+            "n": 10,
+            "t": "Thunder",
+            "d": "2006-02-11"
+          },
+          {
+            "n": 11,
+            "t": "The Apprentice",
+            "d": "2006-02-18"
+          },
+          {
+            "n": 12,
+            "t": "The Icy Depths",
+            "d": "2006-05-06"
+          },
+          {
+            "n": 13,
+            "t": "Gotham's Ultimate Criminal Mastermind",
+            "d": "2006-05-13"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "A Matter of Family",
+            "d": "2006-09-23"
+          },
+          {
+            "n": 2,
+            "t": "Team Penguin",
+            "d": "2006-09-30"
+          },
+          {
+            "n": 3,
+            "t": "Clayfaces",
+            "d": "2006-10-07"
+          },
+          {
+            "n": 4,
+            "t": "The Everywhere Man",
+            "d": "2006-11-04"
+          },
+          {
+            "n": 5,
+            "t": "The Breakout",
+            "d": "2006-11-11"
+          },
+          {
+            "n": 6,
+            "t": "Strange New World",
+            "d": "2006-11-18"
+          },
+          {
+            "n": 7,
+            "t": "Artifacts",
+            "d": "2007-02-03"
+          },
+          {
+            "n": 8,
+            "t": "Seconds",
+            "d": "2007-02-10"
+          },
+          {
+            "n": 9,
+            "t": "Riddler's Revenge",
+            "d": "2007-02-17"
+          },
+          {
+            "n": 10,
+            "t": "Two of a Kind",
+            "d": "2007-02-24"
+          },
+          {
+            "n": 11,
+            "t": "Rumors",
+            "d": "2007-03-03"
+          },
+          {
+            "n": 12,
+            "t": "The Joining, Part One",
+            "d": "2007-04-28"
+          },
+          {
+            "n": 13,
+            "t": "The Joining, Part Two",
+            "d": "2007-05-05"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "The Batman/Superman Story, Part One",
+            "d": "2007-09-22"
+          },
+          {
+            "n": 2,
+            "t": "The Batman/Superman Story, Part Two",
+            "d": "2007-09-29"
+          },
+          {
+            "n": 3,
+            "t": "Vertigo",
+            "d": "2007-10-06"
+          },
+          {
+            "n": 4,
+            "t": "White Heat",
+            "d": "2007-10-13"
+          },
+          {
+            "n": 5,
+            "t": "A Mirror Darkly",
+            "d": "2007-11-03"
+          },
+          {
+            "n": 6,
+            "t": "Joker Express",
+            "d": "2007-11-10"
+          },
+          {
+            "n": 7,
+            "t": "Ring Toss",
+            "d": "2007-12-08"
+          },
+          {
+            "n": 8,
+            "t": "The Metal Face of Comedy",
+            "d": "2007-12-15"
+          },
+          {
+            "n": 9,
+            "t": "Attack of the Terrible Trio",
+            "d": "2008-02-02"
+          },
+          {
+            "n": 10,
+            "t": "The End of the Batman",
+            "d": "2008-02-09"
+          },
+          {
+            "n": 11,
+            "t": "What Goes Up...",
+            "d": "2008-02-16"
+          },
+          {
+            "n": 12,
+            "t": "Lost Heroes, Part One",
+            "d": "2008-03-08"
+          },
+          {
+            "n": 13,
+            "t": "Lost Heroes, Part Two",
+            "d": "2008-03-08"
+          }
+        ]
+      }
     },
     {
       "creators": "",
@@ -11521,12 +15676,12 @@
       "blurb": "A lighthearted, team-up-of-the-week series pulling from DC's deepest cuts."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Greg Weisman, Brandon Vietti",
+      "cast": "Jesse McCartney, Khary Payton, Nolan North, Danica McKellar, Stephanie Lemelin, Jason Spisak",
+      "runtime": "~22-25 min per episode",
+      "plot": "Teenage sidekicks Robin, Aqualad, Kid Flash, and their growing roster of allies form a covert, deniable operations team under the Justice League's direction, maturing over years of continuity-heavy storytelling into a next generation of heroes fighting an ever-escalating shadow war against the Light, the Reach, and cosmic threats far beyond Earth.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Young Justice",
@@ -11540,7 +15695,507 @@
       "episodes": 98,
       "rt": null,
       "imdb": 8.4,
-      "blurb": "A sidekick-led team series praised for dense, long-form continuity across multiple seasons."
+      "blurb": "A sidekick-led team series praised for dense, long-form continuity across multiple seasons.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Independence Day",
+            "d": "2010-11-26"
+          },
+          {
+            "n": 2,
+            "t": "Fireworks",
+            "d": "2010-11-26"
+          },
+          {
+            "n": 3,
+            "t": "Welcome to Happy Harbor",
+            "d": "2011-01-21"
+          },
+          {
+            "n": 4,
+            "t": "Dropzone",
+            "d": "2011-01-28"
+          },
+          {
+            "n": 5,
+            "t": "Schooled",
+            "d": "2011-02-04"
+          },
+          {
+            "n": 6,
+            "t": "Infiltrator",
+            "d": "2011-02-11"
+          },
+          {
+            "n": 7,
+            "t": "Denial",
+            "d": "2011-02-18"
+          },
+          {
+            "n": 8,
+            "t": "Downtime",
+            "d": "2011-03-04"
+          },
+          {
+            "n": 9,
+            "t": "Bereft",
+            "d": "2011-03-11"
+          },
+          {
+            "n": 10,
+            "t": "Targets",
+            "d": "2011-09-16"
+          },
+          {
+            "n": 11,
+            "t": "Terrors",
+            "d": "2011-09-23"
+          },
+          {
+            "n": 12,
+            "t": "Homefront",
+            "d": "2011-09-30"
+          },
+          {
+            "n": 13,
+            "t": "Alpha Male",
+            "d": "2011-10-07"
+          },
+          {
+            "n": 14,
+            "t": "Revelation",
+            "d": "2011-10-14"
+          },
+          {
+            "n": 15,
+            "t": "Humanity",
+            "d": "2011-10-21"
+          },
+          {
+            "n": 16,
+            "t": "Failsafe",
+            "d": "2011-11-04"
+          },
+          {
+            "n": 17,
+            "t": "Disordered",
+            "d": "2011-11-11"
+          },
+          {
+            "n": 18,
+            "t": "Secrets",
+            "d": "2011-11-18"
+          },
+          {
+            "n": 19,
+            "t": "Misplaced",
+            "d": "2012-03-03"
+          },
+          {
+            "n": 20,
+            "t": "Coldhearted",
+            "d": "2012-03-10"
+          },
+          {
+            "n": 21,
+            "t": "Image",
+            "d": "2012-03-17"
+          },
+          {
+            "n": 22,
+            "t": "Agendas",
+            "d": "2012-03-24"
+          },
+          {
+            "n": 23,
+            "t": "Insecurity",
+            "d": "2012-03-31"
+          },
+          {
+            "n": 24,
+            "t": "Performance",
+            "d": "2012-04-07"
+          },
+          {
+            "n": 25,
+            "t": "Usual Suspects",
+            "d": "2012-04-14"
+          },
+          {
+            "n": 26,
+            "t": "Auld Acquaintance",
+            "d": "2012-04-21"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Happy New Year",
+            "d": "2012-04-28"
+          },
+          {
+            "n": 2,
+            "t": "Earthlings",
+            "d": "2012-05-05"
+          },
+          {
+            "n": 3,
+            "t": "Alienated",
+            "d": "2012-05-12"
+          },
+          {
+            "n": 4,
+            "t": "Salvage",
+            "d": "2012-05-19"
+          },
+          {
+            "n": 5,
+            "t": "Beneath",
+            "d": "2012-05-26"
+          },
+          {
+            "n": 6,
+            "t": "Bloodlines",
+            "d": "2012-06-02"
+          },
+          {
+            "n": 7,
+            "t": "Depths",
+            "d": "2012-06-09"
+          },
+          {
+            "n": 8,
+            "t": "Satisfaction",
+            "d": "2012-09-29"
+          },
+          {
+            "n": 9,
+            "t": "Darkest",
+            "d": "2012-10-06"
+          },
+          {
+            "n": 10,
+            "t": "Before the Dawn",
+            "d": "2013-01-05"
+          },
+          {
+            "n": 11,
+            "t": "Cornered",
+            "d": "2013-01-12"
+          },
+          {
+            "n": 12,
+            "t": "True Colors",
+            "d": "2013-01-19"
+          },
+          {
+            "n": 13,
+            "t": "The Fix",
+            "d": "2013-01-26"
+          },
+          {
+            "n": 14,
+            "t": "Runaways",
+            "d": "2013-02-02"
+          },
+          {
+            "n": 15,
+            "t": "War",
+            "d": "2013-02-09"
+          },
+          {
+            "n": 16,
+            "t": "Complications",
+            "d": "2013-02-16"
+          },
+          {
+            "n": 17,
+            "t": "The Hunt",
+            "d": "2013-02-23"
+          },
+          {
+            "n": 18,
+            "t": "Intervention",
+            "d": "2013-03-02"
+          },
+          {
+            "n": 19,
+            "t": "Summit",
+            "d": "2013-03-09"
+          },
+          {
+            "n": 20,
+            "t": "Endgame",
+            "d": "2013-03-16"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Princes All",
+            "d": "2019-01-04"
+          },
+          {
+            "n": 2,
+            "t": "Royal We",
+            "d": "2019-01-04"
+          },
+          {
+            "n": 3,
+            "t": "Eminent Threat",
+            "d": "2019-01-04"
+          },
+          {
+            "n": 4,
+            "t": "Private Security",
+            "d": "2019-01-11"
+          },
+          {
+            "n": 5,
+            "t": "Away Mission",
+            "d": "2019-01-11"
+          },
+          {
+            "n": 6,
+            "t": "Rescue Op",
+            "d": "2019-01-11"
+          },
+          {
+            "n": 7,
+            "t": "Evolution",
+            "d": "2019-01-18"
+          },
+          {
+            "n": 8,
+            "t": "Triptych",
+            "d": "2019-01-18"
+          },
+          {
+            "n": 9,
+            "t": "Home Fires",
+            "d": "2019-01-18"
+          },
+          {
+            "n": 10,
+            "t": "Exceptional Human Beings",
+            "d": "2019-01-25"
+          },
+          {
+            "n": 11,
+            "t": "Another Freak",
+            "d": "2019-01-25"
+          },
+          {
+            "n": 12,
+            "t": "Nightmare Monkeys",
+            "d": "2019-01-25"
+          },
+          {
+            "n": 13,
+            "t": "True Heroes",
+            "d": "2019-01-25"
+          },
+          {
+            "n": 14,
+            "t": "Influence",
+            "d": "2019-07-02"
+          },
+          {
+            "n": 15,
+            "t": "Leverage",
+            "d": "2019-07-02"
+          },
+          {
+            "n": 16,
+            "t": "Illusion of Control",
+            "d": "2019-07-02"
+          },
+          {
+            "n": 17,
+            "t": "First Impression",
+            "d": "2019-07-09"
+          },
+          {
+            "n": 18,
+            "t": "Early Warning",
+            "d": "2019-07-16"
+          },
+          {
+            "n": 19,
+            "t": "Elder Wisdom",
+            "d": "2019-07-23"
+          },
+          {
+            "n": 20,
+            "t": "Quiet Conversations",
+            "d": "2019-07-30"
+          },
+          {
+            "n": 21,
+            "t": "Unknown Factors",
+            "d": "2019-08-06"
+          },
+          {
+            "n": 22,
+            "t": "Antisocial Pathologies",
+            "d": "2019-08-13"
+          },
+          {
+            "n": 23,
+            "t": "Terminus",
+            "d": "2019-08-20"
+          },
+          {
+            "n": 24,
+            "t": "Into the Breach",
+            "d": "2019-08-27"
+          },
+          {
+            "n": 25,
+            "t": "Overwhelmed",
+            "d": "2019-08-27"
+          },
+          {
+            "n": 26,
+            "t": "Nevermore",
+            "d": "2019-08-27"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Inhospitable",
+            "d": "2021-10-16"
+          },
+          {
+            "n": 2,
+            "t": "Needful",
+            "d": "2021-10-16"
+          },
+          {
+            "n": 3,
+            "t": "Volatile",
+            "d": "2021-10-21"
+          },
+          {
+            "n": 4,
+            "t": "Involuntary",
+            "d": "2021-10-28"
+          },
+          {
+            "n": 5,
+            "t": "Tale of Two Sisters",
+            "d": "2021-11-04"
+          },
+          {
+            "n": 6,
+            "t": "Artemis Through the Looking Glass",
+            "d": "2021-11-11"
+          },
+          {
+            "n": 7,
+            "t": "The Lady, or the Tigress?",
+            "d": "2021-11-18"
+          },
+          {
+            "n": 8,
+            "t": "I Know Why the Caged Cat Sings",
+            "d": "2021-11-25"
+          },
+          {
+            "n": 9,
+            "t": "Odnu!",
+            "d": "2021-12-02"
+          },
+          {
+            "n": 10,
+            "t": "Nomed Esir!",
+            "d": "2021-12-09"
+          },
+          {
+            "n": 11,
+            "t": "Teg Ydaer!",
+            "d": "2021-12-16"
+          },
+          {
+            "n": 12,
+            "t": "Og Htrof Dna Reuqnoc!",
+            "d": "2021-12-23"
+          },
+          {
+            "n": 13,
+            "t": "Kaerb Ym Traeh!",
+            "d": "2021-12-30"
+          },
+          {
+            "n": 14,
+            "t": "Nautical Twilight",
+            "d": "2022-03-31"
+          },
+          {
+            "n": 15,
+            "t": "Ebb Tide",
+            "d": "2022-03-31"
+          },
+          {
+            "n": 16,
+            "t": "Emergency Dive",
+            "d": "2022-03-31"
+          },
+          {
+            "n": 17,
+            "t": "Leviathan Wakes",
+            "d": "2022-04-07"
+          },
+          {
+            "n": 18,
+            "t": "Beyond the Grip of the Gods!",
+            "d": "2022-04-14"
+          },
+          {
+            "n": 19,
+            "t": "Encounter Upon the Razor's Edge!",
+            "d": "2022-04-21"
+          },
+          {
+            "n": 20,
+            "t": "Forbidden Secrets of Civilizations Past!",
+            "d": "2022-04-28"
+          },
+          {
+            "n": 21,
+            "t": "Odyssey of Death!",
+            "d": "2022-05-05"
+          },
+          {
+            "n": 22,
+            "t": "Rescue and Search",
+            "d": "2022-05-12"
+          },
+          {
+            "n": 23,
+            "t": "Ego and Superego",
+            "d": "2022-05-19"
+          },
+          {
+            "n": 24,
+            "t": "Zenith and Abyss",
+            "d": "2022-05-26"
+          },
+          {
+            "n": 25,
+            "t": "Over and Out",
+            "d": "2022-06-02"
+          },
+          {
+            "n": 26,
+            "t": "Death and Rebirth",
+            "d": "2022-06-09"
+          }
+        ]
+      }
     },
     {
       "creators": "Giancarlo Volpe, Jim Krieg",
@@ -13013,12 +17668,12 @@
       "blurb": "A spin-off of the adult-animated Harley Quinn series, centered on the lovable D-list villain Kite Man."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Aaron Horvath, Michael Jelenic",
+      "cast": "Scott Menville, Hynden Walch, Khary Payton, Tara Strong, Greg Cipes",
+      "runtime": "~11 min per episode",
+      "plot": "A far more comedic, standalone take on the Teen Titans, dropping the original show's continuity to focus on the goofy, chore-dodging, sandwich-obsessed daily lives of Robin, Starfire, Cyborg, Beast Boy, and Raven between (and often instead of) fighting crime.",
+      "whereToWatch": "Max, Cartoon Network",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Teen Titans Go!",
@@ -13029,10 +17684,2305 @@
         "Teen Titans"
       ],
       "seasons": 9,
-      "episodes": 447,
+      "episodes": 455,
       "rt": null,
       "imdb": 5.4,
-      "blurb": "A comedic, stand-alone spin-off of Teen Titans, still ongoing after more than a decade."
+      "blurb": "A comedic, stand-alone spin-off of Teen Titans, still ongoing after more than a decade. Season 9 is still airing (current through September 2026); episode count will keep rising.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Legendary Sandwich",
+            "d": "2013-04-23"
+          },
+          {
+            "n": 2,
+            "t": "Pie Bros",
+            "d": "2013-04-23"
+          },
+          {
+            "n": 3,
+            "t": "Driver's Ed",
+            "d": "2013-04-30"
+          },
+          {
+            "n": 4,
+            "t": "Dog Hand",
+            "d": "2013-04-30"
+          },
+          {
+            "n": 5,
+            "t": "Double Trouble",
+            "d": "2013-05-07"
+          },
+          {
+            "n": 6,
+            "t": "The Date",
+            "d": "2013-05-07"
+          },
+          {
+            "n": 7,
+            "t": "Dude, Relax",
+            "d": "2013-05-14"
+          },
+          {
+            "n": 8,
+            "t": "Laundry Day",
+            "d": "2013-05-14"
+          },
+          {
+            "n": 9,
+            "t": "Ghostboy",
+            "d": "2013-05-21"
+          },
+          {
+            "n": 10,
+            "t": "La Larva de Amor",
+            "d": "2013-05-28"
+          },
+          {
+            "n": 11,
+            "t": "Hey Pizza!",
+            "d": "2013-06-04"
+          },
+          {
+            "n": 12,
+            "t": "Gorilla",
+            "d": "2013-06-11"
+          },
+          {
+            "n": 13,
+            "t": "Girl's Night Out",
+            "d": "2013-06-18"
+          },
+          {
+            "n": 14,
+            "t": "You're Fired!",
+            "d": "2013-06-25"
+          },
+          {
+            "n": 15,
+            "t": "Super Robin",
+            "d": "2013-07-02"
+          },
+          {
+            "n": 16,
+            "t": "Tower Power",
+            "d": "2013-07-09"
+          },
+          {
+            "n": 17,
+            "t": "Parasite",
+            "d": "2013-07-16"
+          },
+          {
+            "n": 18,
+            "t": "Starliar",
+            "d": "2013-07-23"
+          },
+          {
+            "n": 19,
+            "t": "Meatball Party",
+            "d": "2013-07-30"
+          },
+          {
+            "n": 20,
+            "t": "Staff Meeting",
+            "d": "2013-08-13"
+          },
+          {
+            "n": 21,
+            "t": "Terra-ized",
+            "d": "2013-08-20"
+          },
+          {
+            "n": 22,
+            "t": "Artful Dodgers",
+            "d": "2013-08-27"
+          },
+          {
+            "n": 23,
+            "t": "Burger vs. Burrito",
+            "d": "2013-09-03"
+          },
+          {
+            "n": 24,
+            "t": "Matched",
+            "d": "2013-09-11"
+          },
+          {
+            "n": 25,
+            "t": "Colors of Raven",
+            "d": "2013-09-18"
+          },
+          {
+            "n": 26,
+            "t": "The Left Leg",
+            "d": "2013-09-25"
+          },
+          {
+            "n": 27,
+            "t": "Books",
+            "d": "2013-10-02"
+          },
+          {
+            "n": 28,
+            "t": "Lazy Sunday",
+            "d": "2013-10-09"
+          },
+          {
+            "n": 29,
+            "t": "Power Moves",
+            "d": "2013-10-23"
+          },
+          {
+            "n": 30,
+            "t": "Staring at the Future",
+            "d": "2013-10-30"
+          },
+          {
+            "n": 31,
+            "t": "No Power",
+            "d": "2013-11-06"
+          },
+          {
+            "n": 32,
+            "t": "Sidekick",
+            "d": "2013-11-13"
+          },
+          {
+            "n": 33,
+            "t": "Caged Tiger",
+            "d": "2013-11-20"
+          },
+          {
+            "n": 34,
+            "t": "Nose Mouth",
+            "d": "2014-01-08"
+          },
+          {
+            "n": 35,
+            "t": "Starfire the Terrible",
+            "d": "2013-10-16"
+          },
+          {
+            "n": 36,
+            "t": "Second Christmas",
+            "d": "2013-12-04"
+          },
+          {
+            "n": 37,
+            "t": "Legs",
+            "d": "2014-01-15"
+          },
+          {
+            "n": 38,
+            "t": "Breakfast Cheese",
+            "d": "2014-01-22"
+          },
+          {
+            "n": 39,
+            "t": "Waffles",
+            "d": "2014-02-05"
+          },
+          {
+            "n": 40,
+            "t": "Opposites",
+            "d": "2014-02-19"
+          },
+          {
+            "n": 41,
+            "t": "Birds",
+            "d": "2014-02-26"
+          },
+          {
+            "n": 42,
+            "t": "Be Mine",
+            "d": "2014-02-12"
+          },
+          {
+            "n": 43,
+            "t": "Brain Food",
+            "d": "2014-03-05"
+          },
+          {
+            "n": 44,
+            "t": "In and Out",
+            "d": "2014-03-12"
+          },
+          {
+            "n": 45,
+            "t": "Little Buddies",
+            "d": "2014-03-19"
+          },
+          {
+            "n": 46,
+            "t": "Missing",
+            "d": "2014-03-26"
+          },
+          {
+            "n": 47,
+            "t": "Uncle Jokes",
+            "d": "2014-04-09"
+          },
+          {
+            "n": 48,
+            "t": "Más y Menos",
+            "d": "2014-04-16"
+          },
+          {
+            "n": 49,
+            "t": "Dreams",
+            "d": "2014-04-23"
+          },
+          {
+            "n": 50,
+            "t": "Grandma Voice",
+            "d": "2014-04-30"
+          },
+          {
+            "n": 51,
+            "t": "Real Magic",
+            "d": "2014-05-14"
+          },
+          {
+            "n": 52,
+            "t": "Puppets, Whaaaaat?",
+            "d": "2014-06-05"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Mr. Butt",
+            "d": "2014-06-12"
+          },
+          {
+            "n": 2,
+            "t": "Man Person",
+            "d": "2014-06-19"
+          },
+          {
+            "n": 3,
+            "t": "Pirates",
+            "d": "2014-06-26"
+          },
+          {
+            "n": 4,
+            "t": "I See You",
+            "d": "2014-07-24"
+          },
+          {
+            "n": 5,
+            "t": "Brian",
+            "d": "2014-07-31"
+          },
+          {
+            "n": 6,
+            "t": "Nature",
+            "d": "2014-08-07"
+          },
+          {
+            "n": 7,
+            "t": "Salty Codgers",
+            "d": "2014-08-14"
+          },
+          {
+            "n": 8,
+            "t": "Knowledge",
+            "d": "2014-08-21"
+          },
+          {
+            "n": 9,
+            "t": "Love Monsters",
+            "d": "2014-09-04"
+          },
+          {
+            "n": 10,
+            "t": "Baby Hands",
+            "d": "2014-09-11"
+          },
+          {
+            "n": 11,
+            "t": "Halloween",
+            "d": "2014-10-30"
+          },
+          {
+            "n": 12,
+            "t": "Caramel Apples",
+            "d": "2014-09-18"
+          },
+          {
+            "n": 13,
+            "t": "Sandwich Thief",
+            "d": "2014-09-25"
+          },
+          {
+            "n": 14,
+            "t": "Money Grandma",
+            "d": "2014-07-03"
+          },
+          {
+            "n": 15,
+            "t": "Friendship",
+            "d": "2014-10-02"
+          },
+          {
+            "n": 16,
+            "t": "Vegetables",
+            "d": "2014-10-09"
+          },
+          {
+            "n": 17,
+            "t": "Slumber Party",
+            "d": "2014-08-28"
+          },
+          {
+            "n": 18,
+            "t": "The Mask",
+            "d": "2014-10-16"
+          },
+          {
+            "n": 19,
+            "t": "Serious Business",
+            "d": "2014-10-23"
+          },
+          {
+            "n": 20,
+            "t": "Thanksgiving",
+            "d": "2014-11-26"
+          },
+          {
+            "n": 21,
+            "t": "Boys vs Girls",
+            "d": "2014-11-06"
+          },
+          {
+            "n": 22,
+            "t": "Body Adventure",
+            "d": "2014-11-13"
+          },
+          {
+            "n": 23,
+            "t": "Road Trip",
+            "d": "2014-11-20"
+          },
+          {
+            "n": 24,
+            "t": "The Best Robin",
+            "d": "2014-12-04"
+          },
+          {
+            "n": 25,
+            "t": "Mouth Hole",
+            "d": "2015-01-08"
+          },
+          {
+            "n": 26,
+            "t": "Hot Garbage",
+            "d": "2015-01-15"
+          },
+          {
+            "n": 27,
+            "t": "Robin Backwards",
+            "d": "2015-01-22"
+          },
+          {
+            "n": 28,
+            "t": "Crazy Day",
+            "d": "2015-01-29"
+          },
+          {
+            "n": 29,
+            "t": "Smile Bones",
+            "d": "2015-02-05"
+          },
+          {
+            "n": 30,
+            "t": "Real Boy Adventures",
+            "d": "2015-02-12"
+          },
+          {
+            "n": 31,
+            "t": "Yearbook Madness",
+            "d": "2015-05-14"
+          },
+          {
+            "n": 32,
+            "t": "Hose Water",
+            "d": "2015-02-19"
+          },
+          {
+            "n": 33,
+            "t": "Let's Get Serious",
+            "d": "2015-02-26"
+          },
+          {
+            "n": 34,
+            "t": "Tamaranian Vacation",
+            "d": "2015-03-05"
+          },
+          {
+            "n": 35,
+            "t": "Multiple Trick Pony",
+            "d": "2015-03-19"
+          },
+          {
+            "n": 36,
+            "t": "Rocks and Water",
+            "d": "2015-03-12"
+          },
+          {
+            "n": 37,
+            "t": "Truth, Justice, and What?",
+            "d": "2015-03-26"
+          },
+          {
+            "n": 38,
+            "t": "Beast Man",
+            "d": "2015-06-29"
+          },
+          {
+            "n": 39,
+            "t": "Oil Drums",
+            "d": "2015-04-09"
+          },
+          {
+            "n": 40,
+            "t": "Two Bumble Bees and a Wasp",
+            "d": "2015-04-02"
+          },
+          {
+            "n": 41,
+            "t": "Cool School",
+            "d": "2015-04-23"
+          },
+          {
+            "n": 42,
+            "t": "Video Game References",
+            "d": "2015-04-16"
+          },
+          {
+            "n": 43,
+            "t": "Kicking a Ball and Pretending to Be Hurt",
+            "d": "2015-04-30"
+          },
+          {
+            "n": 44,
+            "t": "Head Fruit",
+            "d": "2015-05-07"
+          },
+          {
+            "n": 45,
+            "t": "Operation Tin Man",
+            "d": "2015-06-30"
+          },
+          {
+            "n": 46,
+            "t": "Nean",
+            "d": "2015-07-01"
+          },
+          {
+            "n": 47,
+            "t": "The HIVE Five",
+            "d": "2015-07-27"
+          },
+          {
+            "n": 48,
+            "t": "Campfire Stories",
+            "d": "2015-07-02"
+          },
+          {
+            "n": 49,
+            "t": "The Return of Slade",
+            "d": "2015-07-28"
+          },
+          {
+            "n": 50,
+            "t": "More of the Same",
+            "d": "2015-07-29"
+          },
+          {
+            "n": 51,
+            "t": "And the Award for Sound Design Goes to Rob",
+            "d": "2015-07-03"
+          },
+          {
+            "n": 52,
+            "t": "Some of Their Parts",
+            "d": "2015-07-30"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Cat's Fancy",
+            "d": "2015-07-31"
+          },
+          {
+            "n": 2,
+            "t": "Leg Day",
+            "d": "2015-08-06"
+          },
+          {
+            "n": 3,
+            "t": "Dignity of Teeth",
+            "d": "2015-08-13"
+          },
+          {
+            "n": 4,
+            "t": "Croissant",
+            "d": "2015-08-20"
+          },
+          {
+            "n": 5,
+            "t": "Spice Game",
+            "d": "2015-08-27"
+          },
+          {
+            "n": 6,
+            "t": "I'm the Sauce",
+            "d": "2015-09-03"
+          },
+          {
+            "n": 7,
+            "t": "Accept the Next Proposition You Hear",
+            "d": "2015-10-19"
+          },
+          {
+            "n": 8,
+            "t": "Hey You, Don't Forget About Me in Your Memory",
+            "d": "2015-09-10"
+          },
+          {
+            "n": 9,
+            "t": "The Fourth Wall",
+            "d": "2015-10-20"
+          },
+          {
+            "n": 10,
+            "t": "40%, 40%, 20%",
+            "d": "2015-10-21"
+          },
+          {
+            "n": 11,
+            "t": "Grube's Fairytales",
+            "d": "2015-10-22"
+          },
+          {
+            "n": 12,
+            "t": "A Farce",
+            "d": "2015-10-23"
+          },
+          {
+            "n": 13,
+            "t": "Animals, It's Just a Word!",
+            "d": "2015-11-05"
+          },
+          {
+            "n": 14,
+            "t": "Scary Figure Dance",
+            "d": "2015-10-29"
+          },
+          {
+            "n": 15,
+            "t": "BBBDay!",
+            "d": "2015-11-12"
+          },
+          {
+            "n": 16,
+            "t": "Black Friday",
+            "d": "2015-11-19"
+          },
+          {
+            "n": 17,
+            "t": "Squash & Stretch",
+            "d": "2016-01-07"
+          },
+          {
+            "n": 18,
+            "t": "Two Parter (1)",
+            "d": "2015-11-26"
+          },
+          {
+            "n": 19,
+            "t": "Two Parter (2)",
+            "d": "2015-11-26"
+          },
+          {
+            "n": 20,
+            "t": "The True Meaning of Christmas",
+            "d": "2015-12-03"
+          },
+          {
+            "n": 21,
+            "t": "Garage Sale",
+            "d": "2016-01-14"
+          },
+          {
+            "n": 22,
+            "t": "Beast Boy's St. Patrick's Day Luck, and It's Bad",
+            "d": "2016-03-17"
+          },
+          {
+            "n": 23,
+            "t": "Secret Garden",
+            "d": "2016-01-21"
+          },
+          {
+            "n": 24,
+            "t": "The Cruel Giggling Ghoul",
+            "d": "2016-02-11"
+          },
+          {
+            "n": 25,
+            "t": "How 'Bout Some Effort",
+            "d": "2016-02-15"
+          },
+          {
+            "n": 26,
+            "t": "Bottle Episode",
+            "d": "2016-04-21"
+          },
+          {
+            "n": 27,
+            "t": "Pyramid Scheme",
+            "d": "2016-02-15"
+          },
+          {
+            "n": 28,
+            "t": "Finally a Lesson",
+            "d": "2016-04-28"
+          },
+          {
+            "n": 29,
+            "t": "Arms Race with Legs",
+            "d": "2016-05-05"
+          },
+          {
+            "n": 30,
+            "t": "Obinray",
+            "d": "2016-05-12"
+          },
+          {
+            "n": 31,
+            "t": "Batman v Teen Titans: Dark Injustice",
+            "d": "2016-03-28"
+          },
+          {
+            "n": 32,
+            "t": "Wally T",
+            "d": "2016-05-19"
+          },
+          {
+            "n": 33,
+            "t": "The Teen Titans Go! Easter Holiday Classic",
+            "d": "2016-03-25"
+          },
+          {
+            "n": 34,
+            "t": "Rad Dudes with Bad Tudes",
+            "d": "2016-05-26"
+          },
+          {
+            "n": 35,
+            "t": "History Lesson",
+            "d": "2016-06-09"
+          },
+          {
+            "n": 36,
+            "t": "The Art of Ninjutsu",
+            "d": "2016-06-16"
+          },
+          {
+            "n": 37,
+            "t": "Think About Your Future",
+            "d": "2016-06-23"
+          },
+          {
+            "n": 38,
+            "t": "Booty Scooty",
+            "d": "2016-09-05"
+          },
+          {
+            "n": 39,
+            "t": "Operation Dude Rescue (1)",
+            "d": "2016-05-30"
+          },
+          {
+            "n": 40,
+            "t": "Operation Dude Rescue (2)",
+            "d": "2016-05-30"
+          },
+          {
+            "n": 41,
+            "t": "Who's Laughing Now",
+            "d": "2016-09-08"
+          },
+          {
+            "n": 42,
+            "t": "Oregon Trail",
+            "d": "2016-09-15"
+          },
+          {
+            "n": 43,
+            "t": "Snuggle Time",
+            "d": "2016-09-22"
+          },
+          {
+            "n": 44,
+            "t": "Oh Yeah!",
+            "d": "2016-09-29"
+          },
+          {
+            "n": 45,
+            "t": "Riding the Dragon",
+            "d": "2016-09-29"
+          },
+          {
+            "n": 46,
+            "t": "Island Adventures (1): Coconut Cream Pie",
+            "d": "2016-08-01"
+          },
+          {
+            "n": 47,
+            "t": "Island Adventures (3): Open Door Policy",
+            "d": "2016-08-03"
+          },
+          {
+            "n": 48,
+            "t": "Island Adventures (2): Pure Protein",
+            "d": "2016-08-02"
+          },
+          {
+            "n": 49,
+            "t": "The Overbite",
+            "d": "2016-10-06"
+          },
+          {
+            "n": 50,
+            "t": "Island Adventures (5): The Titans Show",
+            "d": "2016-08-05"
+          },
+          {
+            "n": 51,
+            "t": "Island Adventures (4): Crazy Desire Island",
+            "d": "2016-08-04"
+          },
+          {
+            "n": 52,
+            "t": "The Cape",
+            "d": "2016-10-13"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Shrimps and Prime Rib",
+            "d": "2016-10-20"
+          },
+          {
+            "n": 2,
+            "t": "Halloween v Christmas",
+            "d": "2016-10-27"
+          },
+          {
+            "n": 3,
+            "t": "Booby Trap House",
+            "d": "2016-11-03"
+          },
+          {
+            "n": 4,
+            "t": "Fish Water",
+            "d": "2016-11-17"
+          },
+          {
+            "n": 5,
+            "t": "TV Knight",
+            "d": "2016-11-26"
+          },
+          {
+            "n": 6,
+            "t": "BBSFBDAY!",
+            "d": "2016-12-03"
+          },
+          {
+            "n": 7,
+            "t": "Teen Titans Save Christmas",
+            "d": "2016-12-01"
+          },
+          {
+            "n": 8,
+            "t": "The Inner Beauty of a Cactus",
+            "d": "2017-02-03"
+          },
+          {
+            "n": 9,
+            "t": "The Streak (1)",
+            "d": "2017-01-27"
+          },
+          {
+            "n": 10,
+            "t": "The Streak (2)",
+            "d": "2017-01-27"
+          },
+          {
+            "n": 11,
+            "t": "Movie Night",
+            "d": "2017-02-10"
+          },
+          {
+            "n": 12,
+            "t": "Permanent Record",
+            "d": "2017-03-03"
+          },
+          {
+            "n": 13,
+            "t": "BBRAE (1)",
+            "d": "2017-02-20"
+          },
+          {
+            "n": 14,
+            "t": "BBRAE (2)",
+            "d": "2017-02-20"
+          },
+          {
+            "n": 15,
+            "t": "Titan Saving Time",
+            "d": "2017-03-10"
+          },
+          {
+            "n": 16,
+            "t": "The Gold Standard",
+            "d": "2017-03-17"
+          },
+          {
+            "n": 17,
+            "t": "Master Detective",
+            "d": "2017-03-31"
+          },
+          {
+            "n": 18,
+            "t": "Easter Creeps",
+            "d": "2017-04-14"
+          },
+          {
+            "n": 19,
+            "t": "The Avogodo",
+            "d": "2017-05-05"
+          },
+          {
+            "n": 20,
+            "t": "Hand Zombie",
+            "d": "2017-04-21"
+          },
+          {
+            "n": 21,
+            "t": "Employee of the Month: Redux",
+            "d": "2017-04-28"
+          },
+          {
+            "n": 22,
+            "t": "Orangins",
+            "d": "2017-05-29"
+          },
+          {
+            "n": 23,
+            "t": "The Day the Night Stopped Beginning to Shine…Ch. 1: I Saw You Dance",
+            "d": "2017-08-01"
+          },
+          {
+            "n": 24,
+            "t": "The Day the Night Stopped Beginning to Shine…Ch. 2: The Story in Your Eyes",
+            "d": "2017-08-02"
+          },
+          {
+            "n": 25,
+            "t": "The Day the Night Stopped Beginning to Shine…Ch. 3: Playing Hard to Get",
+            "d": "2017-08-03"
+          },
+          {
+            "n": 26,
+            "t": "The Day the Night Stopped Beginning to Shine…Ch. 4: The Night Begins to Shine",
+            "d": "2017-08-04"
+          },
+          {
+            "n": 27,
+            "t": "Jinxed",
+            "d": "2017-06-09"
+          },
+          {
+            "n": 28,
+            "t": "Hot Salad Water",
+            "d": "2017-06-30"
+          },
+          {
+            "n": 29,
+            "t": "Brain Percentages",
+            "d": "2017-06-16"
+          },
+          {
+            "n": 30,
+            "t": "BL4Z3",
+            "d": "2017-06-23"
+          },
+          {
+            "n": 31,
+            "t": "Lication",
+            "d": "2017-09-01"
+          },
+          {
+            "n": 32,
+            "t": "Classic Titans",
+            "d": "2017-09-15"
+          },
+          {
+            "n": 33,
+            "t": "Justice League's Next Top Talent Idol Star (1)",
+            "d": "2017-10-09"
+          },
+          {
+            "n": 34,
+            "t": "Justice League's Next Top Talent Idol Star (2)",
+            "d": "2017-10-09"
+          },
+          {
+            "n": 35,
+            "t": "Labor Day",
+            "d": "2017-09-04"
+          },
+          {
+            "n": 36,
+            "t": "Ones and Zeroes",
+            "d": "2017-09-22"
+          },
+          {
+            "n": 37,
+            "t": "Career Day",
+            "d": "2017-09-29"
+          },
+          {
+            "n": 38,
+            "t": "TV Knight 2",
+            "d": "2017-10-06"
+          },
+          {
+            "n": 39,
+            "t": "The Academy",
+            "d": "2017-10-20"
+          },
+          {
+            "n": 40,
+            "t": "Throne of Bones",
+            "d": "2017-11-03"
+          },
+          {
+            "n": 41,
+            "t": "Costume Contest",
+            "d": "2017-10-27"
+          },
+          {
+            "n": 42,
+            "t": "Demon Prom",
+            "d": "2017-11-10"
+          },
+          {
+            "n": 43,
+            "t": "The Self-Indulgent 200th Episode Spectacular! (1)",
+            "d": "2017-11-24"
+          },
+          {
+            "n": 44,
+            "t": "The Self-Indulgent 200th Episode Spectacular! (2)",
+            "d": "2017-11-24"
+          },
+          {
+            "n": 45,
+            "t": "BBCYFSHIPBDAY",
+            "d": "2017-12-08"
+          },
+          {
+            "n": 46,
+            "t": "Thanksgetting",
+            "d": "2017-11-17"
+          },
+          {
+            "n": 47,
+            "t": "Mo' Money Mo' Problems",
+            "d": "2018-06-25"
+          },
+          {
+            "n": 48,
+            "t": "Beast Girl",
+            "d": "2018-02-19"
+          },
+          {
+            "n": 49,
+            "t": "TV Knight 3",
+            "d": "2018-06-25"
+          },
+          {
+            "n": 50,
+            "t": "Bro-Pocalypse",
+            "d": "2018-05-28"
+          },
+          {
+            "n": 51,
+            "t": "Flashback (1)",
+            "d": "2018-03-30"
+          },
+          {
+            "n": 52,
+            "t": "Flashback (2)",
+            "d": "2018-03-30"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "The Scoop!",
+            "d": "2018-06-25"
+          },
+          {
+            "n": 2,
+            "t": "Chicken in the Cradle",
+            "d": "2018-06-25"
+          },
+          {
+            "n": 3,
+            "t": "Kabooms (1)",
+            "d": "2018-07-20"
+          },
+          {
+            "n": 4,
+            "t": "Kabooms (2)",
+            "d": "2018-07-20"
+          },
+          {
+            "n": 5,
+            "t": "Tower Renovation",
+            "d": "2018-08-13"
+          },
+          {
+            "n": 6,
+            "t": "Quantum Fun",
+            "d": "2018-11-06"
+          },
+          {
+            "n": 7,
+            "t": "The Fight",
+            "d": "2018-11-07"
+          },
+          {
+            "n": 8,
+            "t": "Genie President",
+            "d": "2019-02-18"
+          },
+          {
+            "n": 9,
+            "t": "Little Elvis",
+            "d": "2019-04-01"
+          },
+          {
+            "n": 10,
+            "t": "The Groover",
+            "d": "2018-11-08"
+          },
+          {
+            "n": 11,
+            "t": "The Power of Shrimps",
+            "d": "2018-10-08"
+          },
+          {
+            "n": 12,
+            "t": "My Name is Jose",
+            "d": "2018-10-08"
+          },
+          {
+            "n": 13,
+            "t": "Real Orangins",
+            "d": "2018-11-05"
+          },
+          {
+            "n": 14,
+            "t": "Monster Squad",
+            "d": "2018-10-19"
+          },
+          {
+            "n": 15,
+            "t": "Justice League's Next Top Talent…: Second Greatest Team Edition (1)",
+            "d": "2018-11-21"
+          },
+          {
+            "n": 16,
+            "t": "Justice League's Next Top Talent…: Second Greatest Team Edition (2)",
+            "d": "2018-11-21"
+          },
+          {
+            "n": 17,
+            "t": "BBRBDAY",
+            "d": "2018-12-31"
+          },
+          {
+            "n": 18,
+            "t": "Tall Titan Tales",
+            "d": "2019-02-25"
+          },
+          {
+            "n": 19,
+            "t": "How's This for a Special? Spaaaace (1)",
+            "d": "2018-12-21"
+          },
+          {
+            "n": 20,
+            "t": "How's This for a Special? Spaaaace (2)",
+            "d": "2018-12-21"
+          },
+          {
+            "n": 21,
+            "t": "Nostalgia is Not a Substitute for an Actual Story",
+            "d": "2019-02-04"
+          },
+          {
+            "n": 22,
+            "t": "Business Ethics Wink Wink",
+            "d": "2019-02-11"
+          },
+          {
+            "n": 23,
+            "t": "Slapping Butts and Celebrating for No Reason",
+            "d": "2019-01-28"
+          },
+          {
+            "n": 24,
+            "t": "I Used to Be a Peoples",
+            "d": "2019-03-04"
+          },
+          {
+            "n": 25,
+            "t": "The Metric System vs. Freedom",
+            "d": "2019-03-11"
+          },
+          {
+            "n": 26,
+            "t": "The Chaff",
+            "d": "2019-03-18"
+          },
+          {
+            "n": 27,
+            "t": "Curse of the Booty Scooty",
+            "d": "2019-10-04"
+          },
+          {
+            "n": 28,
+            "t": "Them Soviet Boys",
+            "d": "2019-03-25"
+          },
+          {
+            "n": 29,
+            "t": "Lil' Dimples",
+            "d": "2019-04-29"
+          },
+          {
+            "n": 30,
+            "t": "Stockton, CA!",
+            "d": "2019-05-13"
+          },
+          {
+            "n": 31,
+            "t": "Collect Them All!",
+            "d": "2019-10-04"
+          },
+          {
+            "n": 32,
+            "t": "Cartoon Feud",
+            "d": "2019-10-04"
+          },
+          {
+            "n": 33,
+            "t": "Don't Be an Icarus",
+            "d": "2019-05-06"
+          },
+          {
+            "n": 34,
+            "t": "Booty Eggs",
+            "d": "2019-04-15"
+          },
+          {
+            "n": 35,
+            "t": "TV Knight 4",
+            "d": "2019-04-22"
+          },
+          {
+            "n": 36,
+            "t": "Teen Titans Roar!",
+            "d": "2020-04-04"
+          },
+          {
+            "n": 37,
+            "t": "Teen Titans Vroom (1)",
+            "d": "2019-11-09"
+          },
+          {
+            "n": 38,
+            "t": "Teen Titans Vroom (2)",
+            "d": "2019-11-09"
+          },
+          {
+            "n": 39,
+            "t": "What's Opera, Titans?",
+            "d": "2019-05-20"
+          },
+          {
+            "n": 40,
+            "t": "Super Summer Hero Camp (1): Forest Pirates",
+            "d": "2019-05-27"
+          },
+          {
+            "n": 41,
+            "t": "Super Summer Hero Camp (2): The Bergerac",
+            "d": "2019-06-03"
+          },
+          {
+            "n": 42,
+            "t": "Super Summer Hero Camp (3): Snot and Tears",
+            "d": "2019-06-10"
+          },
+          {
+            "n": 43,
+            "t": "Super Summer Hero Camp (4): Campfire!",
+            "d": "2019-06-17"
+          },
+          {
+            "n": 44,
+            "t": "Super Summer Hero Camp (5): What We Learned at Camp",
+            "d": "2019-06-24"
+          },
+          {
+            "n": 45,
+            "t": "Communicate Openly",
+            "d": "2019-07-01"
+          },
+          {
+            "n": 46,
+            "t": "Royal Jelly",
+            "d": "2019-07-08"
+          },
+          {
+            "n": 47,
+            "t": "Strength of a Grown Man",
+            "d": "2019-07-15"
+          },
+          {
+            "n": 48,
+            "t": "Had to Be There",
+            "d": "2019-07-22"
+          },
+          {
+            "n": 49,
+            "t": "Girls Night In (1)",
+            "d": "2019-07-29"
+          },
+          {
+            "n": 50,
+            "t": "Girls Night In (2)",
+            "d": "2019-08-05"
+          },
+          {
+            "n": 51,
+            "t": "The Great Disaster",
+            "d": "2019-08-12"
+          },
+          {
+            "n": 52,
+            "t": "The Viewers Decide",
+            "d": "2019-08-19"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Butt Atoms",
+            "d": "2019-10-04"
+          },
+          {
+            "n": 2,
+            "t": "TV Knight 5",
+            "d": "2019-10-14"
+          },
+          {
+            "n": 3,
+            "t": "Beast Boy's That's What's Up",
+            "d": "2019-11-27"
+          },
+          {
+            "n": 4,
+            "t": "Crab Shenanigans",
+            "d": "2019-11-27"
+          },
+          {
+            "n": 5,
+            "t": "Brobots",
+            "d": "2019-11-27"
+          },
+          {
+            "n": 6,
+            "t": "Brain Flip",
+            "d": "2019-11-27"
+          },
+          {
+            "n": 7,
+            "t": "Witches Brew",
+            "d": "2019-10-25"
+          },
+          {
+            "n": 8,
+            "t": "Beast Boy on a Shelf",
+            "d": "2019-12-21"
+          },
+          {
+            "n": 9,
+            "t": "Christmas Crusaders",
+            "d": "2019-12-21"
+          },
+          {
+            "n": 10,
+            "t": "We're Off to Get Awards",
+            "d": "2020-02-22"
+          },
+          {
+            "n": 11,
+            "t": "Bat Scouts",
+            "d": "2020-02-22"
+          },
+          {
+            "n": 12,
+            "t": "Walk Away",
+            "d": "2020-02-29"
+          },
+          {
+            "n": 13,
+            "t": "Record Book",
+            "d": "2020-03-07"
+          },
+          {
+            "n": 14,
+            "t": "Magic Man",
+            "d": "2020-03-14"
+          },
+          {
+            "n": 15,
+            "t": "Titans Go Casual",
+            "d": "2020-03-21"
+          },
+          {
+            "n": 16,
+            "t": "Rain on Your Wedding Day",
+            "d": "2020-03-28"
+          },
+          {
+            "n": 17,
+            "t": "Egg Hunt",
+            "d": "2020-04-10"
+          },
+          {
+            "n": 18,
+            "t": "Ghost with the Most",
+            "d": "2020-10-05"
+          },
+          {
+            "n": 19,
+            "t": "Justice League's Next Top Talent…: Justice League Edition (1)",
+            "d": "2020-05-25"
+          },
+          {
+            "n": 20,
+            "t": "Justice League's Next Top Talent…: Justice League Edition (2)",
+            "d": "2020-05-25"
+          },
+          {
+            "n": 21,
+            "t": "The Night Begins To Shine Two, Ch. 1: Mission to Find the Lost Stems",
+            "d": "2020-07-10"
+          },
+          {
+            "n": 22,
+            "t": "The Night Begins To Shine Two, Ch. 2: Drums",
+            "d": "2020-07-10"
+          },
+          {
+            "n": 23,
+            "t": "The Night Begins To Shine Two, Ch. 3: Guitar",
+            "d": "2020-07-10"
+          },
+          {
+            "n": 24,
+            "t": "The Night Begins To Shine Two, Ch. 4: Bass",
+            "d": "2020-07-10"
+          },
+          {
+            "n": 25,
+            "t": "The Night Begins To Shine Two, Ch. 5: You're the One",
+            "d": "2020-07-10"
+          },
+          {
+            "n": 26,
+            "t": "Where Exactly on the Globe is Carl SanPedro (1)",
+            "d": "2020-08-10"
+          },
+          {
+            "n": 27,
+            "t": "Where Exactly on the Globe is Carl SanPedro (2)",
+            "d": "2020-08-11"
+          },
+          {
+            "n": 28,
+            "t": "Where Exactly on the Globe is Carl SanPedro (3)",
+            "d": "2020-08-12"
+          },
+          {
+            "n": 29,
+            "t": "Where Exactly on the Globe is Carl SanPedro (4)",
+            "d": "2020-08-13"
+          },
+          {
+            "n": 30,
+            "t": "Bucket List",
+            "d": "2020-10-06"
+          },
+          {
+            "n": 31,
+            "t": "TV Knight 6",
+            "d": "2020-10-07"
+          },
+          {
+            "n": 32,
+            "t": "Kryptonite",
+            "d": "2020-10-08"
+          },
+          {
+            "n": 33,
+            "t": "Thumb War",
+            "d": "2020-10-09"
+          },
+          {
+            "n": 34,
+            "t": "Toddler Titans... Yay!",
+            "d": "2020-11-14"
+          },
+          {
+            "n": 35,
+            "t": "Huggbees",
+            "d": "2020-11-14"
+          },
+          {
+            "n": 36,
+            "t": "Baby Mouth",
+            "d": "2020-11-21"
+          },
+          {
+            "n": 37,
+            "t": "The Cast",
+            "d": "2020-12-12"
+          },
+          {
+            "n": 38,
+            "t": "Superhero Feud",
+            "d": "2020-12-19"
+          },
+          {
+            "n": 39,
+            "t": "Lucky Stars",
+            "d": "2021-01-23"
+          },
+          {
+            "n": 40,
+            "t": "Various Modes of Transportation",
+            "d": "2021-01-23"
+          },
+          {
+            "n": 41,
+            "t": "Cool Uncles",
+            "d": "2021-01-30"
+          },
+          {
+            "n": 42,
+            "t": "Butter Wall",
+            "d": "2021-02-06"
+          },
+          {
+            "n": 43,
+            "t": "BBRAEBDAY",
+            "d": "2021-02-13"
+          },
+          {
+            "n": 44,
+            "t": "Don't Press Play",
+            "d": "2021-02-20"
+          },
+          {
+            "n": 45,
+            "t": "Real Art",
+            "d": "2021-02-27"
+          },
+          {
+            "n": 46,
+            "t": "Just a Little Patience…Yeah…Yeah",
+            "d": "2021-03-06"
+          },
+          {
+            "n": 47,
+            "t": "Villains in a Van Getting Gelato",
+            "d": "2021-03-13"
+          },
+          {
+            "n": 48,
+            "t": "I Am Chair",
+            "d": "2021-03-20"
+          },
+          {
+            "n": 49,
+            "t": "Bumgorf",
+            "d": "2021-03-27"
+          },
+          {
+            "n": 50,
+            "t": "The Mug",
+            "d": "2021-04-17"
+          },
+          {
+            "n": 51,
+            "t": "Hafo Safo",
+            "d": "2021-04-24"
+          },
+          {
+            "n": 52,
+            "t": "Zimdings",
+            "d": "2021-05-01"
+          }
+        ],
+        "7": [
+          {
+            "n": 1,
+            "t": "Justice League's Next Top Talent Idol Star: Dance Crew Edition (1)",
+            "d": "2021-01-08"
+          },
+          {
+            "n": 2,
+            "t": "Justice League's Next Top Talent Idol Star: Dance Crew Edition (2)",
+            "d": "2021-01-08"
+          },
+          {
+            "n": 3,
+            "t": "Feed Me",
+            "d": "2021-04-03"
+          },
+          {
+            "n": 4,
+            "t": "Pig in a Poke",
+            "d": "2021-05-08"
+          },
+          {
+            "n": 5,
+            "t": "P.P.",
+            "d": "2021-05-15"
+          },
+          {
+            "n": 6,
+            "t": "A Little Help Please",
+            "d": "2021-05-22"
+          },
+          {
+            "n": 7,
+            "t": "Marv Wolfman and George Pérez",
+            "d": "2021-05-29"
+          },
+          {
+            "n": 8,
+            "t": "Space House (1)",
+            "d": "2021-05-31"
+          },
+          {
+            "n": 9,
+            "t": "Space House (2)",
+            "d": "2021-05-31"
+          },
+          {
+            "n": 10,
+            "t": "Space House (3)",
+            "d": "2021-05-31"
+          },
+          {
+            "n": 11,
+            "t": "Space House (4)",
+            "d": "2021-05-31"
+          },
+          {
+            "n": 12,
+            "t": "Cy & Beasty",
+            "d": "2021-08-02"
+          },
+          {
+            "n": 13,
+            "t": "T is for Titans",
+            "d": "2021-08-03"
+          },
+          {
+            "n": 14,
+            "t": "Creative Geniuses",
+            "d": "2021-08-04"
+          },
+          {
+            "n": 15,
+            "t": "Manor and Mannerisms",
+            "d": "2021-08-05"
+          },
+          {
+            "n": 16,
+            "t": "Trans Oceanic Magical Cruise",
+            "d": "2021-08-06"
+          },
+          {
+            "n": 17,
+            "t": "Polly Ethylene and Tara Phthalate",
+            "d": "2021-09-04"
+          },
+          {
+            "n": 18,
+            "t": "EEbows",
+            "d": "2021-09-11"
+          },
+          {
+            "n": 19,
+            "t": "Batman's Birthday Gift",
+            "d": "2021-09-18"
+          },
+          {
+            "n": 20,
+            "t": "What a Boy Wonders",
+            "d": "2021-09-25"
+          },
+          {
+            "n": 21,
+            "t": "Doomsday Preppers",
+            "d": "2021-10-02"
+          },
+          {
+            "n": 22,
+            "t": "Fat Cats",
+            "d": "2021-10-09"
+          },
+          {
+            "n": 23,
+            "t": "Jam",
+            "d": "2021-10-16"
+          },
+          {
+            "n": 24,
+            "t": "DC",
+            "d": "2021-10-23"
+          },
+          {
+            "n": 25,
+            "t": "Pepo the Pumpkinman",
+            "d": "2021-10-27"
+          },
+          {
+            "n": 26,
+            "t": "Breakfast",
+            "d": "2021-11-06"
+          },
+          {
+            "n": 27,
+            "t": "Captain Cool",
+            "d": "2021-11-13"
+          },
+          {
+            "n": 28,
+            "t": "A Doom Patrol Thanksgiving, Part 1",
+            "d": "2021-11-19"
+          },
+          {
+            "n": 29,
+            "t": "A Doom Patrol Thanksgiving, Part 2",
+            "d": "2021-11-19"
+          },
+          {
+            "n": 30,
+            "t": "Glunkakakakah",
+            "d": "2021-11-27"
+          },
+          {
+            "n": 31,
+            "t": "Control Freak",
+            "d": "2021-12-04"
+          },
+          {
+            "n": 32,
+            "t": "A Holiday Story",
+            "d": "2021-12-08"
+          },
+          {
+            "n": 33,
+            "t": "The Drip",
+            "d": "2022-02-21"
+          },
+          {
+            "n": 34,
+            "t": "S&P",
+            "d": "2022-03-07"
+          },
+          {
+            "n": 35,
+            "t": "Belly Math",
+            "d": "2022-03-08"
+          },
+          {
+            "n": 36,
+            "t": "Free Perk",
+            "d": "2022-03-09"
+          },
+          {
+            "n": 37,
+            "t": "Go!",
+            "d": "2022-03-10"
+          },
+          {
+            "n": 38,
+            "t": "Finding Aquaman",
+            "d": "2022-05-14"
+          },
+          {
+            "n": 39,
+            "t": "Whodundidit?",
+            "d": "2022-05-23"
+          },
+          {
+            "n": 40,
+            "t": "Sweet Revenge",
+            "d": "2022-05-24"
+          },
+          {
+            "n": 41,
+            "t": "Porch Pirates",
+            "d": "2022-05-25"
+          },
+          {
+            "n": 42,
+            "t": "A Sticky Situation",
+            "d": "2022-05-26"
+          },
+          {
+            "n": 43,
+            "t": "The Perfect Pitch?",
+            "d": "2022-05-27"
+          },
+          {
+            "n": 44,
+            "t": "Pool Season",
+            "d": "2022-08-01"
+          },
+          {
+            "n": 45,
+            "t": "Kyle",
+            "d": "2022-08-02"
+          },
+          {
+            "n": 46,
+            "t": "TV Knight 7",
+            "d": "2022-08-03"
+          },
+          {
+            "n": 47,
+            "t": "We'll Be Right Back",
+            "d": "2022-08-04"
+          },
+          {
+            "n": 48,
+            "t": "Jump City Rock",
+            "d": "2022-09-12"
+          },
+          {
+            "n": 49,
+            "t": "Natural Gas",
+            "d": "2022-09-13"
+          },
+          {
+            "n": 50,
+            "t": "50% Chad",
+            "d": "2022-09-14"
+          },
+          {
+            "n": 51,
+            "t": "The Score",
+            "d": "2022-09-15"
+          },
+          {
+            "n": 52,
+            "t": "365!",
+            "d": "2022-09-16"
+          }
+        ],
+        "8": [
+          {
+            "n": 1,
+            "t": "Welcome to Halloween",
+            "d": "2022-10-07"
+          },
+          {
+            "n": 2,
+            "t": "The Great Holiday Escape",
+            "d": "2022-12-09"
+          },
+          {
+            "n": 3,
+            "t": "Looking for Love",
+            "d": "2023-02-06"
+          },
+          {
+            "n": 4,
+            "t": "Teen Titans Action (1)",
+            "d": "2023-02-20"
+          },
+          {
+            "n": 5,
+            "t": "Teen Titans Action (2)",
+            "d": "2023-02-20"
+          },
+          {
+            "n": 6,
+            "t": "TV Knight 8",
+            "d": "2023-02-27"
+          },
+          {
+            "n": 7,
+            "t": "A Stickier Situation",
+            "d": "2023-03-06"
+          },
+          {
+            "n": 8,
+            "t": "Winning a Golf Tournament Is the Solution to All of Life's Money Problems",
+            "d": "2023-03-13"
+          },
+          {
+            "n": 9,
+            "t": "Always Be Crimefighting",
+            "d": "2023-03-20"
+          },
+          {
+            "n": 10,
+            "t": "Easter Annihilation",
+            "d": "2023-03-27"
+          },
+          {
+            "n": 11,
+            "t": "The Brain of the Family (1)",
+            "d": "2023-05-06"
+          },
+          {
+            "n": 12,
+            "t": "The Brain of the Family (2)",
+            "d": "2023-05-06"
+          },
+          {
+            "n": 13,
+            "t": "Arthur",
+            "d": "2023-05-13"
+          },
+          {
+            "n": 14,
+            "t": "Toilet Water",
+            "d": "2023-05-13"
+          },
+          {
+            "n": 15,
+            "t": "Plot Holes",
+            "d": "2023-05-20"
+          },
+          {
+            "n": 16,
+            "t": "Utility Belt",
+            "d": "2023-05-20"
+          },
+          {
+            "n": 17,
+            "t": "Our House",
+            "d": "2023-07-24"
+          },
+          {
+            "n": 18,
+            "t": "Beard Hunter",
+            "d": "2023-07-25"
+          },
+          {
+            "n": 19,
+            "t": "Elasti-Bot",
+            "d": "2023-07-26"
+          },
+          {
+            "n": 20,
+            "t": "Negative Feels",
+            "d": "2023-07-27"
+          },
+          {
+            "n": 21,
+            "t": "New Chum",
+            "d": "2023-07-28"
+          },
+          {
+            "n": 22,
+            "t": "Intro",
+            "d": "2023-09-23"
+          },
+          {
+            "n": 23,
+            "t": "Haunted Tank",
+            "d": "2023-10-07"
+          },
+          {
+            "n": 24,
+            "t": "Warner Bros. 100th Anniversary (1)",
+            "d": "2023-10-14"
+          },
+          {
+            "n": 25,
+            "t": "Warner Bros. 100th Anniversary (2)",
+            "d": "2023-10-14"
+          },
+          {
+            "n": 26,
+            "t": "Wishbone",
+            "d": "2023-11-18"
+          },
+          {
+            "n": 27,
+            "t": "Christmas Magic",
+            "d": "2023-12-02"
+          },
+          {
+            "n": 28,
+            "t": "Ship",
+            "d": "2024-03-02"
+          },
+          {
+            "n": 29,
+            "t": "Catpin Freak",
+            "d": "2024-03-09"
+          },
+          {
+            "n": 30,
+            "t": "50% Crew",
+            "d": "2024-03-16"
+          },
+          {
+            "n": 31,
+            "t": "Five Bucks",
+            "d": "2024-03-23"
+          },
+          {
+            "n": 32,
+            "t": "Wild Card",
+            "d": "2024-03-30"
+          },
+          {
+            "n": 33,
+            "t": "Azarath! Metrion! Bookstore!",
+            "d": "2024-10-05"
+          },
+          {
+            "n": 34,
+            "t": "The Great Azarathian Face Off",
+            "d": "2024-10-12"
+          },
+          {
+            "n": 35,
+            "t": "Bookyman",
+            "d": "2024-10-19"
+          },
+          {
+            "n": 36,
+            "t": "Unleashed",
+            "d": "2024-10-26"
+          },
+          {
+            "n": 37,
+            "t": "Original Idea",
+            "d": "2024-11-02"
+          },
+          {
+            "n": 38,
+            "t": "Attention to Detail",
+            "d": "2024-11-09"
+          },
+          {
+            "n": 39,
+            "t": "The Ranch",
+            "d": "2024-11-16"
+          },
+          {
+            "n": 40,
+            "t": "TV Knight 9",
+            "d": "2024-11-23"
+          },
+          {
+            "n": 41,
+            "t": "Four Hundred (1)",
+            "d": "2024-11-30"
+          },
+          {
+            "n": 42,
+            "t": "Four Hundred (2)",
+            "d": "2024-11-30"
+          }
+        ],
+        "9": [
+          {
+            "n": 1,
+            "t": "Stickiest Situation",
+            "d": "2025-03-01"
+          },
+          {
+            "n": 2,
+            "t": "O.S.H.A.",
+            "d": "2025-03-01"
+          },
+          {
+            "n": 3,
+            "t": "Teen? Titans",
+            "d": "2025-03-08"
+          },
+          {
+            "n": 4,
+            "t": "Moonlighting",
+            "d": "2025-03-15"
+          },
+          {
+            "n": 5,
+            "t": "Freak Show",
+            "d": "2025-03-22"
+          },
+          {
+            "n": 6,
+            "t": "Diner Means Breakfast",
+            "d": "2025-03-29"
+          },
+          {
+            "n": 7,
+            "t": "High Five",
+            "d": "2025-04-05"
+          },
+          {
+            "n": 8,
+            "t": "Teen Titans and the Easter Factory",
+            "d": "2025-04-12"
+          },
+          {
+            "n": 9,
+            "t": "Passive Income",
+            "d": "2025-04-19"
+          },
+          {
+            "n": 10,
+            "t": "Winged Warriors",
+            "d": "2025-04-26"
+          },
+          {
+            "n": 11,
+            "t": "Closed Circuit",
+            "d": "2025-05-03"
+          },
+          {
+            "n": 12,
+            "t": "Best Mom Ever",
+            "d": "2025-05-10"
+          },
+          {
+            "n": 13,
+            "t": "DC Comic Book Club",
+            "d": "2025-05-17"
+          },
+          {
+            "n": 14,
+            "t": "Favorite Animated Show Nominee",
+            "d": "2025-06-21"
+          },
+          {
+            "n": 15,
+            "t": "Them Jaws",
+            "d": "2025-07-19"
+          },
+          {
+            "n": 16,
+            "t": "Pool Shark",
+            "d": "2025-07-19"
+          },
+          {
+            "n": 17,
+            "t": "Shark Tank",
+            "d": "2025-07-19"
+          },
+          {
+            "n": 18,
+            "t": "Lakeside Story",
+            "d": "2025-07-19"
+          },
+          {
+            "n": 19,
+            "t": "Megalodon Jackson",
+            "d": "2025-07-19"
+          },
+          {
+            "n": 20,
+            "t": "DC Leader Swap",
+            "d": "2025-08-30"
+          },
+          {
+            "n": 21,
+            "t": "Shhhh",
+            "d": "2025-08-30"
+          },
+          {
+            "n": 22,
+            "t": "Crime Alert",
+            "d": "2025-09-06"
+          },
+          {
+            "n": 23,
+            "t": "Mani-Pedi",
+            "d": "2025-09-13"
+          },
+          {
+            "n": 24,
+            "t": "Not a Halloween Special",
+            "d": "2025-09-20"
+          },
+          {
+            "n": 25,
+            "t": "Chowda",
+            "d": "2025-09-27"
+          },
+          {
+            "n": 26,
+            "t": "Activate",
+            "d": "2025-10-04"
+          },
+          {
+            "n": 27,
+            "t": "Ice Cold",
+            "d": "2025-10-11"
+          },
+          {
+            "n": 28,
+            "t": "Cake!",
+            "d": "2025-10-18"
+          },
+          {
+            "n": 29,
+            "t": "Unmasking - The Teen Titans Story",
+            "d": "2025-10-25"
+          },
+          {
+            "n": 30,
+            "t": "Helmet of Doom",
+            "d": "2025-11-01"
+          },
+          {
+            "n": 31,
+            "t": "Bro, Where's the Batmobile?",
+            "d": "2025-11-08"
+          },
+          {
+            "n": 32,
+            "t": "White Elephant",
+            "d": "2025-11-15"
+          },
+          {
+            "n": 33,
+            "t": "Ruler's Rule",
+            "d": "2025-11-22"
+          },
+          {
+            "n": 34,
+            "t": "Hero Hotline",
+            "d": "2025-11-29"
+          },
+          {
+            "n": 35,
+            "t": "Elseworlds",
+            "d": "2026-02-07"
+          },
+          {
+            "n": 36,
+            "t": "Use It or Lose It",
+            "d": "2026-02-14"
+          },
+          {
+            "n": 37,
+            "t": "Task Force X",
+            "d": "2026-02-21"
+          },
+          {
+            "n": 38,
+            "t": "Philly",
+            "d": "2026-02-28"
+          },
+          {
+            "n": 39,
+            "t": "Torso Soap",
+            "d": "2026-03-07"
+          },
+          {
+            "n": 40,
+            "t": "Select Your Trek",
+            "d": "2026-03-14"
+          },
+          {
+            "n": 41,
+            "t": "Huzzah for the Turkey Leg",
+            "d": "2026-07-18"
+          },
+          {
+            "n": 42,
+            "t": "The Joker's on You",
+            "d": "2026-07-25"
+          },
+          {
+            "n": 43,
+            "t": "TV Knight 10",
+            "d": "2026-08-01"
+          },
+          {
+            "n": 44,
+            "t": "A Time to Sew",
+            "d": "2026-08-08"
+          },
+          {
+            "n": 45,
+            "t": "Teen Titans Go to the Repair Shop",
+            "d": "2026-08-15"
+          },
+          {
+            "n": 46,
+            "t": "Episode 46",
+            "d": "2026-08-22"
+          },
+          {
+            "n": 47,
+            "t": "Fishing!!!",
+            "d": "2026-08-29"
+          },
+          {
+            "n": 48,
+            "t": "The Reason Why Things Change",
+            "d": "2026-09-05"
+          },
+          {
+            "n": 49,
+            "t": "Hollywood Squares",
+            "d": "2026-09-12"
+          }
+        ]
+      }
     },
     {
       "creators": "",
@@ -14187,12 +21137,12 @@
       "blurb": "A short-lived Ruby-Spears animated series."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Andy Heyward, Robby London",
+      "cast": "Len Carlson, Don Francks, Harvey Atkin, Philip Akin",
+      "runtime": "~22-25 min per episode",
+      "plot": "A DIC-produced animated tie-in following Swamp Thing's ongoing battle against Dr. Anton Arcane and his gang of mutant Un-Men, made to promote a Kenner action figure line and cancelled after just five episodes.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Swamp Thing",
@@ -14202,11 +21152,40 @@
       "hero": [
         "Swamp Thing"
       ],
-      "seasons": 5,
-      "episodes": null,
+      "seasons": 1,
+      "episodes": 5,
       "rt": null,
       "imdb": 6,
-      "blurb": "A DIC Entertainment animated tie-in to the Swamp Thing film series."
+      "blurb": "A DIC Entertainment animated tie-in to the Swamp Thing film series, tied to a Kenner action figure line. Ran for just 5 episodes.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Un-Men Unleashed",
+            "d": "1990-10-31"
+          },
+          {
+            "n": 2,
+            "t": "To Live Forever",
+            "d": "1991-04-20"
+          },
+          {
+            "n": 3,
+            "t": "Falling Red Star",
+            "d": "1991-04-27"
+          },
+          {
+            "n": 4,
+            "t": "Legend of the Lost Cavern",
+            "d": "1991-05-04"
+          },
+          {
+            "n": 5,
+            "t": "Experiment in Terror",
+            "d": "1991-05-11"
+          }
+        ]
+      }
     }
   ],
   "games": [
