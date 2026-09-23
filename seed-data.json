@@ -21913,24 +21913,78 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Patrick Schumacker, Justin Halpern, Dean Lorey",
+      "cast": "Matt Oberg, Stephanie Hsu, James Adomian, Jonathan Banks, Natasia Demetriou",
+      "runtime": "~22-23 min per episode",
+      "plot": "Lovable D-list villain Kite Man and his girlfriend Golden Glider moonlight as low-level criminals to fund their purchase of Noonan's, Gotham City's seediest dive bar, serving cold drinks to some of the world's most dangerous supervillains right in the shadow of Lex Luthor's Legion of Doom.",
+      "whereToWatch": "HBO Max",
+      "ageRating": "TV-MA",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Kite Man: Hell Yeah!",
-      "y": "2024–",
+      "y": "2024",
       "type": "Animated",
       "connected": "Harley Quinn (animated)",
       "hero": [],
       "seasons": 1,
-      "episodes": null,
+      "episodes": 10,
       "rt": null,
       "imdb": 7.2,
-      "blurb": "A spin-off of the adult-animated Harley Quinn series, centered on the lovable D-list villain Kite Man."
+      "blurb": "A spin-off of the adult-animated Harley Quinn series, centered on the lovable D-list villain Kite Man.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2024-07-18"
+          },
+          {
+            "n": 2,
+            "t": "Grand Reopening",
+            "d": "2024-07-18"
+          },
+          {
+            "n": 3,
+            "t": "Villigan's",
+            "d": "2024-07-25"
+          },
+          {
+            "n": 4,
+            "t": "Portal Potty",
+            "d": "2024-08-01"
+          },
+          {
+            "n": 5,
+            "t": "Prison Break",
+            "d": "2024-08-08"
+          },
+          {
+            "n": 6,
+            "t": "Mother/Daughter Day",
+            "d": "2024-08-15"
+          },
+          {
+            "n": 7,
+            "t": "Sexiest Villain Alive",
+            "d": "2024-08-22"
+          },
+          {
+            "n": 8,
+            "t": "Just Right",
+            "d": "2024-08-29"
+          },
+          {
+            "n": 9,
+            "t": "To Get to the Other Side",
+            "d": "2024-09-05"
+          },
+          {
+            "n": 10,
+            "t": "Hero Stuff",
+            "d": "2024-09-12"
+          }
+        ]
+      }
     },
     {
       "creators": "Aaron Horvath, Michael Jelenic",
@@ -25032,8 +25086,8 @@
       "hero": [
         "Batman"
       ],
-      "seasons": 1,
-      "episodes": 10,
+      "seasons": 2,
+      "episodes": 20,
       "rt": null,
       "imdb": 8.1,
       "blurb": "A darker reimagining of Batman's early years produced by Bruce Timm, Matt Reeves, and J.J. Abrams.",
@@ -25088,6 +25142,58 @@
             "n": 10,
             "t": "Savage Night",
             "d": "2024-08-01"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Brute Force",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 2,
+            "t": "Rocket's Red Glare",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 3,
+            "t": "Deep Cover",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 4,
+            "t": "The Devil's Due",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 5,
+            "t": "The Spectral Hand",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 6,
+            "t": "Sudden Fear",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 7,
+            "t": "Her Dark Reflection",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 8,
+            "t": "Zero Hour",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 9,
+            "t": "Dead Before Dawn",
+            "d": "2026-07-31"
+          },
+          {
+            "n": 10,
+            "t": "The Laughing Death",
+            "d": "2026-07-31"
           }
         ]
       }
@@ -25415,6 +25521,407 @@
             "n": 16,
             "t": "The Watermen",
             "d": "1973-12-22"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Brain Machine / Joy Ride / Invasion of the Earthors / The Whirlpool",
+            "d": "1977-09-10"
+          },
+          {
+            "n": 2,
+            "t": "Invasion of the Hydronoids / Hitchhike / City in a Bottle / Space Emergency",
+            "d": "1977-09-17"
+          },
+          {
+            "n": 3,
+            "t": "The Marsh Monster / Runaways / Will the World Collide? / Time Rescue",
+            "d": "1977-09-24"
+          },
+          {
+            "n": 4,
+            "t": "Doctor Fright / Drag Race / Day of the Plant Creatures / Fire",
+            "d": "1977-10-01"
+          },
+          {
+            "n": 5,
+            "t": "The Monster of Dr. Droid / Vandals / SuperFriends vs. SuperFriends / Energy Mass",
+            "d": "1977-10-08"
+          },
+          {
+            "n": 6,
+            "t": "The Secret Four / Tiger on the Loose / The Mysterious Time Creatures / The Antidote",
+            "d": "1977-10-15"
+          },
+          {
+            "n": 7,
+            "t": "The Enforcer / Shark / Planet of the Neanderthals / Flood of Diamonds",
+            "d": "1977-10-22"
+          },
+          {
+            "n": 8,
+            "t": "The Collector / Handicap / The Mind Maidens / Alaska Peril",
+            "d": "1977-10-29"
+          },
+          {
+            "n": 9,
+            "t": "Attack of the Giant Squid / Game of Chicken / The Water Beast / Volcano",
+            "d": "1977-11-05"
+          },
+          {
+            "n": 10,
+            "t": "The Invisible Menace / Initiation / Coming of the Arthropods / River of Doom",
+            "d": "1977-11-12"
+          },
+          {
+            "n": 11,
+            "t": "Forbidden Power / Pressure Point / The Lion Men / The Day of the Rats",
+            "d": "1977-11-19"
+          },
+          {
+            "n": 12,
+            "t": "Man-Beasts of XRA / Prejudice / Tiny World of Terror / Tibetan Raiders",
+            "d": "1977-11-26"
+          },
+          {
+            "n": 13,
+            "t": "Frozen Peril / Dangerous Prank / The Mummy of Nazca / Cable Car Rescue",
+            "d": "1977-12-03"
+          },
+          {
+            "n": 14,
+            "t": "The Fifty Foot Woman / Cheating / Exploration Earth / Attack of the Killer Bees",
+            "d": "1977-12-10"
+          },
+          {
+            "n": 15,
+            "t": "The Protector / Stowaways / The Ghost / Rampage",
+            "d": "1977-12-17"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Wanted: The Superfriends",
+            "d": "1978-09-09"
+          },
+          {
+            "n": 2,
+            "t": "Invasion of the Fearians",
+            "d": "1978-09-16"
+          },
+          {
+            "n": 3,
+            "t": "The World's Deadliest Game",
+            "d": "1978-09-23"
+          },
+          {
+            "n": 4,
+            "t": "The Time Trap",
+            "d": "1978-09-30"
+          },
+          {
+            "n": 5,
+            "t": "Trial of the Super Friends",
+            "d": "1978-10-07"
+          },
+          {
+            "n": 6,
+            "t": "Monolith of Evil",
+            "d": "1978-10-14"
+          },
+          {
+            "n": 7,
+            "t": "The Giants of Doom",
+            "d": "1978-10-21"
+          },
+          {
+            "n": 8,
+            "t": "Secret Origins of the Super Friends",
+            "d": "1978-10-28"
+          },
+          {
+            "n": 9,
+            "t": "Revenge on Gorilla City",
+            "d": "1978-11-04"
+          },
+          {
+            "n": 10,
+            "t": "Swamp of the Living Dead",
+            "d": "1978-11-11"
+          },
+          {
+            "n": 11,
+            "t": "Conquerors of the Future",
+            "d": "1978-11-18"
+          },
+          {
+            "n": 12,
+            "t": "The Final Challenge",
+            "d": "1978-11-25"
+          },
+          {
+            "n": 13,
+            "t": "Fairy Tale of Doom",
+            "d": "1978-12-02"
+          },
+          {
+            "n": 14,
+            "t": "Doomsday",
+            "d": "1978-12-09"
+          },
+          {
+            "n": 15,
+            "t": "Super Friends, Rest in Peace",
+            "d": "1978-12-16"
+          },
+          {
+            "n": 16,
+            "t": "History of Doom",
+            "d": "1978-12-23"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Rub Three Times for Disaster",
+            "d": "1979-09-22"
+          },
+          {
+            "n": 2,
+            "t": "Lex Luthor Strikes Back",
+            "d": "1979-09-29"
+          },
+          {
+            "n": 3,
+            "t": "Space Knights of Camelon",
+            "d": "1979-10-06"
+          },
+          {
+            "n": 4,
+            "t": "Lord of Middle Earth",
+            "d": "1979-10-13"
+          },
+          {
+            "n": 5,
+            "t": "The Universe of Evil",
+            "d": "1979-10-20"
+          },
+          {
+            "n": 6,
+            "t": "Terror at 20,000 Fathoms",
+            "d": "1979-10-27"
+          },
+          {
+            "n": 7,
+            "t": "The Super Friends Meet Frankenstein",
+            "d": "1979-11-03"
+          },
+          {
+            "n": 8,
+            "t": "The Planet of Oz",
+            "d": "1979-11-10"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Big Foot / The Ice Demon / The Make-Up Monster",
+            "d": "1980-09-13"
+          },
+          {
+            "n": 2,
+            "t": "Journey into Blackness / Cycle Gang / Dive to Disaster",
+            "d": "1980-09-20"
+          },
+          {
+            "n": 3,
+            "t": "Yuna the Terrible / Rock & Roll Space Bandits / Elevator to Nowhere",
+            "d": "1980-09-27"
+          },
+          {
+            "n": 4,
+            "t": "One Small Step for Mars / Haunted House / The Incredible Crude Oil Monster",
+            "d": "1980-10-04"
+          },
+          {
+            "n": 5,
+            "t": "Voodoo Vampire / Invasion of the Gleeks / Mxyzptlk Strikes Again",
+            "d": "1980-10-11"
+          },
+          {
+            "n": 6,
+            "t": "The Man in the Moon / Circus of Horrors / Around the World in 80 Riddles",
+            "d": "1980-10-18"
+          },
+          {
+            "n": 7,
+            "t": "Termites from Venus / Eruption / Return of Atlantis",
+            "d": "1980-10-25"
+          },
+          {
+            "n": 8,
+            "t": "The Killer Machines / Garden of Doom / Revenge of Bizarro",
+            "d": "1980-11-01"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Outlaws of Orion / Three Wishes / Scorpio",
+            "d": "1981-09-26"
+          },
+          {
+            "n": 2,
+            "t": "Mxyzptlk's Flick / Sink Hole / Alien Mummy",
+            "d": "1981-10-03"
+          },
+          {
+            "n": 3,
+            "t": "The Evil from Krypton / The Creature from the Dump / The Aircraft Terror",
+            "d": "1981-10-10"
+          },
+          {
+            "n": 4,
+            "t": "The Lava Men / Bazarowurld / The Warlord's Amulet",
+            "d": "1981-10-17"
+          },
+          {
+            "n": 5,
+            "t": "The Iron Cyclops / Palette's Perils / Colossus",
+            "d": "1981-10-24"
+          },
+          {
+            "n": 6,
+            "t": "Stowaways from Space / The Scaraghosta Sea / The Witch's Arcade",
+            "d": "1981-10-31"
+          }
+        ],
+        "7": [
+          {
+            "n": 1,
+            "t": "Mxyzptlk's Revenge / Roller Coaster / Once Upon a Poltergeist",
+            "d": "1983-09-10"
+          },
+          {
+            "n": 2,
+            "t": "The Krypton Syndrome / Invasion of the Space Dolls / Terror on the Titanic",
+            "d": "1983-09-17"
+          },
+          {
+            "n": 3,
+            "t": "Revenge of Doom / A Pint of Life / Day of the Dinosaurs",
+            "d": "1983-09-24"
+          },
+          {
+            "n": 4,
+            "t": "Playground of Doom / Space Racers / The Recruiter",
+            "d": "1983-10-01"
+          },
+          {
+            "n": 5,
+            "t": "Warpland / Two Gleeks Are Deadlier Than One / Bulgor the Behemoth",
+            "d": "1983-10-08"
+          },
+          {
+            "n": 6,
+            "t": "Prisoners of Sleep / An Unexpected Treasure / The Malusian Blob",
+            "d": "1983-10-15"
+          },
+          {
+            "n": 7,
+            "t": "Return of the Phantoms / Bully for You / Superclones",
+            "d": "1983-10-22"
+          },
+          {
+            "n": 8,
+            "t": "Attack of the Cats / One Small Step for Superman / Video Victims",
+            "d": "1983-10-29"
+          }
+        ],
+        "8": [
+          {
+            "n": 1,
+            "t": "The Bride of Darkseid, Part 1 & 2",
+            "d": "1984-09-08"
+          },
+          {
+            "n": 2,
+            "t": "The Wrath of Brainiac / Reflections in Crime",
+            "d": "1984-09-15"
+          },
+          {
+            "n": 3,
+            "t": "No Honor Among Thieves / Mr. Mxyzptlk and the Magic Lamp",
+            "d": "1984-09-22"
+          },
+          {
+            "n": 4,
+            "t": "The Case of the Shrinking Superfriends / The Mask of Mystery",
+            "d": "1984-09-29"
+          },
+          {
+            "n": 5,
+            "t": "Darkseid's Golden Trap, Part 1 & 2",
+            "d": "1984-10-06"
+          },
+          {
+            "n": 6,
+            "t": "The Island of the Dinosoids / Uncle Mxyzptlk",
+            "d": "1984-10-13"
+          },
+          {
+            "n": 7,
+            "t": "The Case of the Dreadful Dolls / The Royal Ruse",
+            "d": "1984-10-20"
+          },
+          {
+            "n": 8,
+            "t": "The Village of Lost Souls / The Curator",
+            "d": "1984-10-27"
+          }
+        ],
+        "9": [
+          {
+            "n": 1,
+            "t": "The Seeds of Doom",
+            "d": "1985-09-11"
+          },
+          {
+            "n": 2,
+            "t": "The Ghost Ship / The Bizarro Super Powers Team",
+            "d": "1985-09-18"
+          },
+          {
+            "n": 3,
+            "t": "The Darkseid Deception",
+            "d": "1985-09-25"
+          },
+          {
+            "n": 4,
+            "t": "The Fear",
+            "d": "1985-10-02"
+          },
+          {
+            "n": 5,
+            "t": "The Wild Cards",
+            "d": "1985-10-09"
+          },
+          {
+            "n": 6,
+            "t": "Brainchild / The Case of the Stolen Super Powers",
+            "d": "1985-10-16"
+          },
+          {
+            "n": 7,
+            "t": "Escape from Space City",
+            "d": "1985-10-30"
+          },
+          {
+            "n": 8,
+            "t": "The Death of Superman",
+            "d": "1985-11-06"
           }
         ]
       }
