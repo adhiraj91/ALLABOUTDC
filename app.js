@@ -312,13 +312,33 @@ function ratingLabel(d){
   return parts.join(" · ");
 }
 
+function initials(title){
+  if(!title) return "?";
+  const words = title.replace(/[^A-Za-z0-9 ]/g," ").trim().split(/\s+/).filter(w=>w.length);
+  if(words.length===0) return "?";
+  if(words.length===1) return words[0].slice(0,2).toUpperCase();
+  return (words[0][0]+words[1][0]).toUpperCase();
+}
+function thumbHtml(cat, d){
+  const fallback = `<div class="card-thumb-fallback">${initials(d.t)}</div>`;
+  if(d.poster){
+    return `<div class="card-thumb">
+      <img src="${d.poster}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='${fallback.replace(/'/g,"\\'")}'">
+    </div>`;
+  }
+  return `<div class="card-thumb">${fallback}</div>`;
+}
+
 function cardHtml(cat, d){
   const meta = (cat==="movies"||cat==="series") ? movieSeriesMetaTags(cat, d) : metaTagsGeneric(cat, d);
   return `<div class="card ${cat}" data-id="${d.id}">
-      <div class="card-top"><div class="card-title">${d.t}</div><div class="card-year">${d.y||""}</div></div>
-      <div class="card-meta">${meta}</div>
-      <div class="card-blurb">${d.blurb||""}</div>
-      ${isAdmin ? `<div class="card-admin-row"><button class="mini-btn danger" data-del="${d.id}">Delete</button></div>` : ""}
+      ${thumbHtml(cat, d)}
+      <div class="card-body">
+        <div class="card-top"><div class="card-title">${d.t}</div><div class="card-year">${d.y||""}</div></div>
+        <div class="card-meta">${meta}</div>
+        <div class="card-blurb">${d.blurb||""}</div>
+        ${isAdmin ? `<div class="card-admin-row"><button class="mini-btn danger" data-del="${d.id}">Delete</button></div>` : ""}
+      </div>
     </div>`;
 }
 function groupHeaderHtml(label, count){
@@ -493,9 +513,20 @@ function extraDetailsHtml(cat, d){
   return html;
 }
 
+function heroHtml(cat, d){
+  const fallback = `<div class="sheet-hero-fallback">${d.t}</div>`;
+  if(d.poster){
+    return `<div class="sheet-hero ${cat}">
+      <img src="${d.poster}" alt="" onerror="this.parentElement.innerHTML='${fallback.replace(/'/g,"\\'")}'">
+    </div>`;
+  }
+  return `<div class="sheet-hero ${cat}">${fallback}</div>`;
+}
+
 function openSheet(d){
   const cat = state.cat;
-  let html = `<div class="sheet-eyebrow">${cat.toUpperCase()} · ${d.y||""}</div><h2>${d.t}</h2>`;
+  let html = heroHtml(cat, d);
+  html += `<div class="sheet-eyebrow">${cat.toUpperCase()} · ${d.y||""}</div><h2>${d.t}</h2>`;
 
   if(cat==="movies"||cat==="series"){
     html += `<div class="sheet-tags">${movieSeriesMetaTags(cat, d)}</div>`;
