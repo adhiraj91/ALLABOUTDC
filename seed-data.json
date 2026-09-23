@@ -3191,12 +3191,12 @@
   ],
   "series": [
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Ronald Davidson, Norman S. Hall, Arch B. Heath, Joseph Poland, Sol Shor",
+      "cast": "Tom Tyler, Frank Coghlan Jr., William Benedict, Louise Currie, Robert Strange",
+      "runtime": "~16-30 min per chapter (216 min total)",
+      "plot": "During an archaeological expedition to Siam, radio operator Billy Batson is granted the power to transform into the superhuman Captain Marvel by the ancient wizard Shazam, and spends twelve chapters battling a hooded criminal mastermind called the Scorpion for control of the deadly Golden Scorpion device and its power lenses.",
+      "whereToWatch": "Digital rental/purchase (public domain)",
+      "ageRating": "Not Rated",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Adventures of Captain Marvel",
@@ -3208,15 +3208,79 @@
       "episodes": 12,
       "rt": null,
       "imdb": 7.4,
-      "blurb": "A 12-chapter Republic Pictures serial — the first-ever screen adaptation of a Fawcett/DC hero, decades before Shazam's own solo films."
+      "blurb": "A 12-chapter Republic Pictures serial — the first-ever screen adaptation of a Fawcett/DC hero, decades before Shazam's own solo films.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Curse of the Scorpion",
+            "d": "1941-03-28"
+          },
+          {
+            "n": 2,
+            "t": "The Guillotine",
+            "d": "1941-04-04"
+          },
+          {
+            "n": 3,
+            "t": "Time Bomb",
+            "d": "1941-04-11"
+          },
+          {
+            "n": 4,
+            "t": "Death Takes the Wheel",
+            "d": "1941-04-18"
+          },
+          {
+            "n": 5,
+            "t": "The Scorpion Strikes",
+            "d": "1941-04-25"
+          },
+          {
+            "n": 6,
+            "t": "Lens of Death",
+            "d": "1941-05-02"
+          },
+          {
+            "n": 7,
+            "t": "Human Targets",
+            "d": "1941-05-09"
+          },
+          {
+            "n": 8,
+            "t": "Boomerang",
+            "d": "1941-05-16"
+          },
+          {
+            "n": 9,
+            "t": "Dead Man's Trap",
+            "d": "1941-05-23"
+          },
+          {
+            "n": 10,
+            "t": "Doom Ship",
+            "d": "1941-05-30"
+          },
+          {
+            "n": 11,
+            "t": "Valley of Death",
+            "d": "1941-06-06"
+          },
+          {
+            "n": 12,
+            "t": "Captain Marvel's Secret",
+            "d": "1941-06-13"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Victor McLeod, Leslie Swabacker, Harry L. Fraser",
+      "cast": "Lewis Wilson, Douglas Croft, J. Carrol Naish, Shirley Patterson, William Austin",
+      "runtime": "~17 min per chapter (260 min total)",
+      "plot": "Batman and Robin, secretly working as US government agents during World War II, battle a Japanese saboteur named Dr. Daka who is operating a spy ring in Gotham City, using a device that turns captured men into zombie-like slaves.",
+      "whereToWatch": "Digital rental/purchase (public domain)",
+      "ageRating": "Not Rated",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batman",
@@ -3230,15 +3294,94 @@
       "episodes": 15,
       "rt": null,
       "imdb": 5.8,
-      "blurb": "Columbia Pictures' 15-chapter serial — the first-ever screen Batman, fighting a wartime Japanese saboteur."
+      "blurb": "Columbia Pictures' 15-chapter serial — the first-ever screen Batman, fighting a wartime Japanese saboteur.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Electrical Brain",
+            "d": "1943-07-16"
+          },
+          {
+            "n": 2,
+            "t": "The Bat's Cave",
+            "d": "1943-07-23"
+          },
+          {
+            "n": 3,
+            "t": "The Mark of the Zombies",
+            "d": "1943-07-30"
+          },
+          {
+            "n": 4,
+            "t": "Slaves of the Rising Sun",
+            "d": "1943-08-06"
+          },
+          {
+            "n": 5,
+            "t": "The Living Corpse",
+            "d": "1943-08-13"
+          },
+          {
+            "n": 6,
+            "t": "Poison Peril",
+            "d": "1943-08-20"
+          },
+          {
+            "n": 7,
+            "t": "The Phoney Doctor",
+            "d": "1943-08-27"
+          },
+          {
+            "n": 8,
+            "t": "Lured by Radium",
+            "d": "1943-09-03"
+          },
+          {
+            "n": 9,
+            "t": "The Sign of the Sphinx",
+            "d": "1943-09-10"
+          },
+          {
+            "n": 10,
+            "t": "Flying Spies",
+            "d": "1943-09-17"
+          },
+          {
+            "n": 11,
+            "t": "A Nipponese Trap",
+            "d": "1943-09-24"
+          },
+          {
+            "n": 12,
+            "t": "Embers of Evil",
+            "d": "1943-10-01"
+          },
+          {
+            "n": 13,
+            "t": "Eight Steps Down",
+            "d": "1943-10-08"
+          },
+          {
+            "n": 14,
+            "t": "The Executioner Strikes",
+            "d": "1943-10-15"
+          },
+          {
+            "n": 15,
+            "t": "The Doom of the Rising Sun",
+            "d": "1943-10-22"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Lewis Clay, Royal K. Cole, Arthur Hoerl, George H. Plympton, Joseph F. Poland",
+      "cast": "Kirk Alyn, Noel Neill, Carol Forman, Tommy Bond, Pierre Watkin",
+      "runtime": "~16-27 min per chapter (244 min total)",
+      "plot": "The first live-action screen Superman: sent to Earth from a dying Krypton, raised as Clark Kent, and grown into a Daily Planet reporter secretly using his powers to fight crime — in this serial, foiling the schemes of a masked villain called the Spider Lady.",
+      "whereToWatch": "Digital rental/purchase (public domain)",
+      "ageRating": "Not Rated",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Superman",
@@ -3252,15 +3395,94 @@
       "episodes": 15,
       "rt": null,
       "imdb": 6.7,
-      "blurb": "A 15-chapter Columbia serial, the first screen Superman, played by Kirk Alyn."
+      "blurb": "A 15-chapter Columbia serial, the first screen Superman, played by Kirk Alyn.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Superman Comes to Earth",
+            "d": "1948-01-05"
+          },
+          {
+            "n": 2,
+            "t": "Depths of the Earth",
+            "d": "1948-01-12"
+          },
+          {
+            "n": 3,
+            "t": "The Reducer Ray",
+            "d": "1948-01-19"
+          },
+          {
+            "n": 4,
+            "t": "Man of Steel",
+            "d": "1948-01-26"
+          },
+          {
+            "n": 5,
+            "t": "A Job for Superman",
+            "d": "1948-02-02"
+          },
+          {
+            "n": 6,
+            "t": "Superman in Danger",
+            "d": "1948-02-09"
+          },
+          {
+            "n": 7,
+            "t": "Into the Electric Furnace",
+            "d": "1948-02-16"
+          },
+          {
+            "n": 8,
+            "t": "Superman to the Rescue",
+            "d": "1948-02-23"
+          },
+          {
+            "n": 9,
+            "t": "Irresistible Force",
+            "d": "1948-03-01"
+          },
+          {
+            "n": 10,
+            "t": "Between Two Fires",
+            "d": "1948-03-08"
+          },
+          {
+            "n": 11,
+            "t": "Superman's Dilemma",
+            "d": "1948-03-15"
+          },
+          {
+            "n": 12,
+            "t": "Blast in the Depths",
+            "d": "1948-03-22"
+          },
+          {
+            "n": 13,
+            "t": "Hurled to Destruction",
+            "d": "1948-03-29"
+          },
+          {
+            "n": 14,
+            "t": "Superman at Bay",
+            "d": "1948-04-05"
+          },
+          {
+            "n": 15,
+            "t": "The Payoff",
+            "d": "1948-04-12"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "George H. Plympton, Joseph F. Poland, Royal K. Cole",
+      "cast": "Robert Lowery, Johnny Duncan, Jane Adams, Lyle Talbot, Ralph Graves",
+      "runtime": "~17-26 min per chapter (264 min total)",
+      "plot": "Batman and Robin face off against a hooded criminal mastermind called the Wizard, who has stolen a remote-control device capable of stopping or starting any motorized vehicle and intends to use it to extort Gotham City's transportation industry.",
+      "whereToWatch": "Digital rental/purchase (public domain)",
+      "ageRating": "Not Rated",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batman and Robin",
@@ -3274,15 +3496,94 @@
       "episodes": 15,
       "rt": null,
       "imdb": 5.3,
-      "blurb": "Columbia's second Batman serial, introducing the screen's first Robin."
+      "blurb": "Columbia's second Batman serial, introducing the screen's first Robin.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Batman Takes Over",
+            "d": "1949-05-26"
+          },
+          {
+            "n": 2,
+            "t": "Tunnel of Terror",
+            "d": "1949-06-02"
+          },
+          {
+            "n": 3,
+            "t": "Robin's Wild Ride",
+            "d": "1949-06-09"
+          },
+          {
+            "n": 4,
+            "t": "Batman Trapped",
+            "d": "1949-06-16"
+          },
+          {
+            "n": 5,
+            "t": "Robin Rescues Batman",
+            "d": "1949-06-23"
+          },
+          {
+            "n": 6,
+            "t": "Target — Robin!",
+            "d": "1949-06-30"
+          },
+          {
+            "n": 7,
+            "t": "The Fatal Blast",
+            "d": "1949-07-07"
+          },
+          {
+            "n": 8,
+            "t": "Robin Meets the Wizard",
+            "d": "1949-07-14"
+          },
+          {
+            "n": 9,
+            "t": "The Wizard Strikes Back",
+            "d": "1949-07-21"
+          },
+          {
+            "n": 10,
+            "t": "Batman's Last Chance",
+            "d": "1949-07-28"
+          },
+          {
+            "n": 11,
+            "t": "Robin's Ruse",
+            "d": "1949-08-04"
+          },
+          {
+            "n": 12,
+            "t": "Robin Rides the Wind",
+            "d": "1949-08-11"
+          },
+          {
+            "n": 13,
+            "t": "The Wizard's Challenge",
+            "d": "1949-08-18"
+          },
+          {
+            "n": 14,
+            "t": "Batman vs. Wizard",
+            "d": "1949-08-25"
+          },
+          {
+            "n": 15,
+            "t": "Batman Victorious",
+            "d": "1949-09-01"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "David Mathews, George H. Plympton, Joseph F. Poland",
+      "cast": "Kirk Alyn, Lyle Talbot, Noel Neill, Tommy Bond, Pierre Watkin",
+      "runtime": "~17 min per chapter (252 min total)",
+      "plot": "The screen's first-ever Lex Luthor, disguised as the masked 'Atom Man', blackmails Metropolis with a series of deadly inventions — including a disintegration ray and synthetic Kryptonite that briefly strips Superman of his powers — in Kirk Alyn's second outing as the Man of Steel.",
+      "whereToWatch": "Digital rental/purchase (public domain)",
+      "ageRating": "Not Rated",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Atom Man vs. Superman",
@@ -3296,15 +3597,94 @@
       "episodes": 15,
       "rt": null,
       "imdb": 6.7,
-      "blurb": "Kirk Alyn's second serial outing as Superman, against Lex Luthor as 'Atom Man'."
+      "blurb": "Kirk Alyn's second serial outing as Superman, against Lex Luthor as 'Atom Man'.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Superman Flies Again",
+            "d": "1950-07-20"
+          },
+          {
+            "n": 2,
+            "t": "Atom Man Appears",
+            "d": "1950-07-27"
+          },
+          {
+            "n": 3,
+            "t": "Ablaze in the Sky",
+            "d": "1950-08-03"
+          },
+          {
+            "n": 4,
+            "t": "Superman Meets Atom Man",
+            "d": "1950-08-10"
+          },
+          {
+            "n": 5,
+            "t": "Atom Man Tricks Superman",
+            "d": "1950-08-17"
+          },
+          {
+            "n": 6,
+            "t": "Atom Man's Challenge",
+            "d": "1950-08-24"
+          },
+          {
+            "n": 7,
+            "t": "At the Mercy of Atom Man",
+            "d": "1950-08-31"
+          },
+          {
+            "n": 8,
+            "t": "Into the Empty Doom",
+            "d": "1950-09-07"
+          },
+          {
+            "n": 9,
+            "t": "Superman Crashes Through",
+            "d": "1950-09-14"
+          },
+          {
+            "n": 10,
+            "t": "Atom Man's Heat Ray",
+            "d": "1950-09-21"
+          },
+          {
+            "n": 11,
+            "t": "Luthor's Strategy",
+            "d": "1950-09-28"
+          },
+          {
+            "n": 12,
+            "t": "Atom Man Strikes",
+            "d": "1950-10-05"
+          },
+          {
+            "n": 13,
+            "t": "Atom Man's Flying Saucers",
+            "d": "1950-10-12"
+          },
+          {
+            "n": 14,
+            "t": "Rocket of Vengeance",
+            "d": "1950-10-19"
+          },
+          {
+            "n": 15,
+            "t": "Superman Saves the Universe",
+            "d": "1950-10-26"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Whitney Ellsworth, Robert J. Maxwell",
+      "cast": "George Reeves, Phyllis Coates, Noel Neill, Jack Larson, John Hamilton, Robert Shayne",
+      "runtime": "~22-25 min per episode",
+      "plot": "George Reeves stars as Superman, the character's first long-running television incarnation — Daily Planet reporter Clark Kent secretly using his powers to protect Metropolis, starting as a dark, noir-tinged crime drama in its first two black-and-white seasons before settling into the lighter, whimsical tone of 1950s Superman comics.",
+      "whereToWatch": "Digital rental/purchase (public domain, most episodes)",
+      "ageRating": "TV-G",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Adventures of Superman",
@@ -3318,15 +3698,549 @@
       "episodes": 104,
       "rt": null,
       "imdb": 7.3,
-      "blurb": "George Reeves' Superman, the character's first long-running TV incarnation."
+      "blurb": "George Reeves' Superman, the character's first long-running TV incarnation.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Superman on Earth",
+            "d": "1952-09-19"
+          },
+          {
+            "n": 2,
+            "t": "The Haunted Lighthouse",
+            "d": "1952-09-26"
+          },
+          {
+            "n": 3,
+            "t": "The Case of the Talkative Dummy",
+            "d": "1952-10-03"
+          },
+          {
+            "n": 4,
+            "t": "Mystery of the Broken Statues",
+            "d": "1952-10-10"
+          },
+          {
+            "n": 5,
+            "t": "The Monkey Mystery",
+            "d": "1952-10-17"
+          },
+          {
+            "n": 6,
+            "t": "Night of Terror",
+            "d": "1952-10-24"
+          },
+          {
+            "n": 7,
+            "t": "The Birthday Letter",
+            "d": "1952-10-31"
+          },
+          {
+            "n": 8,
+            "t": "The Mind Machine",
+            "d": "1952-11-07"
+          },
+          {
+            "n": 9,
+            "t": "Rescue",
+            "d": "1952-11-14"
+          },
+          {
+            "n": 10,
+            "t": "The Secret of Superman",
+            "d": "1952-11-21"
+          },
+          {
+            "n": 11,
+            "t": "No Holds Barred",
+            "d": "1952-11-28"
+          },
+          {
+            "n": 12,
+            "t": "The Deserted Village",
+            "d": "1952-12-05"
+          },
+          {
+            "n": 13,
+            "t": "The Stolen Costume",
+            "d": "1952-12-12"
+          },
+          {
+            "n": 14,
+            "t": "Mystery in Wax",
+            "d": "1952-12-19"
+          },
+          {
+            "n": 15,
+            "t": "Treasure of the Incas",
+            "d": "1952-12-26"
+          },
+          {
+            "n": 16,
+            "t": "Double Trouble",
+            "d": "1953-01-02"
+          },
+          {
+            "n": 17,
+            "t": "The Runaway Robot",
+            "d": "1953-01-09"
+          },
+          {
+            "n": 18,
+            "t": "Drums of Death",
+            "d": "1953-01-16"
+          },
+          {
+            "n": 19,
+            "t": "The Evil Three",
+            "d": "1953-01-23"
+          },
+          {
+            "n": 20,
+            "t": "Riddle of the Chinese Jade",
+            "d": "1953-01-30"
+          },
+          {
+            "n": 21,
+            "t": "The Human Bomb",
+            "d": "1953-02-06"
+          },
+          {
+            "n": 22,
+            "t": "Czar of the Underworld",
+            "d": "1953-02-13"
+          },
+          {
+            "n": 23,
+            "t": "Ghost Wolf",
+            "d": "1953-02-20"
+          },
+          {
+            "n": 24,
+            "t": "Crime Wave",
+            "d": "1953-02-27"
+          },
+          {
+            "n": 25,
+            "t": "The Unknown People, Part 1",
+            "d": "1953-08-10"
+          },
+          {
+            "n": 26,
+            "t": "The Unknown People, Part 2",
+            "d": "1953-08-10"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Five Minutes to Doom",
+            "d": "1953-09-18"
+          },
+          {
+            "n": 2,
+            "t": "The Big Squeeze",
+            "d": "1953-09-25"
+          },
+          {
+            "n": 3,
+            "t": "The Man Who Could Read Minds",
+            "d": "1953-10-03"
+          },
+          {
+            "n": 4,
+            "t": "Jet Ace",
+            "d": "1953-10-10"
+          },
+          {
+            "n": 5,
+            "t": "Shot in the Dark",
+            "d": "1953-10-17"
+          },
+          {
+            "n": 6,
+            "t": "The Defeat of Superman",
+            "d": "1953-10-24"
+          },
+          {
+            "n": 7,
+            "t": "Superman in Exile",
+            "d": "1953-10-31"
+          },
+          {
+            "n": 8,
+            "t": "A Ghost for Scotland Yard",
+            "d": "1953-11-07"
+          },
+          {
+            "n": 9,
+            "t": "The Dog Who Knew Superman",
+            "d": "1953-11-14"
+          },
+          {
+            "n": 10,
+            "t": "The Face and the Voice",
+            "d": "1953-11-21"
+          },
+          {
+            "n": 11,
+            "t": "The Man in the Lead Mask",
+            "d": "1953-11-28"
+          },
+          {
+            "n": 12,
+            "t": "Panic in the Sky",
+            "d": "1953-12-05"
+          },
+          {
+            "n": 13,
+            "t": "The Machine That Could Plot Crimes",
+            "d": "1953-12-12"
+          },
+          {
+            "n": 14,
+            "t": "Jungle Devil",
+            "d": "1953-12-19"
+          },
+          {
+            "n": 15,
+            "t": "My Friend Superman",
+            "d": "1953-12-26"
+          },
+          {
+            "n": 16,
+            "t": "The Clown Who Cried",
+            "d": "1954-01-02"
+          },
+          {
+            "n": 17,
+            "t": "The Boy Who Hated Superman",
+            "d": "1954-01-09"
+          },
+          {
+            "n": 18,
+            "t": "Semi-Private Eye",
+            "d": "1954-01-16"
+          },
+          {
+            "n": 19,
+            "t": "Perry White's Scoop",
+            "d": "1954-01-23"
+          },
+          {
+            "n": 20,
+            "t": "Beware the Wrecker",
+            "d": "1954-01-30"
+          },
+          {
+            "n": 21,
+            "t": "The Golden Vulture",
+            "d": "1954-02-06"
+          },
+          {
+            "n": 22,
+            "t": "Jimmy Olsen, Boy Editor",
+            "d": "1954-02-13"
+          },
+          {
+            "n": 23,
+            "t": "Lady in Black",
+            "d": "1954-02-20"
+          },
+          {
+            "n": 24,
+            "t": "Star of Fate",
+            "d": "1954-02-27"
+          },
+          {
+            "n": 25,
+            "t": "The Whistling Bird",
+            "d": "1954-03-06"
+          },
+          {
+            "n": 26,
+            "t": "Around the World with Superman",
+            "d": "1954-03-13"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Through the Time Barrier",
+            "d": "1955-04-23"
+          },
+          {
+            "n": 2,
+            "t": "The Talking Clue",
+            "d": "1955-04-30"
+          },
+          {
+            "n": 3,
+            "t": "The Lucky Cat",
+            "d": "1955-05-07"
+          },
+          {
+            "n": 4,
+            "t": "Superman Week",
+            "d": "1955-05-14"
+          },
+          {
+            "n": 5,
+            "t": "Great Caesar's Ghost",
+            "d": "1955-05-21"
+          },
+          {
+            "n": 6,
+            "t": "Test of a Warrior",
+            "d": "1955-05-28"
+          },
+          {
+            "n": 7,
+            "t": "Olsen's Millions",
+            "d": "1955-06-04"
+          },
+          {
+            "n": 8,
+            "t": "Clark Kent, Outlaw",
+            "d": "1955-09-10"
+          },
+          {
+            "n": 9,
+            "t": "The Magic Necklace",
+            "d": "1955-09-17"
+          },
+          {
+            "n": 10,
+            "t": "The Bully of Dry Gulch",
+            "d": "1955-09-24"
+          },
+          {
+            "n": 11,
+            "t": "Flight to the North",
+            "d": "1955-10-01"
+          },
+          {
+            "n": 12,
+            "t": "The Seven Souvenirs",
+            "d": "1955-10-08"
+          },
+          {
+            "n": 13,
+            "t": "King for a Day",
+            "d": "1955-10-15"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Joey",
+            "d": "1956-02-18"
+          },
+          {
+            "n": 2,
+            "t": "The Unlucky Number",
+            "d": "1956-02-25"
+          },
+          {
+            "n": 3,
+            "t": "The Big Freeze",
+            "d": "1956-03-03"
+          },
+          {
+            "n": 4,
+            "t": "Peril by Sea",
+            "d": "1956-03-10"
+          },
+          {
+            "n": 5,
+            "t": "Topsy Turvy",
+            "d": "1956-04-21"
+          },
+          {
+            "n": 6,
+            "t": "Jimmy the Kid",
+            "d": "1956-04-28"
+          },
+          {
+            "n": 7,
+            "t": "The Girl Who Hired Superman",
+            "d": "1956-05-05"
+          },
+          {
+            "n": 8,
+            "t": "The Wedding of Superman",
+            "d": "1956-05-12"
+          },
+          {
+            "n": 9,
+            "t": "Dagger Island",
+            "d": "1956-05-19"
+          },
+          {
+            "n": 10,
+            "t": "Blackmail",
+            "d": "1956-05-26"
+          },
+          {
+            "n": 11,
+            "t": "The Deadly Rock",
+            "d": "1956-06-02"
+          },
+          {
+            "n": 12,
+            "t": "The Phantom Ring",
+            "d": "1956-06-09"
+          },
+          {
+            "n": 13,
+            "t": "The Jolly Roger",
+            "d": "1956-06-16"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Peril in Paris",
+            "d": "1957-03-08"
+          },
+          {
+            "n": 2,
+            "t": "Tin Hero",
+            "d": "1957-03-15"
+          },
+          {
+            "n": 3,
+            "t": "The Town That Wasn't",
+            "d": "1957-03-22"
+          },
+          {
+            "n": 4,
+            "t": "The Tomb of Zaharan",
+            "d": "1957-03-29"
+          },
+          {
+            "n": 5,
+            "t": "The Man Who Made Dreams Come True",
+            "d": "1957-04-05"
+          },
+          {
+            "n": 6,
+            "t": "Disappearing Lois",
+            "d": "1957-04-12"
+          },
+          {
+            "n": 7,
+            "t": "Money to Burn",
+            "d": "1957-04-19"
+          },
+          {
+            "n": 8,
+            "t": "Close Shave",
+            "d": "1957-04-26"
+          },
+          {
+            "n": 9,
+            "t": "The Phony Alibi",
+            "d": "1957-05-03"
+          },
+          {
+            "n": 10,
+            "t": "The Prince Albert Coat",
+            "d": "1957-05-10"
+          },
+          {
+            "n": 11,
+            "t": "The Stolen Elephant",
+            "d": "1957-05-17"
+          },
+          {
+            "n": 12,
+            "t": "Mr. Zero",
+            "d": "1957-05-24"
+          },
+          {
+            "n": 13,
+            "t": "Whatever Goes Up",
+            "d": "1957-05-31"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "The Last Knight",
+            "d": "1958-02-03"
+          },
+          {
+            "n": 2,
+            "t": "The Magic Secret",
+            "d": "1958-02-10"
+          },
+          {
+            "n": 3,
+            "t": "Divide and Conquer",
+            "d": "1958-02-17"
+          },
+          {
+            "n": 4,
+            "t": "The Mysterious Cube",
+            "d": "1958-02-24"
+          },
+          {
+            "n": 5,
+            "t": "The Atomic Captive",
+            "d": "1958-03-03"
+          },
+          {
+            "n": 6,
+            "t": "The Superman Silver Mine",
+            "d": "1958-03-10"
+          },
+          {
+            "n": 7,
+            "t": "The Big Forget",
+            "d": "1958-03-17"
+          },
+          {
+            "n": 8,
+            "t": "The Gentle Monster",
+            "d": "1958-03-24"
+          },
+          {
+            "n": 9,
+            "t": "Superman's Wife",
+            "d": "1958-03-31"
+          },
+          {
+            "n": 10,
+            "t": "Three in One",
+            "d": "1958-04-07"
+          },
+          {
+            "n": 11,
+            "t": "The Brainy Burro",
+            "d": "1958-04-14"
+          },
+          {
+            "n": 12,
+            "t": "The Perils of Superman",
+            "d": "1958-04-21"
+          },
+          {
+            "n": 13,
+            "t": "All That Glitters",
+            "d": "1958-04-28"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Lorenzo Semple Jr., William Dozier",
+      "cast": "Adam West, Burt Ward, Alan Napier, Neil Hamilton, Stafford Repp, Madge Blake, Yvonne Craig",
+      "runtime": "~25 min per episode",
+      "plot": "A gleefully campy, pop-art take on Batman and Robin, who battle a rotating cast of flamboyant Gotham City villains — the Riddler, the Penguin, the Joker, Catwoman, and dozens more — usually across two-part cliffhanger stories, narrated with tongue firmly in cheek.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-G",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batman",
@@ -3340,15 +4254,623 @@
       "episodes": 120,
       "rt": null,
       "imdb": 7.5,
-      "blurb": "Adam West's campy, pop-art Batman, a huge cultural phenomenon of its era."
+      "blurb": "Adam West's campy, pop-art Batman, a huge cultural phenomenon of its era.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Hi Diddle Riddle",
+            "d": "1966-01-12"
+          },
+          {
+            "n": 2,
+            "t": "Smack in the Middle",
+            "d": "1966-01-13"
+          },
+          {
+            "n": 3,
+            "t": "Fine Feathered Finks",
+            "d": "1966-01-19"
+          },
+          {
+            "n": 4,
+            "t": "The Penguin's a Jinx",
+            "d": "1966-01-20"
+          },
+          {
+            "n": 5,
+            "t": "The Joker Is Wild",
+            "d": "1966-01-26"
+          },
+          {
+            "n": 6,
+            "t": "Batman Is Riled",
+            "d": "1966-01-27"
+          },
+          {
+            "n": 7,
+            "t": "Instant Freeze",
+            "d": "1966-02-02"
+          },
+          {
+            "n": 8,
+            "t": "Rats Like Cheese",
+            "d": "1966-02-03"
+          },
+          {
+            "n": 9,
+            "t": "Zelda the Great",
+            "d": "1966-02-09"
+          },
+          {
+            "n": 10,
+            "t": "A Death Worse Than Fate",
+            "d": "1966-02-10"
+          },
+          {
+            "n": 11,
+            "t": "A Riddle a Day Keeps the Riddler Away",
+            "d": "1966-02-16"
+          },
+          {
+            "n": 12,
+            "t": "When the Rat's Away the Mice Will Play",
+            "d": "1966-02-17"
+          },
+          {
+            "n": 13,
+            "t": "The Thirteenth Hat",
+            "d": "1966-02-23"
+          },
+          {
+            "n": 14,
+            "t": "Batman Stands Pat",
+            "d": "1966-02-24"
+          },
+          {
+            "n": 15,
+            "t": "The Joker Goes to School",
+            "d": "1966-03-02"
+          },
+          {
+            "n": 16,
+            "t": "He Meets His Match, the Grisly Ghoul",
+            "d": "1966-03-03"
+          },
+          {
+            "n": 17,
+            "t": "True or False-Face",
+            "d": "1966-03-09"
+          },
+          {
+            "n": 18,
+            "t": "Holy Rat Race",
+            "d": "1966-03-10"
+          },
+          {
+            "n": 19,
+            "t": "The Purr-fect Crime",
+            "d": "1966-03-16"
+          },
+          {
+            "n": 20,
+            "t": "Better Luck Next Time",
+            "d": "1966-03-17"
+          },
+          {
+            "n": 21,
+            "t": "The Penguin Goes Straight",
+            "d": "1966-03-23"
+          },
+          {
+            "n": 22,
+            "t": "Not Yet, He Ain't",
+            "d": "1966-03-24"
+          },
+          {
+            "n": 23,
+            "t": "The Ring of Wax",
+            "d": "1966-03-30"
+          },
+          {
+            "n": 24,
+            "t": "Give 'Em the Axe",
+            "d": "1966-03-31"
+          },
+          {
+            "n": 25,
+            "t": "The Joker Trumps an Ace",
+            "d": "1966-04-06"
+          },
+          {
+            "n": 26,
+            "t": "Batman Sets the Pace",
+            "d": "1966-04-07"
+          },
+          {
+            "n": 27,
+            "t": "The Curse of Tut",
+            "d": "1966-04-13"
+          },
+          {
+            "n": 28,
+            "t": "The Pharaoh's in a Rut",
+            "d": "1966-04-14"
+          },
+          {
+            "n": 29,
+            "t": "The Bookworm Turns",
+            "d": "1966-04-20"
+          },
+          {
+            "n": 30,
+            "t": "While Gotham City Burns",
+            "d": "1966-04-21"
+          },
+          {
+            "n": 31,
+            "t": "Death in Slow Motion",
+            "d": "1966-04-27"
+          },
+          {
+            "n": 32,
+            "t": "The Riddler's False Notion",
+            "d": "1966-04-28"
+          },
+          {
+            "n": 33,
+            "t": "Fine Finny Fiends",
+            "d": "1966-05-04"
+          },
+          {
+            "n": 34,
+            "t": "Batman Makes the Scenes",
+            "d": "1966-05-05"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Shoot a Crooked Arrow",
+            "d": "1966-09-07"
+          },
+          {
+            "n": 2,
+            "t": "Walk the Straight and Narrow",
+            "d": "1966-09-08"
+          },
+          {
+            "n": 3,
+            "t": "Hot Off the Griddle",
+            "d": "1966-09-14"
+          },
+          {
+            "n": 4,
+            "t": "The Cat and the Fiddle",
+            "d": "1966-09-15"
+          },
+          {
+            "n": 5,
+            "t": "The Minstrel's Shakedown",
+            "d": "1966-09-21"
+          },
+          {
+            "n": 6,
+            "t": "Barbecued Batman?",
+            "d": "1966-09-22"
+          },
+          {
+            "n": 7,
+            "t": "The Spell of Tut",
+            "d": "1966-09-28"
+          },
+          {
+            "n": 8,
+            "t": "Tut's Case Is Shut",
+            "d": "1966-09-29"
+          },
+          {
+            "n": 9,
+            "t": "The Greatest Mother of Them All",
+            "d": "1966-10-05"
+          },
+          {
+            "n": 10,
+            "t": "Ma Parker",
+            "d": "1966-10-06"
+          },
+          {
+            "n": 11,
+            "t": "The Clock King's Crazy Crimes",
+            "d": "1966-10-12"
+          },
+          {
+            "n": 12,
+            "t": "The Clock King Gets Crowned",
+            "d": "1966-10-13"
+          },
+          {
+            "n": 13,
+            "t": "An Egg Grows in Gotham",
+            "d": "1966-10-19"
+          },
+          {
+            "n": 14,
+            "t": "The Yegg Foes in Gotham",
+            "d": "1966-10-20"
+          },
+          {
+            "n": 15,
+            "t": "The Devil's Fingers",
+            "d": "1966-10-26"
+          },
+          {
+            "n": 16,
+            "t": "The Dead Ringers",
+            "d": "1966-10-27"
+          },
+          {
+            "n": 17,
+            "t": "Hizzonner the Penguin",
+            "d": "1966-11-02"
+          },
+          {
+            "n": 18,
+            "t": "Dizzoner the Penguin",
+            "d": "1966-11-03"
+          },
+          {
+            "n": 19,
+            "t": "Green Ice",
+            "d": "1966-11-09"
+          },
+          {
+            "n": 20,
+            "t": "Deep Freeze",
+            "d": "1966-11-10"
+          },
+          {
+            "n": 21,
+            "t": "The Impractical Joker",
+            "d": "1966-11-16"
+          },
+          {
+            "n": 22,
+            "t": "The Joker's Provokers",
+            "d": "1966-11-17"
+          },
+          {
+            "n": 23,
+            "t": "Marsha, Queen of Diamonds",
+            "d": "1966-11-23"
+          },
+          {
+            "n": 24,
+            "t": "Marsha's Scheme of Diamonds",
+            "d": "1966-11-24"
+          },
+          {
+            "n": 25,
+            "t": "Come Back, Shame",
+            "d": "1966-11-30"
+          },
+          {
+            "n": 26,
+            "t": "It's How You Play the Game",
+            "d": "1966-12-01"
+          },
+          {
+            "n": 27,
+            "t": "The Penguin's Nest",
+            "d": "1966-12-07"
+          },
+          {
+            "n": 28,
+            "t": "The Bird's Last Jest",
+            "d": "1966-12-08"
+          },
+          {
+            "n": 29,
+            "t": "The Cat's Meow",
+            "d": "1966-12-14"
+          },
+          {
+            "n": 30,
+            "t": "The Bat's Kow Tow",
+            "d": "1966-12-15"
+          },
+          {
+            "n": 31,
+            "t": "The Puzzles Are Coming",
+            "d": "1966-12-21"
+          },
+          {
+            "n": 32,
+            "t": "The Duo Is Slumming",
+            "d": "1966-12-22"
+          },
+          {
+            "n": 33,
+            "t": "The Sandman Cometh",
+            "d": "1966-12-28"
+          },
+          {
+            "n": 34,
+            "t": "The Catwoman Goeth",
+            "d": "1966-12-29"
+          },
+          {
+            "n": 35,
+            "t": "The Contaminated Cowl",
+            "d": "1967-01-04"
+          },
+          {
+            "n": 36,
+            "t": "The Mad Hatter Runs Afoul",
+            "d": "1967-01-05"
+          },
+          {
+            "n": 37,
+            "t": "The Zodiac Crimes",
+            "d": "1967-01-11"
+          },
+          {
+            "n": 38,
+            "t": "The Joker's Hard Times",
+            "d": "1967-01-12"
+          },
+          {
+            "n": 39,
+            "t": "The Penguin Declines",
+            "d": "1967-01-18"
+          },
+          {
+            "n": 40,
+            "t": "That Darn Catwoman",
+            "d": "1967-01-19"
+          },
+          {
+            "n": 41,
+            "t": "Scat! Darn Catwoman",
+            "d": "1967-01-25"
+          },
+          {
+            "n": 42,
+            "t": "Penguin Is a Girl's Best Friend",
+            "d": "1967-01-26"
+          },
+          {
+            "n": 43,
+            "t": "Penguin Sets a Trend",
+            "d": "1967-02-01"
+          },
+          {
+            "n": 44,
+            "t": "Penguin's Disastrous End",
+            "d": "1967-02-02"
+          },
+          {
+            "n": 45,
+            "t": "Batman's Anniversary",
+            "d": "1967-02-08"
+          },
+          {
+            "n": 46,
+            "t": "A Riddling Controversy",
+            "d": "1967-02-09"
+          },
+          {
+            "n": 47,
+            "t": "The Joker's Last Laugh",
+            "d": "1967-02-15"
+          },
+          {
+            "n": 48,
+            "t": "The Joker's Epitaph",
+            "d": "1967-02-16"
+          },
+          {
+            "n": 49,
+            "t": "Catwoman Goes to College",
+            "d": "1967-02-22"
+          },
+          {
+            "n": 50,
+            "t": "Batman Displays His Knowledge",
+            "d": "1967-02-23"
+          },
+          {
+            "n": 51,
+            "t": "A Piece of the Action",
+            "d": "1967-03-01"
+          },
+          {
+            "n": 52,
+            "t": "Batman's Satisfaction",
+            "d": "1967-03-02"
+          },
+          {
+            "n": 53,
+            "t": "King Tut's Coup",
+            "d": "1967-03-08"
+          },
+          {
+            "n": 54,
+            "t": "Batman's Waterloo",
+            "d": "1967-03-09"
+          },
+          {
+            "n": 55,
+            "t": "Black Widow Strikes Again",
+            "d": "1967-03-15"
+          },
+          {
+            "n": 56,
+            "t": "Caught in the Spider's Den",
+            "d": "1967-03-16"
+          },
+          {
+            "n": 57,
+            "t": "Pop Goes the Joker",
+            "d": "1967-03-22"
+          },
+          {
+            "n": 58,
+            "t": "Flop Goes the Joker",
+            "d": "1967-03-23"
+          },
+          {
+            "n": 59,
+            "t": "Ice Spy",
+            "d": "1967-03-29"
+          },
+          {
+            "n": 60,
+            "t": "The Duo Defy",
+            "d": "1967-03-30"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Enter Batgirl, Exit Penguin",
+            "d": "1967-09-14"
+          },
+          {
+            "n": 2,
+            "t": "Ring Around the Riddler",
+            "d": "1967-09-21"
+          },
+          {
+            "n": 3,
+            "t": "The Wail of the Siren",
+            "d": "1967-09-28"
+          },
+          {
+            "n": 4,
+            "t": "The Sport of Penguins",
+            "d": "1967-10-05"
+          },
+          {
+            "n": 5,
+            "t": "A Horse of Another Color",
+            "d": "1967-10-12"
+          },
+          {
+            "n": 6,
+            "t": "The Unkindest Tut of All",
+            "d": "1967-10-19"
+          },
+          {
+            "n": 7,
+            "t": "Louie, the Lilac",
+            "d": "1967-10-26"
+          },
+          {
+            "n": 8,
+            "t": "The Ogg and I",
+            "d": "1967-11-02"
+          },
+          {
+            "n": 9,
+            "t": "How to Hatch a Dinosaur",
+            "d": "1967-11-09"
+          },
+          {
+            "n": 10,
+            "t": "Surf's Up! Joker's Under!",
+            "d": "1967-11-16"
+          },
+          {
+            "n": 11,
+            "t": "The Londinium Larcenies",
+            "d": "1967-11-23"
+          },
+          {
+            "n": 12,
+            "t": "The Foggiest Notion",
+            "d": "1967-11-30"
+          },
+          {
+            "n": 13,
+            "t": "The Bloody Tower",
+            "d": "1967-12-07"
+          },
+          {
+            "n": 14,
+            "t": "Catwoman's Dressed to Kill",
+            "d": "1967-12-14"
+          },
+          {
+            "n": 15,
+            "t": "The Ogg Couple",
+            "d": "1967-12-21"
+          },
+          {
+            "n": 16,
+            "t": "The Funny Feline Felonies",
+            "d": "1967-12-28"
+          },
+          {
+            "n": 17,
+            "t": "The Joke's on Catwoman",
+            "d": "1968-01-04"
+          },
+          {
+            "n": 18,
+            "t": "Louie's Lethal Lilac Time",
+            "d": "1968-01-11"
+          },
+          {
+            "n": 19,
+            "t": "Nora Clavicle and the Ladies' Crime Club",
+            "d": "1968-01-18"
+          },
+          {
+            "n": 20,
+            "t": "Penguin's Clean Sweep",
+            "d": "1968-01-25"
+          },
+          {
+            "n": 21,
+            "t": "The Great Escape",
+            "d": "1968-02-01"
+          },
+          {
+            "n": 22,
+            "t": "The Great Train Robbery",
+            "d": "1968-02-08"
+          },
+          {
+            "n": 23,
+            "t": "I'll Be a Mummy's Uncle",
+            "d": "1968-02-22"
+          },
+          {
+            "n": 24,
+            "t": "The Joker's Flying Saucer",
+            "d": "1968-02-29"
+          },
+          {
+            "n": 25,
+            "t": "The Entrancing Dr. Cassandra",
+            "d": "1968-03-07"
+          },
+          {
+            "n": 26,
+            "t": "Minerva, Mayhem and Millionaires",
+            "d": "1968-03-14"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Norm Prescott, Lou Scheimer, Dick Rosenbloom",
+      "cast": "Michael Gray, Les Tremayne, Jackson Bostwick, John Davey",
+      "runtime": "~22 min per episode",
+      "plot": "Teenager Billy Batson travels the American highways with his elderly guardian Mentor in an RV, transforming into the superhero Captain Marvel by uttering the magic word 'Shazam!' to help ordinary people learn moral lessons and get out of difficult situations of their own making.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-G",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Shazam!",
@@ -3362,15 +4884,163 @@
       "episodes": 28,
       "rt": null,
       "imdb": 6,
-      "blurb": "A live-action Saturday-morning series following Billy Batson's adventures as Captain Marvel."
+      "blurb": "A live-action Saturday-morning series following Billy Batson's adventures as Captain Marvel.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Joyriders",
+            "d": "1974-09-07"
+          },
+          {
+            "n": 2,
+            "t": "The Brothers",
+            "d": "1974-09-14"
+          },
+          {
+            "n": 3,
+            "t": "Thou Shalt Not Kill",
+            "d": "1974-09-21"
+          },
+          {
+            "n": 4,
+            "t": "The Lure of the Lost",
+            "d": "1974-09-28"
+          },
+          {
+            "n": 5,
+            "t": "The Road Back",
+            "d": "1974-10-05"
+          },
+          {
+            "n": 6,
+            "t": "The Athlete",
+            "d": "1974-10-12"
+          },
+          {
+            "n": 7,
+            "t": "The Treasure",
+            "d": "1974-10-19"
+          },
+          {
+            "n": 8,
+            "t": "The Boy Who Said \"No\"",
+            "d": "1974-10-26"
+          },
+          {
+            "n": 9,
+            "t": "The Doom Buggy",
+            "d": "1974-11-02"
+          },
+          {
+            "n": 10,
+            "t": "The Brain",
+            "d": "1974-11-09"
+          },
+          {
+            "n": 11,
+            "t": "Little Boy Lost",
+            "d": "1974-11-16"
+          },
+          {
+            "n": 12,
+            "t": "The Delinquent",
+            "d": "1974-11-23"
+          },
+          {
+            "n": 13,
+            "t": "The Braggart",
+            "d": "1974-11-30"
+          },
+          {
+            "n": 14,
+            "t": "The Past Is Not Forever",
+            "d": "1974-12-07"
+          },
+          {
+            "n": 15,
+            "t": "The Gang's All Here",
+            "d": "1974-12-14"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "On Winning",
+            "d": "1975-09-06"
+          },
+          {
+            "n": 2,
+            "t": "Debbie",
+            "d": "1975-09-13"
+          },
+          {
+            "n": 3,
+            "t": "Fool's Gold",
+            "d": "1975-09-20"
+          },
+          {
+            "n": 4,
+            "t": "Double Trouble",
+            "d": "1975-09-27"
+          },
+          {
+            "n": 5,
+            "t": "Goodbye, Packy",
+            "d": "1975-11-04"
+          },
+          {
+            "n": 6,
+            "t": "Speak No Evil",
+            "d": "1975-11-11"
+          },
+          {
+            "n": 7,
+            "t": "The Odd Couple",
+            "d": "1975-11-18"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "The Contest",
+            "d": "1976-09-11"
+          },
+          {
+            "n": 2,
+            "t": "Bitter Herbs",
+            "d": "1976-09-18"
+          },
+          {
+            "n": 3,
+            "t": "Ripcord",
+            "d": "1976-09-25"
+          },
+          {
+            "n": 4,
+            "t": "Finders Keepers",
+            "d": "1976-10-02"
+          },
+          {
+            "n": 5,
+            "t": "The Sound of a Different Drummer",
+            "d": "1976-10-09"
+          },
+          {
+            "n": 6,
+            "t": "Out of Focus",
+            "d": "1976-10-16"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Stanley Ralph Ross",
+      "cast": "Lynda Carter, Lyle Waggoner, Beatrice Colen, Richard Eastham, Debra Winger, Norman Burton",
+      "runtime": "~45-51 min per episode (90 min pilot)",
+      "plot": "Amazon princess Diana returns downed American pilot Steve Trevor to Washington, D.C. during World War II and stays on as his secret-identity assistant Diana Prince, secretly fighting Nazi spies as the super-strong, golden-lasso-wielding Wonder Woman — a role she resumes decades later, in the present day, working for a government intelligence agency.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Wonder Woman",
@@ -3384,15 +5054,323 @@
       "episodes": 60,
       "rt": null,
       "imdb": 6.7,
-      "blurb": "Lynda Carter's star-making turn as Diana Prince."
+      "blurb": "Lynda Carter's star-making turn as Diana Prince.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The New Original Wonder Woman",
+            "d": "1975-11-07"
+          },
+          {
+            "n": 2,
+            "t": "Wonder Woman Meets Baroness von Gunther",
+            "d": "1976-04-21"
+          },
+          {
+            "n": 3,
+            "t": "Fausta, the Nazi Wonder Woman",
+            "d": "1976-04-28"
+          },
+          {
+            "n": 4,
+            "t": "Beauty on Parade",
+            "d": "1976-10-13"
+          },
+          {
+            "n": 5,
+            "t": "The Feminum Mystique, Part 1",
+            "d": "1976-11-06"
+          },
+          {
+            "n": 6,
+            "t": "The Feminum Mystique, Part 2",
+            "d": "1976-11-08"
+          },
+          {
+            "n": 7,
+            "t": "Wonder Woman vs. Gargantua!",
+            "d": "1976-12-18"
+          },
+          {
+            "n": 8,
+            "t": "The Pluto File",
+            "d": "1976-12-25"
+          },
+          {
+            "n": 9,
+            "t": "Last of the $2 Bills",
+            "d": "1977-01-08"
+          },
+          {
+            "n": 10,
+            "t": "Judgment from Outer Space, Part 1",
+            "d": "1977-01-15"
+          },
+          {
+            "n": 11,
+            "t": "Judgment from Outer Space, Part 2",
+            "d": "1977-01-17"
+          },
+          {
+            "n": 12,
+            "t": "Formula 407",
+            "d": "1977-01-22"
+          },
+          {
+            "n": 13,
+            "t": "The Bushwhackers",
+            "d": "1977-01-29"
+          },
+          {
+            "n": 14,
+            "t": "Wonder Woman in Hollywood",
+            "d": "1977-02-16"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Return of Wonder Woman",
+            "d": "1977-09-16"
+          },
+          {
+            "n": 2,
+            "t": "Anschluss '77",
+            "d": "1977-09-23"
+          },
+          {
+            "n": 3,
+            "t": "The Man Who Could Move the World",
+            "d": "1977-09-30"
+          },
+          {
+            "n": 4,
+            "t": "The Bermuda Triangle Crisis",
+            "d": "1977-10-07"
+          },
+          {
+            "n": 5,
+            "t": "Knockout",
+            "d": "1977-10-14"
+          },
+          {
+            "n": 6,
+            "t": "The Pied Piper",
+            "d": "1977-10-21"
+          },
+          {
+            "n": 7,
+            "t": "The Queen and the Thief",
+            "d": "1977-10-28"
+          },
+          {
+            "n": 8,
+            "t": "I Do, I Do",
+            "d": "1977-11-11"
+          },
+          {
+            "n": 9,
+            "t": "The Man Who Made Volcanoes",
+            "d": "1977-11-18"
+          },
+          {
+            "n": 10,
+            "t": "Mind Stealers from Outer Space, Part 1",
+            "d": "1977-12-02"
+          },
+          {
+            "n": 11,
+            "t": "Mind Stealers from Outer Space, Part 2",
+            "d": "1977-12-09"
+          },
+          {
+            "n": 12,
+            "t": "The Deadly Toys",
+            "d": "1977-12-30"
+          },
+          {
+            "n": 13,
+            "t": "Light-fingered Lady",
+            "d": "1978-01-06"
+          },
+          {
+            "n": 14,
+            "t": "Screaming Javelin",
+            "d": "1978-01-20"
+          },
+          {
+            "n": 15,
+            "t": "Diana's Disappearing Act",
+            "d": "1978-02-03"
+          },
+          {
+            "n": 16,
+            "t": "Death in Disguise",
+            "d": "1978-02-10"
+          },
+          {
+            "n": 17,
+            "t": "IRAC Is Missing",
+            "d": "1978-02-17"
+          },
+          {
+            "n": 18,
+            "t": "Flight to Oblivion",
+            "d": "1978-03-03"
+          },
+          {
+            "n": 19,
+            "t": "Seance of Terror",
+            "d": "1978-03-10"
+          },
+          {
+            "n": 20,
+            "t": "The Man Who Wouldn't Tell",
+            "d": "1978-03-31"
+          },
+          {
+            "n": 21,
+            "t": "The Girl from Ilandia",
+            "d": "1978-04-07"
+          },
+          {
+            "n": 22,
+            "t": "The Murderous Missile",
+            "d": "1978-04-21"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "My Teenage Idol Is Missing",
+            "d": "1978-09-22"
+          },
+          {
+            "n": 2,
+            "t": "Hot Wheels",
+            "d": "1978-09-29"
+          },
+          {
+            "n": 3,
+            "t": "The Deadly Sting",
+            "d": "1978-10-06"
+          },
+          {
+            "n": 4,
+            "t": "The Fine Art of Crime",
+            "d": "1978-10-13"
+          },
+          {
+            "n": 5,
+            "t": "Disco Devil",
+            "d": "1978-10-20"
+          },
+          {
+            "n": 6,
+            "t": "Formicida",
+            "d": "1978-11-03"
+          },
+          {
+            "n": 7,
+            "t": "Time Bomb",
+            "d": "1978-11-10"
+          },
+          {
+            "n": 8,
+            "t": "Skateboard Wiz",
+            "d": "1978-11-24"
+          },
+          {
+            "n": 9,
+            "t": "The Deadly Dolphin",
+            "d": "1978-12-01"
+          },
+          {
+            "n": 10,
+            "t": "Stolen Faces",
+            "d": "1978-12-15"
+          },
+          {
+            "n": 11,
+            "t": "Pot of Gold",
+            "d": "1978-12-22"
+          },
+          {
+            "n": 12,
+            "t": "Gault's Brain",
+            "d": "1978-12-29"
+          },
+          {
+            "n": 13,
+            "t": "Going, Going, Gone",
+            "d": "1979-01-12"
+          },
+          {
+            "n": 14,
+            "t": "Spaced Out",
+            "d": "1979-01-26"
+          },
+          {
+            "n": 15,
+            "t": "The Starships Are Coming",
+            "d": "1979-02-02"
+          },
+          {
+            "n": 16,
+            "t": "Amazon Hot Wax",
+            "d": "1979-02-16"
+          },
+          {
+            "n": 17,
+            "t": "The Richest Man in the World",
+            "d": "1979-02-19"
+          },
+          {
+            "n": 18,
+            "t": "A Date with Doomsday",
+            "d": "1979-03-10"
+          },
+          {
+            "n": 19,
+            "t": "The Girl with a Gift for Disaster",
+            "d": "1979-03-17"
+          },
+          {
+            "n": 20,
+            "t": "The Boy Who Knew Her Secret, Part 1",
+            "d": "1979-05-28"
+          },
+          {
+            "n": 21,
+            "t": "The Boy Who Knew Her Secret, Part 2",
+            "d": "1979-05-29"
+          },
+          {
+            "n": 22,
+            "t": "The Man Who Could Not Die",
+            "d": "1979-08-28"
+          },
+          {
+            "n": 23,
+            "t": "Phantom of the Roller Coaster, Part 1",
+            "d": "1979-09-04"
+          },
+          {
+            "n": 24,
+            "t": "Phantom of the Roller Coaster, Part 2",
+            "d": "1979-09-11"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Alexander Salkind, Ilya Salkind",
+      "cast": "John Haymes Newton, Gerard Christopher, Stacy Haiduk, Jim Calvert, Scott James Wells",
+      "runtime": "~22 min per episode",
+      "plot": "A young Clark Kent navigates college life at Shuster University alongside love interest Lana Lang and roommate T.J. White, secretly using his growing powers as Superboy to battle a rotating cast of threats — from Lex Luthor's schemes to aliens, vampires, and the imperfect clone Bizarro — years before he becomes Metropolis's Superman.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Superboy",
@@ -3406,7 +5384,517 @@
       "episodes": 100,
       "rt": null,
       "imdb": 6.4,
-      "blurb": "A young Clark Kent's college years as the fledgling Superboy."
+      "blurb": "A young Clark Kent's college years as the fledgling Superboy.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Jewel of Techacal",
+            "d": "1988-10-08"
+          },
+          {
+            "n": 2,
+            "t": "A Kind of Princess",
+            "d": "1988-10-15"
+          },
+          {
+            "n": 3,
+            "t": "Back to Oblivion",
+            "d": "1988-10-22"
+          },
+          {
+            "n": 4,
+            "t": "The Russian Exchange Student",
+            "d": "1988-10-29"
+          },
+          {
+            "n": 5,
+            "t": "Countdown to Nowhere",
+            "d": "1988-11-05"
+          },
+          {
+            "n": 6,
+            "t": "Bringing Down the House",
+            "d": "1988-11-12"
+          },
+          {
+            "n": 7,
+            "t": "The Beast and Beauty",
+            "d": "1988-11-19"
+          },
+          {
+            "n": 8,
+            "t": "The Fixer",
+            "d": "1988-11-26"
+          },
+          {
+            "n": 9,
+            "t": "The Alien Solution",
+            "d": "1988-12-03"
+          },
+          {
+            "n": 10,
+            "t": "Troubled Waters",
+            "d": "1988-12-10"
+          },
+          {
+            "n": 11,
+            "t": "The Invisible People",
+            "d": "1989-01-21"
+          },
+          {
+            "n": 12,
+            "t": "Kryptonite Kills",
+            "d": "1989-01-28"
+          },
+          {
+            "n": 13,
+            "t": "Revenge of the Alien, Part 1",
+            "d": "1989-02-04"
+          },
+          {
+            "n": 14,
+            "t": "Revenge of the Alien, Part 2",
+            "d": "1989-02-11"
+          },
+          {
+            "n": 15,
+            "t": "Stand Up and Get Knocked Down",
+            "d": "1989-02-18"
+          },
+          {
+            "n": 16,
+            "t": "Meet Mr. Mxyzptlk",
+            "d": "1989-02-25"
+          },
+          {
+            "n": 17,
+            "t": "Birdwoman of the Swamps",
+            "d": "1989-03-04"
+          },
+          {
+            "n": 18,
+            "t": "Terror from the Blue",
+            "d": "1989-03-11"
+          },
+          {
+            "n": 19,
+            "t": "War of the Species",
+            "d": "1989-03-18"
+          },
+          {
+            "n": 20,
+            "t": "Little Hercules",
+            "d": "1989-04-15"
+          },
+          {
+            "n": 21,
+            "t": "Mutant",
+            "d": "1989-04-22"
+          },
+          {
+            "n": 22,
+            "t": "The Phantom of the Third Division",
+            "d": "1989-04-29"
+          },
+          {
+            "n": 23,
+            "t": "Black Flamingo",
+            "d": "1989-05-06"
+          },
+          {
+            "n": 24,
+            "t": "Hollywood",
+            "d": "1989-05-13"
+          },
+          {
+            "n": 25,
+            "t": "Succubus",
+            "d": "1989-05-20"
+          },
+          {
+            "n": 26,
+            "t": "Luthor Unleashed",
+            "d": "1989-05-27"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "With This Ring, I Thee Kill",
+            "d": "1989-10-07"
+          },
+          {
+            "n": 2,
+            "t": "Lex Luthor: Sentenced to Die!",
+            "d": "1989-10-14"
+          },
+          {
+            "n": 3,
+            "t": "Metallo",
+            "d": "1989-10-21"
+          },
+          {
+            "n": 4,
+            "t": "Young Dracula",
+            "d": "1989-10-28"
+          },
+          {
+            "n": 5,
+            "t": "Nightmare Island",
+            "d": "1989-11-04"
+          },
+          {
+            "n": 6,
+            "t": "Bizarro... the Thing of Steel",
+            "d": "1989-11-11"
+          },
+          {
+            "n": 7,
+            "t": "The Battle with Bizarro",
+            "d": "1989-11-18"
+          },
+          {
+            "n": 8,
+            "t": "Mr. and Mrs. Superboy",
+            "d": "1989-11-25"
+          },
+          {
+            "n": 9,
+            "t": "Programmed for Death",
+            "d": "1989-12-02"
+          },
+          {
+            "n": 10,
+            "t": "Superboy's Deadly Touch",
+            "d": "1989-12-09"
+          },
+          {
+            "n": 11,
+            "t": "The Power of Evil",
+            "d": "1989-12-16"
+          },
+          {
+            "n": 12,
+            "t": "Superboy... Rest in Peace",
+            "d": "1989-12-30"
+          },
+          {
+            "n": 13,
+            "t": "Super Menace!",
+            "d": "1990-01-13"
+          },
+          {
+            "n": 14,
+            "t": "Yellow Peri's Spell of Doom",
+            "d": "1990-01-20"
+          },
+          {
+            "n": 15,
+            "t": "Microboy",
+            "d": "1990-01-27"
+          },
+          {
+            "n": 16,
+            "t": "Run, Dracula, Run",
+            "d": "1990-02-03"
+          },
+          {
+            "n": 17,
+            "t": "Brimstone",
+            "d": "1990-02-10"
+          },
+          {
+            "n": 18,
+            "t": "Abandon Earth",
+            "d": "1990-02-17"
+          },
+          {
+            "n": 19,
+            "t": "Escape to Earth",
+            "d": "1990-02-24"
+          },
+          {
+            "n": 20,
+            "t": "Superstar",
+            "d": "1990-03-03"
+          },
+          {
+            "n": 21,
+            "t": "Nick Knack",
+            "d": "1990-04-14"
+          },
+          {
+            "n": 22,
+            "t": "The Haunting of Andy McAlister",
+            "d": "1990-04-21"
+          },
+          {
+            "n": 23,
+            "t": "Revenge from the Deep",
+            "d": "1990-04-28"
+          },
+          {
+            "n": 24,
+            "t": "Secrets of Superboy",
+            "d": "1990-05-05"
+          },
+          {
+            "n": 25,
+            "t": "Johnny Casanova and the Case of the Secret Serum",
+            "d": "1990-05-12"
+          },
+          {
+            "n": 26,
+            "t": "The Woman Called Tiger Eye",
+            "d": "1990-05-19"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "The Bride of Bizarro, Part 1",
+            "d": "1990-10-06"
+          },
+          {
+            "n": 2,
+            "t": "The Bride of Bizarro, Part 2",
+            "d": "1990-10-13"
+          },
+          {
+            "n": 3,
+            "t": "The Lair",
+            "d": "1990-10-20"
+          },
+          {
+            "n": 4,
+            "t": "Neila",
+            "d": "1990-10-27"
+          },
+          {
+            "n": 5,
+            "t": "Roads Not Taken, Part 1",
+            "d": "1990-11-03"
+          },
+          {
+            "n": 6,
+            "t": "Roads Not Taken, Part 2",
+            "d": "1990-11-10"
+          },
+          {
+            "n": 7,
+            "t": "The Sons of Icarus",
+            "d": "1990-11-17"
+          },
+          {
+            "n": 8,
+            "t": "Carnival",
+            "d": "1990-11-24"
+          },
+          {
+            "n": 9,
+            "t": "Test of Time",
+            "d": "1990-12-01"
+          },
+          {
+            "n": 10,
+            "t": "Mindscape",
+            "d": "1990-12-08"
+          },
+          {
+            "n": 11,
+            "t": "Superboy... Lost",
+            "d": "1990-12-15"
+          },
+          {
+            "n": 12,
+            "t": "Special Effects",
+            "d": "1991-01-05"
+          },
+          {
+            "n": 13,
+            "t": "Neila and the Beast",
+            "d": "1991-01-12"
+          },
+          {
+            "n": 14,
+            "t": "The Golem",
+            "d": "1991-01-19"
+          },
+          {
+            "n": 15,
+            "t": "A Day in the Double Life",
+            "d": "1991-01-26"
+          },
+          {
+            "n": 16,
+            "t": "Bodyswap",
+            "d": "1991-02-02"
+          },
+          {
+            "n": 17,
+            "t": "Rebirth, Part 1",
+            "d": "1991-02-09"
+          },
+          {
+            "n": 18,
+            "t": "Rebirth, Part 2",
+            "d": "1991-02-16"
+          },
+          {
+            "n": 19,
+            "t": "Werewolf",
+            "d": "1991-02-23"
+          },
+          {
+            "n": 20,
+            "t": "People vs. Metallo",
+            "d": "1991-04-06"
+          },
+          {
+            "n": 21,
+            "t": "Jackson and Hyde",
+            "d": "1991-04-13"
+          },
+          {
+            "n": 22,
+            "t": "Mine Games",
+            "d": "1991-04-20"
+          },
+          {
+            "n": 23,
+            "t": "Wish for Armageddon",
+            "d": "1991-05-04"
+          },
+          {
+            "n": 24,
+            "t": "Standoff",
+            "d": "1991-05-11"
+          },
+          {
+            "n": 25,
+            "t": "The Road to Hell, Part 1",
+            "d": "1991-05-18"
+          },
+          {
+            "n": 26,
+            "t": "The Road to Hell, Part 2",
+            "d": "1991-05-25"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "A Change of Heart, Part 1",
+            "d": "1991-10-06"
+          },
+          {
+            "n": 2,
+            "t": "A Change of Heart, Part 2",
+            "d": "1991-10-13"
+          },
+          {
+            "n": 3,
+            "t": "The Kryptonite Kid",
+            "d": "1991-10-20"
+          },
+          {
+            "n": 4,
+            "t": "The Basement",
+            "d": "1991-10-27"
+          },
+          {
+            "n": 5,
+            "t": "Darla Goes Ballistic",
+            "d": "1991-11-03"
+          },
+          {
+            "n": 6,
+            "t": "Paranoia",
+            "d": "1991-11-10"
+          },
+          {
+            "n": 7,
+            "t": "Know Thine Enemy, Part 1",
+            "d": "1991-11-17"
+          },
+          {
+            "n": 8,
+            "t": "Know Thine Enemy, Part 2",
+            "d": "1991-11-24"
+          },
+          {
+            "n": 9,
+            "t": "Hell Breaks Loose",
+            "d": "1991-12-01"
+          },
+          {
+            "n": 10,
+            "t": "Into the Mystery",
+            "d": "1991-12-08"
+          },
+          {
+            "n": 11,
+            "t": "To Be Human, Part 1",
+            "d": "1992-01-19"
+          },
+          {
+            "n": 12,
+            "t": "To Be Human, Part 2",
+            "d": "1992-01-26"
+          },
+          {
+            "n": 13,
+            "t": "West of Alpha Centauri",
+            "d": "1992-02-02"
+          },
+          {
+            "n": 14,
+            "t": "Threesome, Part 1",
+            "d": "1992-02-09"
+          },
+          {
+            "n": 15,
+            "t": "Threesome, Part 2",
+            "d": "1992-02-16"
+          },
+          {
+            "n": 16,
+            "t": "Out of Luck",
+            "d": "1992-02-23"
+          },
+          {
+            "n": 17,
+            "t": "Who Is Superboy?",
+            "d": "1992-03-01"
+          },
+          {
+            "n": 18,
+            "t": "Cat and Mouse",
+            "d": "1992-04-19"
+          },
+          {
+            "n": 19,
+            "t": "Obituary for a Superhero",
+            "d": "1992-04-26"
+          },
+          {
+            "n": 20,
+            "t": "Metamorphosis",
+            "d": "1992-05-03"
+          },
+          {
+            "n": 21,
+            "t": "Rites of Passage, Part 1",
+            "d": "1992-05-10"
+          },
+          {
+            "n": 22,
+            "t": "Rites of Passage, Part 2",
+            "d": "1992-05-17"
+          }
+        ]
+      }
     },
     {
       "creators": "Joseph Stefano",
@@ -4466,12 +6954,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Alfred Gough, Miles Millar",
+      "cast": "Tom Welling, Kristin Kreuk, Michael Rosenbaum, Allison Mack, Erica Durance, John Schneider, Annette O'Toole",
+      "runtime": "~42-45 min per episode",
+      "plot": "Clark Kent's teenage years and young adulthood in Smallville, Kansas — discovering his growing powers and alien origins, navigating his friendship-turned-rivalry with Lex Luthor, his romances with Lana Lang and later Lois Lane, and his slow, decade-long journey toward becoming Superman at the Daily Planet.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-PG",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Smallville",
@@ -4485,7 +6973,1114 @@
       "episodes": 217,
       "rt": null,
       "imdb": 7.5,
-      "blurb": "Clark Kent's teenage years in Kansas, running for ten seasons before he becomes Superman."
+      "blurb": "Clark Kent's teenage years in Kansas, running for ten seasons before he becomes Superman.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Pilot",
+            "d": "2001-10-16"
+          },
+          {
+            "n": 2,
+            "t": "Metamorphosis",
+            "d": "2001-10-23"
+          },
+          {
+            "n": 3,
+            "t": "Hothead",
+            "d": "2001-10-30"
+          },
+          {
+            "n": 4,
+            "t": "X-Ray",
+            "d": "2001-11-06"
+          },
+          {
+            "n": 5,
+            "t": "Cool",
+            "d": "2001-11-13"
+          },
+          {
+            "n": 6,
+            "t": "Hourglass",
+            "d": "2001-11-20"
+          },
+          {
+            "n": 7,
+            "t": "Craving",
+            "d": "2001-11-27"
+          },
+          {
+            "n": 8,
+            "t": "Jitters",
+            "d": "2001-12-11"
+          },
+          {
+            "n": 9,
+            "t": "Rogue",
+            "d": "2002-01-15"
+          },
+          {
+            "n": 10,
+            "t": "Shimmer",
+            "d": "2002-01-29"
+          },
+          {
+            "n": 11,
+            "t": "Hug",
+            "d": "2002-02-05"
+          },
+          {
+            "n": 12,
+            "t": "Leech",
+            "d": "2002-02-12"
+          },
+          {
+            "n": 13,
+            "t": "Kinetic",
+            "d": "2002-02-26"
+          },
+          {
+            "n": 14,
+            "t": "Zero",
+            "d": "2002-03-12"
+          },
+          {
+            "n": 15,
+            "t": "Nicodemus",
+            "d": "2002-03-19"
+          },
+          {
+            "n": 16,
+            "t": "Stray",
+            "d": "2002-04-16"
+          },
+          {
+            "n": 17,
+            "t": "Reaper",
+            "d": "2002-04-23"
+          },
+          {
+            "n": 18,
+            "t": "Drone",
+            "d": "2002-04-30"
+          },
+          {
+            "n": 19,
+            "t": "Crush",
+            "d": "2002-05-07"
+          },
+          {
+            "n": 20,
+            "t": "Obscura",
+            "d": "2002-05-14"
+          },
+          {
+            "n": 21,
+            "t": "Tempest",
+            "d": "2002-05-21"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Vortex",
+            "d": "2002-09-24"
+          },
+          {
+            "n": 2,
+            "t": "Heat",
+            "d": "2002-10-01"
+          },
+          {
+            "n": 3,
+            "t": "Duplicity",
+            "d": "2002-10-08"
+          },
+          {
+            "n": 4,
+            "t": "Red",
+            "d": "2002-10-15"
+          },
+          {
+            "n": 5,
+            "t": "Nocturne",
+            "d": "2002-10-22"
+          },
+          {
+            "n": 6,
+            "t": "Redux",
+            "d": "2002-10-29"
+          },
+          {
+            "n": 7,
+            "t": "Lineage",
+            "d": "2002-11-05"
+          },
+          {
+            "n": 8,
+            "t": "Ryan",
+            "d": "2002-11-12"
+          },
+          {
+            "n": 9,
+            "t": "Dichotic",
+            "d": "2002-11-19"
+          },
+          {
+            "n": 10,
+            "t": "Skinwalker",
+            "d": "2002-11-26"
+          },
+          {
+            "n": 11,
+            "t": "Visage",
+            "d": "2003-01-14"
+          },
+          {
+            "n": 12,
+            "t": "Insurgence",
+            "d": "2003-01-21"
+          },
+          {
+            "n": 13,
+            "t": "Suspect",
+            "d": "2003-01-28"
+          },
+          {
+            "n": 14,
+            "t": "Rush",
+            "d": "2003-02-04"
+          },
+          {
+            "n": 15,
+            "t": "Prodigal",
+            "d": "2003-02-11"
+          },
+          {
+            "n": 16,
+            "t": "Fever",
+            "d": "2003-02-18"
+          },
+          {
+            "n": 17,
+            "t": "Rosetta",
+            "d": "2003-02-25"
+          },
+          {
+            "n": 18,
+            "t": "Visitor",
+            "d": "2003-04-15"
+          },
+          {
+            "n": 19,
+            "t": "Precipice",
+            "d": "2003-04-22"
+          },
+          {
+            "n": 20,
+            "t": "Witness",
+            "d": "2003-04-29"
+          },
+          {
+            "n": 21,
+            "t": "Accelerate",
+            "d": "2003-05-06"
+          },
+          {
+            "n": 22,
+            "t": "Calling",
+            "d": "2003-05-13"
+          },
+          {
+            "n": 23,
+            "t": "Exodus",
+            "d": "2003-05-20"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Exile",
+            "d": "2003-10-01"
+          },
+          {
+            "n": 2,
+            "t": "Phoenix",
+            "d": "2003-10-08"
+          },
+          {
+            "n": 3,
+            "t": "Extinction",
+            "d": "2003-10-15"
+          },
+          {
+            "n": 4,
+            "t": "Slumber",
+            "d": "2003-10-22"
+          },
+          {
+            "n": 5,
+            "t": "Perry",
+            "d": "2003-10-29"
+          },
+          {
+            "n": 6,
+            "t": "Relic",
+            "d": "2003-11-05"
+          },
+          {
+            "n": 7,
+            "t": "Magnetic",
+            "d": "2003-11-12"
+          },
+          {
+            "n": 8,
+            "t": "Shattered",
+            "d": "2003-11-19"
+          },
+          {
+            "n": 9,
+            "t": "Asylum",
+            "d": "2004-01-14"
+          },
+          {
+            "n": 10,
+            "t": "Whisper",
+            "d": "2004-01-21"
+          },
+          {
+            "n": 11,
+            "t": "Delete",
+            "d": "2004-01-28"
+          },
+          {
+            "n": 12,
+            "t": "Hereafter",
+            "d": "2004-02-04"
+          },
+          {
+            "n": 13,
+            "t": "Velocity",
+            "d": "2004-02-11"
+          },
+          {
+            "n": 14,
+            "t": "Obsession",
+            "d": "2004-02-18"
+          },
+          {
+            "n": 15,
+            "t": "Resurrection",
+            "d": "2004-02-25"
+          },
+          {
+            "n": 16,
+            "t": "Crisis",
+            "d": "2004-03-03"
+          },
+          {
+            "n": 17,
+            "t": "Legacy",
+            "d": "2004-04-14"
+          },
+          {
+            "n": 18,
+            "t": "Truth",
+            "d": "2004-04-21"
+          },
+          {
+            "n": 19,
+            "t": "Memoria",
+            "d": "2004-04-28"
+          },
+          {
+            "n": 20,
+            "t": "Talisman",
+            "d": "2004-05-05"
+          },
+          {
+            "n": 21,
+            "t": "Forsaken",
+            "d": "2004-05-12"
+          },
+          {
+            "n": 22,
+            "t": "Covenant",
+            "d": "2004-05-19"
+          }
+        ],
+        "4": [
+          {
+            "n": 1,
+            "t": "Crusade",
+            "d": "2004-09-22"
+          },
+          {
+            "n": 2,
+            "t": "Gone",
+            "d": "2004-09-29"
+          },
+          {
+            "n": 3,
+            "t": "Façade",
+            "d": "2004-10-06"
+          },
+          {
+            "n": 4,
+            "t": "Devoted",
+            "d": "2004-10-13"
+          },
+          {
+            "n": 5,
+            "t": "Run",
+            "d": "2004-10-20"
+          },
+          {
+            "n": 6,
+            "t": "Transference",
+            "d": "2004-10-27"
+          },
+          {
+            "n": 7,
+            "t": "Jinx",
+            "d": "2004-11-03"
+          },
+          {
+            "n": 8,
+            "t": "Spell",
+            "d": "2004-11-10"
+          },
+          {
+            "n": 9,
+            "t": "Bound",
+            "d": "2004-11-17"
+          },
+          {
+            "n": 10,
+            "t": "Scare",
+            "d": "2004-12-01"
+          },
+          {
+            "n": 11,
+            "t": "Unsafe",
+            "d": "2005-01-26"
+          },
+          {
+            "n": 12,
+            "t": "Pariah",
+            "d": "2005-02-02"
+          },
+          {
+            "n": 13,
+            "t": "Recruit",
+            "d": "2005-02-09"
+          },
+          {
+            "n": 14,
+            "t": "Krypto",
+            "d": "2005-02-16"
+          },
+          {
+            "n": 15,
+            "t": "Sacred",
+            "d": "2005-02-23"
+          },
+          {
+            "n": 16,
+            "t": "Lucy",
+            "d": "2005-03-02"
+          },
+          {
+            "n": 17,
+            "t": "Onyx",
+            "d": "2005-04-13"
+          },
+          {
+            "n": 18,
+            "t": "Spirit",
+            "d": "2005-04-20"
+          },
+          {
+            "n": 19,
+            "t": "Blank",
+            "d": "2005-04-27"
+          },
+          {
+            "n": 20,
+            "t": "Ageless",
+            "d": "2005-05-04"
+          },
+          {
+            "n": 21,
+            "t": "Forever",
+            "d": "2005-05-11"
+          },
+          {
+            "n": 22,
+            "t": "Commencement",
+            "d": "2005-05-18"
+          }
+        ],
+        "5": [
+          {
+            "n": 1,
+            "t": "Arrival",
+            "d": "2005-09-29"
+          },
+          {
+            "n": 2,
+            "t": "Mortal",
+            "d": "2005-10-06"
+          },
+          {
+            "n": 3,
+            "t": "Hidden",
+            "d": "2005-10-13"
+          },
+          {
+            "n": 4,
+            "t": "Aqua",
+            "d": "2005-10-20"
+          },
+          {
+            "n": 5,
+            "t": "Thirst",
+            "d": "2005-10-27"
+          },
+          {
+            "n": 6,
+            "t": "Exposed",
+            "d": "2005-11-03"
+          },
+          {
+            "n": 7,
+            "t": "Splinter",
+            "d": "2005-11-10"
+          },
+          {
+            "n": 8,
+            "t": "Solitude",
+            "d": "2005-11-17"
+          },
+          {
+            "n": 9,
+            "t": "Lexmas",
+            "d": "2005-12-08"
+          },
+          {
+            "n": 10,
+            "t": "Fanatic",
+            "d": "2006-01-12"
+          },
+          {
+            "n": 11,
+            "t": "Lockdown",
+            "d": "2006-01-19"
+          },
+          {
+            "n": 12,
+            "t": "Reckoning",
+            "d": "2006-01-26"
+          },
+          {
+            "n": 13,
+            "t": "Vengeance",
+            "d": "2006-02-02"
+          },
+          {
+            "n": 14,
+            "t": "Tomb",
+            "d": "2006-02-09"
+          },
+          {
+            "n": 15,
+            "t": "Cyborg",
+            "d": "2006-02-16"
+          },
+          {
+            "n": 16,
+            "t": "Hypnotic",
+            "d": "2006-03-30"
+          },
+          {
+            "n": 17,
+            "t": "Void",
+            "d": "2006-04-06"
+          },
+          {
+            "n": 18,
+            "t": "Fragile",
+            "d": "2006-04-13"
+          },
+          {
+            "n": 19,
+            "t": "Mercy",
+            "d": "2006-04-20"
+          },
+          {
+            "n": 20,
+            "t": "Fade",
+            "d": "2006-04-27"
+          },
+          {
+            "n": 21,
+            "t": "Oracle",
+            "d": "2006-05-04"
+          },
+          {
+            "n": 22,
+            "t": "Vessel",
+            "d": "2006-05-11"
+          }
+        ],
+        "6": [
+          {
+            "n": 1,
+            "t": "Zod",
+            "d": "2006-09-28"
+          },
+          {
+            "n": 2,
+            "t": "Sneeze",
+            "d": "2006-10-05"
+          },
+          {
+            "n": 3,
+            "t": "Wither",
+            "d": "2006-10-12"
+          },
+          {
+            "n": 4,
+            "t": "Arrow",
+            "d": "2006-10-19"
+          },
+          {
+            "n": 5,
+            "t": "Reunion",
+            "d": "2006-10-26"
+          },
+          {
+            "n": 6,
+            "t": "Fallout",
+            "d": "2006-11-02"
+          },
+          {
+            "n": 7,
+            "t": "Rage",
+            "d": "2006-11-09"
+          },
+          {
+            "n": 8,
+            "t": "Static",
+            "d": "2006-11-16"
+          },
+          {
+            "n": 9,
+            "t": "Subterranean",
+            "d": "2006-12-07"
+          },
+          {
+            "n": 10,
+            "t": "Hydro",
+            "d": "2007-01-11"
+          },
+          {
+            "n": 11,
+            "t": "Justice",
+            "d": "2007-01-18"
+          },
+          {
+            "n": 12,
+            "t": "Labyrinth",
+            "d": "2007-01-25"
+          },
+          {
+            "n": 13,
+            "t": "Crimson",
+            "d": "2007-02-01"
+          },
+          {
+            "n": 14,
+            "t": "Trespass",
+            "d": "2007-02-08"
+          },
+          {
+            "n": 15,
+            "t": "Freak",
+            "d": "2007-02-15"
+          },
+          {
+            "n": 16,
+            "t": "Promise",
+            "d": "2007-03-15"
+          },
+          {
+            "n": 17,
+            "t": "Combat",
+            "d": "2007-03-22"
+          },
+          {
+            "n": 18,
+            "t": "Progeny",
+            "d": "2007-04-19"
+          },
+          {
+            "n": 19,
+            "t": "Nemesis",
+            "d": "2007-04-26"
+          },
+          {
+            "n": 20,
+            "t": "Noir",
+            "d": "2007-05-03"
+          },
+          {
+            "n": 21,
+            "t": "Prototype",
+            "d": "2007-05-10"
+          },
+          {
+            "n": 22,
+            "t": "Phantom",
+            "d": "2007-05-17"
+          }
+        ],
+        "7": [
+          {
+            "n": 1,
+            "t": "Bizarro",
+            "d": "2007-09-27"
+          },
+          {
+            "n": 2,
+            "t": "Kara",
+            "d": "2007-10-04"
+          },
+          {
+            "n": 3,
+            "t": "Fierce",
+            "d": "2007-10-11"
+          },
+          {
+            "n": 4,
+            "t": "Cure",
+            "d": "2007-10-18"
+          },
+          {
+            "n": 5,
+            "t": "Action",
+            "d": "2007-10-25"
+          },
+          {
+            "n": 6,
+            "t": "Lara",
+            "d": "2007-11-01"
+          },
+          {
+            "n": 7,
+            "t": "Wrath",
+            "d": "2007-11-08"
+          },
+          {
+            "n": 8,
+            "t": "Blue",
+            "d": "2007-11-15"
+          },
+          {
+            "n": 9,
+            "t": "Gemini",
+            "d": "2007-12-13"
+          },
+          {
+            "n": 10,
+            "t": "Persona",
+            "d": "2008-01-31"
+          },
+          {
+            "n": 11,
+            "t": "Siren",
+            "d": "2008-02-07"
+          },
+          {
+            "n": 12,
+            "t": "Fracture",
+            "d": "2008-02-14"
+          },
+          {
+            "n": 13,
+            "t": "Hero",
+            "d": "2008-03-13"
+          },
+          {
+            "n": 14,
+            "t": "Traveler",
+            "d": "2008-03-20"
+          },
+          {
+            "n": 15,
+            "t": "Veritas",
+            "d": "2008-03-27"
+          },
+          {
+            "n": 16,
+            "t": "Descent",
+            "d": "2008-04-17"
+          },
+          {
+            "n": 17,
+            "t": "Sleeper",
+            "d": "2008-04-24"
+          },
+          {
+            "n": 18,
+            "t": "Apocalypse",
+            "d": "2008-05-01"
+          },
+          {
+            "n": 19,
+            "t": "Quest",
+            "d": "2008-05-08"
+          },
+          {
+            "n": 20,
+            "t": "Arctic",
+            "d": "2008-05-15"
+          }
+        ],
+        "8": [
+          {
+            "n": 1,
+            "t": "Odyssey",
+            "d": "2008-09-18"
+          },
+          {
+            "n": 2,
+            "t": "Plastique",
+            "d": "2008-09-25"
+          },
+          {
+            "n": 3,
+            "t": "Toxic",
+            "d": "2008-10-02"
+          },
+          {
+            "n": 4,
+            "t": "Instinct",
+            "d": "2008-10-09"
+          },
+          {
+            "n": 5,
+            "t": "Committed",
+            "d": "2008-10-16"
+          },
+          {
+            "n": 6,
+            "t": "Prey",
+            "d": "2008-10-23"
+          },
+          {
+            "n": 7,
+            "t": "Identity",
+            "d": "2008-10-30"
+          },
+          {
+            "n": 8,
+            "t": "Bloodline",
+            "d": "2008-11-06"
+          },
+          {
+            "n": 9,
+            "t": "Abyss",
+            "d": "2008-11-13"
+          },
+          {
+            "n": 10,
+            "t": "Bride",
+            "d": "2008-11-20"
+          },
+          {
+            "n": 11,
+            "t": "Legion",
+            "d": "2009-01-15"
+          },
+          {
+            "n": 12,
+            "t": "Bulletproof",
+            "d": "2009-01-22"
+          },
+          {
+            "n": 13,
+            "t": "Power",
+            "d": "2009-01-29"
+          },
+          {
+            "n": 14,
+            "t": "Requiem",
+            "d": "2009-02-05"
+          },
+          {
+            "n": 15,
+            "t": "Infamous",
+            "d": "2009-03-12"
+          },
+          {
+            "n": 16,
+            "t": "Turbulence",
+            "d": "2009-03-19"
+          },
+          {
+            "n": 17,
+            "t": "Hex",
+            "d": "2009-03-26"
+          },
+          {
+            "n": 18,
+            "t": "Eternal",
+            "d": "2009-04-02"
+          },
+          {
+            "n": 19,
+            "t": "Stiletto",
+            "d": "2009-04-23"
+          },
+          {
+            "n": 20,
+            "t": "Beast",
+            "d": "2009-04-30"
+          },
+          {
+            "n": 21,
+            "t": "Injustice",
+            "d": "2009-05-07"
+          },
+          {
+            "n": 22,
+            "t": "Doomsday",
+            "d": "2009-05-14"
+          }
+        ],
+        "9": [
+          {
+            "n": 1,
+            "t": "Savior",
+            "d": "2009-09-25"
+          },
+          {
+            "n": 2,
+            "t": "Metallo",
+            "d": "2009-10-02"
+          },
+          {
+            "n": 3,
+            "t": "Rabid",
+            "d": "2009-10-09"
+          },
+          {
+            "n": 4,
+            "t": "Echo",
+            "d": "2009-10-16"
+          },
+          {
+            "n": 5,
+            "t": "Roulette",
+            "d": "2009-10-23"
+          },
+          {
+            "n": 6,
+            "t": "Crossfire",
+            "d": "2009-10-30"
+          },
+          {
+            "n": 7,
+            "t": "Kandor",
+            "d": "2009-11-06"
+          },
+          {
+            "n": 8,
+            "t": "Idol",
+            "d": "2009-11-13"
+          },
+          {
+            "n": 9,
+            "t": "Pandora",
+            "d": "2009-11-20"
+          },
+          {
+            "n": 10,
+            "t": "Disciple",
+            "d": "2010-01-29"
+          },
+          {
+            "n": 11,
+            "t": "Absolute Justice",
+            "d": "2010-02-05"
+          },
+          {
+            "n": 12,
+            "t": "Warrior",
+            "d": "2010-02-12"
+          },
+          {
+            "n": 13,
+            "t": "Persuasion",
+            "d": "2010-02-19"
+          },
+          {
+            "n": 14,
+            "t": "Conspiracy",
+            "d": "2010-02-26"
+          },
+          {
+            "n": 15,
+            "t": "Escape",
+            "d": "2010-04-02"
+          },
+          {
+            "n": 16,
+            "t": "Checkmate",
+            "d": "2010-04-09"
+          },
+          {
+            "n": 17,
+            "t": "Upgrade",
+            "d": "2010-04-16"
+          },
+          {
+            "n": 18,
+            "t": "Charade",
+            "d": "2010-04-23"
+          },
+          {
+            "n": 19,
+            "t": "Sacrifice",
+            "d": "2010-04-30"
+          },
+          {
+            "n": 20,
+            "t": "Hostage",
+            "d": "2010-05-07"
+          },
+          {
+            "n": 21,
+            "t": "Salvation",
+            "d": "2010-05-14"
+          }
+        ],
+        "10": [
+          {
+            "n": 1,
+            "t": "Lazarus",
+            "d": "2010-09-24"
+          },
+          {
+            "n": 2,
+            "t": "Shield",
+            "d": "2010-10-01"
+          },
+          {
+            "n": 3,
+            "t": "Supergirl",
+            "d": "2010-10-08"
+          },
+          {
+            "n": 4,
+            "t": "Homecoming",
+            "d": "2010-10-15"
+          },
+          {
+            "n": 5,
+            "t": "Isis",
+            "d": "2010-10-22"
+          },
+          {
+            "n": 6,
+            "t": "Harvest",
+            "d": "2010-10-29"
+          },
+          {
+            "n": 7,
+            "t": "Ambush",
+            "d": "2010-11-05"
+          },
+          {
+            "n": 8,
+            "t": "Abandoned",
+            "d": "2010-11-12"
+          },
+          {
+            "n": 9,
+            "t": "Patriot",
+            "d": "2010-11-19"
+          },
+          {
+            "n": 10,
+            "t": "Luthor",
+            "d": "2010-12-03"
+          },
+          {
+            "n": 11,
+            "t": "Icarus",
+            "d": "2010-12-10"
+          },
+          {
+            "n": 12,
+            "t": "Collateral",
+            "d": "2011-02-04"
+          },
+          {
+            "n": 13,
+            "t": "Beacon",
+            "d": "2011-02-11"
+          },
+          {
+            "n": 14,
+            "t": "Masquerade",
+            "d": "2011-02-18"
+          },
+          {
+            "n": 15,
+            "t": "Fortune",
+            "d": "2011-02-25"
+          },
+          {
+            "n": 16,
+            "t": "Scion",
+            "d": "2011-03-04"
+          },
+          {
+            "n": 17,
+            "t": "Kent",
+            "d": "2011-04-15"
+          },
+          {
+            "n": 18,
+            "t": "Booster",
+            "d": "2011-04-22"
+          },
+          {
+            "n": 19,
+            "t": "Dominion",
+            "d": "2011-04-29"
+          },
+          {
+            "n": 20,
+            "t": "Prophecy",
+            "d": "2011-05-06"
+          },
+          {
+            "n": 21,
+            "t": "Finale, Part 1",
+            "d": "2011-05-13"
+          },
+          {
+            "n": 22,
+            "t": "Finale, Part 2",
+            "d": "2011-05-13"
+          }
+        ]
+      }
     },
     {
       "creators": "Laurie Iker, Bryce Zabel",
@@ -15610,12 +19205,12 @@
       }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Alan Burnett, Paul Dini",
+      "cast": "Sam Vincent, Brian Drummond, Scott McNeil, Alberto Ghisi, Tabitha St. Germain",
+      "runtime": "~22 min per episode (two 11-min segments)",
+      "plot": "A lighthearted, Hanna-Barbera-style children's series following Krypto, Superman's Kryptonian puppy, who lands on Earth fully grown after a rocket mishap and is adopted by young Kevin Whitney — teaming up with Streaky the Supercat, Ace the Bat-Hound, and the alien Dog Star Patrol to protect Metropolis from Lex Luthor's iguana, the Joker's hyenas, and the villainous Mechanikat.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-Y",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Krypto the Superdog",
@@ -15629,15 +19224,216 @@
       "episodes": 39,
       "rt": null,
       "imdb": 6.5,
-      "blurb": "A children's series following Superman's dog and his fellow super-pets."
+      "blurb": "A children's series following Superman's dog and his fellow super-pets.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Krypto's Scrypto",
+            "d": "2005-03-25"
+          },
+          {
+            "n": 2,
+            "t": "Super-Flea / A Bug's Strife",
+            "d": "2005-04-05"
+          },
+          {
+            "n": 3,
+            "t": "Meet the Dog Stars / The Streaky Story",
+            "d": "2005-04-06"
+          },
+          {
+            "n": 4,
+            "t": "Diaper Madness / Feline Fatale",
+            "d": "2005-04-08"
+          },
+          {
+            "n": 5,
+            "t": "Dog-Gone Kevin / The Dark Hound Strikes!",
+            "d": "2005-04-10"
+          },
+          {
+            "n": 6,
+            "t": "My Pet Boy / Dem Bones",
+            "d": "2005-04-11"
+          },
+          {
+            "n": 7,
+            "t": "Bat Hound for a Day / Dogbot",
+            "d": "2005-04-12"
+          },
+          {
+            "n": 8,
+            "t": "Old Dog, New Tricks / Talk to the Animals",
+            "d": "2005-04-13"
+          },
+          {
+            "n": 9,
+            "t": "My Uncle, the Superhero / Top Dog",
+            "d": "2005-04-14"
+          },
+          {
+            "n": 10,
+            "t": "Puss in Space Boots / Teeny Tiny Trouble",
+            "d": "2005-04-15"
+          },
+          {
+            "n": 11,
+            "t": "Dogbot to the Rescue / Bad Bailey",
+            "d": "2005-04-18"
+          },
+          {
+            "n": 12,
+            "t": "Bat Hound's Bad Luck / Circus of the Dog Stars",
+            "d": "2005-04-19"
+          },
+          {
+            "n": 13,
+            "t": "The Living End / The Dog Days of Winter",
+            "d": "2005-04-20"
+          },
+          {
+            "n": 14,
+            "t": "Bad Hair Day / The Cat and the Bat",
+            "d": "2005-04-21"
+          },
+          {
+            "n": 15,
+            "t": "Melanie's Monkey / Funny Business",
+            "d": "2005-04-22"
+          },
+          {
+            "n": 16,
+            "t": "Now You See Him... / Bones of Contention",
+            "d": "2005-04-25"
+          },
+          {
+            "n": 17,
+            "t": "Superdog? Who's Superdog? / The Good Life",
+            "d": "2005-04-26"
+          },
+          {
+            "n": 18,
+            "t": "Streaky's Supercat Tale / The New Recruit",
+            "d": "2005-04-27"
+          },
+          {
+            "n": 19,
+            "t": "Up, Up and Away / Dinosaur Time",
+            "d": "2005-04-28"
+          },
+          {
+            "n": 20,
+            "t": "Puppy Problems / Switching Sides",
+            "d": "2005-04-29"
+          },
+          {
+            "n": 21,
+            "t": "Leaf of Absence / Big Sister",
+            "d": "2005-05-02"
+          },
+          {
+            "n": 22,
+            "t": "Bat Hound Meets the Dog Stars / A Dog's Life",
+            "d": "2005-05-27"
+          },
+          {
+            "n": 23,
+            "t": "Stray for a Day / Ruffled Feathers",
+            "d": "2005-06-03"
+          },
+          {
+            "n": 24,
+            "t": "Bat Hound and the Robin / Furry Fish",
+            "d": "2005-06-10"
+          },
+          {
+            "n": 25,
+            "t": "Tusky's Tooth / When Penguins Fly",
+            "d": "2005-06-17"
+          },
+          {
+            "n": 26,
+            "t": "Storybook Holiday",
+            "d": "2005-12-05"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Kids in Capes / Attack of the Virtual Vegetables",
+            "d": "2006-04-24"
+          },
+          {
+            "n": 2,
+            "t": "Mechani-Bot / Stretch-O-Mutt to the Rescue",
+            "d": "2006-04-25"
+          },
+          {
+            "n": 3,
+            "t": "Growing Pains / K-9 Krusader",
+            "d": "2006-04-26"
+          },
+          {
+            "n": 4,
+            "t": "Andrea Finds Out / Magic Mutts",
+            "d": "2006-04-27"
+          },
+          {
+            "n": 5,
+            "t": "Reptile Round-Up / Streaky's Field Trip",
+            "d": "2006-04-28"
+          },
+          {
+            "n": 6,
+            "t": "Pied Pussycat Piper / Solar Specs",
+            "d": "2006-05-01"
+          },
+          {
+            "n": 7,
+            "t": "Too Many Cooks / Join the Club",
+            "d": "2006-05-02"
+          },
+          {
+            "n": 8,
+            "t": "Bailey's Back / Streaky's Inner Struggle",
+            "d": "2006-05-03"
+          },
+          {
+            "n": 9,
+            "t": "Face Time / Catopia",
+            "d": "2006-05-04"
+          },
+          {
+            "n": 10,
+            "t": "The Parrot and the Pirates / Robbie's Return",
+            "d": "2006-05-05"
+          },
+          {
+            "n": 11,
+            "t": "Revolt of the Beavers / Invasion From the Planet Peanut",
+            "d": "2006-12-08"
+          },
+          {
+            "n": 12,
+            "t": "Mechani-Calamity / Barrump Barrump",
+            "d": "2006-12-12"
+          },
+          {
+            "n": 13,
+            "t": "Iguanukkah",
+            "d": "2006-12-15"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "James Tucker, Amy Wolfram",
+      "cast": "Yuri Lowenthal, Kari Wahlgren, Adam Wylie, Andy Milder, Shawn Harrison",
+      "runtime": "~21-22 min per episode",
+      "plot": "A team of teenage superheroes from across the galaxy in the 31st century travel back in time to recruit Earth's greatest hero — only to accidentally retrieve a young, still-untested Clark Kent, who grows into Superman and joins the Legion in their fight to defend the United Planets from the Fatal Five, Imperiex, and other cosmic threats.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Legion of Super Heroes",
@@ -15651,15 +19447,151 @@
       "episodes": 26,
       "rt": null,
       "imdb": 7.7,
-      "blurb": "A 31st-century team of teenage heroes, with a young Superman as a recurring member."
+      "blurb": "A 31st-century team of teenage heroes, with a young Superman as a recurring member.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Man of Tomorrow",
+            "d": "2006-09-23"
+          },
+          {
+            "n": 2,
+            "t": "Timber Wolf",
+            "d": "2006-09-30"
+          },
+          {
+            "n": 3,
+            "t": "Legacy",
+            "d": "2006-10-07"
+          },
+          {
+            "n": 4,
+            "t": "Phantoms",
+            "d": "2006-11-04"
+          },
+          {
+            "n": 5,
+            "t": "Champions",
+            "d": "2006-11-11"
+          },
+          {
+            "n": 6,
+            "t": "Fear Factory",
+            "d": "2006-11-18"
+          },
+          {
+            "n": 7,
+            "t": "Brain Drain",
+            "d": "2007-02-03"
+          },
+          {
+            "n": 8,
+            "t": "Lightning Storm",
+            "d": "2007-02-10"
+          },
+          {
+            "n": 9,
+            "t": "The Substitutes",
+            "d": "2007-02-17"
+          },
+          {
+            "n": 10,
+            "t": "Child's Play",
+            "d": "2007-02-24"
+          },
+          {
+            "n": 11,
+            "t": "Chain of Command",
+            "d": "2007-03-03"
+          },
+          {
+            "n": 12,
+            "t": "Sundown, Part 1",
+            "d": "2007-04-28"
+          },
+          {
+            "n": 13,
+            "t": "Sundown, Part 2",
+            "d": "2007-05-05"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "The Man from the Edge of Tomorrow, Part 1",
+            "d": "2007-09-22"
+          },
+          {
+            "n": 2,
+            "t": "The Man from the Edge of Tomorrow, Part 2",
+            "d": "2007-09-29"
+          },
+          {
+            "n": 3,
+            "t": "Cry Wolf",
+            "d": "2007-10-06"
+          },
+          {
+            "n": 4,
+            "t": "Chained Lightning",
+            "d": "2007-10-13"
+          },
+          {
+            "n": 5,
+            "t": "The Karate Kid",
+            "d": "2007-10-27"
+          },
+          {
+            "n": 6,
+            "t": "Who Am I?",
+            "d": "2007-11-03"
+          },
+          {
+            "n": 7,
+            "t": "Unnatural Alliances",
+            "d": "2007-11-17"
+          },
+          {
+            "n": 8,
+            "t": "Message in a Bottle",
+            "d": "2007-12-01"
+          },
+          {
+            "n": 9,
+            "t": "In the Beginning",
+            "d": "2008-03-08"
+          },
+          {
+            "n": 10,
+            "t": "Trials",
+            "d": "2008-03-15"
+          },
+          {
+            "n": 11,
+            "t": "In Your Dreams",
+            "d": "2008-03-22"
+          },
+          {
+            "n": 12,
+            "t": "Dark Victory, Part 1",
+            "d": "2008-03-29"
+          },
+          {
+            "n": 13,
+            "t": "Dark Victory, Part 2",
+            "d": "2008-04-05"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "James Tucker, Michael Jelenic",
+      "cast": "Diedrich Bader, Jeff Bennett, Corey Burton, John DiMaggio, Will Friedle",
+      "runtime": "~22-26 min per episode",
+      "plot": "A joyfully retro, comic-relief-forward take on Batman that spotlights his weekly team-ups with heroes deep from DC's back catalog — Blue Beetle, Aquaman, Plastic Man, the Metal Men, Adam Strange, and dozens more — against a rotating rogues gallery, restoring the pulpy, Silver Age spirit of the original Brave and the Bold comics.",
+      "whereToWatch": "Max, digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Batman: The Brave and the Bold",
@@ -15673,7 +19605,340 @@
       "episodes": 65,
       "rt": null,
       "imdb": 8,
-      "blurb": "A lighthearted, team-up-of-the-week series pulling from DC's deepest cuts."
+      "blurb": "A lighthearted, team-up-of-the-week series pulling from DC's deepest cuts.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Rise of the Blue Beetle!",
+            "d": "2008-11-14"
+          },
+          {
+            "n": 2,
+            "t": "Terror on Dinosaur Island!",
+            "d": "2008-11-21"
+          },
+          {
+            "n": 3,
+            "t": "Evil Under the Sea!",
+            "d": "2008-12-05"
+          },
+          {
+            "n": 4,
+            "t": "Day of the Dark Knight!",
+            "d": "2009-01-02"
+          },
+          {
+            "n": 5,
+            "t": "Invasion of the Secret Santas!",
+            "d": "2008-12-12"
+          },
+          {
+            "n": 6,
+            "t": "Enter the Outsiders!",
+            "d": "2009-01-09"
+          },
+          {
+            "n": 7,
+            "t": "Dawn of the Dead Man!",
+            "d": "2009-01-16"
+          },
+          {
+            "n": 8,
+            "t": "Fall of the Blue Beetle!",
+            "d": "2009-01-23"
+          },
+          {
+            "n": 9,
+            "t": "Journey to the Center of the Bat!",
+            "d": "2009-01-30"
+          },
+          {
+            "n": 10,
+            "t": "The Eyes of Despero!",
+            "d": "2009-02-06"
+          },
+          {
+            "n": 11,
+            "t": "Return of the Fearsome Fangs!",
+            "d": "2009-02-20"
+          },
+          {
+            "n": 12,
+            "t": "Deep Cover for Batman!",
+            "d": "2009-02-27"
+          },
+          {
+            "n": 13,
+            "t": "Game Over for Owlman!",
+            "d": "2009-03-06"
+          },
+          {
+            "n": 14,
+            "t": "Mystery In Space!",
+            "d": "2009-03-13"
+          },
+          {
+            "n": 15,
+            "t": "Trials of the Demon!",
+            "d": "2009-03-20"
+          },
+          {
+            "n": 16,
+            "t": "Night of the Huntress!",
+            "d": "2009-05-08"
+          },
+          {
+            "n": 17,
+            "t": "Menace of the Conqueror Caveman!",
+            "d": "2009-05-15"
+          },
+          {
+            "n": 18,
+            "t": "The Color of Revenge!",
+            "d": "2009-05-22"
+          },
+          {
+            "n": 19,
+            "t": "Legends of the Dark Mite!",
+            "d": "2009-05-29"
+          },
+          {
+            "n": 20,
+            "t": "Hail the Tornado Tyrant!",
+            "d": "2009-06-05"
+          },
+          {
+            "n": 21,
+            "t": "Duel of the Double Crossers!",
+            "d": "2009-06-12"
+          },
+          {
+            "n": 22,
+            "t": "Last Bat on Earth!",
+            "d": "2009-06-19"
+          },
+          {
+            "n": 23,
+            "t": "When OMAC Attacks!",
+            "d": "2009-10-16"
+          },
+          {
+            "n": 24,
+            "t": "Mayhem of the Music Meister!",
+            "d": "2009-10-23"
+          },
+          {
+            "n": 25,
+            "t": "Inside the Outsiders!",
+            "d": "2009-11-06"
+          },
+          {
+            "n": 26,
+            "t": "The Fate of Equinox!",
+            "d": "2009-11-13"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "Death Race to Oblivion!",
+            "d": "2009-11-20"
+          },
+          {
+            "n": 2,
+            "t": "Long Arm of the Law!",
+            "d": "2009-12-11"
+          },
+          {
+            "n": 3,
+            "t": "Revenge of the Reach!",
+            "d": "2010-01-01"
+          },
+          {
+            "n": 4,
+            "t": "Aquaman's Outrageous Adventure!",
+            "d": "2010-01-08"
+          },
+          {
+            "n": 5,
+            "t": "The Golden Age of Justice!",
+            "d": "2010-01-15"
+          },
+          {
+            "n": 6,
+            "t": "Sidekicks Assemble!",
+            "d": "2010-01-22"
+          },
+          {
+            "n": 7,
+            "t": "Clash of the Metal Men!",
+            "d": "2010-01-29"
+          },
+          {
+            "n": 8,
+            "t": "A Bat Divided!",
+            "d": "2010-02-05"
+          },
+          {
+            "n": 9,
+            "t": "The Super-Batman of Planet X!",
+            "d": "2010-03-26"
+          },
+          {
+            "n": 10,
+            "t": "The Power of Shazam!",
+            "d": "2010-04-02"
+          },
+          {
+            "n": 11,
+            "t": "Chill of the Night!",
+            "d": "2010-04-09"
+          },
+          {
+            "n": 12,
+            "t": "Gorillas In our Midst!",
+            "d": "2010-04-16"
+          },
+          {
+            "n": 13,
+            "t": "The Siege of Starro! Part One",
+            "d": "2010-09-17"
+          },
+          {
+            "n": 14,
+            "t": "The Siege of Starro! Part Two",
+            "d": "2010-09-24"
+          },
+          {
+            "n": 15,
+            "t": "Requiem for a Scarlet Speedster!",
+            "d": "2010-10-01"
+          },
+          {
+            "n": 16,
+            "t": "The Last Patrol!",
+            "d": "2010-10-08"
+          },
+          {
+            "n": 17,
+            "t": "The Mask of Matches Malone!",
+            "d": "2011-12-05"
+          },
+          {
+            "n": 18,
+            "t": "Menace of the Madniks!",
+            "d": "2010-10-15"
+          },
+          {
+            "n": 19,
+            "t": "Emperor Joker!",
+            "d": "2010-10-22"
+          },
+          {
+            "n": 20,
+            "t": "The Criss Cross Conspiracy!",
+            "d": "2010-10-30"
+          },
+          {
+            "n": 21,
+            "t": "The Plague of the Prototypes!",
+            "d": "2010-11-05"
+          },
+          {
+            "n": 22,
+            "t": "Cry Freedom Fighters!",
+            "d": "2010-11-12"
+          },
+          {
+            "n": 23,
+            "t": "The Knights of Tomorrow!",
+            "d": "2010-11-19"
+          },
+          {
+            "n": 24,
+            "t": "Darkseid Descending!",
+            "d": "2010-12-03"
+          },
+          {
+            "n": 25,
+            "t": "Bat-Mite Presents: Batman's Strangest Cases!",
+            "d": "2011-04-01"
+          },
+          {
+            "n": 26,
+            "t": "The Malicious Mr. Mind!",
+            "d": "2011-04-08"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Battle of the Superheroes!",
+            "d": "2011-03-25"
+          },
+          {
+            "n": 2,
+            "t": "Joker: The Vile and the Villainous!",
+            "d": "2011-04-15"
+          },
+          {
+            "n": 3,
+            "t": "Shadow of the Bat!",
+            "d": "2011-04-22"
+          },
+          {
+            "n": 4,
+            "t": "Night of the Batmen!",
+            "d": "2011-04-29"
+          },
+          {
+            "n": 5,
+            "t": "Scorn of the Star Sapphire!",
+            "d": "2011-09-16"
+          },
+          {
+            "n": 6,
+            "t": "Time Out for Vengeance!",
+            "d": "2011-09-23"
+          },
+          {
+            "n": 7,
+            "t": "Sword of the Atom!",
+            "d": "2011-09-30"
+          },
+          {
+            "n": 8,
+            "t": "Triumvirate of Terror!",
+            "d": "2011-10-07"
+          },
+          {
+            "n": 9,
+            "t": "Bold Beginnings!",
+            "d": "2011-10-14"
+          },
+          {
+            "n": 10,
+            "t": "Powerless!",
+            "d": "2011-10-21"
+          },
+          {
+            "n": 11,
+            "t": "Crisis: 22,300 Miles Above Earth!",
+            "d": "2011-10-28"
+          },
+          {
+            "n": 12,
+            "t": "Four Star Spectacular!",
+            "d": "2011-11-04"
+          },
+          {
+            "n": 13,
+            "t": "Mitefall!",
+            "d": "2011-11-18"
+          }
+        ]
+      }
     },
     {
       "creators": "Greg Weisman, Brandon Vietti",
@@ -21049,12 +25314,12 @@
       "blurb": "An announced anime series centered on the Joker."
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "E. Nelson Bridwell, Carmine Infantino, Julius Schwartz",
+      "cast": "Danny Dark, Olan Soule, Casey Kasem, Shannon Farnon, Norman Alden",
+      "runtime": "~21-45 min per episode (varied by season)",
+      "plot": "Superman, Batman, Robin, Wonder Woman, and Aquaman join forces as the Super Friends, responding to global emergencies and eco-disasters from their Hall of Justice headquarters — a Saturday-morning institution that ran for over a decade across seven different titles, gradually expanding to include Green Lantern, Black Vulcan, Apache Chief, and the villainous Legion of Doom.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-G",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Super Friends",
@@ -21064,19 +25329,103 @@
       "hero": [
         "Justice League"
       ],
-      "seasons": 8,
-      "episodes": null,
+      "seasons": 9,
+      "episodes": 93,
       "rt": null,
       "imdb": 6.9,
-      "blurb": "The original Saturday-morning Justice League team-up cartoon, running across several retitled iterations."
+      "blurb": "The original Saturday-morning Justice League team-up cartoon, running across nine seasons and several retitled iterations (The All-New Super Friends Hour, Challenge of the Superfriends, and others) between 1973 and 1986.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Power Pirate",
+            "d": "1973-09-08"
+          },
+          {
+            "n": 2,
+            "t": "The Baffles Puzzle",
+            "d": "1973-09-15"
+          },
+          {
+            "n": 3,
+            "t": "Professor Goodfellow's G.E.E.C.",
+            "d": "1973-09-22"
+          },
+          {
+            "n": 4,
+            "t": "The Weather Maker",
+            "d": "1973-09-29"
+          },
+          {
+            "n": 5,
+            "t": "Dr. Pelagian's War",
+            "d": "1973-10-06"
+          },
+          {
+            "n": 6,
+            "t": "The Shamon 'U'",
+            "d": "1973-10-13"
+          },
+          {
+            "n": 7,
+            "t": "Too Hot to Handle",
+            "d": "1973-10-20"
+          },
+          {
+            "n": 8,
+            "t": "The Androids",
+            "d": "1973-10-27"
+          },
+          {
+            "n": 9,
+            "t": "The Balloon People",
+            "d": "1973-11-03"
+          },
+          {
+            "n": 10,
+            "t": "The Fantastic Frerps",
+            "d": "1973-11-10"
+          },
+          {
+            "n": 11,
+            "t": "The Ultra Beam",
+            "d": "1973-11-17"
+          },
+          {
+            "n": 12,
+            "t": "The Menace of the White Dwarf",
+            "d": "1973-11-24"
+          },
+          {
+            "n": 13,
+            "t": "The Mysterious Moles",
+            "d": "1973-12-01"
+          },
+          {
+            "n": 14,
+            "t": "Gulliver's Gigantic Goof",
+            "d": "1973-12-08"
+          },
+          {
+            "n": 15,
+            "t": "The Planet Splitter",
+            "d": "1973-12-15"
+          },
+          {
+            "n": 16,
+            "t": "The Watermen",
+            "d": "1973-12-22"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Lou Scheimer, Norm Prescott",
+      "cast": "Bud Collyer, Joan Alexander, Jack Grimes, Ted Knight, Jackson Beck",
+      "runtime": "~6 min per segment",
+      "plot": "Filmation's first-ever animated Superman series, following Daily Planet reporter Clark Kent as he secretly battles alien invaders, mad scientists, and classic rogues like Lex Luthor and Brainiac as Superman — originally paired with Superboy segments, later folded into hour-long anthology blocks alongside Aquaman and then Batman.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The New Adventures of Superman",
@@ -21090,37 +25439,469 @@
       "episodes": 68,
       "rt": null,
       "imdb": 6.7,
-      "blurb": "Filmation's first animated Superman series, paired in its run with segments on Superboy and Aquaman."
+      "blurb": "Filmation's first animated Superman series, paired in its run with segments on Superboy and Aquaman. A 4th season (1969-70) was reruns only, with no new episodes.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Force Phantom",
+            "d": "1966-09-10"
+          },
+          {
+            "n": 2,
+            "t": "Mermen of Emor",
+            "d": "1966-09-10"
+          },
+          {
+            "n": 3,
+            "t": "The Prehistoric Pterodactyls",
+            "d": "1966-09-17"
+          },
+          {
+            "n": 4,
+            "t": "Merlin's Magic Marbles",
+            "d": "1966-09-17"
+          },
+          {
+            "n": 5,
+            "t": "The Threat of the Thrutans",
+            "d": "1966-09-24"
+          },
+          {
+            "n": 6,
+            "t": "The Wicked Warlock",
+            "d": "1966-09-24"
+          },
+          {
+            "n": 7,
+            "t": "The Chimp Who Made It Big",
+            "d": "1966-10-01"
+          },
+          {
+            "n": 8,
+            "t": "The Deadly Icebergs",
+            "d": "1966-10-01"
+          },
+          {
+            "n": 9,
+            "t": "Robot of Riga",
+            "d": "1966-10-08"
+          },
+          {
+            "n": 10,
+            "t": "The Invisible Raiders",
+            "d": "1966-10-08"
+          },
+          {
+            "n": 11,
+            "t": "Neolithic Nightmare",
+            "d": "1966-10-15"
+          },
+          {
+            "n": 12,
+            "t": "The Return of Brainiac",
+            "d": "1966-10-15"
+          },
+          {
+            "n": 13,
+            "t": "The Magnetic Monster",
+            "d": "1966-10-22"
+          },
+          {
+            "n": 14,
+            "t": "The Toys of Doom",
+            "d": "1966-10-22"
+          },
+          {
+            "n": 15,
+            "t": "The Iron Eater",
+            "d": "1966-10-29"
+          },
+          {
+            "n": 16,
+            "t": "The Ape Army of the Amazon",
+            "d": "1966-10-29"
+          },
+          {
+            "n": 17,
+            "t": "The Fire Phantom",
+            "d": "1966-11-05"
+          },
+          {
+            "n": 18,
+            "t": "The Deadly Dish",
+            "d": "1966-11-05"
+          },
+          {
+            "n": 19,
+            "t": "Insect Raiders",
+            "d": "1966-11-12"
+          },
+          {
+            "n": 20,
+            "t": "Return of Warlock",
+            "d": "1966-11-12"
+          },
+          {
+            "n": 21,
+            "t": "The Abominable Ice-Man",
+            "d": "1966-11-19"
+          },
+          {
+            "n": 22,
+            "t": "The Men from A.P.E.",
+            "d": "1966-11-19"
+          },
+          {
+            "n": 23,
+            "t": "The Tree Man of Arbora",
+            "d": "1966-11-26"
+          },
+          {
+            "n": 24,
+            "t": "The Image Maker",
+            "d": "1966-11-26"
+          },
+          {
+            "n": 25,
+            "t": "Superman's Double Trouble",
+            "d": "1966-12-03"
+          },
+          {
+            "n": 26,
+            "t": "The Deadly Super-Doll",
+            "d": "1966-12-03"
+          },
+          {
+            "n": 27,
+            "t": "Lava Men",
+            "d": "1966-12-10"
+          },
+          {
+            "n": 28,
+            "t": "Luthor Strikes Again",
+            "d": "1966-12-10"
+          },
+          {
+            "n": 29,
+            "t": "Mission to Planet Peril",
+            "d": "1966-12-17"
+          },
+          {
+            "n": 30,
+            "t": "The Pernicious Parasite",
+            "d": "1966-12-17"
+          },
+          {
+            "n": 31,
+            "t": "The Two Faces of Superman",
+            "d": "1966-12-24"
+          },
+          {
+            "n": 32,
+            "t": "The Imp-Practical Joker",
+            "d": "1966-12-24"
+          },
+          {
+            "n": 33,
+            "t": "Superman Meets Brainiac",
+            "d": "1966-12-31"
+          },
+          {
+            "n": 34,
+            "t": "Seeds of Disaster",
+            "d": "1966-12-31"
+          },
+          {
+            "n": 35,
+            "t": "The Malevolent Mummy",
+            "d": "1967-01-07"
+          },
+          {
+            "n": 36,
+            "t": "The Bird-Men from Lost Valley",
+            "d": "1967-01-07"
+          }
+        ],
+        "2": [
+          {
+            "n": 1,
+            "t": "A.P.E. Strikes Again",
+            "d": "1967-09-09"
+          },
+          {
+            "n": 2,
+            "t": "The Lethal Lightning Bug",
+            "d": "1967-09-09"
+          },
+          {
+            "n": 3,
+            "t": "The Prankster",
+            "d": "1967-09-16"
+          },
+          {
+            "n": 4,
+            "t": "The Saboteurs",
+            "d": "1967-09-16"
+          },
+          {
+            "n": 5,
+            "t": "The Wisp of Wickedness",
+            "d": "1967-09-23"
+          },
+          {
+            "n": 6,
+            "t": "Superman Meets His Match",
+            "d": "1967-09-23"
+          },
+          {
+            "n": 7,
+            "t": "Night of the Octopod",
+            "d": "1967-09-30"
+          },
+          {
+            "n": 8,
+            "t": "Brainiac's Bubbles",
+            "d": "1967-09-30"
+          },
+          {
+            "n": 9,
+            "t": "War of the Bee Battalion",
+            "d": "1967-10-07"
+          },
+          {
+            "n": 10,
+            "t": "The Toyman's Super Toy",
+            "d": "1967-10-07"
+          },
+          {
+            "n": 11,
+            "t": "The Cage of Glass",
+            "d": "1967-10-14"
+          },
+          {
+            "n": 12,
+            "t": "The Atomic Superman",
+            "d": "1967-10-14"
+          },
+          {
+            "n": 13,
+            "t": "Luthor's Loco Looking Glass",
+            "d": "1967-10-21"
+          },
+          {
+            "n": 14,
+            "t": "The Warlock's Revenge",
+            "d": "1967-10-21"
+          },
+          {
+            "n": 15,
+            "t": "The Halyah of the Himalayas",
+            "d": "1967-10-28"
+          },
+          {
+            "n": 16,
+            "t": "Luthor's Fatal Fireworks",
+            "d": "1967-10-28"
+          }
+        ],
+        "3": [
+          {
+            "n": 1,
+            "t": "Luthor's Lethal Laser, Part 1",
+            "d": "1968-09-14"
+          },
+          {
+            "n": 2,
+            "t": "Luthor's Lethal Laser, Part 2",
+            "d": "1968-09-14"
+          },
+          {
+            "n": 3,
+            "t": "Can a Luthor Change His Spots?, Part 1",
+            "d": "1968-09-21"
+          },
+          {
+            "n": 4,
+            "t": "Can a Luthor Change His Spots?, Part 2",
+            "d": "1968-09-21"
+          },
+          {
+            "n": 5,
+            "t": "The Team of Terror, Part 1",
+            "d": "1968-09-28"
+          },
+          {
+            "n": 6,
+            "t": "The Team of Terror, Part 2",
+            "d": "1968-09-28"
+          },
+          {
+            "n": 7,
+            "t": "Rain of Iron, Part 1",
+            "d": "1968-10-05"
+          },
+          {
+            "n": 8,
+            "t": "Rain of Iron, Part 2",
+            "d": "1968-10-05"
+          },
+          {
+            "n": 9,
+            "t": "The Mysterious Mr. Mist, Part 1",
+            "d": "1968-10-12"
+          },
+          {
+            "n": 10,
+            "t": "The Mysterious Mr. Mist, Part 2",
+            "d": "1968-10-12"
+          },
+          {
+            "n": 11,
+            "t": "Luminians on the Loose, Part 1",
+            "d": "1968-10-19"
+          },
+          {
+            "n": 12,
+            "t": "Luminians on the Loose, Part 2",
+            "d": "1968-10-19"
+          },
+          {
+            "n": 13,
+            "t": "The Ghost of Kilbane Castle, Part 1",
+            "d": "1968-10-26"
+          },
+          {
+            "n": 14,
+            "t": "The Ghost of Kilbane Castle, Part 2",
+            "d": "1968-10-26"
+          },
+          {
+            "n": 15,
+            "t": "The Japanese Sandman, Part 1",
+            "d": "1968-11-02"
+          },
+          {
+            "n": 16,
+            "t": "The Japanese Sandman, Part 2",
+            "d": "1968-11-02"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Filmation, DC Comics",
+      "cast": "Adam West, Burt Ward, Lennie Weinrib, Melendy Britt, Lou Scheimer",
+      "runtime": "~22-25 min per episode",
+      "plot": "Adam West and Burt Ward return to voice Batman and Robin in this Filmation-animated continuation of the 1966 series, joined by Batgirl as the Dynamic Duo battles Gotham's rogues gallery — often complicated by the well-meaning but chaotic interference of Bat-Mite, an imp who considers himself Batman's biggest fan.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-G",
       "trailer": "",
       "seasonTrailers": {},
       "t": "The New Adventures of Batman",
-      "y": "1977–1978",
+      "y": "1977",
       "type": "Animated",
       "connected": "Classic",
       "hero": [
         "Batman"
       ],
       "seasons": 1,
-      "episodes": null,
+      "episodes": 16,
       "rt": null,
       "imdb": 6.3,
-      "blurb": "A Filmation animated series pairing Batman and Robin with the mysterious alien Bat-Mite."
+      "blurb": "A Filmation animated series pairing Batman and Robin with the mysterious imp Bat-Mite, reuniting Adam West and Burt Ward as voice cast.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "The Pest",
+            "d": "1977-02-12"
+          },
+          {
+            "n": 2,
+            "t": "The Moonman",
+            "d": "1977-02-17"
+          },
+          {
+            "n": 3,
+            "t": "Trouble Identity",
+            "d": "1977-02-24"
+          },
+          {
+            "n": 4,
+            "t": "A Sweet Joke on Gotham City",
+            "d": "1977-03-03"
+          },
+          {
+            "n": 5,
+            "t": "The Bermuda Rectangle",
+            "d": "1977-03-10"
+          },
+          {
+            "n": 6,
+            "t": "Curses! Oiled Again!",
+            "d": "1977-03-17"
+          },
+          {
+            "n": 7,
+            "t": "Bite-Sized",
+            "d": "1977-03-24"
+          },
+          {
+            "n": 8,
+            "t": "Reading, Writing, and Wronging",
+            "d": "1977-03-31"
+          },
+          {
+            "n": 9,
+            "t": "The Chameleon",
+            "d": "1977-04-07"
+          },
+          {
+            "n": 10,
+            "t": "He Who Laughs Last",
+            "d": "1977-04-14"
+          },
+          {
+            "n": 11,
+            "t": "The Deep Freeze",
+            "d": "1977-04-21"
+          },
+          {
+            "n": 12,
+            "t": "Dead Ringers",
+            "d": "1977-04-28"
+          },
+          {
+            "n": 13,
+            "t": "Birds of a Feather Fool Around Together",
+            "d": "1977-05-05"
+          },
+          {
+            "n": 14,
+            "t": "Have an Evil Day, Part 1",
+            "d": "1977-05-12"
+          },
+          {
+            "n": 15,
+            "t": "Have an Evil Day, Part 2",
+            "d": "1977-05-19"
+          },
+          {
+            "n": 16,
+            "t": "This Looks Like a Job for Bat-Mite",
+            "d": "1977-05-28"
+          }
+        ]
+      }
     },
     {
-      "creators": "",
-      "cast": "",
-      "runtime": "",
-      "plot": "",
-      "whereToWatch": "",
-      "ageRating": "",
+      "creators": "Marv Wolfman, Gil Kane",
+      "cast": "Beau Weaver, Ginny McSwain",
+      "runtime": "~18 min main story + 4 min 'Family Album' segment",
+      "plot": "A Ruby-Spears animated series made for Superman's 50th anniversary, loosely based on John Byrne's post-Crisis comic reboot, pairing an 18-minute main Superman adventure with a shorter 'Superman's Family Album' segment recounting young Clark Kent's childhood in Smallville.",
+      "whereToWatch": "Digital rental/purchase",
+      "ageRating": "TV-Y7",
       "trailer": "",
       "seasonTrailers": {},
       "t": "Superman",
@@ -21134,7 +25915,76 @@
       "episodes": 13,
       "rt": null,
       "imdb": 6.2,
-      "blurb": "A short-lived Ruby-Spears animated series."
+      "blurb": "A short-lived Ruby-Spears animated series made for Superman's 50th anniversary in 1988, loosely based on John Byrne's post-Crisis reboot.",
+      "epDetails": {
+        "1": [
+          {
+            "n": 1,
+            "t": "Destroy the Defendroids",
+            "d": "1988-09-17"
+          },
+          {
+            "n": 2,
+            "t": "Fugitive from Space",
+            "d": "1988-09-24"
+          },
+          {
+            "n": 3,
+            "t": "By the Skin of the Dragon's Teeth",
+            "d": "1988-10-01"
+          },
+          {
+            "n": 4,
+            "t": "Cybron Strikes",
+            "d": "1988-10-08"
+          },
+          {
+            "n": 5,
+            "t": "The Big Scoop",
+            "d": "1988-10-15"
+          },
+          {
+            "n": 6,
+            "t": "Triple Play",
+            "d": "1988-10-22"
+          },
+          {
+            "n": 7,
+            "t": "The Hunter",
+            "d": "1988-10-29"
+          },
+          {
+            "n": 8,
+            "t": "Superman and Wonder Woman vs. the Sorceress of Time",
+            "d": "1988-11-05"
+          },
+          {
+            "n": 9,
+            "t": "Bonechill",
+            "d": "1988-11-12"
+          },
+          {
+            "n": 10,
+            "t": "The Beast Beneath These Streets",
+            "d": "1988-11-19"
+          },
+          {
+            "n": 11,
+            "t": "Wildsharkk",
+            "d": "1988-11-26"
+          },
+          {
+            "n": 12,
+            "t": "Night of the Living Shadows",
+            "d": "1988-12-03"
+          },
+          {
+            "n": 13,
+            "t": "The Last Time I Saw Earth",
+            "d": "1988-12-10"
+          }
+        ]
+      }
     },
     {
       "creators": "Andy Heyward, Robby London",
