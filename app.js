@@ -344,6 +344,7 @@ function wireImageFallbacks(root){
   root.querySelectorAll("img[data-fallback-title]").forEach(img=>{
     img.addEventListener("error", ()=>{
       const wrap = img.parentElement;
+      wrap.classList.remove("has-poster");
       wrap.innerHTML = "";
       const div = document.createElement("div");
       div.className = "sheet-hero-fallback";
@@ -540,7 +541,7 @@ function extraDetailsHtml(cat, d){
 
 function heroHtml(cat, d){
   if(d.poster){
-    return `<div class="sheet-hero ${cat}">
+    return `<div class="sheet-hero has-poster ${cat}">
       <img src="${escapeAttr(d.poster)}" alt="" data-fallback-title="${escapeAttr(d.t)}">
     </div>`;
   }
