@@ -320,13 +320,37 @@ function initials(title){
   return (words[0][0]+words[1][0]).toUpperCase();
 }
 function thumbHtml(cat, d){
-  const fallback = `<div class="card-thumb-fallback">${initials(d.t)}</div>`;
   if(d.poster){
     return `<div class="card-thumb">
-      <img src="${d.poster}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='${fallback.replace(/'/g,"\\'")}'">
+      <img src="${escapeAttr(d.poster)}" alt="" loading="lazy" data-fallback-initials="${escapeAttr(initials(d.t))}">
     </div>`;
   }
-  return `<div class="card-thumb">${fallback}</div>`;
+  return `<div class="card-thumb"><div class="card-thumb-fallback">${initials(d.t)}</div></div>`;
+}
+function escapeAttr(s){
+  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function wireImageFallbacks(root){
+  root.querySelectorAll("img[data-fallback-initials]").forEach(img=>{
+    img.addEventListener("error", ()=>{
+      const wrap = img.parentElement;
+      wrap.innerHTML = "";
+      const div = document.createElement("div");
+      div.className = "card-thumb-fallback";
+      div.textContent = img.dataset.fallbackInitials;
+      wrap.appendChild(div);
+    }, {once:true});
+  });
+  root.querySelectorAll("img[data-fallback-title]").forEach(img=>{
+    img.addEventListener("error", ()=>{
+      const wrap = img.parentElement;
+      wrap.innerHTML = "";
+      const div = document.createElement("div");
+      div.className = "sheet-hero-fallback";
+      div.textContent = img.dataset.fallbackTitle;
+      wrap.appendChild(div);
+    }, {once:true});
+  });
 }
 
 function cardHtml(cat, d){
@@ -406,6 +430,7 @@ function renderMovieSeriesCards(){
 }
 
 function attachCardHandlers(cat){
+  wireImageFallbacks(gridEl);
   gridEl.querySelectorAll(".card").forEach(c=>{
     c.addEventListener("click", (e)=>{
       if(e.target.closest("[data-del]")) return;
@@ -514,13 +539,12 @@ function extraDetailsHtml(cat, d){
 }
 
 function heroHtml(cat, d){
-  const fallback = `<div class="sheet-hero-fallback">${d.t}</div>`;
   if(d.poster){
     return `<div class="sheet-hero ${cat}">
-      <img src="${d.poster}" alt="" onerror="this.parentElement.innerHTML='${fallback.replace(/'/g,"\\'")}'">
+      <img src="${escapeAttr(d.poster)}" alt="" data-fallback-title="${escapeAttr(d.t)}">
     </div>`;
   }
-  return `<div class="sheet-hero ${cat}">${fallback}</div>`;
+  return `<div class="sheet-hero ${cat}"><div class="sheet-hero-fallback">${d.t}</div></div>`;
 }
 
 function openSheet(d){
@@ -559,6 +583,7 @@ function openSheet(d){
   }
 
   sheetContent.innerHTML = html;
+  wireImageFallbacks(sheetContent);
 
   const trailerBtn = sheetContent.querySelector(".trailer-btn");
   if(trailerBtn){
