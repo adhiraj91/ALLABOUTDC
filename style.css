@@ -185,6 +185,16 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .group-hub-hint{ font-family:var(--font-mono); font-size:10px; color:var(--ink-faint); font-weight:400; margin-left:auto; padding-left:8px; }
 
 /* ---------- Character/Team hub link (detail sheet) ---------- */
+.sheet-journey-row{ display:flex; gap:8px; margin-bottom:10px; }
+.journey-btn{
+  flex:1; background:var(--panel-2); border:1px solid var(--line); border-radius:9px;
+  padding:9px 10px; font-family:var(--font-body); font-size:12.5px; font-weight:600;
+  color:var(--ink-dim); cursor:pointer;
+}
+.journey-btn[data-active="true"]{ color:var(--ink); border-color:var(--ink-faint); }
+.fav-toggle[data-active="true"]{ color:#ff5a7a; border-color:#ff5a7a; }
+.done-toggle[data-active="true"]{ color:var(--good); border-color:var(--good); }
+
 .hub-link-btn{
   display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line);
   border-radius:9px; padding:10px 12px; margin-bottom:14px; color:var(--ink-dim);
@@ -450,6 +460,20 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .discover-tile.games{ border-color:color-mix(in srgb, var(--games) 35%, var(--line)); }
 .discover-tile.comics{ border-color:color-mix(in srgb, var(--comics) 35%, var(--line)); }
 
+/* ---------- My Journey ---------- */
+.journey-hero p{ max-width:480px; }
+.journey-progress-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.journey-progress-card{
+  background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:12px;
+}
+.journey-progress-top{
+  display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; margin-bottom:8px;
+}
+.journey-progress-top span:last-child{ font-family:var(--font-mono); font-weight:400; color:var(--ink-faint); }
+.journey-progress-bar{ height:6px; border-radius:3px; background:var(--line); overflow:hidden; }
+.journey-progress-fill{ height:100%; background:var(--good); border-radius:3px; }
+.journey-empty{ font-size:13px; color:var(--ink-faint); padding:6px 2px; }
+
 /* ---------- Mobile bottom nav ---------- */
 .mobile-nav{
   display:none; position:fixed; left:0; right:0; bottom:0; z-index:35;
@@ -551,10 +575,17 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 
 /* ---------- Card thumbnails ---------- */
 .card{ display:flex; gap:12px; align-items:stretch; }
+.card-thumb-wrap{ flex:0 0 56px; position:relative; }
 .card-thumb{
   flex:0 0 56px; width:56px; height:84px; border-radius:7px; overflow:hidden;
   background:var(--panel-2); position:relative; flex-shrink:0;
 }
+.fav-btn{
+  position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%;
+  background:rgba(10,10,14,0.75); border:none; color:#fff; font-size:12px; line-height:1;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2;
+}
+.fav-btn[data-active="true"]{ color:#ff5a7a; }
 .card-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
 .card-thumb-fallback{
   width:100%; height:100%; display:flex; align-items:center; justify-content:center;

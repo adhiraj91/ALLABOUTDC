@@ -15,6 +15,7 @@ const CATS = [
 ];
 const INTRO = {
   home:"An unofficial DC reading & watch guide — every movie, series, game and comic run, organized by hero, timeline and how deep you want to go.",
+  journey:"Your favorites and progress, saved on this device — tap ♡ on any title, or \"Mark as Watched/Read/Played\", to track them here.",
   movies:"Every DC film — pick Live Action or Animated, then sort by newest, by hero or team, by connected timeline, or by rating.",
   series:"Every DC TV series — pick Live Action or Animated, then sort by newest, by hero or team, by connected timeline, or by rating.",
   games:"Organized by franchise (Arkham, Injustice, LEGO, and so on) rather than platform or year, since that's how most of these actually relate to each other.",
@@ -111,6 +112,41 @@ let state = {
 };
 let isAdmin = false;
 let loaded = false;
+
+/* ============================= MY JOURNEY: favorites & progress (Phase 3) =============================
+   Stored per-device in localStorage — this site has no reader login, only admin auth, so there is no
+   cross-device sync. Each browser/phone keeps its own list. */
+const LS_FAV_KEY = "dc_favorites";
+const LS_PROGRESS_KEY = "dc_progress";
+function lsGetJson(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ return fallback; }
+}
+function lsSetJson(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){ /* storage unavailable — fail quietly */ }
+}
+function itemKey(cat, id){ return `${cat}:${id}`; }
+function getFavorites(){ return lsGetJson(LS_FAV_KEY, []); }
+function isFavorite(cat, id){ return getFavorites().includes(itemKey(cat,id)); }
+function toggleFavorite(cat, id){
+  const key = itemKey(cat,id);
+  let favs = getFavorites();
+  if(favs.includes(key)) favs = favs.filter(k=>k!==key);
+  else favs = [...favs, key];
+  lsSetJson(LS_FAV_KEY, favs);
+  return favs.includes(key);
+}
+function getProgress(){ return lsGetJson(LS_PROGRESS_KEY, {}); }
+function isDone(cat, id){ return !!getProgress()[itemKey(cat,id)]; }
+function toggleDone(cat, id){
+  const key = itemKey(cat,id);
+  const prog = getProgress();
+  if(prog[key]) delete prog[key];
+  else prog[key] = true;
+  lsSetJson(LS_PROGRESS_KEY, prog);
+  return !!prog[key];
+}
+const PROGRESS_VERB = { movies:"Watched", series:"Watched", games:"Played", comics:"Read" };
 
 /* ============================= DOM ============================= */
 const $ = (sel,root=document)=>root.querySelector(sel);
@@ -234,10 +270,11 @@ function goToCategory(cat, opts){
 }
 function buildTabs(){
   const homeBtn = `<button class="tab-btn" data-cat="home" data-active="${state.cat==="home"}">Home</button>`;
+  const journeyBtn = `<button class="tab-btn" data-cat="journey" data-active="${state.cat==="journey"}">My Journey</button>`;
   tabsEl.innerHTML = homeBtn + CATS.map(c=>{
     const n = DATA[c.id].length;
     return `<button class="tab-btn" data-cat="${c.id}" data-active="${state.cat===c.id}">${c.label}<span class="n">${n}</span></button>`;
-  }).join("");
+  }).join("") + journeyBtn;
   tabsEl.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       state.cat = btn.dataset.cat;
@@ -254,7 +291,7 @@ function buildFilters(){
   filterRow.innerHTML = "";
   chipRow.innerHTML = "";
 
-  if(cat==="home") return;
+  if(cat==="home" || cat==="journey") return;
 
   if(cat==="movies" || cat==="series"){
     buildMovieSeriesFilters(cat);
@@ -507,8 +544,12 @@ function wireImageFallbacks(root){
 
 function cardHtml(cat, d){
   const meta = (cat==="movies"||cat==="series") ? movieSeriesMetaTags(cat, d) : metaTagsGeneric(cat, d);
+  const fav = isFavorite(cat, d.id);
   return `<div class="card ${cat}" data-id="${d.id}" data-cat="${cat}">
-      ${thumbHtml(cat, d)}
+      <div class="card-thumb-wrap">
+        ${thumbHtml(cat, d)}
+        <button class="fav-btn" data-fav-cat="${cat}" data-fav-id="${d.id}" data-active="${fav}" aria-label="Favorite">${fav?"♥":"♡"}</button>
+      </div>
       <div class="card-body">
         <div class="card-top"><div class="card-title">${d.t}</div><div class="card-year">${d.y||""}</div></div>
         <div class="card-meta">${meta}</div>
@@ -592,7 +633,7 @@ function attachCardHandlers(cat){
   wireImageFallbacks(gridEl);
   gridEl.querySelectorAll(".card").forEach(c=>{
     c.addEventListener("click", (e)=>{
-      if(e.target.closest("[data-del]")) return;
+      if(e.target.closest("[data-del]") || e.target.closest(".fav-btn")) return;
       const d = DATA[cat].find(x=>x.id===c.dataset.id);
       if(d) openSheet(d);
     });
@@ -642,6 +683,7 @@ function renderGenericCards(){
 function renderCards(){
   if(!loaded) return;
   if(state.cat==="home") renderHome();
+  else if(state.cat==="journey") renderJourney();
   else if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
   else renderGenericCards();
 }
@@ -649,8 +691,12 @@ function renderCards(){
 /* ============================= RENDER: HOME ============================= */
 function stripCardHtml(cat, d){
   const rating = ratingLabel(d);
+  const fav = isFavorite(cat, d.id);
   return `<div class="strip-card" data-id="${d.id}" data-cat="${cat}">
-      ${thumbHtml(cat, d)}
+      <div class="card-thumb-wrap">
+        ${thumbHtml(cat, d)}
+        <button class="fav-btn" data-fav-cat="${cat}" data-fav-id="${d.id}" data-active="${fav}" aria-label="Favorite">${fav?"♥":"♡"}</button>
+      </div>
       <div class="strip-card-title">${d.t}</div>
       <div class="strip-card-meta">${d.y||""}${rating?` · ${rating}`:""}</div>
     </div>`;
@@ -721,7 +767,8 @@ function renderHome(){
   wireImageFallbacks(gridEl);
 
   gridEl.querySelectorAll(".strip-card").forEach(c=>{
-    c.addEventListener("click", ()=>{
+    c.addEventListener("click", (e)=>{
+      if(e.target.closest(".fav-btn")) return;
       const cat = c.dataset.cat, id = c.dataset.id;
       const d = DATA[cat].find(x=>x.id===id);
       if(!d) return;
@@ -744,6 +791,74 @@ function renderHome(){
   const browseBtn = $("#homeBrowseBtn");
   if(browseBtn) browseBtn.addEventListener("click", ()=> goToCategory("movies"));
 }
+/* ============================= RENDER: MY JOURNEY ============================= */
+function resolveKeys(keys){
+  const out = [];
+  keys.forEach(k=>{
+    const [cat, id] = k.split(":");
+    const d = (DATA[cat]||[]).find(x=>x.id===id);
+    if(d) out.push({d, cat});
+  });
+  return out;
+}
+function renderJourney(){
+  countEl.textContent = "";
+  const favItems = resolveKeys(getFavorites());
+  const progressKeys = Object.keys(getProgress());
+  const doneByCat = { movies:0, series:0, games:0, comics:0 };
+  progressKeys.forEach(k=>{
+    const [cat] = k.split(":");
+    if(doneByCat[cat]!==undefined) doneByCat[cat]++;
+  });
+
+  let html = `<div class="home-hero journey-hero">
+      <div class="home-hero-badge">📌 SAVED ON THIS DEVICE</div>
+      <h2>My Journey</h2>
+      <p>Favorites and progress live in this browser only — no login, so they won't follow you to another phone or a fresh browser.</p>
+    </div>`;
+
+  html += `<div class="home-section">
+      <div class="home-section-head"><h3>Progress</h3></div>
+      <div class="journey-progress-grid">
+        ${CATS.map(c=>{
+          const total = DATA[c.id].length;
+          const done = doneByCat[c.id]||0;
+          const pct = total ? Math.round((done/total)*100) : 0;
+          return `<div class="journey-progress-card">
+              <div class="journey-progress-top"><span>${CAT_ICON[c.id]||""} ${c.label}</span><span>${done}/${total}</span></div>
+              <div class="journey-progress-bar"><div class="journey-progress-fill" style="width:${pct}%"></div></div>
+            </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+
+  if(favItems.length){
+    html += `<div class="home-section">
+        <div class="home-section-head"><h3>♥ Favorites</h3><span class="home-section-sub">${favItems.length}</span></div>
+        <div class="home-strip">${favItems.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
+      </div>`;
+  } else {
+    html += `<div class="home-section">
+        <div class="home-section-head"><h3>♥ Favorites</h3></div>
+        <p class="journey-empty">Nothing favorited yet — tap the ♡ on any title's card or detail page to save it here.</p>
+      </div>`;
+  }
+
+  gridEl.innerHTML = html;
+  wireImageFallbacks(gridEl);
+  gridEl.querySelectorAll(".strip-card").forEach(c=>{
+    c.addEventListener("click", (e)=>{
+      if(e.target.closest(".fav-btn")) return;
+      const cat = c.dataset.cat, id = c.dataset.id;
+      const d = DATA[cat].find(x=>x.id===id);
+      if(!d) return;
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  });
+}
+
 function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); }
 
 /* ============================= CHARACTER / TEAM HUB (Phase 2) ============================= */
@@ -781,7 +896,8 @@ function openHub(group){
   hubContent.innerHTML = html;
   wireImageFallbacks(hubContent);
   hubContent.querySelectorAll(".strip-card").forEach(c=>{
-    c.addEventListener("click", ()=>{
+    c.addEventListener("click", (e)=>{
+      if(e.target.closest(".fav-btn")) return;
       const cat = c.dataset.cat, id = c.dataset.id;
       const d = (DATA[cat]||[]).find(x=>x.id===id);
       if(!d) return;
@@ -890,7 +1006,10 @@ function openUniverseHub(connected){
     openSheet(d);
   };
   hubContent.querySelectorAll(".strip-card").forEach(c=>{
-    c.addEventListener("click", ()=> openItem(c.dataset.cat, c.dataset.id));
+    c.addEventListener("click", (e)=>{
+      if(e.target.closest(".fav-btn")) return;
+      openItem(c.dataset.cat, c.dataset.id);
+    });
   });
   hubContent.querySelectorAll(".timeline-row").forEach(r=>{
     r.addEventListener("click", ()=> openItem(r.dataset.cat, r.dataset.id));
@@ -1008,6 +1127,15 @@ function openSheet(d){
   }
   let html = heroHtml(cat, d);
   html += `<div class="sheet-eyebrow">${cat.toUpperCase()} · ${d.y||""}</div><h2>${d.t}</h2>`;
+
+  const fav = isFavorite(cat, d.id);
+  const done = isDone(cat, d.id);
+  const verb = PROGRESS_VERB[cat] || "Done";
+  html += `<div class="sheet-journey-row">
+      <button class="journey-btn fav-toggle" data-fav-cat="${cat}" data-fav-id="${d.id}" data-active="${fav}">${fav?"♥ Favorited":"♡ Favorite"}</button>
+      <button class="journey-btn done-toggle" data-done-cat="${cat}" data-done-id="${d.id}" data-active="${done}">${done?`✓ ${verb}`:`Mark as ${verb}`}</button>
+    </div>`;
+
   const hubGroup = groupOf(cat, d);
   html += `<button class="hub-link-btn" data-hub-group="${escapeAttr(hubGroup)}">🔗 ${hubGroup} hub — every movie, series, game &amp; comic</button>`;
 
@@ -1054,6 +1182,27 @@ function openSheet(d){
 
   sheetContent.innerHTML = html;
   wireImageFallbacks(sheetContent);
+
+  const favToggleBtn = sheetContent.querySelector(".fav-toggle");
+  if(favToggleBtn) favToggleBtn.addEventListener("click", ()=>{
+    const nowFav = toggleFavorite(favToggleBtn.dataset.favCat, favToggleBtn.dataset.favId);
+    favToggleBtn.dataset.active = nowFav ? "true" : "false";
+    favToggleBtn.textContent = nowFav ? "♥ Favorited" : "♡ Favorite";
+    document.querySelectorAll(`.fav-btn[data-fav-cat="${favToggleBtn.dataset.favCat}"][data-fav-id="${favToggleBtn.dataset.favId}"]`).forEach(b=>{
+      b.dataset.active = nowFav ? "true" : "false";
+      b.textContent = nowFav ? "♥" : "♡";
+    });
+    if(state.cat==="journey") renderJourney();
+  });
+  const doneToggleBtn = sheetContent.querySelector(".done-toggle");
+  if(doneToggleBtn) doneToggleBtn.addEventListener("click", ()=>{
+    const c = doneToggleBtn.dataset.doneCat, id = doneToggleBtn.dataset.doneId;
+    const nowDone = toggleDone(c, id);
+    const verb = PROGRESS_VERB[c] || "Done";
+    doneToggleBtn.dataset.active = nowDone ? "true" : "false";
+    doneToggleBtn.textContent = nowDone ? `✓ ${verb}` : `Mark as ${verb}`;
+    if(state.cat==="journey") renderJourney();
+  });
 
   const hubBtn = sheetContent.querySelector(".hub-link-btn");
   if(hubBtn) hubBtn.addEventListener("click", ()=>{
@@ -1283,6 +1432,10 @@ $("#exploreClose").addEventListener("click", ()=> closeSheetEl(exploreBackdrop, 
 moreBackdrop.addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSheet));
 $("#moreClose").addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSheet));
 
+$("#moreQuickJourney").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  goToCategory("journey");
+});
 $("#moreQuickHero").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
   goToCategory("movies", { sortMode:"hero" });
@@ -1442,4 +1595,21 @@ $("#addSubmit").addEventListener("click", async ()=>{
     addMsg.textContent = "Couldn't save — check you're still signed in.";
     addMsg.className = "form-msg err";
   }
+});
+
+/* ============================= FAVORITE BUTTON (global, event-delegated) ============================= */
+document.addEventListener("click", (e)=>{
+  const btn = e.target.closest(".fav-btn");
+  if(!btn) return;
+  e.stopPropagation();
+  e.preventDefault();
+  const cat = btn.dataset.favCat, id = btn.dataset.favId;
+  const nowFav = toggleFavorite(cat, id);
+  btn.dataset.active = nowFav ? "true" : "false";
+  btn.textContent = nowFav ? "♥" : "♡";
+  document.querySelectorAll(`.fav-btn[data-fav-cat="${cat}"][data-fav-id="${id}"]`).forEach(b=>{
+    b.dataset.active = nowFav ? "true" : "false";
+    b.textContent = nowFav ? "♥" : "♡";
+  });
+  if(state.cat==="journey") renderJourney();
 });
