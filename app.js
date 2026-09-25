@@ -109,6 +109,7 @@ let state = {
   sortMode:"newest",                       // movies/series: newest | hero | story | rating
   viewerLevelFilter:"all", complexityFilter:"all", canonFilter:"all", // movies/series: new filters (Phase 1, Task 7)
   gameMode:"all", gamePlatform:"all",      // games: all | platform | story
+  nerdMode: (localStorage.getItem("dc_nerd_mode") === "true"), // Phase 4, Task 22
 };
 let isAdmin = false;
 let loaded = false;
@@ -542,6 +543,15 @@ function wireImageFallbacks(root){
   });
 }
 
+function nerdBadgesHtml(cat, d){
+  if(cat==="comics") return ""; // reading level & canon already shown on comic cards
+  const parts = [];
+  if(d.viewerLevel) parts.push(`<span class="qf-pill rl-${readingLevelClass(d.viewerLevel)}">${d.viewerLevel}</span>`);
+  if(d.complexity) parts.push(`<span class="qf-pill cx-${complexityClass(d.complexity)}">${d.complexity}</span>`);
+  if(d.canonStatus) parts.push(`<span class="tag">${canonShort(d.canonStatus)}</span>`);
+  if(!parts.length) return "";
+  return `<div class="nerd-badges">${parts.join("")}</div>`;
+}
 function cardHtml(cat, d){
   const meta = (cat==="movies"||cat==="series") ? movieSeriesMetaTags(cat, d) : metaTagsGeneric(cat, d);
   const fav = isFavorite(cat, d.id);
@@ -553,6 +563,7 @@ function cardHtml(cat, d){
       <div class="card-body">
         <div class="card-top"><div class="card-title">${d.t}</div><div class="card-year">${d.y||""}</div></div>
         <div class="card-meta">${meta}</div>
+        ${state.nerdMode ? nerdBadgesHtml(cat, d) : ""}
         <div class="card-blurb">${d.blurb||""}</div>
         ${isAdmin ? `<div class="card-admin-row"><button class="mini-btn danger" data-del="${d.id}">Delete</button></div>` : ""}
       </div>
@@ -760,6 +771,8 @@ function renderHome(){
         <div class="discover-tile" data-cat="games" data-sort="story"><div class="discover-tile-icon">🎮</div><div class="discover-tile-label">Games by Franchise</div><div class="discover-tile-count">Arkham, Injustice &amp; more</div></div>
         <div class="discover-tile" data-cat="comics"><div class="discover-tile-icon">📖</div><div class="discover-tile-label">Comics by Era</div><div class="discover-tile-count">Golden Age to today</div></div>
         <div class="discover-tile" data-hub="event"><div class="discover-tile-icon">💥</div><div class="discover-tile-label">Multiverse Events</div><div class="discover-tile-count">Crisis crossovers, in order</div></div>
+        <div class="discover-tile" data-hub="glossary"><div class="discover-tile-icon">📚</div><div class="discover-tile-label">DC Glossary</div><div class="discover-tile-count">Canon, Elseworlds &amp; more, explained</div></div>
+        <div class="discover-tile" data-hub="multiverse"><div class="discover-tile-icon">🌀</div><div class="discover-tile-label">Multiverse Map</div><div class="discover-tile-count">Every continuity, at a glance</div></div>
       </div>
     </div>`;
 
@@ -779,6 +792,10 @@ function renderHome(){
   });
   const eventTile = gridEl.querySelector('[data-hub="event"]');
   if(eventTile) eventTile.addEventListener("click", openEventHub);
+  const glossaryTile = gridEl.querySelector('[data-hub="glossary"]');
+  if(glossaryTile) glossaryTile.addEventListener("click", openGlossary);
+  const multiverseTile = gridEl.querySelector('[data-hub="multiverse"]');
+  if(multiverseTile) multiverseTile.addEventListener("click", openMultiverseMap);
   gridEl.querySelectorAll(".discover-tile:not([data-hub])").forEach(t=>{
     t.addEventListener("click", ()=>{
       goToCategory(t.dataset.cat, { sortMode: t.dataset.sort });
@@ -859,7 +876,7 @@ function renderJourney(){
   });
 }
 
-function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); }
+function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); }
 
 /* ============================= CHARACTER / TEAM HUB (Phase 2) ============================= */
 const hubBackdrop = $("#hubBackdrop"), hubSheet = $("#hubSheet"), hubContent = $("#hubContent");
@@ -933,6 +950,184 @@ function timelineRowsWithDecades(sortedItems){
 }
 
 /* ============================= COMIC EVENT HUB (Phase 2) ============================= */
+/* ============================= GLOSSARY (Phase 4) ============================= */
+const GLOSSARY_TERMS = [
+  ["Canon", "The official, \"really happened\" continuity of a shared universe — as opposed to Elseworlds or alternate-universe stories, which don't affect it."],
+  ["Continuity", "The connected timeline a story belongs to. Titles in the same continuity reference each other's events; titles outside it don't."],
+  ["Elseworlds", "A DC imprint/label for standalone \"what if\" stories that place familiar characters outside their usual continuity (e.g. a different era, moral alignment, or outcome). Self-contained — no prior reading required."],
+  ["Multiverse", "The idea that many parallel Earths and continuities exist simultaneously, each a variation on the DC universe (e.g. Earth-1, Earth-2, Earth-3)."],
+  ["Crisis / Crossover Event", "A large story arc that spans many titles at once, usually reshaping or resetting continuity going forward (Crisis on Infinite Earths, Flashpoint, Infinite Crisis)."],
+  ["Retcon", "Short for \"retroactive continuity\" — when a later story changes or reinterprets an earlier established fact."],
+  ["Reboot", "A full restart of a character's or universe's continuity, discarding some or all prior history (e.g. the New 52 in 2011)."],
+  ["Golden Age", "The earliest era of superhero comics, roughly late 1930s–early 1950s — Action Comics #1, Detective Comics #27, and the genre's birth."],
+  ["Silver Age", "Roughly mid-1950s–early 1970s — the era that reintroduced and modernized many heroes (the Barry Allen Flash, the Multiverse concept)."],
+  ["Bronze Age", "Roughly early 1970s–mid-1980s — grittier, more socially conscious storytelling."],
+  ["Post-Crisis", "The continuity that followed 1985's Crisis on Infinite Earths, which merged the Multiverse into a single streamlined universe."],
+  ["New 52", "DC's 2011 line-wide relaunch and soft reboot of continuity, starting every series back at issue #1."],
+  ["Rebirth", "DC's 2016 course-correction after the New 52, restoring some classic continuity and legacy relationships."],
+  ["Imprint", "A publishing label under DC for content outside the core shared universe — Vertigo (mature, creator-owned/horror), Black Label (mature, prestige one-offs)."],
+  ["Standalone", "A story that doesn't depend on or feed into a larger shared continuity — can be read/watched with zero prior context."],
+  ["Shared Universe", "A continuity where multiple heroes' stories interconnect and reference each other's events."],
+  ["Legacy Character", "A codename passed between different characters over time (e.g. multiple people have been \"the Flash\" or \"Robin\")."],
+  ["Canon Status (on this site)", "How AllAboutDC classifies each title: Shared Universe (connects to others), Standalone (self-contained), or Elseworlds (deliberately outside continuity)."],
+  ["TPB", "Trade Paperback — a softcover collecting several single issues of a comic run."],
+  ["Omnibus / Absolute Edition", "Larger hardcover collections gathering many issues (omnibus) or a premium oversized edition with extras (Absolute)."],
+];
+function openGlossary(){
+  hubSheet.style.removeProperty("--theme-a");
+  hubSheet.style.removeProperty("--theme-b");
+  hubSheet.dataset.themed = "false";
+
+  let html = `<div class="sheet-eyebrow">REFERENCE</div><h2>DC Glossary</h2>
+    <p class="hub-count">${GLOSSARY_TERMS.length} terms used across the site</p>`;
+  html += `<div class="glossary-list">${GLOSSARY_TERMS.map(([term,def])=>`
+      <div class="glossary-row">
+        <div class="glossary-term">${term}</div>
+        <div class="glossary-def">${def}</div>
+      </div>`).join("")}</div>`;
+
+  hubContent.innerHTML = html;
+  openSheetEl(hubBackdrop, hubSheet);
+}
+
+function creatorWorks(name){
+  if(!name) return [];
+  const movies = DATA.movies.filter(d=>d.director===name).map(d=>({...d, _cat:"movies"}));
+  const series = DATA.series.filter(d=>d.creators===name).map(d=>({...d, _cat:"series"}));
+  return [...movies, ...series].sort((a,b)=>firstYear(a.y)-firstYear(b.y));
+}
+
+function openCreatorHub(name){
+  hubSheet.style.removeProperty("--theme-a");
+  hubSheet.style.removeProperty("--theme-b");
+  hubSheet.dataset.themed = "false";
+
+  const works = creatorWorks(name);
+  let html = `<div class="sheet-eyebrow">CREATOR</div><h2>${name}</h2>
+    <p class="hub-count">${works.length} title${works.length===1?"":"s"} on AllAboutDC</p>`;
+
+  html += `<div class="home-section">
+      <div class="home-strip">${works.map(d=>stripCardHtml(d._cat, d)).join("")}</div>
+    </div>`;
+
+  hubContent.innerHTML = html;
+  wireImageFallbacks(hubContent);
+  hubContent.querySelectorAll(".strip-card").forEach(c=>{
+    c.addEventListener("click", (e)=>{
+      if(e.target.closest(".fav-btn")) return;
+      const cat = c.dataset.cat, id = c.dataset.id;
+      const d = (DATA[cat]||[]).find(x=>x.id===id);
+      if(!d) return;
+      closeSheetEl(hubBackdrop, hubSheet);
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  });
+  openSheetEl(hubBackdrop, hubSheet);
+}
+
+const CANON_SECTION_ORDER = [
+  "Shared Universe / Connected Continuity",
+  "Elseworlds / Alternate Continuity",
+  "Standalone / No Shared Continuity",
+];
+const MULTIVERSE_EXCLUDE = new Set(["Standalone", "Standalone (Vertigo)"]);
+
+function multiverseGroups(){
+  const info = {};
+  for(const cat of ["movies","series"]){
+    for(const d of DATA[cat]){
+      const name = d.connected;
+      if(!name || MULTIVERSE_EXCLUDE.has(name)) continue;
+      if(!info[name]) info[name] = { count:0, canonStatus: d.canonStatus || "Other" };
+      info[name].count++;
+    }
+  }
+  const groups = {};
+  Object.entries(info).forEach(([name, v])=>{
+    if(!groups[v.canonStatus]) groups[v.canonStatus] = [];
+    groups[v.canonStatus].push({ name, count: v.count });
+  });
+  Object.values(groups).forEach(arr=>arr.sort((a,b)=>b.count-a.count));
+  return groups;
+}
+
+function openMultiverseMap(){
+  hubSheet.style.removeProperty("--theme-a");
+  hubSheet.style.removeProperty("--theme-b");
+  hubSheet.dataset.themed = "false";
+
+  const groups = multiverseGroups();
+  const keys = [...CANON_SECTION_ORDER.filter(k=>groups[k]), ...Object.keys(groups).filter(k=>!CANON_SECTION_ORDER.includes(k))];
+  const totalUniverses = keys.reduce((n,k)=>n+groups[k].length, 0);
+
+  let html = `<div class="sheet-eyebrow">REFERENCE</div><h2>Multiverse Map</h2>
+    <p class="hub-count">${totalUniverses} continuities across movies &amp; series — tap one to browse its watch order</p>`;
+
+  keys.forEach(k=>{
+    html += `<div class="multiverse-section">
+        <div class="multiverse-section-title">${k}</div>
+        <div class="multiverse-grid">
+          ${groups[k].map(g=>`<div class="discover-tile" data-universe="${escapeAttr(g.name)}">
+              <div class="discover-tile-label">${g.name}</div>
+              <div class="discover-tile-count">${g.count} title${g.count===1?"":"s"}</div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  });
+
+  hubContent.innerHTML = html;
+  hubContent.querySelectorAll("[data-universe]").forEach(t=>{
+    t.addEventListener("click", ()=> openUniverseHub(t.dataset.universe));
+  });
+  openSheetEl(hubBackdrop, hubSheet);
+}
+
+function siteStats(){
+  const universeCount = Object.values(multiverseGroups()).reduce((n,arr)=>n+arr.length, 0);
+  const creatorCounts = {};
+  for(const cat of ["movies","series"]){
+    for(const d of DATA[cat]){
+      const name = cat==="movies" ? d.director : d.creators;
+      if(!name) continue;
+      creatorCounts[name] = (creatorCounts[name]||0) + 1;
+    }
+  }
+  const trackedCreators = Object.values(creatorCounts).filter(n=>n>=2).length;
+  return {
+    movies: DATA.movies.length,
+    series: DATA.series.length,
+    games: DATA.games.length,
+    comics: DATA.comics.length,
+    universes: universeCount,
+    creators: trackedCreators,
+  };
+}
+
+function renderStatsFooter(){
+  const footer = $("#siteStatsFooter");
+  if(!footer) return;
+  if(!state.nerdMode){
+    footer.style.display = "none";
+    footer.innerHTML = "";
+    return;
+  }
+  const s = siteStats();
+  const total = s.movies + s.series + s.games + s.comics;
+  footer.innerHTML = `<div class="stats-eyebrow">🤓 NERD MODE — SITE STATS</div>
+    <div class="stats-grid">
+      <div class="stat-item"><div class="stat-num">${total}</div><div class="stat-label">Total Titles</div></div>
+      <div class="stat-item"><div class="stat-num">${s.movies}</div><div class="stat-label">Movies</div></div>
+      <div class="stat-item"><div class="stat-num">${s.series}</div><div class="stat-label">Series</div></div>
+      <div class="stat-item"><div class="stat-num">${s.games}</div><div class="stat-label">Games</div></div>
+      <div class="stat-item"><div class="stat-num">${s.comics}</div><div class="stat-label">Comics</div></div>
+      <div class="stat-item"><div class="stat-num">${s.universes}</div><div class="stat-label">Continuities</div></div>
+      <div class="stat-item"><div class="stat-num">${s.creators}</div><div class="stat-label">Tracked Creators</div></div>
+    </div>`;
+  footer.style.display = "block";
+}
+
 function openEventHub(){
   hubSheet.style.removeProperty("--theme-a");
   hubSheet.style.removeProperty("--theme-b");
@@ -1091,15 +1286,18 @@ function extraDetailsHtml(cat, d){
     </div>`;
   }
   const credits = [];
-  if(cat==="movies" && d.director) credits.push(["DIRECTOR", d.director]);
-  if(cat==="series" && d.creators) credits.push(["CREATED BY", d.creators]);
+  if(cat==="movies" && d.director) credits.push(["DIRECTOR", d.director, "director"]);
+  if(cat==="series" && d.creators) credits.push(["CREATED BY", d.creators, "creators"]);
   if(d.cast) credits.push(["CAST", d.cast]);
   if(d.runtime) credits.push(["RUNTIME", d.runtime]);
   if(d.whereToWatch) credits.push(["WHERE TO WATCH", d.whereToWatch]);
   if(cat==="movies" && d.boxOffice) credits.push(["BOX OFFICE", d.boxOffice]);
   if(d.ageRating) credits.push(["AGE RATING", d.ageRating]);
-  credits.forEach(([label,val])=>{
-    html += `<div class="sheet-section"><div class="sheet-label">${label}</div><div class="sheet-body">${val}</div></div>`;
+  credits.forEach(([label,val,creatorField])=>{
+    const isCreatorLink = creatorField && creatorWorks(val).length > 1;
+    const bodyClass = isCreatorLink ? "sheet-body sheet-label-link" : "sheet-body";
+    const linkAttr = isCreatorLink ? ` data-creator-link="${escapeAttr(val)}"` : "";
+    html += `<div class="sheet-section"><div class="sheet-label">${label}</div><div class="${bodyClass}"${linkAttr}>${val}${isCreatorLink?" · view all →":""}</div></div>`;
   });
   return html;
 }
@@ -1253,6 +1451,14 @@ function openSheet(d){
     });
   });
 
+  sheetContent.querySelectorAll("[data-creator-link]").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      stopAllTrailers();
+      closeSheetEl(backdrop, sheet);
+      openCreatorHub(el.dataset.creatorLink);
+    });
+  });
+
   sheetContent.querySelectorAll("[data-related-id]").forEach(row=>{
     row.addEventListener("click", ()=>{
       const rcat = row.dataset.relatedCat, rid = row.dataset.relatedId;
@@ -1350,6 +1556,21 @@ const loginEmail = $("#loginEmail"), loginPassword = $("#loginPassword"), loginM
 const fab = $("#fabAdd");
 
 adminToggle.addEventListener("click", ()=> openSheetEl(loginBackdrop, loginSheet));
+
+/* ============================= NERD MODE (Phase 4, Task 22) ============================= */
+const nerdToggle = $("#nerdToggle");
+function applyNerdModeUI(){
+  nerdToggle.dataset.active = state.nerdMode ? "true" : "false";
+  nerdToggle.title = state.nerdMode ? "Nerd Mode: ON" : "Nerd Mode: OFF";
+}
+applyNerdModeUI();
+nerdToggle.addEventListener("click", ()=>{
+  state.nerdMode = !state.nerdMode;
+  localStorage.setItem("dc_nerd_mode", state.nerdMode ? "true" : "false");
+  applyNerdModeUI();
+  renderCards();
+  renderStatsFooter();
+});
 loginBackdrop.addEventListener("click", ()=> closeSheetEl(loginBackdrop, loginSheet));
 $("#loginClose").addEventListener("click", ()=> closeSheetEl(loginBackdrop, loginSheet));
 $("#loginCancel").addEventListener("click", ()=> closeSheetEl(loginBackdrop, loginSheet));
@@ -1422,6 +1643,8 @@ mobileNav.querySelectorAll(".mobile-nav-btn").forEach(btn=>{
       window.scrollTo({top:0, behavior:"smooth"});
       setTimeout(()=> searchInput.focus(), 250);
     } else if(which==="more"){
+      const nerdRow = $("#moreQuickNerd");
+      if(nerdRow) nerdRow.textContent = state.nerdMode ? "🤓 Nerd Mode: ON" : "🤓 Nerd Mode: OFF";
       openSheetEl(moreBackdrop, moreSheet);
     }
     updateMobileNavActive();
@@ -1451,6 +1674,18 @@ $("#moreQuickTopRated").addEventListener("click", ()=>{
 $("#moreQuickEvents").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
   openEventHub();
+});
+$("#moreQuickGlossary").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  openGlossary();
+});
+$("#moreQuickMultiverse").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  openMultiverseMap();
+});
+$("#moreQuickNerd").addEventListener("click", ()=>{
+  nerdToggle.click();
+  $("#moreQuickNerd").textContent = state.nerdMode ? "🤓 Nerd Mode: ON" : "🤓 Nerd Mode: OFF";
 });
 $("#moreAdmin").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
