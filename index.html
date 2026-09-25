@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -28,7 +28,10 @@
 <p class="intro" id="introText"></p>
 
 <div class="controls">
-  <div class="search-row"><input type="text" id="searchInput" placeholder="Search titles…"></div>
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="Search all of AllAboutDC — movies, series, games, comics…" autocomplete="off">
+    <div class="global-search-results" id="globalSearchResults"></div>
+  </div>
   <div class="filter-row" id="filterRow"></div>
   <div class="chip-scroller" id="chipRow"></div>
 </div>
@@ -37,6 +40,38 @@
 <main><div class="grid" id="grid"><div class="skeleton">Loading the compendium…</div></div></main>
 
 <button class="fab" id="fabAdd" data-visible="false">＋</button>
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-btn" data-mnav="home"><span class="mnav-icon">🏠</span><span class="mnav-label">Home</span></button>
+  <button class="mobile-nav-btn" data-mnav="explore"><span class="mnav-icon">🧭</span><span class="mnav-label">Explore</span></button>
+  <button class="mobile-nav-btn" data-mnav="search"><span class="mnav-icon">🔎</span><span class="mnav-label">Search</span></button>
+  <button class="mobile-nav-btn" data-mnav="more"><span class="mnav-icon">⋯</span><span class="mnav-label">More</span></button>
+</nav>
+
+<!-- Explore sheet (mobile bottom nav) -->
+<div class="sheet-backdrop" id="exploreBackdrop"></div>
+<div class="sheet" id="exploreSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="exploreClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>Explore</h2>
+  <div class="home-discover-grid" id="exploreGrid"></div>
+</div>
+
+<!-- More sheet (mobile bottom nav) -->
+<div class="sheet-backdrop" id="moreBackdrop"></div>
+<div class="sheet" id="moreSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="moreClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>More</h2>
+  <div class="more-list">
+    <button class="more-row" id="moreQuickHero">By Hero / Team</button>
+    <button class="more-row" id="moreQuickStory">Connected Story</button>
+    <button class="more-row" id="moreQuickTopRated">Top Rated</button>
+    <button class="more-row" id="moreAdmin">Admin Sign In</button>
+  </div>
+  <p class="more-about">AllAboutDC is an unofficial fan-made DC reading &amp; watch guide.</p>
+</div>
 
 <!-- Detail sheet -->
 <div class="sheet-backdrop" id="backdrop"></div>
@@ -105,6 +140,6 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=16"></script>
+<script type="module" src="app.js?v=23"></script>
 </body>
 </html>

@@ -14,6 +14,7 @@ const CATS = [
   {id:"comics", label:"Comics"},
 ];
 const INTRO = {
+  home:"An unofficial DC reading & watch guide — every movie, series, game and comic run, organized by hero, timeline and how deep you want to go.",
   movies:"Every DC film — pick Live Action or Animated, then sort by newest, by hero or team, by connected timeline, or by rating.",
   series:"Every DC TV series — pick Live Action or Animated, then sort by newest, by hero or team, by connected timeline, or by rating.",
   games:"Organized by franchise (Arkham, Injustice, LEGO, and so on) rather than platform or year, since that's how most of these actually relate to each other.",
@@ -40,6 +41,9 @@ const SCHEMA = {
     {key:"boxOffice", label:"Box office", type:"text", required:false, placeholder:"e.g. Budget ~$X · Gross ~$Y"},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. PG-13"},
     {key:"trailer", label:"Trailer — YouTube video ID (e.g. TQfATDZY5Y4, not the full link)", type:"text", required:false},
+    {key:"readingLevel", label:"Reading level", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
+    {key:"complexity", label:"Complexity", type:"select", required:true, options:["Low","Medium","High"]},
+    {key:"canonStatus", label:"Canon status", type:"select", required:true, options:["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"]},
   ],
   series: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -59,6 +63,9 @@ const SCHEMA = {
     {key:"whereToWatch", label:"Where to watch", type:"text", required:false},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. TV-MA"},
     {key:"trailer", label:"Trailer — YouTube video ID (series-wide, e.g. TQfATDZY5Y4)", type:"text", required:false},
+    {key:"readingLevel", label:"Reading level", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
+    {key:"complexity", label:"Complexity", type:"select", required:true, options:["Low","Medium","High"]},
+    {key:"canonStatus", label:"Canon status", type:"select", required:true, options:["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"]},
   ],
   games: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -72,6 +79,9 @@ const SCHEMA = {
     {key:"whereToWatch", label:"Where to buy / play", type:"text", required:false},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. ESRB T"},
     {key:"trailer", label:"Trailer — YouTube video ID", type:"text", required:false},
+    {key:"readingLevel", label:"Reading level", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
+    {key:"complexity", label:"Complexity", type:"select", required:true, options:["Low","Medium","High"]},
+    {key:"canonStatus", label:"Canon status", type:"select", required:true, options:["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"]},
   ],
   comics: [
     {key:"t", label:"Title", type:"text", required:true},
@@ -89,11 +99,12 @@ const SCHEMA = {
 /* ============================= STATE ============================= */
 let DATA = { movies:[], series:[], games:[], comics:[] };
 let state = {
-  cat:"comics",
+  cat:"home",
   search:"",
   f1:"all", f2:"all", chip:"all",         // games/comics filters (unchanged behavior)
   typeFilter:"Live Action",                // movies/series: Live Action | Animated
   sortMode:"newest",                       // movies/series: newest | hero | story | rating
+  readingLevelFilter:"all", complexityFilter:"all", canonFilter:"all", // movies/series: new filters (Phase 1, Task 7)
   gameMode:"all", gamePlatform:"all",      // games: all | platform | story
 };
 let isAdmin = false;
@@ -136,6 +147,34 @@ function ratingScore(d){
   return null;
 }
 const HERO_PRIORITY = ["Batman","Superman","Justice League","Wonder Woman","Aquaman","Flash","Suicide Squad","Harley Quinn","Joker","Green Lantern","Shazam","Supergirl","Teen Titans","DC Super Hero Girls","LEGO DC","Watchmen","Constantine","Catwoman","Swamp Thing","Legion of Super-Heroes","Human Target","Vertigo / Imprint Films"];
+
+/* ---- Themed backgrounds per hero / team group (Phase 1, Task 2) ---- */
+const GROUP_THEMES = {
+  "Batman":                   { a:"#3a3f4a", b:"#0d0d10" },
+  "Superman":                 { a:"#2c5fd1", b:"#a3182a" },
+  "Justice League":           { a:"#1f3f7a", b:"#c9a227" },
+  "Wonder Woman":             { a:"#a3132a", b:"#c9a227" },
+  "Aquaman":                  { a:"#0e7490", b:"#e07c1e" },
+  "Flash":                    { a:"#c0272d", b:"#f4c430" },
+  "Suicide Squad":            { a:"#7a1f1f", b:"#2b2b2b" },
+  "Harley Quinn":             { a:"#d6336c", b:"#1c1c1c" },
+  "Joker":                    { a:"#6a2c91", b:"#3f8f3f" },
+  "Green Lantern":            { a:"#1f8f4d", b:"#0d2b0d" },
+  "Shazam":                   { a:"#c0272d", b:"#f2c230" },
+  "Supergirl":                { a:"#3d74d6", b:"#c0272d" },
+  "Teen Titans":              { a:"#6a3fae", b:"#2fae6a" },
+  "DC Super Hero Girls":      { a:"#e0479a", b:"#7a3fd1" },
+  "LEGO DC":                  { a:"#d1272d", b:"#2c5fd1" },
+  "Watchmen":                 { a:"#b8860b", b:"#1a1a1a" },
+  "Constantine":              { a:"#8a1f1f", b:"#2b2b2b" },
+  "Catwoman":                 { a:"#4a2f6a", b:"#17171c" },
+  "Swamp Thing":              { a:"#2f6a2f", b:"#1a2b1a" },
+  "Legion of Super-Heroes":   { a:"#3f3fae", b:"#1a1a3a" },
+  "Human Target":             { a:"#4a4f5a", b:"#22242c" },
+  "Vertigo / Imprint Films":  { a:"#5a2f5a", b:"#17171c" },
+  "Other DC Characters":      { a:"#4a4f5a", b:"#22242c" },
+};
+function groupTheme(g){ return GROUP_THEMES[g] || GROUP_THEMES["Other DC Characters"]; }
 function sortHeroNames(heroMap){
   return Object.keys(heroMap).sort((a,b)=>{
     const ia = HERO_PRIORITY.indexOf(a), ib = HERO_PRIORITY.indexOf(b);
@@ -148,18 +187,35 @@ function sortHeroNames(heroMap){
 }
 
 /* ============================= RENDER: TABS ============================= */
+function resetFiltersForTabSwitch(){
+  state.f1="all"; state.f2="all"; state.chip="all"; state.search="";
+  state.sortMode="newest";
+  state.gameMode="all"; state.gamePlatform="all";
+  state.readingLevelFilter="all"; state.complexityFilter="all"; state.canonFilter="all";
+  searchInput.value="";
+  globalSearchResults.innerHTML = ""; globalSearchResults.dataset.open = "false";
+}
+function goToCategory(cat, opts){
+  state.cat = cat;
+  resetFiltersForTabSwitch();
+  if(opts){
+    if(opts.sortMode) state.sortMode = opts.sortMode;
+    if(opts.typeFilter) state.typeFilter = opts.typeFilter;
+    if(opts.readingLevelFilter) state.readingLevelFilter = opts.readingLevelFilter;
+    if(opts.complexityFilter) state.complexityFilter = opts.complexityFilter;
+  }
+  render();
+}
 function buildTabs(){
-  tabsEl.innerHTML = CATS.map(c=>{
+  const homeBtn = `<button class="tab-btn" data-cat="home" data-active="${state.cat==="home"}">Home</button>`;
+  tabsEl.innerHTML = homeBtn + CATS.map(c=>{
     const n = DATA[c.id].length;
     return `<button class="tab-btn" data-cat="${c.id}" data-active="${state.cat===c.id}">${c.label}<span class="n">${n}</span></button>`;
   }).join("");
   tabsEl.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       state.cat = btn.dataset.cat;
-      state.f1="all"; state.f2="all"; state.chip="all"; state.search="";
-      state.sortMode="newest";
-      state.gameMode="all"; state.gamePlatform="all";
-      searchInput.value="";
+      resetFiltersForTabSwitch();
       render();
     });
   });
@@ -171,6 +227,8 @@ function buildFilters(){
   introEl.textContent = INTRO[cat];
   filterRow.innerHTML = "";
   chipRow.innerHTML = "";
+
+  if(cat==="home") return;
 
   if(cat==="movies" || cat==="series"){
     buildMovieSeriesFilters(cat);
@@ -228,14 +286,28 @@ function buildFilters(){
 }
 
 function buildMovieSeriesFilters(cat){
+  const RL_OPTIONS = ["New Reader","Familiar Reader","Experienced Reader","Hardcore"];
+  const CX_OPTIONS = ["Low","Medium","High"];
+  const CANON_OPTIONS = ["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"];
   filterRow.innerHTML = `
     <div class="radio-row">
       <label class="radio-pill ${cat}"><input type="radio" name="typeFilter" value="Live Action" ${state.typeFilter==="Live Action"?"checked":""}> Live Action</label>
       <label class="radio-pill ${cat}"><input type="radio" name="typeFilter" value="Animated" ${state.typeFilter==="Animated"?"checked":""}> Animated</label>
+    </div>
+    <div class="select-row">
+      <select id="selReadingLevel"><option value="all">Any reading level</option>${RL_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
+      <select id="selComplexity"><option value="all">Any complexity</option>${CX_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
+      <select id="selCanonStatus"><option value="all">Any canon status</option>${CANON_OPTIONS.map(o=>`<option value="${o}">${canonShort(o)}</option>`).join("")}</select>
     </div>`;
   filterRow.querySelectorAll('input[name="typeFilter"]').forEach(r=>{
     r.addEventListener("change", e=>{ state.typeFilter = e.target.value; renderCards(); });
   });
+  $("#selReadingLevel").value = state.readingLevelFilter;
+  $("#selComplexity").value = state.complexityFilter;
+  $("#selCanonStatus").value = state.canonFilter;
+  $("#selReadingLevel").addEventListener("change", e=>{ state.readingLevelFilter = e.target.value; renderCards(); });
+  $("#selComplexity").addEventListener("change", e=>{ state.complexityFilter = e.target.value; renderCards(); });
+  $("#selCanonStatus").addEventListener("change", e=>{ state.canonFilter = e.target.value; renderCards(); });
 
   const modes = [
     {id:"newest", label:"Newest → Oldest"},
@@ -292,6 +364,9 @@ function filteredMovieSeries(){
   const q = state.search.trim().toLowerCase();
   return DATA[cat].filter(d=>{
     if(d.type !== state.typeFilter) return false;
+    if(state.readingLevelFilter!=="all" && d.readingLevel !== state.readingLevelFilter) return false;
+    if(state.complexityFilter!=="all" && d.complexity !== state.complexityFilter) return false;
+    if(state.canonFilter!=="all" && d.canonStatus !== state.canonFilter) return false;
     if(q && !(d.t||"").toLowerCase().includes(q) && !(d.blurb||"").toLowerCase().includes(q)) return false;
     return true;
   });
@@ -304,6 +379,48 @@ function movieSeriesMetaTags(cat, d){
   const rating = ratingLabel(d);
   if(rating) tags += `<span class="tag rating">${rating}</span>`;
   return tags;
+}
+// Sheet-only variant: omits connected/format/seasons since Quick Facts already shows them; keeps rating.
+function sheetMetaTags(cat, d){
+  const rating = ratingLabel(d);
+  let tags = "";
+  if(cat==="series" && d.seasons) tags += `<span class="tag">${d.seasons} season${d.seasons==1?"":"s"}${d.episodes?` · ${d.episodes} ep`:""}</span>`;
+  if(rating) tags += `<span class="tag rating">${rating}</span>`;
+  return tags;
+}
+function readingLevelClass(rl){
+  if(rl==="New Reader") return "new";
+  if(rl==="Familiar Reader") return "familiar";
+  if(rl==="Experienced Reader") return "experienced";
+  if(rl==="Hardcore") return "hardcore";
+  return "";
+}
+function complexityClass(c){
+  if(c==="Low") return "low";
+  if(c==="Medium") return "medium";
+  if(c==="High") return "high";
+  return "";
+}
+function canonShort(c){
+  if(!c) return "";
+  if(c.startsWith("Shared")) return "Shared Universe";
+  if(c.startsWith("Standalone")) return "Standalone";
+  if(c.startsWith("Elseworlds")) return "Elseworlds";
+  return c;
+}
+function quickFactsHtml(cat, d){
+  const medium = cat==="movies" ? (d.format || "Movie") : "Series";
+  const cells = [
+    ["MEDIUM", medium],
+    ["YEAR", d.y || "—"],
+    ["UNIVERSE", d.connected || "—"],
+  ];
+  if(d.readingLevel) cells.push(["READING LEVEL", `<span class="qf-pill rl-${readingLevelClass(d.readingLevel)}">${d.readingLevel}</span>`]);
+  if(d.complexity) cells.push(["COMPLEXITY", `<span class="qf-pill cx-${complexityClass(d.complexity)}">${d.complexity}</span>`]);
+  if(d.canonStatus) cells.push(["CANON STATUS", canonShort(d.canonStatus)]);
+  return `<div class="quick-facts">${cells.map(([label,val])=>
+    `<div class="qf-cell"><div class="qf-label">${label}</div><div class="qf-val">${val}</div></div>`
+  ).join("")}</div>`;
 }
 function ratingLabel(d){
   const parts = [];
@@ -356,7 +473,7 @@ function wireImageFallbacks(root){
 
 function cardHtml(cat, d){
   const meta = (cat==="movies"||cat==="series") ? movieSeriesMetaTags(cat, d) : metaTagsGeneric(cat, d);
-  return `<div class="card ${cat}" data-id="${d.id}">
+  return `<div class="card ${cat}" data-id="${d.id}" data-cat="${cat}">
       ${thumbHtml(cat, d)}
       <div class="card-body">
         <div class="card-top"><div class="card-title">${d.t}</div><div class="card-year">${d.y||""}</div></div>
@@ -366,7 +483,10 @@ function cardHtml(cat, d){
       </div>
     </div>`;
 }
-function groupHeaderHtml(label, count){
+function groupHeaderHtml(label, count, theme){
+  if(theme){
+    return `<div class="group-header themed" style="--theme-a:${theme.a};--theme-b:${theme.b}">${label}<span class="group-count">${count}</span></div>`;
+  }
   return `<div class="group-header">${label}<span class="group-count">${count}</span></div>`;
 }
 
@@ -404,7 +524,7 @@ function renderMovieSeriesCards(){
     const heroNames = sortHeroNames(heroMap).filter(h=>h!=="Other DC Characters");
     heroNames.forEach(h=>{
       const list = heroMap[h].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
-      html += groupHeaderHtml(h, list.length) + list.map(d=>cardHtml(cat,d)).join("");
+      html += groupHeaderHtml(h, list.length, groupTheme(h)) + list.map(d=>cardHtml(cat,d)).join("");
     });
     if(heroMap["Other DC Characters"] && heroMap["Other DC Characters"].length){
       const list = heroMap["Other DC Characters"].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
@@ -478,10 +598,107 @@ function renderGenericCards(){
 
 function renderCards(){
   if(!loaded) return;
-  if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
+  if(state.cat==="home") renderHome();
+  else if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
   else renderGenericCards();
 }
-function render(){ buildTabs(); buildFilters(); renderCards(); }
+
+/* ============================= RENDER: HOME ============================= */
+function stripCardHtml(cat, d){
+  const rating = ratingLabel(d);
+  return `<div class="strip-card" data-id="${d.id}" data-cat="${cat}">
+      ${thumbHtml(cat, d)}
+      <div class="strip-card-title">${d.t}</div>
+      <div class="strip-card-meta">${d.y||""}${rating?` · ${rating}`:""}</div>
+    </div>`;
+}
+function stripHtml(id, title, subtitle, items){
+  if(!items.length) return "";
+  return `<div class="home-section">
+      <div class="home-section-head"><h3>${title}</h3>${subtitle?`<span class="home-section-sub">${subtitle}</span>`:""}</div>
+      <div class="home-strip" id="${id}">${items.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
+    </div>`;
+}
+function renderHome(){
+  countEl.textContent = "";
+  const allMS = [
+    ...DATA.movies.map(d=>({d,cat:"movies"})),
+    ...DATA.series.map(d=>({d,cat:"series"})),
+  ];
+
+  const startHere = allMS
+    .filter(({d})=>d.readingLevel==="New Reader" && d.complexity==="Low")
+    .sort((a,b)=> (ratingScore(b.d)||0) - (ratingScore(a.d)||0))
+    .slice(0, 12);
+
+  const topRated = allMS
+    .filter(({d})=>ratingScore(d)!==null)
+    .sort((a,b)=> ratingScore(b.d) - ratingScore(a.d))
+    .slice(0, 12);
+
+  const catCounts = CATS.map(c=>({...c, n: DATA[c.id].length}));
+
+  let html = `
+    <div class="home-hero">
+      <div class="home-hero-badge">💥 UNOFFICIAL DC GUIDE</div>
+      <h2>Every DC story, organized by hero, timeline &amp; how deep you want to go.</h2>
+      <p>${catCounts.map(c=>`${c.n} ${c.label.toLowerCase()}`).join(" · ")}</p>
+      <div class="home-hero-actions">
+        <button class="btn btn-primary home-btn" id="homeStartHereBtn">New to DC? Start Here</button>
+        <button class="btn btn-ghost home-btn" id="homeBrowseBtn">Browse Everything</button>
+      </div>
+    </div>`;
+
+  html += stripHtml("homeStartHereStrip", "New to DC? Start Here", "Low-complexity, standalone-friendly picks", startHere);
+  html += stripHtml("homeTopRatedStrip", "Top Rated", "Highest-rated movies & series on the site", topRated);
+
+  html += `<div class="home-section">
+      <div class="home-section-head"><h3>Explore by Category</h3></div>
+      <div class="home-discover-grid">
+        ${catCounts.map(c=>`<div class="discover-tile ${c.id}" data-cat="${c.id}">
+            <div class="discover-tile-icon">${CAT_ICON[c.id]||""}</div>
+            <div class="discover-tile-label">${c.label}</div>
+            <div class="discover-tile-count">${c.n} entries</div>
+          </div>`).join("")}
+      </div>
+    </div>`;
+
+  html += `<div class="home-section">
+      <div class="home-section-head"><h3>Browse By</h3></div>
+      <div class="home-discover-grid">
+        <div class="discover-tile" data-cat="movies" data-sort="hero"><div class="discover-tile-icon">🦇</div><div class="discover-tile-label">Hero / Team</div><div class="discover-tile-count">Movies &amp; series</div></div>
+        <div class="discover-tile" data-cat="movies" data-sort="story"><div class="discover-tile-icon">🌐</div><div class="discover-tile-label">Connected Story</div><div class="discover-tile-count">Movies &amp; series</div></div>
+        <div class="discover-tile" data-cat="games" data-sort="story"><div class="discover-tile-icon">🎮</div><div class="discover-tile-label">Games by Franchise</div><div class="discover-tile-count">Arkham, Injustice &amp; more</div></div>
+        <div class="discover-tile" data-cat="comics"><div class="discover-tile-icon">📖</div><div class="discover-tile-label">Comics by Era</div><div class="discover-tile-count">Golden Age to today</div></div>
+      </div>
+    </div>`;
+
+  gridEl.innerHTML = html;
+  wireImageFallbacks(gridEl);
+
+  gridEl.querySelectorAll(".strip-card").forEach(c=>{
+    c.addEventListener("click", ()=>{
+      const cat = c.dataset.cat, id = c.dataset.id;
+      const d = DATA[cat].find(x=>x.id===id);
+      if(!d) return;
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  });
+  gridEl.querySelectorAll(".discover-tile").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      goToCategory(t.dataset.cat, { sortMode: t.dataset.sort });
+    });
+  });
+  const startBtn = $("#homeStartHereBtn");
+  if(startBtn) startBtn.addEventListener("click", ()=>{
+    document.getElementById("homeStartHereStrip")?.scrollIntoView({behavior:"smooth", block:"center"});
+  });
+  const browseBtn = $("#homeBrowseBtn");
+  if(browseBtn) browseBtn.addEventListener("click", ()=> goToCategory("movies"));
+}
+function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); }
 
 /* ============================= DETAIL SHEET ============================= */
 const backdrop = $("#backdrop"), sheet = $("#sheet"), sheetContent = $("#sheetContent");
@@ -543,7 +760,16 @@ function extraDetailsHtml(cat, d){
   if(trailers.length){
     html += `<button class="trailer-btn">▶ Watch Trailer${trailers.length>1?"s":""}${trailers.length>1?` (${trailers.length})`:""}</button><div class="trailer-strip" id="trailerStrip"></div>`;
   }
-  if(d.plot) html += `<div class="sheet-section"><div class="sheet-label">PLOT</div><div class="sheet-body">${d.plot}</div></div>`;
+  if(d.plot){
+    html += `<div class="sheet-section spoiler-section">
+      <div class="sheet-label">FULL PLOT</div>
+      <div class="spoiler-gate">
+        <span>⚠ Contains major plot details</span>
+        <button class="spoiler-reveal-btn">Reveal spoilers</button>
+      </div>
+      <div class="sheet-body spoiler-body" data-revealed="false">${d.plot}</div>
+    </div>`;
+  }
   const credits = [];
   if(cat==="movies" && d.director) credits.push(["DIRECTOR", d.director]);
   if(cat==="series" && d.creators) credits.push(["CREATED BY", d.creators]);
@@ -559,22 +785,34 @@ function extraDetailsHtml(cat, d){
 }
 
 function heroHtml(cat, d){
+  const theme = (cat==="movies"||cat==="series") ? groupTheme(d.group) : null;
+  const themeStyle = theme ? ` style="--theme-a:${theme.a};--theme-b:${theme.b}"` : "";
   if(d.poster){
-    return `<div class="sheet-hero has-poster ${cat}">
+    return `<div class="sheet-hero has-poster ${cat}${theme?" themed":""}"${themeStyle}>
       <img src="${escapeAttr(d.poster)}" alt="" data-fallback-title="${escapeAttr(d.t)}">
     </div>`;
   }
-  return `<div class="sheet-hero ${cat}"><div class="sheet-hero-fallback">${d.t}</div></div>`;
+  return `<div class="sheet-hero ${cat}${theme?" themed":""}"${themeStyle}><div class="sheet-hero-fallback">${d.t}</div></div>`;
 }
 
 function openSheet(d){
   const cat = state.cat;
+  if(cat==="movies"||cat==="series"){
+    const theme = groupTheme(d.group);
+    sheet.style.setProperty("--theme-a", theme.a);
+    sheet.style.setProperty("--theme-b", theme.b);
+    sheet.dataset.themed = "true";
+  } else {
+    sheet.dataset.themed = "false";
+  }
   let html = heroHtml(cat, d);
   html += `<div class="sheet-eyebrow">${cat.toUpperCase()} · ${d.y||""}</div><h2>${d.t}</h2>`;
 
   if(cat==="movies"||cat==="series"){
-    html += `<div class="sheet-tags">${movieSeriesMetaTags(cat, d)}</div>`;
-    html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${d.blurb||""}</div></div>`;
+    html += quickFactsHtml(cat, d);
+    const sheetTags = sheetMetaTags(cat, d);
+    if(sheetTags) html += `<div class="sheet-tags">${sheetTags}</div>`;
+    html += `<div class="sheet-section"><div class="sheet-label">ABOUT · SPOILER-FREE</div><div class="sheet-body">${d.blurb||""}</div></div>`;
     html += extraDetailsHtml(cat, d);
 
     if(cat==="series" && d.seasons){
@@ -623,6 +861,14 @@ function openSheet(d){
     });
   }
 
+  sheetContent.querySelectorAll(".spoiler-reveal-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const section = btn.closest(".spoiler-section");
+      section.querySelector(".spoiler-body").dataset.revealed = "true";
+      section.querySelector(".spoiler-gate").style.display = "none";
+    });
+  });
+
   sheetContent.querySelectorAll("[data-season]").forEach(chip=>{
     chip.addEventListener("click", ()=>{
       sheetContent.querySelectorAll(".season-chip").forEach(c=>c.dataset.active="false");
@@ -656,11 +902,68 @@ function stopAllTrailers(){
 backdrop.addEventListener("click", ()=>{ stopAllTrailers(); closeSheetEl(backdrop, sheet); });
 $("#sheetClose").addEventListener("click", ()=>{ stopAllTrailers(); closeSheetEl(backdrop, sheet); });
 
+/* ============================= GLOBAL CROSS-CATEGORY SEARCH ============================= */
+const CAT_ICON = { movies:"🎬", series:"📺", games:"🎮", comics:"📖" };
+const globalSearchResults = $("#globalSearchResults");
+function catLabelOf(catId){ return (CATS.find(c=>c.id===catId)||{}).label || catId; }
+function globalSearchMatches(q){
+  const results = [];
+  CATS.forEach(c=>{
+    (DATA[c.id]||[]).forEach(d=>{
+      const title = (d.t||"").toLowerCase();
+      if(title.includes(q)) results.push({ d, cat:c.id, score: title.startsWith(q) ? 0 : 1 });
+    });
+  });
+  results.sort((a,b)=> a.score - b.score || (a.d.t||"").localeCompare(b.d.t||""));
+  return results.slice(0, 10);
+}
+function renderGlobalSearchDropdown(query){
+  const q = query.trim().toLowerCase();
+  if(q.length < 2 || !loaded){ globalSearchResults.innerHTML = ""; globalSearchResults.dataset.open="false"; return; }
+  const matches = globalSearchMatches(q);
+  if(!matches.length){
+    globalSearchResults.innerHTML = `<div class="gsr-empty">No matches across movies, series, games or comics.</div>`;
+    globalSearchResults.dataset.open = "true";
+    return;
+  }
+  globalSearchResults.innerHTML = matches.map(({d,cat})=>
+    `<div class="gsr-row" data-cat="${cat}" data-id="${d.id}">
+      <span class="gsr-icon">${CAT_ICON[cat]||""}</span>
+      <span class="gsr-title">${d.t}</span>
+      <span class="gsr-meta">${d.y||""} · ${catLabelOf(cat)}</span>
+    </div>`
+  ).join("");
+  globalSearchResults.dataset.open = "true";
+  globalSearchResults.querySelectorAll(".gsr-row").forEach(row=>{
+    row.addEventListener("click", ()=>{
+      const cat = row.dataset.cat, id = row.dataset.id;
+      const d = (DATA[cat]||[]).find(x=>x.id===id);
+      if(!d) return;
+      globalSearchResults.dataset.open = "false";
+      globalSearchResults.innerHTML = "";
+      searchInput.value = "";
+      state.search = "";
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      render();
+      openSheet(d);
+    });
+  });
+}
+
 let searchTimer;
 searchInput.addEventListener("input", e=>{
   clearTimeout(searchTimer);
   const v = e.target.value;
-  searchTimer = setTimeout(()=>{ state.search = v; renderCards(); }, 120);
+  searchTimer = setTimeout(()=>{
+    state.search = v;
+    renderCards();
+    renderGlobalSearchDropdown(v);
+  }, 120);
+});
+searchInput.addEventListener("focus", ()=>{ if(searchInput.value.trim().length>=2) renderGlobalSearchDropdown(searchInput.value); });
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".search-row")){ globalSearchResults.dataset.open = "false"; }
 });
 
 /* ============================= ADMIN: LOGIN ============================= */
@@ -704,6 +1007,70 @@ onAuthStateChanged(auth, (user)=>{
     signedInArea.style.display = "none";
   }
   if(loaded) renderCards();
+});
+
+/* ============================= MOBILE BOTTOM NAV ============================= */
+const mobileNav = $("#mobileNav");
+const exploreBackdrop = $("#exploreBackdrop"), exploreSheet = $("#exploreSheet"), exploreGrid = $("#exploreGrid");
+const moreBackdrop = $("#moreBackdrop"), moreSheet = $("#moreSheet");
+
+function buildExploreGrid(){
+  exploreGrid.innerHTML = CATS.map(c=>`<div class="discover-tile ${c.id}" data-cat="${c.id}">
+      <div class="discover-tile-icon">${CAT_ICON[c.id]||""}</div>
+      <div class="discover-tile-label">${c.label}</div>
+      <div class="discover-tile-count">${DATA[c.id].length} entries</div>
+    </div>`).join("");
+  exploreGrid.querySelectorAll(".discover-tile").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      closeSheetEl(exploreBackdrop, exploreSheet);
+      goToCategory(t.dataset.cat);
+    });
+  });
+}
+
+function updateMobileNavActive(){
+  mobileNav.querySelectorAll(".mobile-nav-btn").forEach(btn=>{
+    btn.dataset.active = (btn.dataset.mnav==="home" && state.cat==="home") ? "true" : "false";
+  });
+}
+
+mobileNav.querySelectorAll(".mobile-nav-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const which = btn.dataset.mnav;
+    if(which==="home"){
+      goToCategory("home");
+    } else if(which==="explore"){
+      buildExploreGrid();
+      openSheetEl(exploreBackdrop, exploreSheet);
+    } else if(which==="search"){
+      window.scrollTo({top:0, behavior:"smooth"});
+      setTimeout(()=> searchInput.focus(), 250);
+    } else if(which==="more"){
+      openSheetEl(moreBackdrop, moreSheet);
+    }
+    updateMobileNavActive();
+  });
+});
+exploreBackdrop.addEventListener("click", ()=> closeSheetEl(exploreBackdrop, exploreSheet));
+$("#exploreClose").addEventListener("click", ()=> closeSheetEl(exploreBackdrop, exploreSheet));
+moreBackdrop.addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSheet));
+$("#moreClose").addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSheet));
+
+$("#moreQuickHero").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  goToCategory("movies", { sortMode:"hero" });
+});
+$("#moreQuickStory").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  goToCategory("movies", { sortMode:"story" });
+});
+$("#moreQuickTopRated").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  goToCategory("movies", { sortMode:"rating" });
+});
+$("#moreAdmin").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  openSheetEl(loginBackdrop, loginSheet);
 });
 
 /* ============================= ADMIN: IMPORT STARTER DATA (first-time, all 4) ============================= */
