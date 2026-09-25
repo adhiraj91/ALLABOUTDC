@@ -1797,6 +1797,46 @@ if(replaceBtn){
   });
 }
 
+/* ============================= ADMIN: REPLACE COMICS ============================= */
+const replaceComicsBtn = $("#replaceComicsBtn");
+const replaceComicsMsg = $("#replaceComicsMsg");
+if(replaceComicsBtn){
+  replaceComicsBtn.addEventListener("click", async ()=>{
+    if(!confirm("This deletes all existing Comics entries, then loads the current dataset from seed-data.json. Continue?")) return;
+    replaceComicsBtn.disabled = true;
+    replaceComicsMsg.className = "form-msg";
+    try{
+      replaceComicsMsg.textContent = "Fetching dataset…";
+      const res = await fetch("./seed-data.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("seed-data.json not found");
+      const seed = await res.json();
+
+      const existing = DATA.comics;
+      for(let i=0;i<existing.length;i++){
+        replaceComicsMsg.textContent = `Deleting old comics: ${i+1} / ${existing.length}…`;
+        await deleteDoc(doc(db, "comics", existing[i].id));
+      }
+      DATA.comics = [];
+
+      const items = seed.comics || [];
+      for(let i=0;i<items.length;i++){
+        replaceComicsMsg.textContent = `Importing new comics: ${i+1} / ${items.length}…`;
+        const ref = await addDoc(collection(db, "comics"), items[i]);
+        DATA.comics.push({ id: ref.id, ...items[i] });
+      }
+      replaceComicsMsg.textContent = `Done — Comics replaced (${items.length} entries).`;
+      replaceComicsMsg.className = "form-msg ok";
+      buildTabs();
+      renderCards();
+    }catch(err){
+      replaceComicsMsg.textContent = "Replace failed: " + err.message;
+      replaceComicsMsg.className = "form-msg err";
+    }finally{
+      replaceComicsBtn.disabled = false;
+    }
+  });
+}
+
 /* ============================= ADMIN: ADD ENTRY ============================= */
 const addBackdrop = $("#addBackdrop"), addSheet = $("#addSheet");
 const addCategory = $("#addCategory"), addFormFields = $("#addFormFields"), addMsg = $("#addMsg");
