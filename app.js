@@ -192,6 +192,7 @@ const GROUP_THEMES = {
   "Batman":                   { a:"#3a3f4a", b:"#0d0d10" },
   "Superman":                 { a:"#2c5fd1", b:"#a3182a" },
   "Justice League":           { a:"#1f3f7a", b:"#c9a227" },
+  "Justice Society":          { a:"#8a6a1f", b:"#3a2f0d" },
   "Wonder Woman":             { a:"#a3132a", b:"#c9a227" },
   "Aquaman":                  { a:"#0e7490", b:"#e07c1e" },
   "Flash":                    { a:"#c0272d", b:"#f4c430" },
@@ -747,6 +748,11 @@ function renderHome(){
 
   const catCounts = CATS.map(c=>({...c, n: DATA[c.id].length}));
 
+  const recentlyAdded = ["movies","series","games","comics"]
+    .flatMap(cat=>DATA[cat].filter(d=>d.addedAt).map(d=>({d,cat})))
+    .sort((a,b)=> (b.d.addedAt||"").localeCompare(a.d.addedAt||""))
+    .slice(0, 12);
+
   let html = `
     <div class="home-hero">
       <div class="home-hero-badge">💥 UNOFFICIAL DC GUIDE</div>
@@ -758,6 +764,7 @@ function renderHome(){
       </div>
     </div>`;
 
+  html += stripHtml("homeRecentlyAddedStrip", "Recently Added", "Newest entries on the site — not release date, when it was added here", recentlyAdded);
   html += stripHtml("homeStartHereStrip", "New to DC? Start Here", "Low-complexity, standalone-friendly picks", startHere);
   html += stripHtml("homeTopRatedStrip", "Top Rated", "Highest-rated movies & series on the site", topRated);
 
@@ -1885,6 +1892,7 @@ $("#addSubmit").addEventListener("click", async ()=>{
     if((f.key==="rt"||f.key==="imdb"||f.key==="seasons"||f.key==="episodes") && val!=="") val = Number(val);
     entry[f.key] = val;
   }
+  entry.addedAt = new Date().toISOString().slice(0,10);
   addMsg.textContent = "Adding…"; addMsg.className = "form-msg";
   try{
     const ref = await addDoc(collection(db, cat), entry);
