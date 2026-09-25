@@ -14,8 +14,8 @@ const CATS = [
   {id:"comics", label:"Comics"},
 ];
 const INTRO = {
-  movies:"Every DC film — pick Live Action or Animated, then sort by newest, by character, by connected timeline, or by rating.",
-  series:"Every DC TV series — pick Live Action or Animated, then sort by newest, by character, by connected timeline, or by rating.",
+  movies:"Every DC film — pick Live Action or Animated, then sort by newest, by hero or team, by connected timeline, or by rating.",
+  series:"Every DC TV series — pick Live Action or Animated, then sort by newest, by hero or team, by connected timeline, or by rating.",
   games:"Organized by franchise (Arkham, Injustice, LEGO, and so on) rather than platform or year, since that's how most of these actually relate to each other.",
   comics:"Filter by era, canon status, and character line to figure out what's essential, what's a fun detour, and what order to read an arc in."
 };
@@ -28,7 +28,7 @@ const SCHEMA = {
     {key:"type", label:"Type", type:"select", options:["Live Action","Animated"], required:true},
     {key:"format", label:"Format", type:"select", options:["Theatrical","Direct-to-Video","TV Movie","Serial"], required:true},
     {key:"connected", label:"Connected story / timeline", type:"text", required:true, placeholder:"e.g. DCEU, DCU (Gunnverse), Nolanverse, Standalone"},
-    {key:"hero", label:"Hero(es) — comma separated, only if 2+ standalones exist", type:"text", required:false, placeholder:"e.g. Batman, Justice League"},
+    {key:"group", label:"Hero / Team group — the ONE group this belongs under", type:"text", required:true, placeholder:"e.g. Batman, Justice League, Suicide Squad — or \"Other DC Characters\" if it's the only one for that character"},
     {key:"rt", label:"Rotten Tomatoes % (blank if none)", type:"text", required:false},
     {key:"imdb", label:"IMDb rating out of 10 (blank if none)", type:"text", required:false},
     {key:"blurb", label:"Summary", type:"textarea", required:true},
@@ -46,7 +46,7 @@ const SCHEMA = {
     {key:"y", label:"Year(s)", type:"text", required:true, placeholder:"e.g. 2019–2023"},
     {key:"type", label:"Type", type:"select", options:["Live Action","Animated"], required:true},
     {key:"connected", label:"Connected story / timeline", type:"text", required:true, placeholder:"e.g. Arrowverse, DCU (Gunnverse), Standalone"},
-    {key:"hero", label:"Hero(es) — comma separated, only if 2+ standalones exist", type:"text", required:false, placeholder:"e.g. Flash, Justice League"},
+    {key:"group", label:"Hero / Team group — the ONE group this belongs under", type:"text", required:true, placeholder:"e.g. Flash, Justice League, Teen Titans — or \"Other DC Characters\" if it's the only one for that character"},
     {key:"seasons", label:"Seasons (number, blank if TBA)", type:"text", required:false},
     {key:"episodes", label:"Total episodes (number, blank if TBA)", type:"text", required:false},
     {key:"rt", label:"Rotten Tomatoes % (blank if none)", type:"text", required:false},
@@ -135,7 +135,7 @@ function ratingScore(d){
   if(d.imdb !== null && d.imdb !== undefined && d.imdb !== "") return Number(d.imdb) * 10;
   return null;
 }
-const HERO_PRIORITY = ["Batman","Superman","Wonder Woman","Aquaman","Justice League","Flash","Suicide Squad","Harley Quinn","Joker","Green Lantern","Shazam"];
+const HERO_PRIORITY = ["Batman","Superman","Justice League","Wonder Woman","Aquaman","Flash","Suicide Squad","Harley Quinn","Joker","Green Lantern","Shazam","Supergirl","Teen Titans","DC Super Hero Girls","LEGO DC","Watchmen","Constantine","Catwoman","Swamp Thing","Legion of Super-Heroes","Human Target","Vertigo / Imprint Films"];
 function sortHeroNames(heroMap){
   return Object.keys(heroMap).sort((a,b)=>{
     const ia = HERO_PRIORITY.indexOf(a), ib = HERO_PRIORITY.indexOf(b);
@@ -239,7 +239,7 @@ function buildMovieSeriesFilters(cat){
 
   const modes = [
     {id:"newest", label:"Newest → Oldest"},
-    {id:"hero", label:"By Character"},
+    {id:"hero", label:"By Hero / Team"},
     {id:"story", label:"Connected Story"},
     {id:"rating", label:"By Rating"},
   ];
@@ -393,21 +393,22 @@ function renderMovieSeriesCards(){
     }
   }
   else if(state.sortMode==="hero"){
+    // Each title belongs to exactly ONE group now (d.group) — no more showing
+    // the same title under multiple heroes/teams. Falls back to the legacy
+    // multi-tag "hero" field only for any entry that predates the "group" field.
     const heroMap = {};
-    const other = [];
     items.forEach(d=>{
-      const heroes = heroList(d);
-      if(heroes.length===0){ other.push(d); return; }
-      heroes.forEach(h=>{ (heroMap[h] = heroMap[h] || []).push(d); });
+      const g = d.group || heroList(d)[0] || "Other DC Characters";
+      (heroMap[g] = heroMap[g] || []).push(d);
     });
-    const heroNames = sortHeroNames(heroMap);
+    const heroNames = sortHeroNames(heroMap).filter(h=>h!=="Other DC Characters");
     heroNames.forEach(h=>{
       const list = heroMap[h].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
       html += groupHeaderHtml(h, list.length) + list.map(d=>cardHtml(cat,d)).join("");
     });
-    if(other.length){
-      const list = other.sort((a,b)=>firstYear(b.y)-firstYear(a.y));
-      html += groupHeaderHtml("Ensemble / Other", list.length) + list.map(d=>cardHtml(cat,d)).join("");
+    if(heroMap["Other DC Characters"] && heroMap["Other DC Characters"].length){
+      const list = heroMap["Other DC Characters"].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
+      html += groupHeaderHtml("Other DC Characters", list.length) + list.map(d=>cardHtml(cat,d)).join("");
     }
   }
   else if(state.sortMode==="story"){
@@ -521,9 +522,27 @@ function relatedInUniverse(connected, cat, excludeId){
   return results.sort((a,b)=>firstYear(a.y)-firstYear(b.y));
 }
 
+function trailerListOf(d){
+  if(Array.isArray(d.trailers) && d.trailers.length) return d.trailers;
+  if(d.trailer) return [{ id: d.trailer, label: "Trailer" }];
+  return [];
+}
+function trailerStripHtml(trailers){
+  return trailers.map((t,i)=>`
+    <div class="trailer-card" data-idx="${i}">
+      <div class="trailer-card-media">
+        <img src="https://i.ytimg.com/vi/${escapeAttr(t.id)}/hqdefault.jpg" alt="" loading="lazy">
+        <button class="trailer-play" data-yt="${escapeAttr(t.id)}">▶</button>
+      </div>
+      <div class="trailer-card-label">${t.label||"Trailer"}</div>
+    </div>`).join("");
+}
 function extraDetailsHtml(cat, d){
   let html = "";
-  if(d.trailer) html += `<button class="trailer-btn" data-yt="${d.trailer}">▶ Watch Trailer</button><div class="trailer-embed" id="trailerEmbed"></div>`;
+  const trailers = trailerListOf(d);
+  if(trailers.length){
+    html += `<button class="trailer-btn">▶ Watch Trailer${trailers.length>1?"s":""}${trailers.length>1?` (${trailers.length})`:""}</button><div class="trailer-strip" id="trailerStrip"></div>`;
+  }
   if(d.plot) html += `<div class="sheet-section"><div class="sheet-label">PLOT</div><div class="sheet-body">${d.plot}</div></div>`;
   const credits = [];
   if(cat==="movies" && d.director) credits.push(["DIRECTOR", d.director]);
@@ -588,11 +607,18 @@ function openSheet(d){
 
   const trailerBtn = sheetContent.querySelector(".trailer-btn");
   if(trailerBtn){
+    const trailers = trailerListOf(d);
     trailerBtn.addEventListener("click", ()=>{
-      const vid = trailerBtn.dataset.yt;
-      const embed = $("#trailerEmbed");
-      embed.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1" title="Trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-      embed.dataset.active = "true";
+      const strip = $("#trailerStrip");
+      strip.innerHTML = trailerStripHtml(trailers);
+      strip.dataset.active = "true";
+      strip.querySelectorAll(".trailer-play").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const vid = btn.dataset.yt;
+          const media = btn.closest(".trailer-card-media");
+          media.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1" title="Trailer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        });
+      });
       trailerBtn.style.display = "none";
     });
   }
@@ -620,8 +646,15 @@ function openSheet(d){
 }
 function openSheetEl(bd, sh){ bd.dataset.open="true"; sh.dataset.open="true"; }
 function closeSheetEl(bd, sh){ bd.dataset.open="false"; sh.dataset.open="false"; }
-backdrop.addEventListener("click", ()=>closeSheetEl(backdrop, sheet));
-$("#sheetClose").addEventListener("click", ()=>closeSheetEl(backdrop, sheet));
+function stopAllTrailers(){
+  // Removing/blanking the iframe src actually halts YouTube playback;
+  // hiding the sheet with CSS alone leaves the audio/video running.
+  sheetContent.querySelectorAll(".trailer-card-media iframe").forEach(f=>{ f.src = "about:blank"; });
+  const strip = $("#trailerStrip");
+  if(strip){ strip.innerHTML = ""; strip.dataset.active = "false"; }
+}
+backdrop.addEventListener("click", ()=>{ stopAllTrailers(); closeSheetEl(backdrop, sheet); });
+$("#sheetClose").addEventListener("click", ()=>{ stopAllTrailers(); closeSheetEl(backdrop, sheet); });
 
 let searchTimer;
 searchInput.addEventListener("input", e=>{
