@@ -415,7 +415,7 @@ function filteredDataGeneric(){
 }
 function canonTagClass(canon){
   if(!canon) return "";
-  return canon==="Main Continuity" ? "canon-main" : "canon-alt";
+  return canon==="Main Canon" ? "canon-main" : "canon-alt";
 }
 function metaTagsGeneric(cat, d){
   if(cat==="games"){
@@ -424,7 +424,9 @@ function metaTagsGeneric(cat, d){
   }
   if(cat==="comics"){
     const rl = d.readingLevel ? `<span class="qf-pill rl-${readingLevelClass(d.readingLevel)}">${d.readingLevel}</span>` : "";
-    return `<span class="tag">${d.era||""}</span><span class="tag ${canonTagClass(d.canon)}">${d.canon||""}</span><span class="tag">${d.line||""}</span>${rl}`;
+    const review = (d.verificationStatus && d.verificationStatus!=="verified")
+      ? `<span class="tag needs-review" title="Continuity not definitively confirmed by DC">⚠ needs review</span>` : "";
+    return `<span class="tag">${d.era||""}</span><span class="tag ${canonTagClass(d.canon)}">${d.canon||""}</span><span class="tag">${d.line||""}</span>${rl}${review}`;
   }
   return "";
 }
@@ -544,7 +546,14 @@ function wireImageFallbacks(root){
 }
 
 function nerdBadgesHtml(cat, d){
-  if(cat==="comics") return ""; // reading level & canon already shown on comic cards
+  if(cat==="comics"){
+    const parts = [];
+    if(d.continuity) parts.push(`<span class="tag">${d.continuity}</span>`);
+    if(d.universe) parts.push(`<span class="tag">${d.universe}</span>`);
+    if(d.credits) parts.push(`<span class="tag">${d.credits}</span>`);
+    if(!parts.length) return "";
+    return `<div class="nerd-badges">${parts.join("")}</div>`;
+  }
   const parts = [];
   if(d.viewerLevel) parts.push(`<span class="qf-pill rl-${readingLevelClass(d.viewerLevel)}">${d.viewerLevel}</span>`);
   if(d.complexity) parts.push(`<span class="qf-pill cx-${complexityClass(d.complexity)}">${d.complexity}</span>`);
@@ -1375,6 +1384,27 @@ function openSheet(d){
     if(cat==="comics"){
       html += `<div class="sheet-section"><div class="sheet-label">WHERE IT FITS / READING ORDER</div><div class="sheet-body">${d.ord||""}</div></div>`;
       html += `<div class="sheet-section"><div class="sheet-label">COLLECTED FORMATS</div><div class="sheet-body">${d.fmt||""}</div></div>`;
+      if(d.credits){
+        html += `<div class="sheet-section"><div class="sheet-label">CREDITS</div><div class="sheet-body">${d.credits}</div></div>`;
+      }
+      if(d.issueNumber){
+        const bits = [];
+        if(d.onSaleDate) bits.push(`On sale ${d.onSaleDate}`);
+        if(d.coverPrice) bits.push(d.coverPrice);
+        if(d.pageCount) bits.push(`${d.pageCount} pages`);
+        if(d.rating) bits.push(`Rated ${d.rating}`);
+        html += `<div class="sheet-section"><div class="sheet-label">ISSUE DETAILS</div><div class="sheet-body">${bits.join(" · ")}</div></div>`;
+      }
+      if(d.continuity || d.universe){
+        const bits = [];
+        if(d.continuity) bits.push(`<span class="tag">${d.continuity}</span>`);
+        if(d.universe) bits.push(`<span class="tag">${d.universe}</span>`);
+        html += `<div class="sheet-section"><div class="sheet-label">CONTINUITY &amp; UNIVERSE</div><div class="sheet-body">${bits.join(" ")}</div></div>`;
+      }
+      if(d.verificationStatus && d.verificationStatus!=="verified"){
+        const label = d.verificationStatus==="needs_review" ? "Needs review" : "Partially verified";
+        html += `<div class="sheet-section"><div class="sheet-label">RESEARCH STATUS</div><div class="sheet-body">⚠ ${label} — DC has never definitively clarified this title's exact continuity placement.${d.researchNote?` <span class="research-note">${d.researchNote}</span>`:""}</div></div>`;
+      }
     }
   }
 
