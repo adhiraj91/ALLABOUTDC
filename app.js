@@ -289,7 +289,13 @@ function buildTabs(){
 /* ============================= RENDER: FILTERS ============================= */
 function buildFilters(){
   const cat = state.cat;
-  introEl.textContent = INTRO[cat];
+  if(cat==="home"){
+    introEl.textContent = "";
+    introEl.style.display = "none";
+  } else {
+    introEl.style.display = "";
+    introEl.textContent = INTRO[cat];
+  }
   filterRow.innerHTML = "";
   chipRow.innerHTML = "";
 
@@ -729,6 +735,12 @@ function stripHtml(id, title, subtitle, items){
       <div class="home-strip" id="${id}">${items.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
     </div>`;
 }
+const ERA_ORDER = ["Golden Age","Silver Age","Bronze Age","Crisis Transition","Modern Age / Post-Crisis","New 52","Rebirth","Infinite Frontier","Dawn of DC","Absolute-era publishing"];
+const ERA_ICON = {
+  "Golden Age":"⭐", "Silver Age":"🌙", "Bronze Age":"🥉", "Crisis Transition":"💥",
+  "Modern Age / Post-Crisis":"🏙️", "New 52":"5️⃣2️⃣", "Rebirth":"🔥", "Infinite Frontier":"♾️",
+  "Dawn of DC":"🌅", "Absolute-era publishing":"🅰️",
+};
 function renderHome(){
   countEl.textContent = "";
   const allMS = [
@@ -736,56 +748,121 @@ function renderHome(){
     ...DATA.series.map(d=>({d,cat:"series"})),
   ];
 
-  const startHere = allMS
-    .filter(({d})=>d.viewerLevel==="New Viewer" && d.complexity==="Low")
-    .sort((a,b)=> (ratingScore(b.d)||0) - (ratingScore(a.d)||0))
-    .slice(0, 12);
-
   const topRated = allMS
     .filter(({d})=>ratingScore(d)!==null)
     .sort((a,b)=> ratingScore(b.d) - ratingScore(a.d))
     .slice(0, 12);
-
-  const catCounts = CATS.map(c=>({...c, n: DATA[c.id].length}));
 
   const recentlyAdded = ["movies","series","games","comics"]
     .flatMap(cat=>DATA[cat].filter(d=>d.addedAt).map(d=>({d,cat})))
     .sort((a,b)=> (b.d.addedAt||"").localeCompare(a.d.addedAt||""))
     .slice(0, 12);
 
+  // Featured — one flagship (highest-rated) pick per top hero/team, for a diverse showcase rail
+  const featured = [];
+  const seenFeatured = new Set();
+  HERO_PRIORITY.forEach(group=>{
+    const inGroup = allMS.filter(({d})=> (d.group||"Other DC Characters")===group && ratingScore(d)!==null);
+    if(!inGroup.length) return;
+    const best = inGroup.sort((a,b)=>ratingScore(b.d)-ratingScore(a.d))[0];
+    const key = best.cat+":"+best.d.id;
+    if(seenFeatured.has(key)) return;
+    seenFeatured.add(key);
+    featured.push(best);
+  });
+
+  // Explore by Hero — every group with at least one title, DC-priority order first
+  const allGroupNames = uniq([
+    ...DATA.movies.map(d=>d.group), ...DATA.series.map(d=>d.group), ...DATA.comics.map(d=>d.group),
+    ...DATA.games.map(d=>GAME_GROUP[d.fr]||"Other DC Characters"),
+  ]);
+  const heroRailGroups = sortHeroNames(Object.fromEntries(allGroupNames.map(g=>[g, allGroupMembers(g)])))
+    .filter(g=>g!=="Other DC Characters")
+    .slice(0, 14);
+
+  // Explore by Era — from the comics catalogue's own era tagging
+  const eraCounts = {};
+  DATA.comics.forEach(d=>{ if(d.era) eraCounts[d.era] = (eraCounts[d.era]||0)+1; });
+  const eraTiles = [
+    ...ERA_ORDER.filter(e=>eraCounts[e]).map(e=>({era:e, n:eraCounts[e]})),
+    ...Object.keys(eraCounts).filter(e=>!ERA_ORDER.includes(e)).map(e=>({era:e, n:eraCounts[e]})),
+  ];
+
+  // Continue Your Journey — personalized rail from this device's saved favorites/progress, when there is any
+  const favKeys = getFavorites();
+  const progressKeys = Object.keys(getProgress());
+  const journeyItems = [
+    ...resolveKeys(favKeys),
+    ...resolveKeys(progressKeys.filter(k=>!favKeys.includes(k))),
+  ].slice(0, 12);
+
   let html = `
-    <div class="home-hero">
-      <div class="home-hero-badge">💥 UNOFFICIAL DC GUIDE</div>
-      <h2>Every DC story, organized by hero, timeline &amp; how deep you want to go.</h2>
-      <p>${catCounts.map(c=>`${c.n} ${c.label.toLowerCase()}`).join(" · ")}</p>
-      <div class="home-hero-actions">
-        <button class="btn btn-primary home-btn" id="homeStartHereBtn">New to DC? Start Here</button>
-        <button class="btn btn-ghost home-btn" id="homeBrowseBtn">Browse Everything</button>
+    <section class="home-hero-cinematic">
+      <div class="hhc-eyebrow">UNOFFICIAL DC GUIDE</div>
+      <h2>Discover DC</h2>
+      <p>Every movie, series, game and comic — organized by hero, timeline, and how deep you want to go.</p>
+      <button class="btn-cta" id="heroExploreBtn">Explore the DC Universe</button>
+    </section>`;
+
+  if(journeyItems.length){
+    html += stripHtml("homeJourneyStrip", "Continue Your Journey", "Your favorites & progress on this device", journeyItems);
+  }
+
+  html += `
+    <div class="starting-point-card" id="startingPointCard">
+      <div class="spc-icon">🧭</div>
+      <div class="spc-text">
+        <div class="spc-title">New to DC?</div>
+        <div class="spc-sub">Find My Starting Point — low-complexity, standalone-friendly picks</div>
+      </div>
+      <div class="spc-arrow">→</div>
+    </div>`;
+
+  html += `<div class="home-section">
+      <div class="home-section-head"><h3>Explore by Hero</h3></div>
+      <div class="home-strip hero-rail" id="homeHeroRail">
+        ${heroRailGroups.map(g=>{
+          const theme = groupTheme(g);
+          const n = allGroupMembers(g).length;
+          return `<div class="hero-tile" data-group="${escapeAttr(g)}" style="--ta:${theme.a};--tb:${theme.b}">
+              <div class="hero-tile-name">${g}</div>
+              <div class="hero-tile-count">${n} title${n===1?"":"s"}</div>
+            </div>`;
+        }).join("")}
       </div>
     </div>`;
 
-  html += stripHtml("homeRecentlyAddedStrip", "Recently Added", "Newest entries on the site — not release date, when it was added here", recentlyAdded);
-  html += stripHtml("homeStartHereStrip", "New to DC? Start Here", "Low-complexity, standalone-friendly picks", startHere);
+  html += stripHtml("homeFeaturedStrip", "Featured", "Flagship picks across the DC universe", featured);
+
+  if(eraTiles.length){
+    html += `<div class="home-section">
+        <div class="home-section-head"><h3>Explore by Era</h3><span class="home-section-sub">Comics, Golden Age to today</span></div>
+        <div class="home-strip era-rail" id="homeEraRail">
+          ${eraTiles.map(({era,n})=>`<div class="era-tile" data-era="${escapeAttr(era)}">
+              <div class="era-tile-icon">${ERA_ICON[era]||"📖"}</div>
+              <div class="era-tile-name">${era}</div>
+              <div class="era-tile-count">${n} issue${n===1?"":"s"}</div>
+            </div>`).join("")}
+        </div>
+      </div>`;
+  }
+
+  html += stripHtml("homeRecentlyAddedStrip", "Recently Added", "Newest entries on the site", recentlyAdded);
   html += stripHtml("homeTopRatedStrip", "Top Rated", "Highest-rated movies & series on the site", topRated);
 
+  const catCounts = CATS.map(c=>({...c, n: DATA[c.id].length}));
   html += `<div class="home-section">
-      <div class="home-section-head"><h3>Explore by Category</h3></div>
-      <div class="home-discover-grid">
-        ${catCounts.map(c=>`<div class="discover-tile ${c.id}" data-cat="${c.id}">
-            <div class="discover-tile-icon">${CAT_ICON[c.id]||""}</div>
-            <div class="discover-tile-label">${c.label}</div>
-            <div class="discover-tile-count">${c.n} entries</div>
-          </div>`).join("")}
+      <div class="home-section-head"><h3>Browse Everything</h3></div>
+      <div class="home-category-row">
+        ${catCounts.map(c=>`<button class="cat-pill ${c.id}" data-cat="${c.id}">${CAT_ICON[c.id]||""} ${c.label} <span>${c.n}</span></button>`).join("")}
       </div>
     </div>`;
 
   html += `<div class="home-section">
-      <div class="home-section-head"><h3>Browse By</h3></div>
+      <div class="home-section-head"><h3>More Ways to Browse</h3></div>
       <div class="home-discover-grid">
-        <div class="discover-tile" data-cat="movies" data-sort="hero"><div class="discover-tile-icon">🦇</div><div class="discover-tile-label">Hero / Team</div><div class="discover-tile-count">Movies &amp; series</div></div>
         <div class="discover-tile" data-cat="movies" data-sort="story"><div class="discover-tile-icon">🌐</div><div class="discover-tile-label">Connected Story</div><div class="discover-tile-count">Movies &amp; series</div></div>
         <div class="discover-tile" data-cat="games" data-sort="story"><div class="discover-tile-icon">🎮</div><div class="discover-tile-label">Games by Franchise</div><div class="discover-tile-count">Arkham, Injustice &amp; more</div></div>
-        <div class="discover-tile" data-cat="comics"><div class="discover-tile-icon">📖</div><div class="discover-tile-label">Comics by Era</div><div class="discover-tile-count">Golden Age to today</div></div>
         <div class="discover-tile" data-hub="event"><div class="discover-tile-icon">💥</div><div class="discover-tile-label">Multiverse Events</div><div class="discover-tile-count">Crisis crossovers, in order</div></div>
         <div class="discover-tile" data-hub="glossary"><div class="discover-tile-icon">📚</div><div class="discover-tile-label">DC Glossary</div><div class="discover-tile-count">Canon, Elseworlds &amp; more, explained</div></div>
         <div class="discover-tile" data-hub="multiverse"><div class="discover-tile-icon">🌀</div><div class="discover-tile-label">Multiverse Map</div><div class="discover-tile-count">Every continuity, at a glance</div></div>
@@ -817,12 +894,29 @@ function renderHome(){
       goToCategory(t.dataset.cat, { sortMode: t.dataset.sort });
     });
   });
-  const startBtn = $("#homeStartHereBtn");
-  if(startBtn) startBtn.addEventListener("click", ()=>{
-    document.getElementById("homeStartHereStrip")?.scrollIntoView({behavior:"smooth", block:"center"});
+  gridEl.querySelectorAll(".cat-pill").forEach(p=>{
+    p.addEventListener("click", ()=> goToCategory(p.dataset.cat));
   });
-  const browseBtn = $("#homeBrowseBtn");
-  if(browseBtn) browseBtn.addEventListener("click", ()=> goToCategory("movies"));
+  gridEl.querySelectorAll(".hero-tile").forEach(t=>{
+    t.addEventListener("click", ()=> openHub(t.dataset.group));
+  });
+  gridEl.querySelectorAll(".era-tile").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      state.cat = "comics";
+      resetFiltersForTabSwitch();
+      state.f1 = t.dataset.era;
+      render();
+    });
+  });
+  const spc = $("#startingPointCard");
+  if(spc) spc.addEventListener("click", ()=>{
+    goToCategory("movies", { viewerLevelFilter:"New Viewer", complexityFilter:"Low" });
+  });
+  const heroBtn = $("#heroExploreBtn");
+  if(heroBtn) heroBtn.addEventListener("click", ()=>{
+    buildExploreGrid();
+    openSheetEl(exploreBackdrop, exploreSheet);
+  });
 }
 /* ============================= RENDER: MY JOURNEY ============================= */
 function resolveKeys(keys){
