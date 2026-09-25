@@ -713,6 +713,7 @@ function renderHome(){
         <div class="discover-tile" data-cat="movies" data-sort="story"><div class="discover-tile-icon">🌐</div><div class="discover-tile-label">Connected Story</div><div class="discover-tile-count">Movies &amp; series</div></div>
         <div class="discover-tile" data-cat="games" data-sort="story"><div class="discover-tile-icon">🎮</div><div class="discover-tile-label">Games by Franchise</div><div class="discover-tile-count">Arkham, Injustice &amp; more</div></div>
         <div class="discover-tile" data-cat="comics"><div class="discover-tile-icon">📖</div><div class="discover-tile-label">Comics by Era</div><div class="discover-tile-count">Golden Age to today</div></div>
+        <div class="discover-tile" data-hub="event"><div class="discover-tile-icon">💥</div><div class="discover-tile-label">Multiverse Events</div><div class="discover-tile-count">Crisis crossovers, in order</div></div>
       </div>
     </div>`;
 
@@ -729,7 +730,9 @@ function renderHome(){
       openSheet(d);
     });
   });
-  gridEl.querySelectorAll(".discover-tile").forEach(t=>{
+  const eventTile = gridEl.querySelector('[data-hub="event"]');
+  if(eventTile) eventTile.addEventListener("click", openEventHub);
+  gridEl.querySelectorAll(".discover-tile:not([data-hub])").forEach(t=>{
     t.addEventListener("click", ()=>{
       goToCategory(t.dataset.cat, { sortMode: t.dataset.sort });
     });
@@ -758,6 +761,14 @@ function openHub(group){
   let html = `<div class="sheet-eyebrow">CHARACTER / TEAM HUB</div><h2>${group}</h2>
     <p class="hub-count">${members.length} title${members.length===1?"":"s"} across ${CATS.filter(c=>byCat[c.id].length).map(c=>c.label.toLowerCase()).join(", ")}</p>`;
 
+  const origin = [...members].sort((a,b)=>firstYear(a.d.y)-firstYear(b.d.y)).find(m=>m.d.blurb);
+  if(origin){
+    html += `<div class="sheet-section origin-block">
+        <div class="sheet-label">ORIGIN — ${escapeAttr(origin.d.t)} (${origin.d.y||""})</div>
+        <div class="sheet-body">${origin.d.blurb}</div>
+      </div>`;
+  }
+
   CATS.forEach(c=>{
     const list = byCat[c.id];
     if(!list.length) return;
@@ -784,6 +795,68 @@ function openHub(group){
 }
 
 /* ============================= UNIVERSE / CONNECTED-STORY HUB (Phase 2) ============================= */
+function timelineRowsWithDecades(sortedItems){
+  let html = "";
+  let lastDecade = null;
+  sortedItems.forEach(d=>{
+    const yr = firstYear(d.y);
+    if(yr){
+      const decade = Math.floor(yr/10)*10;
+      if(decade !== lastDecade){
+        html += `<div class="timeline-decade">${decade}s</div>`;
+        lastDecade = decade;
+      }
+    }
+    html += `<div class="timeline-row" data-cat="${d._cat}" data-id="${d.id}">
+        <span class="timeline-year">${d.y||""}</span>
+        <span class="timeline-icon">${CAT_ICON[d._cat]||""}</span>
+        <span class="timeline-title">${d.t}</span>
+      </div>`;
+  });
+  return html;
+}
+
+/* ============================= COMIC EVENT HUB (Phase 2) ============================= */
+function openEventHub(){
+  hubSheet.style.removeProperty("--theme-a");
+  hubSheet.style.removeProperty("--theme-b");
+  hubSheet.dataset.themed = "false";
+
+  const events = DATA.comics
+    .filter(d=>d.line==="Multiverse/Crisis Event")
+    .map(d=>({...d, _cat:"comics"}))
+    .sort((a,b)=>firstYear(a.y)-firstYear(b.y));
+
+  let html = `<div class="sheet-eyebrow">COMIC EVENTS</div><h2>DC Multiverse &amp; Crisis Events</h2>
+    <p class="hub-count">${events.length} major crossover events, in publication order</p>
+    <div class="sheet-section"><div class="sheet-body">The big reality-shaking crossovers — the ones that reset, merge, or fracture DC continuity. Reading these in order (below) roughly tracks how DC's shared universe has evolved since 1961.</div></div>`;
+
+  html += `<div class="home-section"><div class="universe-timeline">${timelineRowsWithDecades(events)}</div></div>`;
+
+  html += `<div class="home-section">
+      <div class="home-section-head"><h3>Where each one fits</h3></div>
+      ${events.map(d=>`<div class="event-detail-row" data-cat="comics" data-id="${d.id}">
+          <div class="event-detail-title">${d.t} <span class="event-detail-year">${d.y||""}</span></div>
+          <div class="event-detail-fit">${d.ord||""}</div>
+        </div>`).join("")}
+    </div>`;
+
+  hubContent.innerHTML = html;
+  wireImageFallbacks(hubContent);
+  const openItem = (cat, id)=>{
+    const d = (DATA[cat]||[]).find(x=>x.id===id);
+    if(!d) return;
+    closeSheetEl(hubBackdrop, hubSheet);
+    state.cat = cat;
+    if(d.type) state.typeFilter = d.type;
+    openSheet(d);
+  };
+  hubContent.querySelectorAll(".timeline-row, .event-detail-row").forEach(r=>{
+    r.addEventListener("click", ()=> openItem(r.dataset.cat, r.dataset.id));
+  });
+  openSheetEl(hubBackdrop, hubSheet);
+}
+
 function openUniverseHub(connected){
   hubSheet.style.removeProperty("--theme-a");
   hubSheet.style.removeProperty("--theme-b");
@@ -802,11 +875,7 @@ function openUniverseHub(connected){
   html += `<div class="home-section">
       <div class="home-section-head"><h3>Timeline</h3></div>
       <div class="universe-timeline">
-        ${byYear.map(d=>`<div class="timeline-row" data-cat="${d._cat}" data-id="${d.id}">
-            <span class="timeline-year">${d.y||""}</span>
-            <span class="timeline-icon">${CAT_ICON[d._cat]||""}</span>
-            <span class="timeline-title">${d.t}</span>
-          </div>`).join("")}
+        ${timelineRowsWithDecades(byYear)}
       </div>
     </div>`;
 
@@ -1225,6 +1294,10 @@ $("#moreQuickStory").addEventListener("click", ()=>{
 $("#moreQuickTopRated").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
   goToCategory("movies", { sortMode:"rating" });
+});
+$("#moreQuickEvents").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  openEventHub();
 });
 $("#moreAdmin").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
