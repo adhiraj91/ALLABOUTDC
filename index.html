@@ -7,8 +7,8 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💥</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=26">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 
@@ -20,11 +20,14 @@
   <div class="brand">
     <div class="brand-left"><span class="dot"></span><h1>ALLABOUTDC</h1></div>
     <div class="brand-actions">
-      <button class="admin-toggle" id="nerdToggle" title="Nerd Mode" data-active="false">🤓</button>
-      <button class="admin-toggle" id="adminToggle" title="Admin">🔒</button>
+      <button class="admin-toggle" id="nerdToggle" title="Nerd Mode" data-active="false">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1 .8-1.8 1.8-1.8h2.4c1 0 1.8.8 1.8 1.8v2c0 1-.8 1.8-1.8 1.8h-2.4A1.8 1.8 0 0 1 9 12.5z"/><path d="M12 8.7V7M9.2 9.5 7.8 8M14.8 9.5 16.2 8"/></svg>
+      </button>
+      <button class="admin-toggle" id="adminToggle" title="Admin">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      </button>
     </div>
   </div>
-  <p class="brand-sub">movies · series · games · comics — an unofficial DC reading &amp; watch guide</p>
   <nav class="tabs" id="tabs"></nav>
 </header>
 
@@ -163,6 +166,6 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=35"></script>
+<script type="module" src="app.js?v=36"></script>
 </body>
 </html>

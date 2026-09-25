@@ -1630,7 +1630,6 @@ $("#logoutBtn").addEventListener("click", async ()=>{
 onAuthStateChanged(auth, (user)=>{
   isAdmin = !!user;
   adminToggle.dataset.signedIn = isAdmin ? "true" : "false";
-  adminToggle.textContent = isAdmin ? "🔓" : "🔒";
   fab.dataset.visible = isAdmin ? "true" : "false";
   if(isAdmin){
     loginArea.style.display = "none";
