@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=28">
+<link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
 
@@ -72,6 +72,7 @@
   <div class="sheet-handle"></div>
   <h2>More</h2>
   <div class="more-list">
+    <button class="more-row" id="moreQuickStart">🧭 New to DC? Start Here</button>
     <button class="more-row" id="moreQuickJourney">♥ My Journey</button>
     <button class="more-row" id="moreQuickHero">By Hero / Team</button>
     <button class="more-row" id="moreQuickStory">Connected Story</button>
@@ -91,6 +92,14 @@
   <button class="sheet-close" id="hubClose">✕</button>
   <div class="sheet-handle"></div>
   <div id="hubContent"></div>
+</div>
+
+<!-- DC Starting Point (beginner guide) sheet -->
+<div class="sheet-backdrop" id="startBackdrop"></div>
+<div class="sheet" id="startSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="startClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="startContent"></div>
 </div>
 
 <!-- Detail sheet -->
@@ -138,6 +147,12 @@
       <div class="form-actions"><button class="btn btn-ghost" id="replaceComicsBtn">Replace Comics</button></div>
       <div class="form-msg" id="replaceComicsMsg"></div>
     </div>
+    <div class="sheet-section" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px;">
+      <div class="sheet-label">UPDATE</div>
+      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Replaces the "New to DC?" beginner-guide recommendations (Start Here paths &amp; starter picks) with the current curated dataset — deletes the old ones first, so it's safe to run even if you already imported before.</p>
+      <div class="form-actions"><button class="btn btn-ghost" id="replaceBeginnerBtn">Replace Beginner Guide</button></div>
+      <div class="form-msg" id="replaceBeginnerMsg"></div>
+    </div>
   </div>
 </div>
 
@@ -166,6 +181,6 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=37"></script>
+<script type="module" src="app.js?v=38"></script>
 </body>
 </html>

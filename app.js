@@ -100,7 +100,10 @@ const SCHEMA = {
 };
 
 /* ============================= STATE ============================= */
-let DATA = { movies:[], series:[], games:[], comics:[] };
+// META_COLLECTIONS: non-title-record collections (curated editorial data, not movies/series/games/comics
+// entries themselves) — loaded the same way but never shown as a browse tab.
+const META_COLLECTIONS = ["beginnerPaths", "starterRecommendations"];
+let DATA = { movies:[], series:[], games:[], comics:[], beginnerPaths:[], starterRecommendations:[] };
 let state = {
   cat:"home",
   search:"",
@@ -161,6 +164,18 @@ async function loadAll(){
     const snap = await getDocs(collection(db, c.id));
     DATA[c.id] = snap.docs.map(d => ({ id:d.id, ...d.data() }));
   }
+  // Beginner-guide editorial data (curated paths / starter picks) — same Firestore pattern as the
+  // title collections above, but not shown as a browse tab. Safe to be empty (admin hasn't imported
+  // it yet, or is mid-setup) — the Start Here experience falls back gracefully either way.
+  for(const key of META_COLLECTIONS){
+    try{
+      const snap = await getDocs(collection(db, key));
+      DATA[key] = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    }catch(e){
+      console.warn(`[Beginner Guide] Couldn't load "${key}":`, e.message);
+      DATA[key] = [];
+    }
+  }
   loaded = true;
   render();
 }
@@ -186,6 +201,49 @@ function ratingScore(d){
   return null;
 }
 const HERO_PRIORITY = ["Batman","Superman","Justice League","Wonder Woman","Aquaman","Flash","Suicide Squad","Harley Quinn","Joker","Green Lantern","Shazam","Supergirl","Teen Titans","DC Super Hero Girls","LEGO DC","Watchmen","Constantine","Catwoman","Swamp Thing","Legion of Super-Heroes","Human Target","Vertigo / Imprint Films"];
+
+/* ============================= BEGINNER GUIDE ("New to DC?") =============================
+   Curated recommendation data (DATA.beginnerPaths / DATA.starterRecommendations) is loaded from
+   Firestore like everything else, but it never duplicates a title record — every recommendation
+   references an existing movies/series/games/comics entry via a stable "titleKey" of the form
+   "<category>::<title>::<year>", resolved against the real catalogue at render time. There is no
+   Firestore document ID to reference here: seed-data.json entries have none (Firestore assigns one
+   only at import, and it changes every time an admin re-imports), so title+year is the only stable,
+   human-readable key that survives a re-import. */
+function resolveTitleKey(key){
+  if(!key || typeof key !== "string") return null;
+  const parts = key.split("::");
+  if(parts.length < 3) return null;
+  const cat = parts[0];
+  const y = parts[parts.length - 1];
+  const t = parts.slice(1, -1).join("::");
+  if(!DATA[cat]) return null;
+  const d = DATA[cat].find(x => x.t === t && String(x.y) === String(y));
+  if(!d){
+    console.warn(`[Beginner Guide] Could not resolve titleKey "${key}" against current data — skipping this card.`);
+    return null;
+  }
+  return { d, cat };
+}
+// Difficulty is DERIVED from each title's own existing viewerLevel/complexity (movies & series) or
+// readingLevel (comics) — never stored as separate, possibly-conflicting metadata on the recommendation.
+function deriveDifficulty(cat, d){
+  if(cat === "comics"){
+    const rl = d.readingLevel;
+    if(rl === "New Reader") return "beginner";
+    if(rl === "Familiar Reader") return "intermediate";
+    if(rl === "Experienced Reader") return "advanced";
+    if(rl === "Hardcore") return "deep_dive";
+    return "intermediate";
+  }
+  const vl = d.viewerLevel, cx = d.complexity;
+  if(vl === "Hardcore Fan") return "deep_dive";
+  if(vl === "Experienced Viewer" || cx === "High") return "advanced";
+  if(cx === "Medium") return "intermediate";
+  if(vl === "New Viewer" && cx === "Low") return "beginner";
+  return "intermediate";
+}
+const DIFFICULTY_LABEL = { beginner:"Beginner", intermediate:"Familiar", advanced:"Deep Dive", deep_dive:"Deep Dive" };
 
 /* ---- Themed backgrounds per hero / team group (Phase 1, Task 2) ---- */
 const GROUP_THEMES = {
@@ -909,9 +967,7 @@ function renderHome(){
     });
   });
   const spc = $("#startingPointCard");
-  if(spc) spc.addEventListener("click", ()=>{
-    goToCategory("movies", { viewerLevelFilter:"New Viewer", complexityFilter:"Low" });
-  });
+  if(spc) spc.addEventListener("click", openStartSheet);
   const heroBtn = $("#heroExploreBtn");
   if(heroBtn) heroBtn.addEventListener("click", ()=>{
     buildExploreGrid();
@@ -1324,6 +1380,152 @@ function openUniverseHub(connected){
 
 hubBackdrop.addEventListener("click", ()=> closeSheetEl(hubBackdrop, hubSheet));
 $("#hubClose").addEventListener("click", ()=> closeSheetEl(hubBackdrop, hubSheet));
+
+/* ============================= DC STARTING POINT (beginner guide) ============================= */
+const startBackdrop = $("#startBackdrop"), startSheet = $("#startSheet"), startContent = $("#startContent");
+const HERO_PATH_IDS = ["batman","superman","wonder-woman","flash","justice-league"];
+const MEDIUM_CHIPS = [
+  {id:"all", label:"All"}, {id:"movies", label:"🎬 Movies"}, {id:"series", label:"📺 Series"},
+  {id:"comics", label:"📖 Comics"}, {id:"games", label:"🎮 Games"},
+];
+const DEPTH_CHIPS = [
+  {id:"all", label:"All"}, {id:"beginner", label:"Beginner"},
+  {id:"intermediate", label:"Familiar"}, {id:"deep", label:"Deep Dive"},
+];
+let startState = { pathId:"general", medium:"all", depth:"all" };
+
+function matchesDepth(derived, chipId){
+  if(chipId==="all") return true;
+  if(chipId==="deep") return derived==="advanced" || derived==="deep_dive";
+  return derived===chipId;
+}
+function resolveRecList(recs){
+  return (recs||[]).map(r=>{
+    const hit = resolveTitleKey(r.titleKey);
+    if(!hit) return null;
+    return { d:hit.d, cat:hit.cat, reason:r.reason, order:r.order||99, required:!!r.required };
+  }).filter(Boolean);
+}
+// Never produces an empty result if there is ANY curated data at all — falls back one step at a
+// time (drop depth filter, then drop the hero/path choice) rather than showing a dead end.
+function getStartRecommendations(){
+  const paths = DATA.beginnerPaths || [];
+  const chosenPath = paths.find(p=>p.id===startState.pathId) || paths.find(p=>p.id==="general");
+  let list = resolveRecList(chosenPath ? chosenPath.recommendations : []);
+
+  if(startState.medium!=="all") list = list.filter(r=>r.cat===startState.medium);
+  let depthFiltered = startState.depth==="all" ? list : list.filter(r=>matchesDepth(deriveDifficulty(r.cat,r.d), startState.depth));
+
+  if(depthFiltered.length) return depthFiltered.sort((a,b)=>a.order-b.order);
+  if(list.length) return list.sort((a,b)=>a.order-b.order); // depth filter was too narrow — drop it
+
+  // This specific path/medium combo has no verified data — fall back to the general starter pool
+  // (still real, curated data; never a fabricated or empty result).
+  let fallback = resolveRecList((DATA.starterRecommendations||[]).map(r=>({...r})));
+  if(startState.medium!=="all") fallback = fallback.filter(r=>r.cat===startState.medium);
+  if(!fallback.length) fallback = resolveRecList(DATA.starterRecommendations||[]);
+  return fallback;
+}
+function startCardHtml(r){
+  const difficulty = deriveDifficulty(r.cat, r.d);
+  const catLabel = (CATS.find(c=>c.id===r.cat)||{}).label || r.cat;
+  return `<div class="beginner-card" data-id="${r.d.id}" data-cat="${r.cat}">
+      <div class="bc-thumb">${thumbHtml(r.cat, r.d)}</div>
+      <div class="bc-body">
+        <div class="bc-title">${r.d.t}<span class="bc-year">${r.d.y||""}</span></div>
+        <div class="bc-medium">${CAT_ICON[r.cat]||""} ${catLabel} · ${DIFFICULTY_LABEL[difficulty]||""}</div>
+        <div class="bc-reason">${r.reason||""}</div>
+      </div>
+    </div>`;
+}
+function renderStartSheet(){
+  const paths = DATA.beginnerPaths || [];
+  const heroChips = [
+    {id:"general", label:"All Heroes"},
+    ...HERO_PATH_IDS.filter(id=>paths.some(p=>p.id===id)).map(id=>{
+      const p = paths.find(p=>p.id===id);
+      return {id, label:p.hero};
+    }),
+    ...(paths.some(p=>p.id==="comics") ? [{id:"comics", label:"Comics"}] : []),
+  ];
+  const recs = getStartRecommendations();
+
+  let html = `<div class="sheet-eyebrow">YOUR DC STARTING POINT</div>
+    <h2>New to DC?</h2>
+    <p class="sheet-body" style="color:var(--ink-dim);margin-bottom:18px;">Don't worry about continuity — start with a path that matches what you're interested in.</p>`;
+
+  if(!paths.length){
+    html += `<p class="sheet-body" style="color:var(--ink-faint);">The beginner guide hasn't been loaded yet — ask an admin to run "Replace Beginner Guide" from Admin sign-in.</p>`;
+    startContent.innerHTML = html;
+    return;
+  }
+
+  html += `<div class="start-filter-block">
+      <div class="sheet-label">CHOOSE YOUR HERO</div>
+      <div class="chip-scroller start-chip-row">
+        ${heroChips.map(c=>`<div class="chip start-chip" data-role="path" data-val="${c.id}" data-active="${startState.pathId===c.id}">${c.label}</div>`).join("")}
+      </div>
+    </div>
+    <div class="start-filter-block">
+      <div class="sheet-label">CHOOSE YOUR MEDIUM</div>
+      <div class="chip-scroller start-chip-row">
+        ${MEDIUM_CHIPS.map(c=>`<div class="chip start-chip" data-role="medium" data-val="${c.id}" data-active="${startState.medium===c.id}">${c.label}</div>`).join("")}
+      </div>
+    </div>
+    <div class="start-filter-block">
+      <div class="sheet-label">HOW DEEP DO YOU WANT TO GO?</div>
+      <div class="chip-scroller start-chip-row">
+        ${DEPTH_CHIPS.map(c=>`<div class="chip start-chip" data-role="depth" data-val="${c.id}" data-active="${startState.depth===c.id}">${c.label}</div>`).join("")}
+      </div>
+    </div>`;
+
+  html += `<div class="home-section" style="margin-top:20px;">
+      <div class="home-section-head"><h3>Start Here</h3><span class="home-section-sub">${recs.length} pick${recs.length===1?"":"s"}</span></div>
+      <div class="beginner-card-list">${recs.map(startCardHtml).join("")}</div>
+    </div>`;
+
+  html += `<button class="btn btn-primary" id="startJourneyBtn" style="width:100%;margin-top:6px;" ${recs.length?"":"disabled"}>Start My DC Journey</button>`;
+
+  startContent.innerHTML = html;
+  wireImageFallbacks(startContent);
+
+  startContent.querySelectorAll(".beginner-card").forEach(c=>{
+    c.addEventListener("click", ()=>{
+      const cat = c.dataset.cat, id = c.dataset.id;
+      const d = (DATA[cat]||[]).find(x=>x.id===id);
+      if(!d) return;
+      closeSheetEl(startBackdrop, startSheet);
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  });
+  startContent.querySelectorAll(".start-chip").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      const role = chip.dataset.role, val = chip.dataset.val;
+      if(role==="path") startState.pathId = val;
+      else if(role==="medium") startState.medium = val;
+      else if(role==="depth") startState.depth = val;
+      renderStartSheet();
+    });
+  });
+  const journeyBtn = $("#startJourneyBtn");
+  if(journeyBtn) journeyBtn.addEventListener("click", ()=>{
+    const top = recs[0];
+    if(!top) return;
+    closeSheetEl(startBackdrop, startSheet);
+    state.cat = top.cat;
+    if(top.d.type) state.typeFilter = top.d.type;
+    openSheet(top.d);
+  });
+}
+function openStartSheet(){
+  startState = { pathId:"general", medium:"all", depth:"all" };
+  renderStartSheet();
+  openSheetEl(startBackdrop, startSheet);
+}
+startBackdrop.addEventListener("click", ()=> closeSheetEl(startBackdrop, startSheet));
+$("#startClose").addEventListener("click", ()=> closeSheetEl(startBackdrop, startSheet));
 
 /* ============================= DETAIL SHEET ============================= */
 const backdrop = $("#backdrop"), sheet = $("#sheet"), sheetContent = $("#sheetContent");
@@ -1785,6 +1987,10 @@ $("#exploreClose").addEventListener("click", ()=> closeSheetEl(exploreBackdrop, 
 moreBackdrop.addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSheet));
 $("#moreClose").addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSheet));
 
+$("#moreQuickStart").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  openStartSheet();
+});
 $("#moreQuickJourney").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
   goToCategory("journey");
@@ -1933,6 +2139,48 @@ if(replaceComicsBtn){
       replaceComicsMsg.className = "form-msg err";
     }finally{
       replaceComicsBtn.disabled = false;
+    }
+  });
+}
+
+/* ============================= ADMIN: REPLACE BEGINNER GUIDE ============================= */
+const replaceBeginnerBtn = $("#replaceBeginnerBtn");
+const replaceBeginnerMsg = $("#replaceBeginnerMsg");
+if(replaceBeginnerBtn){
+  replaceBeginnerBtn.addEventListener("click", async ()=>{
+    if(!confirm('This deletes the existing "New to DC?" beginner-guide data, then loads the current curated dataset from seed-data.json. Continue?')) return;
+    replaceBeginnerBtn.disabled = true;
+    replaceBeginnerMsg.className = "form-msg";
+    try{
+      replaceBeginnerMsg.textContent = "Fetching dataset…";
+      const res = await fetch("./seed-data.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("seed-data.json not found");
+      const seed = await res.json();
+
+      let total = 0;
+      for(const key of META_COLLECTIONS){
+        const existing = DATA[key] || [];
+        for(let i=0;i<existing.length;i++){
+          replaceBeginnerMsg.textContent = `Deleting old ${key}: ${i+1} / ${existing.length}…`;
+          await deleteDoc(doc(db, key, existing[i].id));
+        }
+        DATA[key] = [];
+
+        const items = seed[key] || [];
+        for(let i=0;i<items.length;i++){
+          replaceBeginnerMsg.textContent = `Importing ${key}: ${i+1} / ${items.length}…`;
+          const ref = await addDoc(collection(db, key), items[i]);
+          DATA[key].push({ id: ref.id, ...items[i] });
+        }
+        total += items.length;
+      }
+      replaceBeginnerMsg.textContent = `Done — Beginner guide replaced (${total} records).`;
+      replaceBeginnerMsg.className = "form-msg ok";
+    }catch(err){
+      replaceBeginnerMsg.textContent = "Replace failed: " + err.message;
+      replaceBeginnerMsg.className = "form-msg err";
+    }finally{
+      replaceBeginnerBtn.disabled = false;
     }
   });
 }

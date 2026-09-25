@@ -130,6 +130,25 @@ select{
 .chip.series[data-active="true"]{ background:var(--series); }
 .chip.games[data-active="true"]{ background:var(--games); }
 .chip.comics[data-active="true"]{ background:var(--comics); }
+.chip.start-chip[data-active="true"]{ background:var(--ink); }
+
+/* ---------- Beginner guide ("New to DC?" Start Here sheet) ---------- */
+.start-filter-block{ margin-bottom:16px; }
+.start-chip-row{ padding-bottom:4px; }
+.beginner-card-list{ display:flex; flex-direction:column; gap:10px; }
+.beginner-card{
+  display:flex; gap:12px; align-items:flex-start; cursor:pointer;
+  background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:10px;
+  transition:border-color .15s ease;
+}
+.beginner-card:active{ border-color:var(--ink-faint); }
+.bc-thumb{ flex:0 0 auto; }
+.bc-thumb .card-thumb, .bc-thumb .card-thumb-fallback{ width:56px; height:80px; border-radius:7px; }
+.bc-body{ flex:1; min-width:0; padding-top:1px; }
+.bc-title{ font-size:14px; font-weight:700; line-height:1.25; }
+.bc-year{ font-variant-numeric:tabular-nums; font-weight:500; font-size:11px; color:var(--ink-faint); margin-left:6px; }
+.bc-medium{ font-size:11px; color:var(--ink-faint); margin-top:3px; }
+.bc-reason{ font-size:12.5px; color:var(--ink-dim); line-height:1.4; margin-top:5px; }
 
 .result-count{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); padding:2px 16px 0 16px; }
 
