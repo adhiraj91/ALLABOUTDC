@@ -41,7 +41,7 @@ const SCHEMA = {
     {key:"boxOffice", label:"Box office", type:"text", required:false, placeholder:"e.g. Budget ~$X · Gross ~$Y"},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. PG-13"},
     {key:"trailer", label:"Trailer — YouTube video ID (e.g. TQfATDZY5Y4, not the full link)", type:"text", required:false},
-    {key:"readingLevel", label:"Reading level", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
+    {key:"viewerLevel", label:"Viewer level", type:"select", required:true, options:["New Viewer","Familiar Viewer","Experienced Viewer","Hardcore Fan"]},
     {key:"complexity", label:"Complexity", type:"select", required:true, options:["Low","Medium","High"]},
     {key:"canonStatus", label:"Canon status", type:"select", required:true, options:["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"]},
   ],
@@ -63,7 +63,7 @@ const SCHEMA = {
     {key:"whereToWatch", label:"Where to watch", type:"text", required:false},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. TV-MA"},
     {key:"trailer", label:"Trailer — YouTube video ID (series-wide, e.g. TQfATDZY5Y4)", type:"text", required:false},
-    {key:"readingLevel", label:"Reading level", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
+    {key:"viewerLevel", label:"Viewer level", type:"select", required:true, options:["New Viewer","Familiar Viewer","Experienced Viewer","Hardcore Fan"]},
     {key:"complexity", label:"Complexity", type:"select", required:true, options:["Low","Medium","High"]},
     {key:"canonStatus", label:"Canon status", type:"select", required:true, options:["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"]},
   ],
@@ -79,7 +79,7 @@ const SCHEMA = {
     {key:"whereToWatch", label:"Where to buy / play", type:"text", required:false},
     {key:"ageRating", label:"Age rating", type:"text", required:false, placeholder:"e.g. ESRB T"},
     {key:"trailer", label:"Trailer — YouTube video ID", type:"text", required:false},
-    {key:"readingLevel", label:"Reading level", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
+    {key:"viewerLevel", label:"Viewer level", type:"select", required:true, options:["New Viewer","Familiar Viewer","Experienced Viewer","Hardcore Fan"]},
     {key:"complexity", label:"Complexity", type:"select", required:true, options:["Low","Medium","High"]},
     {key:"canonStatus", label:"Canon status", type:"select", required:true, options:["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"]},
   ],
@@ -90,7 +90,9 @@ const SCHEMA = {
     {key:"canon", label:"Canon status", type:"select", required:true,
       options:["Main Continuity","Elseworlds","Alternate Universe","Imprint — Vertigo","Imprint — Black Label"]},
     {key:"line", label:"Character line", type:"text", required:true, placeholder:"e.g. Batman, Justice League, Vertigo/Mature"},
+    {key:"group", label:"Hero / Team group — the ONE group this belongs under, for the character hub", type:"text", required:true, placeholder:"e.g. Batman, Justice League — or \"Other DC Characters\""},
     {key:"fmt", label:"Collected formats", type:"text", required:true, placeholder:"e.g. TPB, Omnibus, Absolute Edition"},
+    {key:"readingLevel", label:"Reading level — how much prior DC knowledge this assumes", type:"select", required:true, options:["New Reader","Familiar Reader","Experienced Reader","Hardcore"]},
     {key:"ord", label:"Where it fits / reading order", type:"textarea", required:true},
     {key:"blurb", label:"Summary", type:"textarea", required:true},
   ],
@@ -101,10 +103,10 @@ let DATA = { movies:[], series:[], games:[], comics:[] };
 let state = {
   cat:"home",
   search:"",
-  f1:"all", f2:"all", chip:"all",         // games/comics filters (unchanged behavior)
+  f1:"all", f2:"all", f3:"all", chip:"all", // games/comics filters (f3: comics reading level)
   typeFilter:"Live Action",                // movies/series: Live Action | Animated
   sortMode:"newest",                       // movies/series: newest | hero | story | rating
-  readingLevelFilter:"all", complexityFilter:"all", canonFilter:"all", // movies/series: new filters (Phase 1, Task 7)
+  viewerLevelFilter:"all", complexityFilter:"all", canonFilter:"all", // movies/series: new filters (Phase 1, Task 7)
   gameMode:"all", gamePlatform:"all",      // games: all | platform | story
 };
 let isAdmin = false;
@@ -175,6 +177,30 @@ const GROUP_THEMES = {
   "Other DC Characters":      { a:"#4a4f5a", b:"#22242c" },
 };
 function groupTheme(g){ return GROUP_THEMES[g] || GROUP_THEMES["Other DC Characters"]; }
+
+/* ---- Cross-category group lookup, for Character/Team hub pages (Phase 2) ---- */
+const GAME_GROUP = {
+  "Batman: Arkham": "Batman",
+  "Gotham Knights": "Batman",
+  "Telltale Batman": "Batman",
+  "LEGO DC": "LEGO DC",
+  "DC Universe Online": "Justice League",
+  "Injustice": "Justice League",
+};
+function groupOf(cat, d){
+  if(cat==="movies" || cat==="series" || cat==="comics") return d.group || "Other DC Characters";
+  if(cat==="games") return GAME_GROUP[d.fr] || "Other DC Characters";
+  return "Other DC Characters";
+}
+function allGroupMembers(group){
+  const out = [];
+  CATS.forEach(c=>{
+    (DATA[c.id]||[]).forEach(d=>{
+      if(groupOf(c.id, d)===group) out.push({d, cat:c.id});
+    });
+  });
+  return out.sort((a,b)=>firstYear(a.d.y)-firstYear(b.d.y));
+}
 function sortHeroNames(heroMap){
   return Object.keys(heroMap).sort((a,b)=>{
     const ia = HERO_PRIORITY.indexOf(a), ib = HERO_PRIORITY.indexOf(b);
@@ -188,10 +214,10 @@ function sortHeroNames(heroMap){
 
 /* ============================= RENDER: TABS ============================= */
 function resetFiltersForTabSwitch(){
-  state.f1="all"; state.f2="all"; state.chip="all"; state.search="";
+  state.f1="all"; state.f2="all"; state.f3="all"; state.chip="all"; state.search="";
   state.sortMode="newest";
   state.gameMode="all"; state.gamePlatform="all";
-  state.readingLevelFilter="all"; state.complexityFilter="all"; state.canonFilter="all";
+  state.viewerLevelFilter="all"; state.complexityFilter="all"; state.canonFilter="all";
   searchInput.value="";
   globalSearchResults.innerHTML = ""; globalSearchResults.dataset.open = "false";
 }
@@ -201,7 +227,7 @@ function goToCategory(cat, opts){
   if(opts){
     if(opts.sortMode) state.sortMode = opts.sortMode;
     if(opts.typeFilter) state.typeFilter = opts.typeFilter;
-    if(opts.readingLevelFilter) state.readingLevelFilter = opts.readingLevelFilter;
+    if(opts.viewerLevelFilter) state.viewerLevelFilter = opts.viewerLevelFilter;
     if(opts.complexityFilter) state.complexityFilter = opts.complexityFilter;
   }
   render();
@@ -266,12 +292,15 @@ function buildFilters(){
     const eras = uniq(data.map(d=>d.era));
     const canons = uniq(data.map(d=>d.canon));
     const lines = uniq(data.map(d=>d.line));
+    const readingLevels = ["New Reader","Familiar Reader","Experienced Reader","Hardcore"];
     filterRow.innerHTML = `
       <select id="selEra"><option value="all">All eras</option>${eras.map(e=>`<option value="${e}">${e}</option>`).join("")}</select>
-      <select id="selCanon"><option value="all">All canon status</option>${canons.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>`;
+      <select id="selCanon"><option value="all">All canon status</option>${canons.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
+      <select id="selComicsReadingLevel"><option value="all">Any reading level</option>${readingLevels.map(r=>`<option value="${r}">${r}</option>`).join("")}</select>`;
     $("#selEra").addEventListener("change", e=>{ state.f1=e.target.value; renderCards(); });
     $("#selCanon").addEventListener("change", e=>{ state.f2=e.target.value; renderCards(); });
-    $("#selEra").value = state.f1; $("#selCanon").value = state.f2;
+    $("#selComicsReadingLevel").addEventListener("change", e=>{ state.f3=e.target.value; renderCards(); });
+    $("#selEra").value = state.f1; $("#selCanon").value = state.f2; $("#selComicsReadingLevel").value = state.f3;
 
     chipRow.innerHTML = `<div class="chip comics" data-val="all" data-active="${state.chip==='all'}">All lines</div>` +
       lines.map(l=>`<div class="chip comics" data-val="${l}" data-active="${state.chip===l}">${l}</div>`).join("");
@@ -286,7 +315,7 @@ function buildFilters(){
 }
 
 function buildMovieSeriesFilters(cat){
-  const RL_OPTIONS = ["New Reader","Familiar Reader","Experienced Reader","Hardcore"];
+  const VL_OPTIONS = ["New Viewer","Familiar Viewer","Experienced Viewer","Hardcore Fan"];
   const CX_OPTIONS = ["Low","Medium","High"];
   const CANON_OPTIONS = ["Shared Universe / Connected Continuity","Standalone / No Shared Continuity","Elseworlds / Alternate Continuity"];
   filterRow.innerHTML = `
@@ -295,17 +324,17 @@ function buildMovieSeriesFilters(cat){
       <label class="radio-pill ${cat}"><input type="radio" name="typeFilter" value="Animated" ${state.typeFilter==="Animated"?"checked":""}> Animated</label>
     </div>
     <div class="select-row">
-      <select id="selReadingLevel"><option value="all">Any reading level</option>${RL_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
+      <select id="selViewerLevel"><option value="all">Any viewer level</option>${VL_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
       <select id="selComplexity"><option value="all">Any complexity</option>${CX_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
       <select id="selCanonStatus"><option value="all">Any canon status</option>${CANON_OPTIONS.map(o=>`<option value="${o}">${canonShort(o)}</option>`).join("")}</select>
     </div>`;
   filterRow.querySelectorAll('input[name="typeFilter"]').forEach(r=>{
     r.addEventListener("change", e=>{ state.typeFilter = e.target.value; renderCards(); });
   });
-  $("#selReadingLevel").value = state.readingLevelFilter;
+  $("#selViewerLevel").value = state.viewerLevelFilter;
   $("#selComplexity").value = state.complexityFilter;
   $("#selCanonStatus").value = state.canonFilter;
-  $("#selReadingLevel").addEventListener("change", e=>{ state.readingLevelFilter = e.target.value; renderCards(); });
+  $("#selViewerLevel").addEventListener("change", e=>{ state.viewerLevelFilter = e.target.value; renderCards(); });
   $("#selComplexity").addEventListener("change", e=>{ state.complexityFilter = e.target.value; renderCards(); });
   $("#selCanonStatus").addEventListener("change", e=>{ state.canonFilter = e.target.value; renderCards(); });
 
@@ -340,6 +369,7 @@ function filteredDataGeneric(){
     if(cat==="comics"){
       if(state.f1!=="all" && d.era!==state.f1) return false;
       if(state.f2!=="all" && d.canon!==state.f2) return false;
+      if(state.f3!=="all" && d.readingLevel!==state.f3) return false;
       if(state.chip!=="all" && d.line!==state.chip) return false;
     }
     return true;
@@ -354,7 +384,10 @@ function metaTagsGeneric(cat, d){
     const plats = (d.plats||[]).map(p=>`<span class="tag plat">${p}</span>`).join("");
     return `<span class="tag">${d.fr||""}</span>${plats}`;
   }
-  if(cat==="comics") return `<span class="tag">${d.era||""}</span><span class="tag ${canonTagClass(d.canon)}">${d.canon||""}</span><span class="tag">${d.line||""}</span>`;
+  if(cat==="comics"){
+    const rl = d.readingLevel ? `<span class="qf-pill rl-${readingLevelClass(d.readingLevel)}">${d.readingLevel}</span>` : "";
+    return `<span class="tag">${d.era||""}</span><span class="tag ${canonTagClass(d.canon)}">${d.canon||""}</span><span class="tag">${d.line||""}</span>${rl}`;
+  }
   return "";
 }
 
@@ -364,7 +397,7 @@ function filteredMovieSeries(){
   const q = state.search.trim().toLowerCase();
   return DATA[cat].filter(d=>{
     if(d.type !== state.typeFilter) return false;
-    if(state.readingLevelFilter!=="all" && d.readingLevel !== state.readingLevelFilter) return false;
+    if(state.viewerLevelFilter!=="all" && d.viewerLevel !== state.viewerLevelFilter) return false;
     if(state.complexityFilter!=="all" && d.complexity !== state.complexityFilter) return false;
     if(state.canonFilter!=="all" && d.canonStatus !== state.canonFilter) return false;
     if(q && !(d.t||"").toLowerCase().includes(q) && !(d.blurb||"").toLowerCase().includes(q)) return false;
@@ -389,10 +422,11 @@ function sheetMetaTags(cat, d){
   return tags;
 }
 function readingLevelClass(rl){
-  if(rl==="New Reader") return "new";
-  if(rl==="Familiar Reader") return "familiar";
-  if(rl==="Experienced Reader") return "experienced";
-  if(rl==="Hardcore") return "hardcore";
+  if(!rl) return "";
+  if(rl.startsWith("New")) return "new";
+  if(rl.startsWith("Familiar")) return "familiar";
+  if(rl.startsWith("Experienced")) return "experienced";
+  if(rl.startsWith("Hardcore")) return "hardcore";
   return "";
 }
 function complexityClass(c){
@@ -415,7 +449,7 @@ function quickFactsHtml(cat, d){
     ["YEAR", d.y || "—"],
     ["UNIVERSE", d.connected || "—"],
   ];
-  if(d.readingLevel) cells.push(["READING LEVEL", `<span class="qf-pill rl-${readingLevelClass(d.readingLevel)}">${d.readingLevel}</span>`]);
+  if(d.viewerLevel) cells.push(["VIEWER LEVEL", `<span class="qf-pill rl-${readingLevelClass(d.viewerLevel)}">${d.viewerLevel}</span>`]);
   if(d.complexity) cells.push(["COMPLEXITY", `<span class="qf-pill cx-${complexityClass(d.complexity)}">${d.complexity}</span>`]);
   if(d.canonStatus) cells.push(["CANON STATUS", canonShort(d.canonStatus)]);
   return `<div class="quick-facts">${cells.map(([label,val])=>
@@ -483,11 +517,14 @@ function cardHtml(cat, d){
       </div>
     </div>`;
 }
-function groupHeaderHtml(label, count, theme){
+function groupHeaderHtml(label, count, theme, hubGroup, universeHub){
+  const clickable = hubGroup ? ` data-hub-group="${escapeAttr(hubGroup)}"` : (universeHub ? ` data-universe-hub="${escapeAttr(universeHub)}"` : "");
+  const hint = (hubGroup || universeHub) ? `<span class="group-hub-hint">View hub →</span>` : "";
+  const inner = `<span class="group-header-label">${label}</span><span class="group-count">${count}</span>${hint}`;
   if(theme){
-    return `<div class="group-header themed" style="--theme-a:${theme.a};--theme-b:${theme.b}">${label}<span class="group-count">${count}</span></div>`;
+    return `<div class="group-header themed"${clickable} style="--theme-a:${theme.a};--theme-b:${theme.b}">${inner}</div>`;
   }
-  return `<div class="group-header">${label}<span class="group-count">${count}</span></div>`;
+  return `<div class="group-header"${clickable}>${inner}</div>`;
 }
 
 function renderMovieSeriesCards(){
@@ -524,11 +561,11 @@ function renderMovieSeriesCards(){
     const heroNames = sortHeroNames(heroMap).filter(h=>h!=="Other DC Characters");
     heroNames.forEach(h=>{
       const list = heroMap[h].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
-      html += groupHeaderHtml(h, list.length, groupTheme(h)) + list.map(d=>cardHtml(cat,d)).join("");
+      html += groupHeaderHtml(h, list.length, groupTheme(h), h) + list.map(d=>cardHtml(cat,d)).join("");
     });
     if(heroMap["Other DC Characters"] && heroMap["Other DC Characters"].length){
       const list = heroMap["Other DC Characters"].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
-      html += groupHeaderHtml("Other DC Characters", list.length) + list.map(d=>cardHtml(cat,d)).join("");
+      html += groupHeaderHtml("Other DC Characters", list.length, null, "Other DC Characters") + list.map(d=>cardHtml(cat,d)).join("");
     }
   }
   else if(state.sortMode==="story"){
@@ -544,7 +581,7 @@ function renderMovieSeriesCards(){
     });
     groupNames.forEach(g=>{
       const list = groups[g].sort((a,b)=>firstYear(a.y)-firstYear(b.y)); // true sequel/chronological order within the universe
-      html += groupHeaderHtml(g, list.length) + list.map(d=>cardHtml(cat,d)).join("");
+      html += groupHeaderHtml(g, list.length, null, null, g!=="Standalone" ? g : null) + list.map(d=>cardHtml(cat,d)).join("");
     });
   }
   gridEl.innerHTML = html;
@@ -568,6 +605,12 @@ function attachCardHandlers(cat){
       DATA[cat] = DATA[cat].filter(x=>x.id!==btn.dataset.del);
       buildTabs(); renderCards();
     });
+  });
+  gridEl.querySelectorAll("[data-hub-group]").forEach(h=>{
+    h.addEventListener("click", ()=> openHub(h.dataset.hubGroup));
+  });
+  gridEl.querySelectorAll("[data-universe-hub]").forEach(h=>{
+    h.addEventListener("click", ()=> openUniverseHub(h.dataset.universeHub));
   });
 }
 
@@ -627,7 +670,7 @@ function renderHome(){
   ];
 
   const startHere = allMS
-    .filter(({d})=>d.readingLevel==="New Reader" && d.complexity==="Low")
+    .filter(({d})=>d.viewerLevel==="New Viewer" && d.complexity==="Low")
     .sort((a,b)=> (ratingScore(b.d)||0) - (ratingScore(a.d)||0))
     .slice(0, 12);
 
@@ -699,6 +742,95 @@ function renderHome(){
   if(browseBtn) browseBtn.addEventListener("click", ()=> goToCategory("movies"));
 }
 function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); }
+
+/* ============================= CHARACTER / TEAM HUB (Phase 2) ============================= */
+const hubBackdrop = $("#hubBackdrop"), hubSheet = $("#hubSheet"), hubContent = $("#hubContent");
+function openHub(group){
+  const theme = groupTheme(group);
+  hubSheet.style.setProperty("--theme-a", theme.a);
+  hubSheet.style.setProperty("--theme-b", theme.b);
+  hubSheet.dataset.themed = "true";
+
+  const members = allGroupMembers(group);
+  const byCat = { movies:[], series:[], games:[], comics:[] };
+  members.forEach(m=> byCat[m.cat].push(m));
+
+  let html = `<div class="sheet-eyebrow">CHARACTER / TEAM HUB</div><h2>${group}</h2>
+    <p class="hub-count">${members.length} title${members.length===1?"":"s"} across ${CATS.filter(c=>byCat[c.id].length).map(c=>c.label.toLowerCase()).join(", ")}</p>`;
+
+  CATS.forEach(c=>{
+    const list = byCat[c.id];
+    if(!list.length) return;
+    html += `<div class="home-section">
+        <div class="home-section-head"><h3>${CAT_ICON[c.id]||""} ${c.label}</h3><span class="home-section-sub">${list.length}</span></div>
+        <div class="home-strip">${list.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
+      </div>`;
+  });
+
+  hubContent.innerHTML = html;
+  wireImageFallbacks(hubContent);
+  hubContent.querySelectorAll(".strip-card").forEach(c=>{
+    c.addEventListener("click", ()=>{
+      const cat = c.dataset.cat, id = c.dataset.id;
+      const d = (DATA[cat]||[]).find(x=>x.id===id);
+      if(!d) return;
+      closeSheetEl(hubBackdrop, hubSheet);
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  });
+  openSheetEl(hubBackdrop, hubSheet);
+}
+
+/* ============================= UNIVERSE / CONNECTED-STORY HUB (Phase 2) ============================= */
+function openUniverseHub(connected){
+  hubSheet.style.removeProperty("--theme-a");
+  hubSheet.style.removeProperty("--theme-b");
+  hubSheet.dataset.themed = "false";
+
+  const members = relatedInUniverse(connected, null, null); // full list, nothing excluded
+  const byYear = [...members].sort((a,b)=>firstYear(a.y)-firstYear(b.y));
+
+  let html = `<div class="sheet-eyebrow">CONNECTED UNIVERSE</div><h2>${connected}</h2>
+    <p class="hub-count">${members.length} title${members.length===1?"":"s"} — recommended watch order</p>`;
+
+  html += `<div class="home-section">
+      <div class="home-strip">${byYear.map(d=>stripCardHtml(d._cat, d)).join("")}</div>
+    </div>`;
+
+  html += `<div class="home-section">
+      <div class="home-section-head"><h3>Timeline</h3></div>
+      <div class="universe-timeline">
+        ${byYear.map(d=>`<div class="timeline-row" data-cat="${d._cat}" data-id="${d.id}">
+            <span class="timeline-year">${d.y||""}</span>
+            <span class="timeline-icon">${CAT_ICON[d._cat]||""}</span>
+            <span class="timeline-title">${d.t}</span>
+          </div>`).join("")}
+      </div>
+    </div>`;
+
+  hubContent.innerHTML = html;
+  wireImageFallbacks(hubContent);
+  const openItem = (cat, id)=>{
+    const d = (DATA[cat]||[]).find(x=>x.id===id);
+    if(!d) return;
+    closeSheetEl(hubBackdrop, hubSheet);
+    state.cat = cat;
+    if(d.type) state.typeFilter = d.type;
+    openSheet(d);
+  };
+  hubContent.querySelectorAll(".strip-card").forEach(c=>{
+    c.addEventListener("click", ()=> openItem(c.dataset.cat, c.dataset.id));
+  });
+  hubContent.querySelectorAll(".timeline-row").forEach(r=>{
+    r.addEventListener("click", ()=> openItem(r.dataset.cat, r.dataset.id));
+  });
+  openSheetEl(hubBackdrop, hubSheet);
+}
+
+hubBackdrop.addEventListener("click", ()=> closeSheetEl(hubBackdrop, hubSheet));
+$("#hubClose").addEventListener("click", ()=> closeSheetEl(hubBackdrop, hubSheet));
 
 /* ============================= DETAIL SHEET ============================= */
 const backdrop = $("#backdrop"), sheet = $("#sheet"), sheetContent = $("#sheetContent");
@@ -807,6 +939,8 @@ function openSheet(d){
   }
   let html = heroHtml(cat, d);
   html += `<div class="sheet-eyebrow">${cat.toUpperCase()} · ${d.y||""}</div><h2>${d.t}</h2>`;
+  const hubGroup = groupOf(cat, d);
+  html += `<button class="hub-link-btn" data-hub-group="${escapeAttr(hubGroup)}">🔗 ${hubGroup} hub — every movie, series, game &amp; comic</button>`;
 
   if(cat==="movies"||cat==="series"){
     html += quickFactsHtml(cat, d);
@@ -826,7 +960,16 @@ function openSheet(d){
 
     const related = relatedInUniverse(d.connected, cat, d.id);
     if(related.length){
-      html += `<div class="sheet-section"><div class="sheet-label">SAME TIMELINE — ${(d.connected||"").toUpperCase()}</div>`;
+      const fullTimeline = [...related, {...d, _cat:cat}].sort((a,b)=>firstYear(a.y)-firstYear(b.y));
+      const dIdx = fullTimeline.findIndex(x=>x._cat===cat && x.id===d.id);
+      const upNext = dIdx>=0 ? fullTimeline.slice(dIdx+1).find(x=>!(x._cat===cat && x.id===d.id)) : null;
+      if(upNext){
+        html += `<div class="sheet-section up-next-block" data-related-cat="${upNext._cat}" data-related-id="${upNext.id}">
+            <div class="sheet-label">UP NEXT IN ${(d.connected||"").toUpperCase()}</div>
+            <div class="up-next-row"><span class="up-next-icon">${CAT_ICON[upNext._cat]||""}</span><span class="up-next-title">${upNext.t}</span><span class="up-next-year">${upNext.y||""}</span></div>
+          </div>`;
+      }
+      html += `<div class="sheet-section"><div class="sheet-label sheet-label-link" data-universe-hub="${escapeAttr(d.connected)}">SAME TIMELINE — ${(d.connected||"").toUpperCase()} · View full universe →</div>`;
       html += related.map(r=>`<div class="related-row" data-related-cat="${r._cat}" data-related-id="${r.id}"><span class="related-year">${r.y}</span> ${r.t} <span class="related-type">${r._cat}</span></div>`).join("");
       html += `</div>`;
     }
@@ -842,6 +985,13 @@ function openSheet(d){
 
   sheetContent.innerHTML = html;
   wireImageFallbacks(sheetContent);
+
+  const hubBtn = sheetContent.querySelector(".hub-link-btn");
+  if(hubBtn) hubBtn.addEventListener("click", ()=>{
+    stopAllTrailers();
+    closeSheetEl(backdrop, sheet);
+    openHub(hubBtn.dataset.hubGroup);
+  });
 
   const trailerBtn = sheetContent.querySelector(".trailer-btn");
   if(trailerBtn){
@@ -874,6 +1024,14 @@ function openSheet(d){
       sheetContent.querySelectorAll(".season-chip").forEach(c=>c.dataset.active="false");
       chip.dataset.active = "true";
       renderEpisodeList(d, chip.dataset.season);
+    });
+  });
+
+  sheetContent.querySelectorAll("[data-universe-hub]").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      stopAllTrailers();
+      closeSheetEl(backdrop, sheet);
+      openUniverseHub(el.dataset.universeHub);
     });
   });
 

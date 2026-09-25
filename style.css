@@ -176,10 +176,44 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .group-header{
   margin:18px 0 2px 0; padding-bottom:6px; border-bottom:1px solid var(--line);
   font-family:var(--font-display); font-weight:400; font-size:17px; letter-spacing:0.3px;
-  display:flex; align-items:baseline; justify-content:space-between;
+  display:flex; align-items:baseline; gap:8px;
 }
 .group-header:first-child{ margin-top:2px; }
+.group-header-label{ flex:0 1 auto; }
 .group-count{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); font-weight:400; }
+.group-header[data-hub-group]{ cursor:pointer; }
+.group-hub-hint{ font-family:var(--font-mono); font-size:10px; color:var(--ink-faint); font-weight:400; margin-left:auto; padding-left:8px; }
+
+/* ---------- Character/Team hub link (detail sheet) ---------- */
+.hub-link-btn{
+  display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line);
+  border-radius:9px; padding:10px 12px; margin-bottom:14px; color:var(--ink-dim);
+  font-family:var(--font-body); font-size:12.5px; font-weight:600; cursor:pointer;
+}
+.hub-count{ font-size:12px; color:var(--ink-faint); font-family:var(--font-mono); margin:-4px 0 14px 0; }
+.sheet-label-link{ cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
+
+/* ---------- Up Next ---------- */
+.up-next-block{
+  background:linear-gradient(135deg, color-mix(in srgb, var(--theme-a, var(--ink-faint)) 20%, var(--panel-2)), var(--panel-2));
+  border:1px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer;
+}
+.up-next-row{ display:flex; align-items:center; gap:8px; margin-top:2px; }
+.up-next-icon{ font-size:15px; }
+.up-next-title{ flex:1; font-weight:700; font-size:14px; }
+.up-next-year{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); }
+
+/* ---------- Universe timeline ---------- */
+.universe-timeline{ display:flex; flex-direction:column; }
+.timeline-row{
+  display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--line);
+  cursor:pointer; font-size:13px;
+}
+.timeline-row:last-child{ border-bottom:none; }
+.timeline-row:active{ background:var(--panel-2); }
+.timeline-year{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); flex:0 0 64px; }
+.timeline-icon{ flex:0 0 auto; font-size:13px; }
+.timeline-title{ flex:1; font-weight:600; }
 
 /* ---------- Rating tag ---------- */
 .tag.rating{ color:var(--ink); border-color:var(--ink-faint); }
