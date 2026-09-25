@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
 
@@ -29,8 +29,9 @@
         </span>
         <img id="profileAvatarImg" alt="" style="display:none;">
       </button>
-      <button class="admin-toggle" id="adminToggle" title="Admin">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+      <button class="admin-toggle admin-toggle-labeled" id="adminToggle" title="Admin access">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <span class="admin-toggle-label">Admin</span>
       </button>
     </div>
   </div>
@@ -69,6 +70,14 @@
   <div class="sheet-handle"></div>
   <h2>Explore</h2>
   <div class="home-discover-grid" id="exploreGrid"></div>
+  <div class="explore-rail-section">
+    <div class="home-section-head"><h3>Explore by Hero</h3></div>
+    <div class="explore-hero-rail" id="exploreHeroRail"></div>
+  </div>
+  <div class="explore-rail-section">
+    <div class="home-section-head"><h3>Explore by Era</h3></div>
+    <div class="explore-era-rail" id="exploreEraRail"></div>
+  </div>
 </div>
 
 <!-- More sheet (mobile bottom nav) -->
@@ -168,8 +177,8 @@
 <div class="sheet" id="loginSheet" role="dialog" aria-modal="true">
   <button class="sheet-close" id="loginClose">✕</button>
   <div class="sheet-handle"></div>
-  <div class="sheet-eyebrow">ADMIN</div>
-  <h2 id="loginHeading">Sign in</h2>
+  <div class="sheet-eyebrow">ADMIN ACCESS</div>
+  <h2 id="loginHeading">Admin Sign In</h2>
   <div id="loginArea">
     <div class="form-group"><label>Email</label><input type="email" id="loginEmail"></div>
     <div class="form-group"><label>Password</label><input type="password" id="loginPassword"></div>
@@ -234,6 +243,6 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=39"></script>
+<script type="module" src="app.js?v=41"></script>
 </body>
 </html>

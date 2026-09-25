@@ -62,6 +62,17 @@ header{
 }
 .admin-toggle:active{ border-color:var(--ink-faint); }
 .admin-toggle[data-signed-in="true"]{ border-color:var(--good); color:var(--good); }
+
+/* ---- Phase 1: admin entry point must read as "ADMIN", never a mystery lock icon ---- */
+.admin-toggle-labeled{
+  width:auto; border-radius:16px; gap:5px; padding:0 10px 0 9px;
+  border-color:color-mix(in srgb, var(--bad) 45%, var(--line));
+  color:var(--ink-faint);
+}
+.admin-toggle-label{
+  font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:0.06em;
+}
+.admin-toggle-labeled[data-signed-in="true"]{ border-color:var(--good); color:var(--good); }
 #nerdToggle[data-active="true"]{ border-color:#d4a72c; color:#d4a72c; background:color-mix(in srgb, #d4a72c 14%, transparent); opacity:1; }
 #nerdToggle[data-active="false"]{ opacity:0.6; }
 #profileToggle[data-signed-in="true"]{ border-color:var(--series); overflow:hidden; }
@@ -216,6 +227,33 @@ select{
 .journey-seq-meta{ font-size:11px; color:var(--ink-faint); margin-top:2px; }
 .journey-seq-toggle{ flex:0 0 auto; }
 
+/* ---- Phase 8: "next up" prompt + past-completion branch choices, so the journey never stops dead ---- */
+.journey-next-up{
+  margin-top:12px; display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; cursor:pointer;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--comics) 16%, var(--panel-2)), var(--panel-2));
+  border:1px solid var(--line); border-radius:12px; padding:12px 14px;
+}
+.journey-next-up-label{ width:100%; font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:0.08em; color:var(--comics); }
+.journey-next-up-title{ font-size:14px; font-weight:700; }
+.journey-next-up-meta{ font-size:11.5px; color:var(--ink-faint); }
+.journey-next-up-cta{ margin-left:auto; font-size:12.5px; font-weight:700; color:var(--ink); }
+
+.journey-complete-block{
+  margin-top:14px; text-align:center; padding:22px 14px; border-radius:14px;
+  background:var(--panel-2); border:1px solid var(--line);
+}
+.journey-complete-title{ font-family:var(--font-display); font-size:19px; letter-spacing:0.4px; color:var(--good); }
+.journey-complete-sub{ font-size:13px; color:var(--ink-dim); margin-top:6px; margin-bottom:16px; }
+.journey-branch-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; text-align:left; }
+.journey-branch-btn{
+  display:flex; flex-direction:column; gap:2px; background:var(--bg-2); border:1px solid var(--line);
+  border-radius:10px; padding:10px 12px; cursor:pointer; color:var(--ink); text-align:left;
+}
+.journey-branch-btn:active{ border-color:var(--ink-faint); }
+.journey-branch-label{ font-size:12.5px; font-weight:700; }
+.journey-branch-sub{ font-size:10.5px; color:var(--ink-faint); }
+@media (max-width:420px){ .journey-branch-grid{ grid-template-columns:1fr; } }
+
 .result-count{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); padding:2px 16px 0 16px; }
 
 /* ---------- Cards ---------- */
@@ -243,6 +281,28 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .card-blurb{ margin-top:7px; font-size:13px; line-height:1.5; color:var(--ink-dim); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .empty{ text-align:center; padding:50px 20px; color:var(--ink-faint); font-size:13.5px; }
 .skeleton{ text-align:center; padding:50px 20px; color:var(--ink-faint); font-size:13px; font-family:var(--font-mono); }
+
+/* ---- Phase 3: active-filter summary bar + "broaden search" empty state ---- */
+.active-filter-bar{
+  display:flex; flex-wrap:wrap; gap:7px; align-items:center;
+  padding:2px 2px 12px 2px;
+}
+.active-filter-chip{
+  display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+  padding:6px 10px; border-radius:20px; border:1px solid var(--line); background:var(--panel-2);
+  color:var(--ink); cursor:pointer;
+}
+.active-filter-chip .x{ color:var(--ink-faint); font-size:11px; }
+.active-filter-chip:active{ border-color:var(--bad); }
+.active-filter-clearall{
+  font-size:12px; font-weight:700; padding:6px 10px; border-radius:20px; border:1px solid transparent;
+  background:none; color:var(--ink-faint); text-decoration:underline; text-underline-offset:2px; cursor:pointer;
+}
+.empty-broaden{ padding:44px 20px; }
+.empty-title{ font-size:16px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.empty-sub{ font-size:13px; color:var(--ink-faint); max-width:44ch; margin:0 auto 18px auto; line-height:1.5; }
+.empty-actions{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.empty-actions .btn{ font-size:12.5px; }
 
 .card-admin-row{ margin-top:9px; display:flex; gap:8px; }
 .mini-btn{
@@ -621,6 +681,22 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .discover-tile.games{ border-color:color-mix(in srgb, var(--games) 35%, var(--line)); }
 .discover-tile.comics{ border-color:color-mix(in srgb, var(--comics) 35%, var(--line)); }
 
+/* ---- Phase 4: "Explore DC" hero / era rails ---- */
+.explore-rail-section{ margin-top:20px; }
+.explore-hero-rail, .explore-era-rail{
+  display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x proximity; padding-bottom:4px; scrollbar-width:none;
+}
+.explore-hero-rail::-webkit-scrollbar, .explore-era-rail::-webkit-scrollbar{ display:none; }
+.explore-rail-tile{
+  flex:0 0 auto; scroll-snap-align:start; min-width:130px; border-radius:12px; padding:14px;
+  cursor:pointer; border:1px solid var(--line); color:#fff;
+  background:linear-gradient(135deg, var(--theme-a,var(--panel-2)), var(--theme-b,var(--panel-2)));
+}
+.explore-rail-tile.era{ color:var(--ink); background:var(--panel-2); border-color:color-mix(in srgb, var(--comics) 35%, var(--line)); }
+.explore-rail-tile-label{ font-family:var(--font-display); font-weight:400; font-size:14.5px; line-height:1.15; }
+.explore-rail-tile-count{ font-size:10.5px; opacity:0.85; margin-top:4px; }
+.explore-rail-tile.era .explore-rail-tile-count{ color:var(--ink-faint); opacity:1; }
+
 /* ---------- My Journey ---------- */
 .home-hero{
   padding:22px 16px 20px 16px; margin:-2px -16px 22px -16px; border-radius:0 0 18px 18px;
@@ -650,6 +726,8 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .journey-progress-bar{ height:6px; border-radius:3px; background:var(--line); overflow:hidden; }
 .journey-progress-fill{ height:100%; background:var(--good); border-radius:3px; }
 .journey-empty{ font-size:13px; color:var(--ink-faint); padding:6px 2px; }
+.journey-empty-cta .journey-empty{ margin-bottom:10px; }
+.journey-empty-cta .btn-primary{ width:100%; }
 
 /* ---------- Mobile bottom nav ---------- */
 .mobile-nav{

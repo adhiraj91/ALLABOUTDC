@@ -515,6 +515,93 @@ async function pullJourneyFromCloud(uid){
     }
   }catch(e){ console.warn("[Reader] journey pull failed:", e.message); }
 }
+/* ---- Phase 8 (CRITICAL): journey must not stop dead at completion. When every item is marked done,
+   we surface real, working next-step choices. Each choice re-scores the catalogue with the same ranked
+   engine used to build the original journey (scoreCandidate / buildCandidatePool / buildBroaderPool —
+   never a random fill) and APPENDS new picks onto the same journey, excluding anything already in it —
+   so the journey keeps growing rather than being replaced or duplicated. */
+const JOURNEY_BRANCH_OPTIONS = [
+  { id:"deeper",       label:h=>`Go deeper into ${h}`,          sub:"More of everything for this hero" },
+  { id:"comics",       label:h=>`Explore ${h} comics`,          sub:"Add comic-book picks to your journey" },
+  { id:"wider",        label:()=>"Explore the wider DC Universe", sub:"Branch out to shared-universe titles" },
+  { id:"keepwatching", label:()=>"Keep watching",                sub:"More movies & series for this hero" },
+  { id:"surprise",     label:()=>"Surprise me",                  sub:"A wildcard pick from the whole compendium" },
+];
+function journeyExistingKeys(journey){
+  return new Set(journey.recommendedTitleKeys||[]);
+}
+// Extends (never replaces) the saved journey with new ranked picks. Returns how many were actually added
+// so the UI can say plainly when a branch has nothing left to offer, instead of pretending it worked.
+function extendJourney(mode){
+  const journey = getSavedJourney();
+  if(!journey) return { added:0 };
+  const hero = BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero);
+  if(!hero) return { added:0 };
+  const existingKeys = journeyExistingKeys(journey);
+
+  let pool;
+  if(mode==="wider" || mode==="surprise"){
+    pool = buildBroaderPool(new Set()); // score against the whole catalogue, exclude below by key
+  } else {
+    pool = buildCandidatePool(hero); // same hero group — "deeper"/"comics"/"keepwatching"
+  }
+  if(mode==="comics") pool = pool.filter(p=>p.cat==="comics");
+  if(mode==="keepwatching") pool = pool.filter(p=>p.cat==="movies" || p.cat==="series");
+
+  const curated = buildCuratedMap(journey.selectedHero);
+  const scoreIntent = mode==="wider" ? "universe" : (mode==="surprise" ? "surprise" : (journey.selectedIntent||"easiest"));
+  const scoreMedium = mode==="comics" ? "comics" : (mode==="keepwatching" ? "movies" : (journey.selectedMedium||"all"));
+
+  const scored = pool
+    .map(p=>({ cat:p.cat, d:p.d, key:`${p.cat}::${p.d.t}::${p.d.y}` }))
+    .filter(p=>!existingKeys.has(p.key))
+    .map(p=>({ ...p, score:scoreCandidate(p.cat, p.d, hero, scoreMedium, scoreIntent, curated) }))
+    .sort((a,b)=>b.score-a.score);
+
+  const picks = scored.slice(0, 4);
+  if(!picks.length) return { added:0 };
+
+  journey.recommendedTitleKeys = [...(journey.recommendedTitleKeys||[]), ...picks.map(p=>p.key)];
+  journey.updatedAt = new Date().toISOString();
+  journey.branchHistory = journey.branchHistory || [];
+  journey.branchHistory.push({ mode, at:journey.updatedAt, addedCount:picks.length });
+  setSavedJourney(journey);
+  return { added:picks.length, journey };
+}
+// Records when a journey item was marked done (journey-scoped only, not the site-wide progress store) so
+// the "Recently Completed" section on My Journey (Phase 12) can show real completion order.
+function recordJourneyCompletion(cat, id, done){
+  const journey = getSavedJourney();
+  if(!journey) return;
+  const key = itemKey(cat, id);
+  journey.completedAt = journey.completedAt || {};
+  if(done) journey.completedAt[key] = new Date().toISOString();
+  else delete journey.completedAt[key];
+  setSavedJourney(journey);
+}
+function journeyCompletionHtml(journey, heroLabel){
+  const buttons = JOURNEY_BRANCH_OPTIONS.map(opt=>
+    `<button class="journey-branch-btn" data-branch="${opt.id}">
+       <span class="journey-branch-label">${opt.label(heroLabel)}</span>
+       <span class="journey-branch-sub">${opt.sub}</span>
+     </button>`
+  ).join("");
+  return `<div class="journey-complete-block" id="journeyCompleteBlock">
+      <div class="journey-complete-title">${heroLabel.toUpperCase()} STARTING PATH COMPLETE ✓</div>
+      <div class="journey-complete-sub">You've got the basics. Where do you want to go next?</div>
+      <div class="journey-branch-grid">${buttons}</div>
+    </div>`;
+}
+function journeyNextUpHtml(nextItem){
+  if(!nextItem) return "";
+  const catLabel = (CATS.find(c=>c.id===nextItem.cat)||{}).label || nextItem.cat;
+  return `<div class="journey-next-up" id="journeyNextUp" data-cat="${nextItem.cat}" data-id="${nextItem.d.id}">
+      <span class="journey-next-up-label">NEXT UP</span>
+      <span class="journey-next-up-title">${nextItem.d.t}<span class="bc-year">${nextItem.d.y||""}</span></span>
+      <span class="journey-next-up-meta">${CAT_ICON[nextItem.cat]||""} ${catLabel}</span>
+      <span class="journey-next-up-cta">Continue Journey →</span>
+    </div>`;
+}
 function renderJourneySequenceHtml(journey){
   const items = (journey.recommendedTitleKeys||[]).map(resolveTitleKey).filter(Boolean);
   if(!items.length) return "";
@@ -532,16 +619,21 @@ function renderJourneySequenceHtml(journey){
         <button class="btn btn-small journey-seq-toggle" data-cat="${it.cat}" data-id="${it.d.id}">${done?"Done":"Mark done"}</button>
       </div>`;
   }).join("");
+  const allDone = doneCount===items.length;
+  const nextItem = !allDone ? items.find(it=>!isDone(it.cat, it.d.id)) : null;
+  const tail = allDone ? journeyCompletionHtml(journey, heroLabel) : journeyNextUpHtml(nextItem);
   return `<div class="home-section" id="journeySequenceSection">
       <div class="home-section-head"><h3>Your DC Journey — ${heroLabel}</h3><span class="home-section-sub">${doneCount}/${items.length}</span></div>
       <div class="journey-seq-list">${rows}</div>
+      ${tail}
     </div>`;
 }
 function wireJourneySequenceHandlers(root){
   root.querySelectorAll(".journey-seq-toggle").forEach(btn=>{
     btn.addEventListener("click", e=>{
       e.stopPropagation();
-      toggleDone(btn.dataset.cat, btn.dataset.id);
+      const nowDone = toggleDone(btn.dataset.cat, btn.dataset.id);
+      recordJourneyCompletion(btn.dataset.cat, btn.dataset.id, nowDone);
       if(state.cat==="journey") renderJourney();
     });
   });
@@ -554,6 +646,29 @@ function wireJourneySequenceHandlers(root){
       state.cat = cat;
       if(d.type) state.typeFilter = d.type;
       openSheet(d);
+    });
+  });
+  const nextUp = root.querySelector("#journeyNextUp");
+  if(nextUp){
+    nextUp.addEventListener("click", ()=>{
+      const cat = nextUp.dataset.cat, id = nextUp.dataset.id;
+      const d = (DATA[cat]||[]).find(x=>x.id===id);
+      if(!d) return;
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  }
+  root.querySelectorAll(".journey-branch-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const mode = btn.dataset.branch;
+      const result = extendJourney(mode);
+      if(!result.added){
+        btn.querySelector(".journey-branch-sub").textContent = "Nothing new to add here right now — try another option.";
+        return;
+      }
+      if(state.cat==="journey") renderJourney();
+      setTimeout(()=> document.getElementById("journeySequenceSection")?.scrollIntoView({behavior:"smooth", block:"start"}), 60);
     });
   });
 }
@@ -809,6 +924,71 @@ function metaTagsGeneric(cat, d){
   return "";
 }
 
+/* ---- Phase 3: active-filter summary + "broaden search" empty state (fixes Explore 0-results UX) ----
+   The underlying filter logic already treats "all" as no-filter correctly — confirmed by inspection
+   and direct testing against the real catalogue data. What was actually missing was UX: some filter
+   combinations are genuinely empty in the real data (e.g. no Live Action title is tagged "Hardcore
+   Fan"), and the app gave no way to see WHICH filters were active or remove just one of them. This
+   never silently changes the user's selection — it only ever removes a filter the user explicitly taps. */
+function activeMovieSeriesFilterChips(){
+  const chips = [];
+  if(state.viewerLevelFilter!=="all") chips.push({label:`Viewer level: ${state.viewerLevelFilter}`, key:"viewerLevelFilter"});
+  if(state.complexityFilter!=="all") chips.push({label:`Complexity: ${state.complexityFilter}`, key:"complexityFilter"});
+  if(state.canonFilter!=="all") chips.push({label:`Canon: ${canonShort(state.canonFilter)}`, key:"canonFilter"});
+  if(state.search.trim()) chips.push({label:`Search: "${state.search.trim()}"`, key:"search"});
+  return chips;
+}
+function activeGenericFilterChips(){
+  const cat = state.cat;
+  const chips = [];
+  if(cat==="comics"){
+    if(state.f1!=="all") chips.push({label:`Era: ${state.f1}`, key:"f1"});
+    if(state.f2!=="all") chips.push({label:`Canon: ${state.f2}`, key:"f2"});
+    if(state.f3!=="all") chips.push({label:`Reading level: ${state.f3}`, key:"f3"});
+    if(state.chip!=="all") chips.push({label:`Line: ${state.chip}`, key:"chip"});
+  }
+  if(cat==="games" && state.gameMode==="platform" && state.gamePlatform!=="all"){
+    chips.push({label:`Platform: ${state.gamePlatform}`, key:"gamePlatform"});
+  }
+  if(state.search.trim()) chips.push({label:`Search: "${state.search.trim()}"`, key:"search"});
+  return chips;
+}
+function clearFilterChip(key){
+  if(key==="search"){ state.search=""; if(searchInput) searchInput.value=""; }
+  else state[key] = "all";
+}
+function activeFilterBarHtml(chips){
+  if(!chips.length) return "";
+  const pills = chips.map((c,i)=>`<button class="active-filter-chip" data-clear-i="${i}">${escapeAttr(c.label)} <span class="x">✕</span></button>`).join("");
+  return `<div class="active-filter-bar">${pills}<button class="active-filter-clearall" id="clearAllFiltersBtn">Clear all</button></div>`;
+}
+function noMatchesHtml(chips){
+  if(!chips.length){
+    return `<div class="empty">Nothing here yet.</div>`;
+  }
+  const removeBtns = chips.map((c,i)=>`<button class="btn btn-small" data-clear-i="${i}">Remove: ${escapeAttr(c.label)}</button>`).join("");
+  return `<div class="empty empty-broaden">
+      <div class="empty-title">No exact matches</div>
+      <div class="empty-sub">Nothing in the compendium matches all of these filters together. Broaden your search:</div>
+      <div class="empty-actions">${removeBtns}<button class="btn btn-small" id="emptyClearAllBtn">Clear all filters</button></div>
+    </div>`;
+}
+function wireFilterBarHandlers(root, chips){
+  root.querySelectorAll("[data-clear-i]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      clearFilterChip(chips[+btn.dataset.clearI].key);
+      buildFilters(); renderCards();
+    });
+  });
+  const clearAll = root.querySelector("#clearAllFiltersBtn, #emptyClearAllBtn");
+  if(clearAll){
+    clearAll.addEventListener("click", ()=>{
+      chips.forEach(c=>clearFilterChip(c.key));
+      buildFilters(); renderCards();
+    });
+  }
+}
+
 /* ============================= RENDER: CARDS (movies/series) ============================= */
 function filteredMovieSeries(){
   const cat = state.cat;
@@ -969,13 +1149,15 @@ function groupHeaderHtml(label, count, theme, hubGroup, universeHub){
 function renderMovieSeriesCards(){
   const cat = state.cat;
   const items = filteredMovieSeries();
+  const chips = activeMovieSeriesFilterChips();
   countEl.textContent = `${items.length} title${items.length===1?"":"s"}`;
   if(items.length===0){
-    gridEl.innerHTML = `<div class="empty">Nothing matches those filters yet.<br>Try the other type, or clear the search.</div>`;
+    gridEl.innerHTML = activeFilterBarHtml(chips) + noMatchesHtml(chips);
+    wireFilterBarHandlers(gridEl, chips);
     return;
   }
 
-  let html = "";
+  let html = activeFilterBarHtml(chips);
   if(state.sortMode==="newest"){
     const sorted = [...items].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
     html = sorted.map(d=>cardHtml(cat,d)).join("");
@@ -1024,6 +1206,7 @@ function renderMovieSeriesCards(){
     });
   }
   gridEl.innerHTML = html;
+  wireFilterBarHandlers(gridEl, chips);
   attachCardHandlers(cat);
 }
 
@@ -1057,24 +1240,28 @@ function attachCardHandlers(cat){
 function renderGenericCards(){
   const cat = state.cat;
   const items = filteredDataGeneric();
+  const chips = activeGenericFilterChips();
   countEl.textContent = `${items.length} title${items.length===1?"":"s"}`;
   if(items.length===0){
-    gridEl.innerHTML = `<div class="empty">Nothing matches those filters yet.<br>Try clearing a filter or the search.</div>`;
+    gridEl.innerHTML = activeFilterBarHtml(chips) + noMatchesHtml(chips);
+    wireFilterBarHandlers(gridEl, chips);
     return;
   }
+  let html = activeFilterBarHtml(chips);
   if(cat==="games" && state.gameMode==="story"){
     const groups = {};
     items.forEach(d=>{ (groups[d.fr||"Other"] = groups[d.fr||"Other"] || []).push(d); });
     const groupNames = Object.keys(groups).sort();
-    let html = "";
     groupNames.forEach(g=>{
       const list = groups[g].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
       html += groupHeaderHtml(g, list.length) + list.map(d=>cardHtml(cat,d)).join("");
     });
     gridEl.innerHTML = html;
   } else {
-    gridEl.innerHTML = items.map(d=>cardHtml(cat,d)).join("");
+    html += items.map(d=>cardHtml(cat,d)).join("");
+    gridEl.innerHTML = html;
   }
+  wireFilterBarHandlers(gridEl, chips);
   attachCardHandlers(cat);
 }
 
@@ -1159,13 +1346,26 @@ function renderHome(){
     ...Object.keys(eraCounts).filter(e=>!ERA_ORDER.includes(e)).map(e=>({era:e, n:eraCounts[e]})),
   ];
 
-  // Continue Your Journey — personalized rail from this device's saved favorites/progress, when there is any
+  // Continue Your Journey — personalized rail from this device's saved favorites/progress, when there is any.
+  // Phase 13: when a saved New to DC journey exists, items related to that journey's hero are surfaced
+  // first — real relationship data (groupOf), never a random reorder — so "finished a Batman starter path"
+  // actually shows more Batman-adjacent content before broadly unrelated DC titles.
   const favKeys = getFavorites();
   const progressKeys = Object.keys(getProgress());
-  const journeyItems = [
+  let journeyItems = [
     ...resolveKeys(favKeys),
     ...resolveKeys(progressKeys.filter(k=>!favKeys.includes(k))),
-  ].slice(0, 12);
+  ];
+  const activeJourney = getSavedJourney();
+  const journeyHeroGroup = activeJourney ? (BEGINNER_CHARACTERS.find(h=>h.id===activeJourney.selectedHero)||{}).group : null;
+  if(journeyHeroGroup){
+    journeyItems = [...journeyItems].sort((a,b)=>{
+      const aMatch = groupOf(a.cat, a.d)===journeyHeroGroup ? 1 : 0;
+      const bMatch = groupOf(b.cat, b.d)===journeyHeroGroup ? 1 : 0;
+      return bMatch - aMatch; // hero-matching items first, otherwise stable (favorites still lead progress)
+    });
+  }
+  journeyItems = journeyItems.slice(0, 12);
 
   let html = `
     <section class="home-hero-cinematic">
@@ -1323,7 +1523,50 @@ function renderJourney(opts){
 
   const journey = getSavedJourney();
   if(journey){
+    html += `<div class="home-section-head journey-section-label"><h3>CONTINUE</h3></div>`;
     html += renderJourneySequenceHtml(journey);
+
+    // ---- Phase 12: RECENTLY COMPLETED — journey items marked done, most-recently-completed first ----
+    const completedItems = (journey.recommendedTitleKeys||[]).map(resolveTitleKey).filter(Boolean)
+      .filter(it=>isDone(it.cat, it.d.id));
+    if(completedItems.length){
+      const completedAt = journey.completedAt || {};
+      const sorted = [...completedItems].sort((a,b)=>{
+        const ta = completedAt[itemKey(a.cat,a.d.id)] || "";
+        const tb = completedAt[itemKey(b.cat,b.d.id)] || "";
+        return tb.localeCompare(ta); // newest first; items with no timestamp (pre-existing) sink to the end
+      });
+      html += `<div class="home-section" id="journeyRecentlyCompletedSection">
+          <div class="home-section-head"><h3>RECENTLY COMPLETED</h3><span class="home-section-sub">${sorted.length}</span></div>
+          <div class="home-strip">${sorted.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
+        </div>`;
+    }
+  } else {
+    html += `<div class="journey-empty-cta home-section" id="journeyEmptyCta">
+        <div class="home-section-head"><h3>CONTINUE</h3></div>
+        <p class="journey-empty">You haven't started a DC journey yet.</p>
+        <button class="btn btn-primary" id="journeyStartCtaBtn">New to DC? Start Here</button>
+      </div>`;
+  }
+
+  // ---- Phase 12: DISCOVER NEXT — other real, data-backed heroes to branch into ----
+  {
+    const currentHeroGroup = journey ? (BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero)||{}).group : null;
+    const otherHeroes = realHeroGroups().filter(h=>h.group!==currentHeroGroup).slice(0,6);
+    if(otherHeroes.length){
+      html += `<div class="home-section" id="journeyDiscoverNextSection">
+          <div class="home-section-head"><h3>DISCOVER NEXT</h3></div>
+          <div class="explore-hero-rail" id="journeyDiscoverRail">
+            ${otherHeroes.map(h=>{
+              const t = groupTheme(h.group);
+              return `<div class="explore-rail-tile" data-group="${escapeAttr(h.group)}" style="--theme-a:${t.a};--theme-b:${t.b};">
+                  <div class="explore-rail-tile-label">${h.group}</div>
+                  <div class="explore-rail-tile-count">${h.count} title${h.count===1?"":"s"}</div>
+                </div>`;
+            }).join("")}
+          </div>
+        </div>`;
+    }
   }
 
   html += `<div class="home-section" id="journeyProgressSection">
@@ -1368,6 +1611,11 @@ function renderJourney(opts){
   });
   const signInLink = $("#journeySignInLink");
   if(signInLink) signInLink.addEventListener("click", (e)=>{ e.preventDefault(); openSheetEl(readerBackdrop, readerSheet); });
+  const startCtaBtn = $("#journeyStartCtaBtn");
+  if(startCtaBtn) startCtaBtn.addEventListener("click", openStartSheet);
+  gridEl.querySelectorAll("#journeyDiscoverRail .explore-rail-tile").forEach(t=>{
+    t.addEventListener("click", ()=> openHub(t.dataset.group));
+  });
   wireJourneySequenceHandlers(gridEl);
 
   // If signed in, refresh from Firestore once in the background so cross-device changes show up here —
@@ -2385,6 +2633,26 @@ const mobileNav = $("#mobileNav");
 const exploreBackdrop = $("#exploreBackdrop"), exploreSheet = $("#exploreSheet"), exploreGrid = $("#exploreGrid");
 const moreBackdrop = $("#moreBackdrop"), moreSheet = $("#moreSheet");
 
+/* ---- Phase 4: "Explore DC" discovery rails — real, data-backed categories only, never invented ---- */
+function realHeroGroups(){
+  // Every group that actually has at least one title anywhere in the catalogue, ranked the same way
+  // the movies/series "By Hero" sort mode already ranks them — no invented groups, no empty tiles.
+  const counts = {};
+  CATS.forEach(c=>{ (DATA[c.id]||[]).forEach(d=>{ const g = groupOf(c.id,d); counts[g] = (counts[g]||0)+1; }); });
+  return sortHeroNames(counts).filter(g=>g!=="Other DC Characters").map(g=>({ group:g, count:counts[g] }));
+}
+function realComicsEras(){
+  // Pulled straight from the comics catalogue's own `era` field — whatever eras actually exist in the
+  // real data, in first-appearance (oldest→newest) order, never a hardcoded/invented list.
+  const withYear = {};
+  (DATA.comics||[]).forEach(d=>{
+    if(!d.era) return;
+    const y = firstYear(d.y);
+    if(withYear[d.era]===undefined || (y && y<withYear[d.era])) withYear[d.era] = y||withYear[d.era]||9999;
+  });
+  return Object.keys(withYear).sort((a,b)=>(withYear[a]||9999)-(withYear[b]||9999))
+    .map(era=>({ era, count:(DATA.comics||[]).filter(d=>d.era===era).length }));
+}
 function buildExploreGrid(){
   exploreGrid.innerHTML = CATS.map(c=>`<div class="discover-tile ${c.id}" data-cat="${c.id}">
       <div class="discover-tile-icon">${CAT_ICON[c.id]||""}</div>
@@ -2397,6 +2665,50 @@ function buildExploreGrid(){
       goToCategory(t.dataset.cat);
     });
   });
+
+  const heroes = realHeroGroups();
+  const exploreHeroRail = $("#exploreHeroRail");
+  if(exploreHeroRail){
+    exploreHeroRail.innerHTML = heroes.map(h=>{
+      const t = groupTheme(h.group);
+      return `<div class="explore-rail-tile" data-group="${escapeAttr(h.group)}" style="--theme-a:${t.a};--theme-b:${t.b};">
+          <div class="explore-rail-tile-label">${h.group}</div>
+          <div class="explore-rail-tile-count">${h.count} title${h.count===1?"":"s"}</div>
+        </div>`;
+    }).join("");
+    exploreHeroRail.querySelectorAll(".explore-rail-tile").forEach(t=>{
+      t.addEventListener("click", ()=>{
+        closeSheetEl(exploreBackdrop, exploreSheet);
+        openHub(t.dataset.group);
+      });
+    });
+  }
+
+  const eras = realComicsEras();
+  const exploreEraRail = $("#exploreEraRail");
+  if(exploreEraRail){
+    if(!eras.length){
+      exploreEraRail.innerHTML = "";
+      exploreEraRail.closest(".explore-rail-section").style.display = "none";
+    } else {
+      exploreEraRail.closest(".explore-rail-section").style.display = "";
+      exploreEraRail.innerHTML = eras.map(e=>
+        `<div class="explore-rail-tile era" data-era="${escapeAttr(e.era)}">
+           <div class="explore-rail-tile-label">${e.era}</div>
+           <div class="explore-rail-tile-count">${e.count} comic${e.count===1?"":"s"}</div>
+         </div>`
+      ).join("");
+      exploreEraRail.querySelectorAll(".explore-rail-tile").forEach(t=>{
+        t.addEventListener("click", ()=>{
+          closeSheetEl(exploreBackdrop, exploreSheet);
+          state.cat = "comics";
+          resetFiltersForTabSwitch();
+          state.f1 = t.dataset.era;
+          render();
+        });
+      });
+    }
+  }
 }
 
 function updateMobileNavActive(){
