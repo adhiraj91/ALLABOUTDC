@@ -1,9 +1,10 @@
 import { db, auth } from "./firebase-config.js";
 import {
-  collection, getDocs, addDoc, deleteDoc, doc
+  collection, getDocs, addDoc, deleteDoc, doc, getDoc, setDoc, updateDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import {
-  signInWithEmailAndPassword, signOut, onAuthStateChanged
+  signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
+  signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 /* ============================= CONFIG ============================= */
@@ -102,8 +103,8 @@ const SCHEMA = {
 /* ============================= STATE ============================= */
 // META_COLLECTIONS: non-title-record collections (curated editorial data, not movies/series/games/comics
 // entries themselves) — loaded the same way but never shown as a browse tab.
-const META_COLLECTIONS = ["beginnerPaths", "starterRecommendations"];
-let DATA = { movies:[], series:[], games:[], comics:[], beginnerPaths:[], starterRecommendations:[] };
+const META_COLLECTIONS = ["beginnerRecommendations"];
+let DATA = { movies:[], series:[], games:[], comics:[], beginnerRecommendations:[] };
 let state = {
   cat:"home",
   search:"",
@@ -116,10 +117,17 @@ let state = {
 };
 let isAdmin = false;
 let loaded = false;
+// readerUser: the signed-in Firebase Auth user acting as a READER (personalization/sync), independent of
+// isAdmin (a role, checked separately against the admins/{uid} collection — see checkIsAdmin below). Any
+// signed-in user, including the admin, has a reader profile under their own uid.
+let readerUser = null;
 
-/* ============================= MY JOURNEY: favorites & progress (Phase 3) =============================
-   Stored per-device in localStorage — this site has no reader login, only admin auth, so there is no
-   cross-device sync. Each browser/phone keeps its own list. */
+/* ============================= MY JOURNEY: favorites & progress (Phase 3, extended Phase 1) =============================
+   localStorage is always the fast, always-available local cache — every read/write goes through it first so
+   the UI never waits on a network round trip. When a reader is signed in, every change is ALSO mirrored to
+   Firestore under users/{uid}/favorites|progress (fire-and-forget), and on login we merge local + cloud data
+   both ways so favorites/progress follow the reader across devices without losing anything. Logged-out
+   visitors keep working exactly as before, per-device only. */
 const LS_FAV_KEY = "dc_favorites";
 const LS_PROGRESS_KEY = "dc_progress";
 function lsGetJson(key, fallback){
@@ -132,25 +140,116 @@ function lsSetJson(key, val){
 function itemKey(cat, id){ return `${cat}:${id}`; }
 function getFavorites(){ return lsGetJson(LS_FAV_KEY, []); }
 function isFavorite(cat, id){ return getFavorites().includes(itemKey(cat,id)); }
+function syncFavoriteToCloud(cat, id, active){
+  if(!readerUser) return;
+  const ref = doc(db, "users", readerUser.uid, "favorites", itemKey(cat,id));
+  const p = active
+    ? setDoc(ref, { cat, titleId:id, addedAt: serverTimestamp() })
+    : deleteDoc(ref);
+  p.catch(e=>console.warn("[Reader] favorite sync failed:", e.message));
+}
 function toggleFavorite(cat, id){
   const key = itemKey(cat,id);
   let favs = getFavorites();
   if(favs.includes(key)) favs = favs.filter(k=>k!==key);
   else favs = [...favs, key];
   lsSetJson(LS_FAV_KEY, favs);
-  return favs.includes(key);
+  const nowActive = favs.includes(key);
+  syncFavoriteToCloud(cat, id, nowActive);
+  return nowActive;
 }
 function getProgress(){ return lsGetJson(LS_PROGRESS_KEY, {}); }
 function isDone(cat, id){ return !!getProgress()[itemKey(cat,id)]; }
+function syncProgressToCloud(cat, id, done){
+  if(!readerUser) return;
+  const ref = doc(db, "users", readerUser.uid, "progress", itemKey(cat,id));
+  const p = done
+    ? setDoc(ref, { cat, titleId:id, done:true, updatedAt: serverTimestamp() })
+    : deleteDoc(ref);
+  p.catch(e=>console.warn("[Reader] progress sync failed:", e.message));
+}
 function toggleDone(cat, id){
   const key = itemKey(cat,id);
   const prog = getProgress();
   if(prog[key]) delete prog[key];
   else prog[key] = true;
   lsSetJson(LS_PROGRESS_KEY, prog);
-  return !!prog[key];
+  const nowDone = !!prog[key];
+  syncProgressToCloud(cat, id, nowDone);
+  return nowDone;
 }
 const PROGRESS_VERB = { movies:"Watched", series:"Watched", games:"Played", comics:"Read" };
+
+/* ---- Reader account: profile, admin-role check, and local↔cloud merge on login ---- */
+async function upsertReaderProfile(user){
+  const ref = doc(db, "users", user.uid);
+  const base = { displayName:user.displayName||"", email:user.email||"", photoURL:user.photoURL||"", lastLoginAt: serverTimestamp() };
+  try{
+    const snap = await getDoc(ref);
+    if(snap.exists()) await updateDoc(ref, base);
+    else await setDoc(ref, { ...base, createdAt: serverTimestamp() });
+  }catch(e){ console.warn("[Reader] profile upsert failed:", e.message); }
+}
+// Admin is a separate ROLE, not "any signed-in user" — checked against a server-side allowlist
+// (admins/{uid}) that only Firestore security rules and the site owner (via the Firebase console) can
+// write to. A reader signing up/in through Google or email/password can never become admin this way.
+async function checkIsAdmin(uid){
+  try{
+    const snap = await getDoc(doc(db, "admins", uid));
+    return snap.exists();
+  }catch(e){ return false; }
+}
+async function pushLocalDataToCloud(uid){
+  const localFavs = getFavorites();
+  const localProg = getProgress();
+  const [favSnap, progSnap] = await Promise.all([
+    getDocs(collection(db, "users", uid, "favorites")),
+    getDocs(collection(db, "users", uid, "progress")),
+  ]);
+  const cloudFavKeys = new Set(favSnap.docs.map(d=>d.id));
+  const cloudProgKeys = new Set(progSnap.docs.map(d=>d.id));
+  const writes = [];
+  localFavs.forEach(key=>{
+    if(cloudFavKeys.has(key)) return; // merge, never duplicate
+    const [cat,id] = key.split(":");
+    writes.push(setDoc(doc(db,"users",uid,"favorites",key), { cat, titleId:id, addedAt: serverTimestamp() }));
+  });
+  Object.keys(localProg).forEach(key=>{
+    if(!localProg[key] || cloudProgKeys.has(key)) return;
+    const [cat,id] = key.split(":");
+    writes.push(setDoc(doc(db,"users",uid,"progress",key), { cat, titleId:id, done:true, updatedAt: serverTimestamp() }));
+  });
+  await Promise.all(writes);
+}
+async function pullCloudDataToLocal(uid){
+  const [favSnap, progSnap] = await Promise.all([
+    getDocs(collection(db, "users", uid, "favorites")),
+    getDocs(collection(db, "users", uid, "progress")),
+  ]);
+  const mergedFavs = uniq([...getFavorites(), ...favSnap.docs.map(d=>d.id)]);
+  lsSetJson(LS_FAV_KEY, mergedFavs);
+  const mergedProg = { ...getProgress() };
+  progSnap.docs.forEach(d=>{ mergedProg[d.id] = true; });
+  lsSetJson(LS_PROGRESS_KEY, mergedProg);
+}
+// Runs once per reader account (marked via users/{uid}/meta/migration) to migrate this device's
+// pre-existing localStorage favorites/progress into the cloud without overwriting anything already there,
+// then always pulls the merged cloud state back down — so returning on ANY device, in ANY order, converges
+// on the same union of data rather than one device's copy clobbering another's.
+async function onReaderLogin(uid){
+  try{
+    const migRef = doc(db, "users", uid, "meta", "migration");
+    const migSnap = await getDoc(migRef);
+    if(!migSnap.exists() || !migSnap.data().localStorageMigrated){
+      await pushLocalDataToCloud(uid);
+      await setDoc(migRef, { localStorageMigrated:true, migratedAt: serverTimestamp() });
+    }
+    await pullCloudDataToLocal(uid);
+    await pullJourneyFromCloud(uid);
+  }catch(e){
+    console.warn("[Reader] login sync failed:", e.message);
+  }
+}
 
 /* ============================= DOM ============================= */
 const $ = (sel,root=document)=>root.querySelector(sel);
@@ -203,7 +302,7 @@ function ratingScore(d){
 const HERO_PRIORITY = ["Batman","Superman","Justice League","Wonder Woman","Aquaman","Flash","Suicide Squad","Harley Quinn","Joker","Green Lantern","Shazam","Supergirl","Teen Titans","DC Super Hero Girls","LEGO DC","Watchmen","Constantine","Catwoman","Swamp Thing","Legion of Super-Heroes","Human Target","Vertigo / Imprint Films"];
 
 /* ============================= BEGINNER GUIDE ("New to DC?") =============================
-   Curated recommendation data (DATA.beginnerPaths / DATA.starterRecommendations) is loaded from
+   Curated recommendation data (DATA.beginnerRecommendations) is loaded from
    Firestore like everything else, but it never duplicates a title record — every recommendation
    references an existing movies/series/games/comics entry via a stable "titleKey" of the form
    "<category>::<title>::<year>", resolved against the real catalogue at render time. There is no
@@ -225,25 +324,239 @@ function resolveTitleKey(key){
   }
   return { d, cat };
 }
-// Difficulty is DERIVED from each title's own existing viewerLevel/complexity (movies & series) or
-// readingLevel (comics) — never stored as separate, possibly-conflicting metadata on the recommendation.
-function deriveDifficulty(cat, d){
+// accessibility(): how beginner-friendly a single title is, derived from its own existing
+// viewerLevel/complexity (movies/series/games) or readingLevel (comics) — 0-25, higher = easier.
+// Never stored as separate metadata; always computed from real catalogue fields.
+function accessibility(cat, d){
   if(cat === "comics"){
     const rl = d.readingLevel;
-    if(rl === "New Reader") return "beginner";
-    if(rl === "Familiar Reader") return "intermediate";
-    if(rl === "Experienced Reader") return "advanced";
-    if(rl === "Hardcore") return "deep_dive";
-    return "intermediate";
+    if(rl === "New Reader") return 25;
+    if(rl === "Familiar Reader") return 15;
+    if(rl === "Experienced Reader") return 5;
+    return 0; // Hardcore
   }
+  let score = 0;
   const vl = d.viewerLevel, cx = d.complexity;
-  if(vl === "Hardcore Fan") return "deep_dive";
-  if(vl === "Experienced Viewer" || cx === "High") return "advanced";
-  if(cx === "Medium") return "intermediate";
-  if(vl === "New Viewer" && cx === "Low") return "beginner";
-  return "intermediate";
+  if(vl === "New Viewer") score += 15;
+  else if(vl === "Familiar Viewer") score += 8;
+  else if(vl === "Experienced Viewer") score += 2;
+  if(cx === "Low") score += 10;
+  else if(cx === "Medium") score += 5;
+  return score;
 }
-const DIFFICULTY_LABEL = { beginner:"Beginner", intermediate:"Familiar", advanced:"Deep Dive", deep_dive:"Deep Dive" };
+
+/* ============================= "NEW TO DC?" — hero picker + ranked recommendation engine =============================
+   Rebuilt per spec: Step 1 shows ONLY individual hero characters (never teams/universes/media types).
+   Config lives here, separate from any title's own "group" field, so the hero list is an explicit,
+   curated set rather than something derived blindly from the data. */
+const BEGINNER_CHARACTERS = [
+  { id:"batman",        label:"Batman",        group:"Batman" },
+  { id:"superman",       label:"Superman",      group:"Superman" },
+  { id:"wonder-woman",   label:"Wonder Woman",  group:"Wonder Woman" },
+  { id:"flash",          label:"The Flash",     group:"Flash" },
+  { id:"aquaman",        label:"Aquaman",       group:"Aquaman" },
+  { id:"green-lantern",  label:"Green Lantern", group:"Green Lantern" },
+];
+const MEDIUM_OPTIONS = [
+  { id:"all", label:"Everything" }, { id:"movies", label:"🎬 Movies" }, { id:"series", label:"📺 Series" },
+  { id:"comics", label:"📖 Comics" }, { id:"games", label:"🎮 Games" },
+];
+// Intent-based, NOT expertise-based — the user already told us they're new to DC.
+const START_INTENTS = [
+  { id:"easiest",    label:"Give me the easiest place to start" },
+  { id:"meet-hero",  label:"I want to meet this hero" },
+  { id:"universe",   label:"I want to understand the bigger DC Universe" },
+  { id:"standalone", label:"I want a great standalone story" },
+  { id:"comics",     label:"I want to start with comics" },
+  { id:"surprise",   label:"Surprise me" },
+];
+function firstSentence(text){
+  if(!text || typeof text !== "string") return "";
+  const m = text.match(/^[^.!?]*[.!?]/);
+  const s = m ? m[0].trim() : text.trim();
+  return s.length > 160 ? s.slice(0,157).trim() + "…" : s;
+}
+// Curated editorial data (DATA.beginnerRecommendations) never duplicates a title record — each entry
+// references an existing title via the same "cat::title::year" titleKey used elsewhere, keyed here per
+// hero for fast lookup during scoring.
+function buildCuratedMap(heroId){
+  const map = new Map();
+  (DATA.beginnerRecommendations || []).forEach(r=>{
+    if(!Array.isArray(r.characterIds) || !r.characterIds.includes(heroId)) return;
+    const hit = resolveTitleKey(r.titleKey);
+    if(!hit) return;
+    map.set(itemKey(hit.cat, hit.d.id), r);
+  });
+  return map;
+}
+// Ranked scoring — NOT a simple filter intersection. Character match dominates, then curated editorial
+// data, then medium (a soft preference, never a hard filter), then intent-specific heuristics drawn from
+// each title's real canonStatus/canon + accessibility, and rating only as a final tiebreaker.
+function scoreCandidate(cat, d, hero, medium, intent, curatedMap){
+  let score = 0;
+  const group = groupOf(cat, d);
+  const heroes = heroList(d);
+  const heroNameBare = hero.label.replace(/^The\s+/i,"").toLowerCase();
+  if(group === hero.group) score += 40;                       // 1. strong character match (own hub)
+  else if(heroes.some(h=>h.toLowerCase().includes(heroNameBare))) score += 22; // hero appears, different group (e.g. team-up)
+
+  const cur = curatedMap.get(itemKey(cat, d.id));
+  if(cur){                                                      // 2. editorial curation
+    score += 45 + (Number(cur.priority)||0) * 3;
+    if(cur.starter) score += 12;
+    if(cur.intent === intent) score += 15;
+    if(cur.mediaType && (cur.mediaType === medium || medium === "all")) score += 5;
+  }
+  if(medium !== "all" && cat === medium) score += 15;           // 3. medium preference (soft)
+
+  const canonVal = cat === "comics" ? d.canon : d.canonStatus;  // 4. intent heuristics on real fields
+  const acc = accessibility(cat, d);
+  if(intent === "easiest"){
+    score += acc;
+  } else if(intent === "meet-hero"){
+    score += acc * 0.6;
+    if(canonVal && /Standalone/.test(canonVal)) score += 8;
+  } else if(intent === "universe"){
+    if(canonVal && /(Shared Universe|Main Canon)/.test(canonVal)) score += 18;
+    score += acc * 0.3;
+  } else if(intent === "standalone"){
+    if(canonVal && /(Standalone|Black Label)/.test(canonVal)) score += 20;
+  } else if(intent === "comics"){
+    score += cat === "comics" ? 25 : -8;
+  } else if(intent === "surprise"){
+    let h = 0; const s = `${d.t}${d.y}`;
+    for(let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+    score += (h % 20) + acc * 0.2;
+  }
+  const r = ratingScore(d);                                      // 5. rating — last-resort tiebreaker
+  if(r !== null) score += r / 12;
+  return score;
+}
+function buildCandidatePool(hero){
+  const pool = [];
+  CATS.forEach(c=>{ (DATA[c.id]||[]).forEach(d=>{ if(groupOf(c.id,d)===hero.group) pool.push({cat:c.id,d}); }); });
+  return pool;
+}
+function buildRelatedPool(hero, exclude){
+  const pool = [];
+  const heroNameBare = hero.label.replace(/^The\s+/i,"").toLowerCase();
+  CATS.forEach(c=>{ (DATA[c.id]||[]).forEach(d=>{
+    const key = itemKey(c.id, d.id);
+    if(exclude.has(key)) return;
+    if(heroList(d).some(h=>h.toLowerCase().includes(heroNameBare))) pool.push({cat:c.id,d});
+  }); });
+  return pool;
+}
+function buildBroaderPool(exclude){
+  const pool = [];
+  CATS.forEach(c=>{ (DATA[c.id]||[]).forEach(d=>{
+    const key = itemKey(c.id, d.id);
+    if(!exclude.has(key)) pool.push({cat:c.id,d});
+  }); });
+  return pool;
+}
+// 3-tier fallback cascade — guarantees a minimum of `minTarget` results whenever the catalogue has
+// ANY titles at all, so "0 titles" can never happen again: exact hero group → hero-related titles in
+// other groups → the broader catalogue, each tier ranked and appended rather than replacing the last.
+function getRecommendations(heroId, medium, intent, opts){
+  opts = opts || {};
+  const limit = opts.limit || 6, minTarget = opts.minTarget || 3;
+  const hero = BEGINNER_CHARACTERS.find(h=>h.id===heroId);
+  if(!hero) return [];
+  const curated = buildCuratedMap(heroId);
+  const seen = new Set();
+  const scoreAndRank = pool => pool.map(({cat,d})=>({
+    cat, d,
+    score: scoreCandidate(cat, d, hero, medium, intent, curated),
+    reason: (curated.get(itemKey(cat,d.id))||{}).reason || firstSentence(d.blurb),
+  })).sort((a,b)=>b.score-a.score);
+
+  const tier1 = buildCandidatePool(hero);
+  tier1.forEach(({cat,d})=>seen.add(itemKey(cat,d.id)));
+  let ranked = scoreAndRank(tier1);
+
+  if(ranked.length < minTarget){
+    const tier2 = buildRelatedPool(hero, seen);
+    tier2.forEach(({cat,d})=>seen.add(itemKey(cat,d.id)));
+    ranked = ranked.concat(scoreAndRank(tier2)).sort((a,b)=>b.score-a.score);
+  }
+  if(ranked.length < minTarget){
+    const tier3 = buildBroaderPool(seen);
+    ranked = ranked.concat(scoreAndRank(tier3)).sort((a,b)=>b.score-a.score);
+  }
+  return ranked.slice(0, limit);
+}
+
+/* ---- Journey persistence: the saved "sequence" from a completed New to DC flow (Phase 2) ----
+   Stored locally (fast, always available) and mirrored to users/{uid}/preferences/dcJourney when
+   signed in. Titles are referenced by the same stable "cat::title::year" titleKey used by curated
+   recommendation data — never a raw Firestore doc id, which changes on every catalogue re-import. */
+const LS_JOURNEY_KEY = "dc_journey";
+function getSavedJourney(){ return lsGetJson(LS_JOURNEY_KEY, null); }
+function setSavedJourney(journey){
+  lsSetJson(LS_JOURNEY_KEY, journey);
+  if(readerUser) syncJourneyToCloud(readerUser.uid, journey);
+}
+function syncJourneyToCloud(uid, journey){
+  if(!journey) return;
+  const ref = doc(db, "users", uid, "preferences", "dcJourney");
+  setDoc(ref, { ...journey, updatedAt: serverTimestamp() }).catch(e=>console.warn("[Reader] journey sync failed:", e.message));
+}
+async function pullJourneyFromCloud(uid){
+  try{
+    const snap = await getDoc(doc(db, "users", uid, "preferences", "dcJourney"));
+    const local = getSavedJourney();
+    if(snap.exists() && !local){
+      lsSetJson(LS_JOURNEY_KEY, snap.data());
+    } else if(local){
+      // Local journey is the source of truth if both exist (avoid over-engineering a merge here) —
+      // still push it up so a fresh device without one adopts it.
+      syncJourneyToCloud(uid, local);
+    }
+  }catch(e){ console.warn("[Reader] journey pull failed:", e.message); }
+}
+function renderJourneySequenceHtml(journey){
+  const items = (journey.recommendedTitleKeys||[]).map(resolveTitleKey).filter(Boolean);
+  if(!items.length) return "";
+  const heroLabel = (BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero)||{}).label || "DC";
+  const doneCount = items.filter(it=>isDone(it.cat, it.d.id)).length;
+  const rows = items.map((it,i)=>{
+    const done = isDone(it.cat, it.d.id);
+    const catLabel = (CATS.find(c=>c.id===it.cat)||{}).label || it.cat;
+    return `<div class="journey-seq-item" data-cat="${it.cat}" data-id="${it.d.id}">
+        <div class="journey-seq-num" data-done="${done}">${done?"✓":i+1}</div>
+        <div class="journey-seq-body">
+          <div class="journey-seq-title">${it.d.t}<span class="bc-year">${it.d.y||""}</span></div>
+          <div class="journey-seq-meta">${CAT_ICON[it.cat]||""} ${catLabel}</div>
+        </div>
+        <button class="btn btn-small journey-seq-toggle" data-cat="${it.cat}" data-id="${it.d.id}">${done?"Done":"Mark done"}</button>
+      </div>`;
+  }).join("");
+  return `<div class="home-section" id="journeySequenceSection">
+      <div class="home-section-head"><h3>Your DC Journey — ${heroLabel}</h3><span class="home-section-sub">${doneCount}/${items.length}</span></div>
+      <div class="journey-seq-list">${rows}</div>
+    </div>`;
+}
+function wireJourneySequenceHandlers(root){
+  root.querySelectorAll(".journey-seq-toggle").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+      e.stopPropagation();
+      toggleDone(btn.dataset.cat, btn.dataset.id);
+      if(state.cat==="journey") renderJourney();
+    });
+  });
+  root.querySelectorAll(".journey-seq-item").forEach(item=>{
+    item.addEventListener("click", e=>{
+      if(e.target.closest(".journey-seq-toggle")) return;
+      const cat = item.dataset.cat, id = item.dataset.id;
+      const d = (DATA[cat]||[]).find(x=>x.id===id);
+      if(!d) return;
+      state.cat = cat;
+      if(d.type) state.typeFilter = d.type;
+      openSheet(d);
+    });
+  });
+}
 
 /* ---- Themed backgrounds per hero / team group (Phase 1, Task 2) ---- */
 const GROUP_THEMES = {
@@ -984,7 +1297,8 @@ function resolveKeys(keys){
   });
   return out;
 }
-function renderJourney(){
+function renderJourney(opts){
+  opts = opts || {};
   countEl.textContent = "";
   const favItems = resolveKeys(getFavorites());
   const progressKeys = Object.keys(getProgress());
@@ -993,14 +1307,26 @@ function renderJourney(){
     const [cat] = k.split(":");
     if(doneByCat[cat]!==undefined) doneByCat[cat]++;
   });
+  const signedIn = !!readerUser;
 
-  let html = `<div class="home-hero journey-hero">
-      <div class="home-hero-badge">📌 SAVED ON THIS DEVICE</div>
-      <h2>My Journey</h2>
-      <p>Favorites and progress live in this browser only — no login, so they won't follow you to another phone or a fresh browser.</p>
-    </div>`;
+  let html = signedIn
+    ? `<div class="home-hero journey-hero">
+        <div class="home-hero-badge">☁️ SYNCED TO YOUR ACCOUNT</div>
+        <h2>My Journey</h2>
+        <p>Signed in as ${escapeAttr(readerUser.displayName || readerUser.email || "you")} — favorites and progress follow you to any device.</p>
+      </div>`
+    : `<div class="home-hero journey-hero">
+        <div class="home-hero-badge">📌 SAVED ON THIS DEVICE</div>
+        <h2>My Journey</h2>
+        <p>Favorites and progress live in this browser only right now. <a href="#" id="journeySignInLink" style="color:var(--ink);text-decoration:underline;">Sign in</a> to sync them across every device.</p>
+      </div>`;
 
-  html += `<div class="home-section">
+  const journey = getSavedJourney();
+  if(journey){
+    html += renderJourneySequenceHtml(journey);
+  }
+
+  html += `<div class="home-section" id="journeyProgressSection">
       <div class="home-section-head"><h3>Progress</h3></div>
       <div class="journey-progress-grid">
         ${CATS.map(c=>{
@@ -1016,12 +1342,12 @@ function renderJourney(){
     </div>`;
 
   if(favItems.length){
-    html += `<div class="home-section">
+    html += `<div class="home-section" id="journeyFavoritesSection">
         <div class="home-section-head"><h3>♥ Favorites</h3><span class="home-section-sub">${favItems.length}</span></div>
         <div class="home-strip">${favItems.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
       </div>`;
   } else {
-    html += `<div class="home-section">
+    html += `<div class="home-section" id="journeyFavoritesSection">
         <div class="home-section-head"><h3>♥ Favorites</h3></div>
         <p class="journey-empty">Nothing favorited yet — tap the ♡ on any title's card or detail page to save it here.</p>
       </div>`;
@@ -1040,6 +1366,18 @@ function renderJourney(){
       openSheet(d);
     });
   });
+  const signInLink = $("#journeySignInLink");
+  if(signInLink) signInLink.addEventListener("click", (e)=>{ e.preventDefault(); openSheetEl(readerBackdrop, readerSheet); });
+  wireJourneySequenceHandlers(gridEl);
+
+  // If signed in, refresh from Firestore once in the background so cross-device changes show up here —
+  // localStorage (read above) already renders instantly; this just quietly catches it up if stale.
+  // skipRefresh on the follow-up render prevents this from looping.
+  if(signedIn && !opts.skipRefresh){
+    pullCloudDataToLocal(readerUser.uid).then(()=>{
+      if(state.cat==="journey") renderJourney({skipRefresh:true});
+    }).catch(()=>{});
+  }
 }
 
 function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); }
@@ -1381,146 +1719,122 @@ function openUniverseHub(connected){
 hubBackdrop.addEventListener("click", ()=> closeSheetEl(hubBackdrop, hubSheet));
 $("#hubClose").addEventListener("click", ()=> closeSheetEl(hubBackdrop, hubSheet));
 
-/* ============================= DC STARTING POINT (beginner guide) ============================= */
+/* ============================= NEW TO DC? — hero → medium → intent → picks ============================= */
 const startBackdrop = $("#startBackdrop"), startSheet = $("#startSheet"), startContent = $("#startContent");
-const HERO_PATH_IDS = ["batman","superman","wonder-woman","flash","justice-league"];
-const MEDIUM_CHIPS = [
-  {id:"all", label:"All"}, {id:"movies", label:"🎬 Movies"}, {id:"series", label:"📺 Series"},
-  {id:"comics", label:"📖 Comics"}, {id:"games", label:"🎮 Games"},
-];
-const DEPTH_CHIPS = [
-  {id:"all", label:"All"}, {id:"beginner", label:"Beginner"},
-  {id:"intermediate", label:"Familiar"}, {id:"deep", label:"Deep Dive"},
-];
-let startState = { pathId:"general", medium:"all", depth:"all" };
+let startState = { step:1, heroId:null, medium:"all", intent:null };
 
-function matchesDepth(derived, chipId){
-  if(chipId==="all") return true;
-  if(chipId==="deep") return derived==="advanced" || derived==="deep_dive";
-  return derived===chipId;
-}
-function resolveRecList(recs){
-  return (recs||[]).map(r=>{
-    const hit = resolveTitleKey(r.titleKey);
-    if(!hit) return null;
-    return { d:hit.d, cat:hit.cat, reason:r.reason, order:r.order||99, required:!!r.required };
-  }).filter(Boolean);
-}
-// Never produces an empty result if there is ANY curated data at all — falls back one step at a
-// time (drop depth filter, then drop the hero/path choice) rather than showing a dead end.
-function getStartRecommendations(){
-  const paths = DATA.beginnerPaths || [];
-  const chosenPath = paths.find(p=>p.id===startState.pathId) || paths.find(p=>p.id==="general");
-  let list = resolveRecList(chosenPath ? chosenPath.recommendations : []);
-
-  if(startState.medium!=="all") list = list.filter(r=>r.cat===startState.medium);
-  let depthFiltered = startState.depth==="all" ? list : list.filter(r=>matchesDepth(deriveDifficulty(r.cat,r.d), startState.depth));
-
-  if(depthFiltered.length) return depthFiltered.sort((a,b)=>a.order-b.order);
-  if(list.length) return list.sort((a,b)=>a.order-b.order); // depth filter was too narrow — drop it
-
-  // This specific path/medium combo has no verified data — fall back to the general starter pool
-  // (still real, curated data; never a fabricated or empty result).
-  let fallback = resolveRecList((DATA.starterRecommendations||[]).map(r=>({...r})));
-  if(startState.medium!=="all") fallback = fallback.filter(r=>r.cat===startState.medium);
-  if(!fallback.length) fallback = resolveRecList(DATA.starterRecommendations||[]);
-  return fallback;
-}
-function startCardHtml(r){
-  const difficulty = deriveDifficulty(r.cat, r.d);
+function startResultCardHtml(r){
   const catLabel = (CATS.find(c=>c.id===r.cat)||{}).label || r.cat;
   return `<div class="beginner-card" data-id="${r.d.id}" data-cat="${r.cat}">
       <div class="bc-thumb">${thumbHtml(r.cat, r.d)}</div>
       <div class="bc-body">
         <div class="bc-title">${r.d.t}<span class="bc-year">${r.d.y||""}</span></div>
-        <div class="bc-medium">${CAT_ICON[r.cat]||""} ${catLabel} · ${DIFFICULTY_LABEL[difficulty]||""}</div>
+        <div class="bc-medium">${CAT_ICON[r.cat]||""} ${catLabel}</div>
         <div class="bc-reason">${r.reason||""}</div>
       </div>
+      <button class="btn btn-small bc-view" data-id="${r.d.id}" data-cat="${r.cat}">View</button>
     </div>`;
 }
-function renderStartSheet(){
-  const paths = DATA.beginnerPaths || [];
-  const heroChips = [
-    {id:"general", label:"All Heroes"},
-    ...HERO_PATH_IDS.filter(id=>paths.some(p=>p.id===id)).map(id=>{
-      const p = paths.find(p=>p.id===id);
-      return {id, label:p.hero};
-    }),
-    ...(paths.some(p=>p.id==="comics") ? [{id:"comics", label:"Comics"}] : []),
-  ];
-  const recs = getStartRecommendations();
-
+function openStartTitle(cat, id){
+  const d = (DATA[cat]||[]).find(x=>x.id===id);
+  if(!d) return;
+  closeSheetEl(startBackdrop, startSheet);
+  state.cat = cat;
+  if(d.type) state.typeFilter = d.type;
+  openSheet(d);
+}
+function renderStartStepHero(){
   let html = `<div class="sheet-eyebrow">YOUR DC STARTING POINT</div>
-    <h2>New to DC?</h2>
-    <p class="sheet-body" style="color:var(--ink-dim);margin-bottom:18px;">Don't worry about continuity — start with a path that matches what you're interested in.</p>`;
-
-  if(!paths.length){
-    html += `<p class="sheet-body" style="color:var(--ink-faint);">The beginner guide hasn't been loaded yet — ask an admin to run "Replace Beginner Guide" from Admin sign-in.</p>`;
-    startContent.innerHTML = html;
-    return;
-  }
-
-  html += `<div class="start-filter-block">
-      <div class="sheet-label">CHOOSE YOUR HERO</div>
-      <div class="chip-scroller start-chip-row">
-        ${heroChips.map(c=>`<div class="chip start-chip" data-role="path" data-val="${c.id}" data-active="${startState.pathId===c.id}">${c.label}</div>`).join("")}
-      </div>
-    </div>
-    <div class="start-filter-block">
-      <div class="sheet-label">CHOOSE YOUR MEDIUM</div>
-      <div class="chip-scroller start-chip-row">
-        ${MEDIUM_CHIPS.map(c=>`<div class="chip start-chip" data-role="medium" data-val="${c.id}" data-active="${startState.medium===c.id}">${c.label}</div>`).join("")}
-      </div>
-    </div>
-    <div class="start-filter-block">
-      <div class="sheet-label">HOW DEEP DO YOU WANT TO GO?</div>
-      <div class="chip-scroller start-chip-row">
-        ${DEPTH_CHIPS.map(c=>`<div class="chip start-chip" data-role="depth" data-val="${c.id}" data-active="${startState.depth===c.id}">${c.label}</div>`).join("")}
-      </div>
+    <h2>Who do you want to meet?</h2>
+    <p class="sheet-body" style="color:var(--ink-dim);margin-bottom:18px;">Pick a hero — we'll build a starting path just for them.</p>
+    <div class="start-hero-grid">
+      ${BEGINNER_CHARACTERS.map(h=>{
+        const t = groupTheme(h.group);
+        return `<div class="start-hero-tile" data-id="${h.id}" style="--theme-a:${t.a};--theme-b:${t.b};">${h.label}</div>`;
+      }).join("")}
     </div>`;
-
-  html += `<div class="home-section" style="margin-top:20px;">
-      <div class="home-section-head"><h3>Start Here</h3><span class="home-section-sub">${recs.length} pick${recs.length===1?"":"s"}</span></div>
-      <div class="beginner-card-list">${recs.map(startCardHtml).join("")}</div>
+  startContent.innerHTML = html;
+  startContent.querySelectorAll(".start-hero-tile").forEach(t=>{
+    t.addEventListener("click", ()=>{ startState.heroId = t.dataset.id; startState.step = 2; renderStartSheet(); });
+  });
+}
+function renderStartStepMedium(){
+  const hero = BEGINNER_CHARACTERS.find(h=>h.id===startState.heroId);
+  let html = `<div class="sheet-eyebrow">YOUR DC STARTING POINT</div>
+    <div class="start-back" id="startBackBtn">‹ Back</div>
+    <h2>What do you want to watch or read?</h2>
+    <p class="sheet-body" style="color:var(--ink-dim);margin-bottom:18px;">Starting with ${hero?hero.label:"DC"}. This is just a preference — we'll still surface the best pick even outside it.</p>
+    <div class="start-hero-grid">
+      ${MEDIUM_OPTIONS.map(m=>`<div class="start-hero-tile plain" data-val="${m.id}">${m.label}</div>`).join("")}
     </div>`;
-
-  html += `<button class="btn btn-primary" id="startJourneyBtn" style="width:100%;margin-top:6px;" ${recs.length?"":"disabled"}>Start My DC Journey</button>`;
-
+  startContent.innerHTML = html;
+  $("#startBackBtn").addEventListener("click", ()=>{ startState.step = 1; renderStartSheet(); });
+  startContent.querySelectorAll(".start-hero-tile").forEach(c=>{
+    c.addEventListener("click", ()=>{ startState.medium = c.dataset.val; startState.step = 3; renderStartSheet(); });
+  });
+}
+function renderStartStepIntent(){
+  let html = `<div class="sheet-eyebrow">YOUR DC STARTING POINT</div>
+    <div class="start-back" id="startBackBtn">‹ Back</div>
+    <h2>What sounds good?</h2>
+    <div class="start-intent-list">
+      ${START_INTENTS.map(i=>`<div class="start-intent-tile" data-val="${i.id}">${i.label}</div>`).join("")}
+    </div>`;
+  startContent.innerHTML = html;
+  $("#startBackBtn").addEventListener("click", ()=>{ startState.step = 2; renderStartSheet(); });
+  startContent.querySelectorAll(".start-intent-tile").forEach(t=>{
+    t.addEventListener("click", ()=>{ startState.intent = t.dataset.val; startState.step = 4; renderStartSheet(); });
+  });
+}
+function renderStartResults(){
+  const hero = BEGINNER_CHARACTERS.find(h=>h.id===startState.heroId);
+  const recs = getRecommendations(startState.heroId, startState.medium, startState.intent, {limit:6, minTarget:3});
+  let html = `<div class="sheet-eyebrow">YOUR DC STARTING PICKS</div>
+    <div class="start-back" id="startBackBtn">‹ Back</div>
+    <h2>${hero?hero.label:"Your"} starting picks</h2>
+    <div class="beginner-card-list">${recs.map(startResultCardHtml).join("")}</div>
+    <div class="home-section" style="margin-top:18px;">
+      <div class="home-section-head"><h3>Why these picks?</h3></div>
+      <p class="sheet-body" style="color:var(--ink-dim);">Ranked for ${hero?hero.label:"this hero"} by character fit, how beginner-friendly each one is, and editorial picks curated for new readers — never just by star rating or release date.</p>
+    </div>
+    <button class="btn btn-primary" id="startJourneyBtn" style="width:100%;margin-top:16px;" ${recs.length?"":"disabled"}>Start My DC Journey</button>
+    ${readerUser?"":`<p class="sheet-body" style="color:var(--ink-faint);text-align:center;margin-top:8px;">Sign in to save your journey across devices — or just start now.</p>`}`;
   startContent.innerHTML = html;
   wireImageFallbacks(startContent);
-
+  $("#startBackBtn").addEventListener("click", ()=>{ startState.step = 3; renderStartSheet(); });
   startContent.querySelectorAll(".beginner-card").forEach(c=>{
-    c.addEventListener("click", ()=>{
-      const cat = c.dataset.cat, id = c.dataset.id;
-      const d = (DATA[cat]||[]).find(x=>x.id===id);
-      if(!d) return;
-      closeSheetEl(startBackdrop, startSheet);
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
-    });
+    c.addEventListener("click", e=>{ if(e.target.closest(".bc-view")) return; openStartTitle(c.dataset.cat, c.dataset.id); });
   });
-  startContent.querySelectorAll(".start-chip").forEach(chip=>{
-    chip.addEventListener("click", ()=>{
-      const role = chip.dataset.role, val = chip.dataset.val;
-      if(role==="path") startState.pathId = val;
-      else if(role==="medium") startState.medium = val;
-      else if(role==="depth") startState.depth = val;
-      renderStartSheet();
-    });
+  startContent.querySelectorAll(".bc-view").forEach(btn=>{
+    btn.addEventListener("click", e=>{ e.stopPropagation(); openStartTitle(btn.dataset.cat, btn.dataset.id); });
   });
   const journeyBtn = $("#startJourneyBtn");
   if(journeyBtn) journeyBtn.addEventListener("click", ()=>{
-    const top = recs[0];
-    if(!top) return;
+    if(!recs.length) return;
+    const journey = {
+      selectedHero: startState.heroId,
+      selectedMedium: startState.medium,
+      selectedIntent: startState.intent,
+      recommendedTitleKeys: recs.map(r=>`${r.cat}::${r.d.t}::${r.d.y}`),
+      currentPosition: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    setSavedJourney(journey);
     closeSheetEl(startBackdrop, startSheet);
-    state.cat = top.cat;
-    if(top.d.type) state.typeFilter = top.d.type;
-    openSheet(top.d);
+    state.cat = "journey";
+    resetFiltersForTabSwitch();
+    render();
   });
 }
+function renderStartSheet(){
+  if(startState.step===1) return renderStartStepHero();
+  if(startState.step===2) return renderStartStepMedium();
+  if(startState.step===3) return renderStartStepIntent();
+  return renderStartResults();
+}
 function openStartSheet(){
-  startState = { pathId:"general", medium:"all", depth:"all" };
+  startState = { step:1, heroId:null, medium:"all", intent:null };
   renderStartSheet();
   openSheetEl(startBackdrop, startSheet);
 }
@@ -1923,8 +2237,128 @@ $("#logoutBtn").addEventListener("click", async ()=>{
   closeSheetEl(loginBackdrop, loginSheet);
 });
 
-onAuthStateChanged(auth, (user)=>{
-  isAdmin = !!user;
+/* ============================= READER ACCOUNT (Phase 1) ============================= */
+const profileToggle = $("#profileToggle");
+const profileAvatarImg = $("#profileAvatarImg"), profileAvatarFallback = $("#profileAvatarFallback");
+const readerBackdrop = $("#readerBackdrop"), readerSheet = $("#readerSheet");
+const readerAuthArea = $("#readerAuthArea"), readerProfileArea = $("#readerProfileArea");
+const readerEmail = $("#readerEmail"), readerPassword = $("#readerPassword"), readerMsg = $("#readerMsg");
+const readerHeading = $("#readerHeading"), readerSubmit = $("#readerSubmit");
+const readerModeSignup = $("#readerModeSignup"), readerModeLogin = $("#readerModeLogin");
+let readerAuthMode = "login"; // "login" | "signup"
+
+function setReaderAuthMode(mode){
+  readerAuthMode = mode;
+  readerMsg.textContent = ""; readerMsg.className = "form-msg";
+  if(mode==="signup"){
+    readerHeading.textContent = "Create Account";
+    readerSubmit.textContent = "Create Account";
+    readerModeSignup.style.display = "none";
+    readerModeLogin.style.display = "inline";
+  }else{
+    readerHeading.textContent = "Sign In";
+    readerSubmit.textContent = "Sign In";
+    readerModeSignup.style.display = "inline";
+    readerModeLogin.style.display = "none";
+  }
+}
+function updateReaderProfileUI(){
+  const signedIn = !!readerUser;
+  profileToggle.dataset.signedIn = signedIn ? "true" : "false";
+  profileToggle.title = signedIn ? (readerUser.displayName || readerUser.email || "Account") : "Sign In";
+  if(signedIn && readerUser.photoURL){
+    profileAvatarImg.src = readerUser.photoURL;
+    profileAvatarImg.style.display = "block";
+    profileAvatarFallback.style.display = "none";
+  }else{
+    profileAvatarImg.style.display = "none";
+    profileAvatarFallback.style.display = "flex";
+  }
+  if(signedIn){
+    readerAuthArea.style.display = "none";
+    readerProfileArea.style.display = "block";
+    const name = readerUser.displayName || (readerUser.email ? readerUser.email.split("@")[0] : "Reader");
+    $("#readerProfileName").textContent = name;
+    $("#readerProfileEmail").textContent = readerUser.email || "";
+    const fb = $("#readerProfileAvatarFallback"), img = $("#readerProfileAvatarImg");
+    if(readerUser.photoURL){ img.src = readerUser.photoURL; img.style.display="block"; fb.style.display="none"; }
+    else{ img.style.display="none"; fb.style.display="flex"; fb.textContent = initials(name); }
+  }else{
+    readerAuthArea.style.display = "block";
+    readerProfileArea.style.display = "none";
+    setReaderAuthMode("login");
+  }
+}
+updateReaderProfileUI();
+
+profileToggle.addEventListener("click", ()=>{
+  updateReaderProfileUI();
+  openSheetEl(readerBackdrop, readerSheet);
+});
+readerBackdrop.addEventListener("click", ()=> closeSheetEl(readerBackdrop, readerSheet));
+$("#readerClose").addEventListener("click", ()=> closeSheetEl(readerBackdrop, readerSheet));
+$("#readerCancel").addEventListener("click", ()=> closeSheetEl(readerBackdrop, readerSheet));
+$("#readerToggleMode").addEventListener("click", (e)=>{ e.preventDefault(); setReaderAuthMode("signup"); });
+$("#readerToggleModeBack").addEventListener("click", (e)=>{ e.preventDefault(); setReaderAuthMode("login"); });
+
+$("#googleSignInBtn").addEventListener("click", async ()=>{
+  readerMsg.textContent = ""; readerMsg.className = "form-msg";
+  try{
+    await signInWithPopup(auth, new GoogleAuthProvider());
+    closeSheetEl(readerBackdrop, readerSheet);
+  }catch(err){
+    readerMsg.textContent = "Google sign-in failed: " + err.message;
+    readerMsg.className = "form-msg err";
+  }
+});
+readerSubmit.addEventListener("click", async ()=>{
+  readerMsg.textContent = ""; readerMsg.className = "form-msg";
+  const email = readerEmail.value.trim(), pw = readerPassword.value;
+  if(!email || !pw){
+    readerMsg.textContent = "Enter an email and password.";
+    readerMsg.className = "form-msg err";
+    return;
+  }
+  readerSubmit.disabled = true;
+  try{
+    if(readerAuthMode==="signup") await createUserWithEmailAndPassword(auth, email, pw);
+    else await signInWithEmailAndPassword(auth, email, pw);
+    closeSheetEl(readerBackdrop, readerSheet);
+    readerEmail.value = ""; readerPassword.value = "";
+  }catch(err){
+    readerMsg.textContent = readerAuthMode==="signup"
+      ? "Couldn't create account: " + err.message
+      : "Sign-in failed — check the email and password.";
+    readerMsg.className = "form-msg err";
+  }finally{
+    readerSubmit.disabled = false;
+  }
+});
+$("#readerLogoutBtn").addEventListener("click", async ()=>{
+  await signOut(auth);
+  closeSheetEl(readerBackdrop, readerSheet);
+});
+$("#readerGoJourney").addEventListener("click", ()=>{
+  closeSheetEl(readerBackdrop, readerSheet);
+  goToCategory("journey");
+});
+$("#readerGoFavorites").addEventListener("click", ()=>{
+  closeSheetEl(readerBackdrop, readerSheet);
+  goToCategory("journey");
+  setTimeout(()=> document.getElementById("journeyFavoritesSection")?.scrollIntoView({behavior:"smooth"}), 250);
+});
+$("#readerGoProgress").addEventListener("click", ()=>{
+  closeSheetEl(readerBackdrop, readerSheet);
+  goToCategory("journey");
+  setTimeout(()=> document.getElementById("journeyProgressSection")?.scrollIntoView({behavior:"smooth"}), 250);
+});
+
+onAuthStateChanged(auth, async (user)=>{
+  const wasSignedIn = !!readerUser;
+  readerUser = user || null;
+
+  // Admin is a separate, server-checked role — never inferred from "a user is signed in".
+  isAdmin = user ? await checkIsAdmin(user.uid) : false;
   adminToggle.dataset.signedIn = isAdmin ? "true" : "false";
   fab.dataset.visible = isAdmin ? "true" : "false";
   if(isAdmin){
@@ -1935,6 +2369,14 @@ onAuthStateChanged(auth, (user)=>{
     loginArea.style.display = "block";
     signedInArea.style.display = "none";
   }
+
+  updateReaderProfileUI();
+  if(user && !wasSignedIn){
+    await upsertReaderProfile(user);
+    await onReaderLogin(user.uid);
+    if(state.cat==="journey") renderJourney();
+  }
+
   if(loaded) renderCards();
 });
 

@@ -64,6 +64,29 @@ header{
 .admin-toggle[data-signed-in="true"]{ border-color:var(--good); color:var(--good); }
 #nerdToggle[data-active="true"]{ border-color:#d4a72c; color:#d4a72c; background:color-mix(in srgb, #d4a72c 14%, transparent); opacity:1; }
 #nerdToggle[data-active="false"]{ opacity:0.6; }
+#profileToggle[data-signed-in="true"]{ border-color:var(--series); overflow:hidden; }
+#profileToggle img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+
+/* ---------- Reader account sheet ---------- */
+.btn-google{
+  width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+  background:#fff; color:#3c4043; border:1px solid var(--line); border-radius:9px;
+  font-family:var(--font-body); font-weight:600; font-size:14px; padding:11px 14px; cursor:pointer;
+}
+.reader-auth-divider{ display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--ink-faint); font-size:11.5px; }
+.reader-auth-divider::before, .reader-auth-divider::after{ content:""; flex:1; height:1px; background:var(--line); }
+.reader-auth-switch{ text-align:center; font-size:12.5px; color:var(--ink-dim); margin-top:14px; }
+.reader-auth-switch a{ color:var(--ink); font-weight:600; text-decoration:underline; text-underline-offset:2px; cursor:pointer; }
+.reader-profile-head{ display:flex; align-items:center; gap:12px; }
+.reader-profile-avatar{
+  width:48px; height:48px; border-radius:50%; flex:0 0 auto;
+  background:linear-gradient(135deg, var(--series), var(--comics));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-family:var(--font-display); font-size:18px;
+}
+#readerProfileAvatarImg{ width:48px; height:48px; border-radius:50%; object-fit:cover; flex:0 0 auto; }
+.reader-profile-name{ font-weight:700; font-size:15px; }
+.reader-profile-email{ font-size:12px; color:var(--ink-faint); margin-top:2px; }
 
 nav.tabs{ display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; }
 nav.tabs::-webkit-scrollbar{display:none;}
@@ -149,6 +172,49 @@ select{
 .bc-year{ font-variant-numeric:tabular-nums; font-weight:500; font-size:11px; color:var(--ink-faint); margin-left:6px; }
 .bc-medium{ font-size:11px; color:var(--ink-faint); margin-top:3px; }
 .bc-reason{ font-size:12.5px; color:var(--ink-dim); line-height:1.4; margin-top:5px; }
+.bc-view{ flex:0 0 auto; align-self:center; }
+.btn-small{ padding:7px 12px; font-size:12px; border-radius:8px; }
+
+/* ---- "New to DC?" hero → medium → intent flow (Phase 2 rebuild) ---- */
+.start-back{
+  font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); cursor:pointer;
+  margin-bottom:10px; display:inline-block;
+}
+.start-back:active{ color:var(--ink); }
+.start-hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px; }
+.start-hero-tile{
+  border-radius:14px; padding:22px 14px; font-weight:700; font-size:15px; text-align:center;
+  cursor:pointer; color:#fff; border:1px solid var(--line);
+  background:linear-gradient(135deg, var(--theme-a,#3a3f4a), var(--theme-b,#0d0d10));
+  transition:transform .12s ease;
+}
+.start-hero-tile:active{ transform:scale(0.97); }
+.start-hero-tile.plain{
+  background:var(--panel-2); color:var(--ink); font-weight:600; padding:16px 14px;
+}
+.start-intent-list{ display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+.start-intent-tile{
+  background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:border-color .15s ease;
+}
+.start-intent-tile:active{ border-color:var(--ink-faint); }
+
+/* ---- My Journey: saved sequence (Phase 2) ---- */
+.journey-seq-list{ display:flex; flex-direction:column; gap:8px; }
+.journey-seq-item{
+  display:flex; align-items:center; gap:12px; cursor:pointer;
+  background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+}
+.journey-seq-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--ink-dim); background:var(--bg-2);
+  border:1px solid var(--line);
+}
+.journey-seq-num[data-done="true"]{ background:var(--good); color:var(--bg); border-color:transparent; }
+.journey-seq-body{ flex:1; min-width:0; }
+.journey-seq-title{ font-size:13.5px; font-weight:700; line-height:1.25; }
+.journey-seq-meta{ font-size:11px; color:var(--ink-faint); margin-top:2px; }
+.journey-seq-toggle{ flex:0 0 auto; }
 
 .result-count{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); padding:2px 16px 0 16px; }
 
