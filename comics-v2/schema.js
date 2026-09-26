@@ -392,4 +392,4 @@ export function validateReadingPath(p) {
   });
   if (p) validateSourceInfo(p.sourceInfo, errors, "readingPath");
   return { valid: errors.length === 0, errors };
-          }
+}
