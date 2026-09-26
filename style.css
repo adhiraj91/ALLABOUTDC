@@ -1084,6 +1084,37 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
   border:1px dashed var(--ink-faint); border-radius:8px; padding:8px 10px; margin-top:8px; line-height:1.65; word-break:break-word;
 }
 
+/* ---- Pointer 5: Reading Paths + Collections (Explorer) ---- */
+.cx-chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.cx-chip{
+  display:flex; align-items:center; gap:6px; background:var(--panel); border:1px solid var(--line);
+  border-radius:20px; padding:7px 12px; font-size:12.5px; font-weight:600; color:var(--ink); cursor:pointer;
+}
+.cx-chip:active{ border-color:var(--comics); }
+.cx-chip[data-on-path="true"]{ border-color:var(--comics); color:var(--comics); }
+.cx-chip-n{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); }
+.cx-chip[data-on-path="true"] .cx-chip-n{ color:var(--comics); }
+.cx-path-order{
+  flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:var(--panel-2); border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10.5px; font-weight:700; color:var(--ink-dim);
+}
+.cx-row[data-current="true"]{ background:color-mix(in srgb, var(--comics) 10%, transparent); border-radius:8px; }
+.cx-coverage-line{ color:var(--ink-dim); }
+.cx-fact-list{ display:flex; flex-direction:column; }
+.cx-fact{ display:grid; grid-template-columns:120px 1fr; gap:10px; padding:7px 0; border-bottom:1px solid var(--line); font-size:12.5px; }
+.cx-fact:last-child{ border-bottom:none; }
+.cx-fact span:first-child{ color:var(--ink-faint); font-size:11.5px; }
+.cx-coverage-row{ margin-bottom:12px; }
+.cx-coverage-row-title{ font-size:12.5px; font-weight:700; margin-bottom:4px; }
+.cx-coverage-bar{ margin-bottom:3px; }
+.cx-coverage-track{ position:relative; height:8px; border-radius:4px; background:var(--panel-2); border:1px solid var(--line); overflow:hidden; }
+.cx-coverage-seg{ position:absolute; top:0; bottom:0; background:var(--comics); border-radius:3px; }
+.cx-coverage-row-range{ font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); }
+.cx-compare-list{ display:flex; flex-direction:column; gap:10px; }
+.cx-compare-card{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+.cx-compare-format{ font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--comics); margin-bottom:3px; }
+.cx-hint{ font-size:11px; color:var(--ink-faint); margin-top:6px; }
+
 @media (min-width:760px){
   .cx-entry-grid{ flex-direction:row; }
   .cx-entry-btn{ flex:1; }
@@ -1423,6 +1454,35 @@ html.sm-lock, html.sm-lock body{ overflow:hidden; }
 .sm-d-action:hover{ border-color:var(--ink-faint); }
 .sm-d-primary{ background:var(--ink); color:var(--bg-2); border-color:var(--ink); }
 .sm-d-nerd{ margin-top:14px; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-faint); background:var(--panel-2); border:1px dashed var(--ink-faint); border-radius:8px; padding:8px 10px; line-height:1.65; word-break:break-word; }
+
+/* ---- Pointer 5: Reading Paths + Collections (Story Map detail panel) ---- */
+.sm-d-path-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+.sm-d-path-chip{
+  display:flex; align-items:center; gap:5px; background:var(--panel); border:1px solid var(--line);
+  border-radius:18px; padding:6px 11px; font-size:12px; font-weight:600; color:var(--ink); cursor:pointer;
+}
+.sm-d-path-chip[data-on-path="true"]{ border-color:var(--comics); color:var(--comics); }
+.sm-d-path-chip[data-selected="true"]{ background:var(--comics); color:#1b1c22; border-color:var(--comics); }
+.sm-d-path-n{ font-family:var(--font-mono); font-size:10px; opacity:0.75; }
+.sm-d-path-detail{ margin-top:10px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+.sm-d-path-entry{ display:flex; align-items:center; gap:8px; padding:5px 0; font-size:12.5px; border-bottom:1px solid var(--line); }
+.sm-d-path-entry:last-child{ border-bottom:none; }
+.sm-d-path-entry[data-current="true"]{ color:var(--comics); font-weight:700; }
+.sm-d-path-order{
+  flex:0 0 auto; width:18px; height:18px; border-radius:50%; background:var(--panel); border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:9.5px; font-weight:700; color:var(--ink-dim);
+}
+.sm-d-path-note{ font-size:11px; color:var(--ink-faint); }
+.sm-d-coll-list{ display:flex; flex-direction:column; gap:8px; }
+.sm-d-coll-card{
+  display:block; width:100%; text-align:left; background:var(--panel-2); border:1px solid var(--line); border-radius:10px;
+  padding:9px 11px; cursor:pointer; font: inherit; color:inherit;
+}
+.sm-d-coll-card[data-expanded="true"]{ border-color:var(--comics); }
+.sm-d-coll-title{ font-size:13px; font-weight:700; }
+.sm-d-coll-tag{ font-size:10px; font-weight:600; padding:1px 6px; border-radius:5px; background:var(--panel); border:1px solid var(--line); color:var(--ink-dim); }
+.sm-d-coll-meta{ font-size:11.5px; color:var(--ink-faint); margin-top:2px; }
+.sm-d-coll-expand{ margin-top:2px; padding:2px 2px 4px; }
 
 @media (max-width:759px){
   .sm-root{ padding-bottom:calc(58px + env(safe-area-inset-bottom,0px)); } /* the site's bottom nav stays usable */

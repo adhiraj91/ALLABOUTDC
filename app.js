@@ -3154,6 +3154,9 @@ $("#adminToolsClose").addEventListener("click", ()=> closeSheetEl(adminToolsBack
 /* Comics-v2 (beta): one-tap import button for the New 52 Batman dataset built in comics-v2/seed-batman-new52.js.
    Fully independent of the rest of Admin Tools — talks only to window.__comicsV2 (comics-v2/index.js). */
 $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
+  // Single combined button: runs the base Batman New 52 dataset import, then the
+  // collections (Zero Year/Endgame/Superheavy/Bloom) import. Both are upsert-based,
+  // so re-running this is always safe — nothing is duplicated or overwritten wrong.
   const btn = $("#importBatmanNew52Btn"), msg = $("#importBatmanNew52Msg");
   if(!window.__comicsV2 || !window.__comicsV2.batmanNew52){
     msg.textContent = "Comics v2 module not loaded — check that comics-v2/index.js is uploaded.";
@@ -3164,18 +3167,30 @@ $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
   msg.textContent = "Importing…";
   msg.className = "form-msg";
   try{
-    const result = await window.__comicsV2.batmanNew52.import();
-    if(result?.validation && !result.validation.valid){
-      msg.textContent = "Dataset failed validation — nothing was written: " + JSON.stringify(result.validation.errors || result.validation);
+    const base = await window.__comicsV2.batmanNew52.import();
+    if(base?.validation && !base.validation.valid){
+      msg.textContent = "Base dataset failed validation — nothing was written: " + JSON.stringify(base.validation.errors || base.validation);
       msg.className = "form-msg err";
       return;
     }
-    const total = Object.values(result?.written || {}).reduce((a,b)=>a+b, 0);
-    if(result?.errors?.length){
-      msg.textContent = `Wrote ${total} records, but ${result.errors.length} failed: ${result.errors.slice(0,3).join(" | ")}`;
+    let collResult = null, collSkipped = false;
+    if(window.__comicsV2.batmanNew52Collections){
+      collResult = await window.__comicsV2.batmanNew52Collections.import();
+      if(collResult?.validation && !collResult.validation.valid){
+        msg.textContent = "Collections data failed validation — nothing was written: " + JSON.stringify(collResult.validation.errors || collResult.validation);
+        msg.className = "form-msg err";
+        return;
+      }
+    } else collSkipped = true;
+
+    const baseTotal = Object.values(base?.written || {}).reduce((a,b)=>a+b, 0);
+    const collTotal = Object.values(collResult?.written || {}).reduce((a,b)=>a+b, 0);
+    const allErrors = [...(base?.errors||[]), ...(collResult?.errors||[])];
+    if(allErrors.length){
+      msg.textContent = `Wrote ${baseTotal + collTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
       msg.className = "form-msg err";
     }else{
-      msg.textContent = `Done — imported ${total} records across ${Object.keys(result?.written||{}).length} collections.`;
+      msg.textContent = `Done — ${baseTotal} base records` + (collSkipped ? " (collections file not found — skipped)." : ` + ${collTotal} collection records (Zero Year, Endgame, Superheavy, Bloom).`);
       msg.className = "form-msg ok";
     }
   }catch(err){
