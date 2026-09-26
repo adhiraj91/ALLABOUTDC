@@ -107,6 +107,7 @@ const META_COLLECTIONS = ["beginnerRecommendations"];
 let DATA = { movies:[], series:[], games:[], comics:[], beginnerRecommendations:[] };
 let state = {
   cat:"home",
+  comicsView:"landing", // Pointer 4: Comics tab opens its landing; "browse" = the old flat catalogue
   search:"",
   f1:"all", f2:"all", f3:"all", chip:"all", // games/comics filters (f3: comics reading level)
   typeFilter:"Live Action",                // movies/series: Live Action | Animated
@@ -881,6 +882,7 @@ function sortHeroNames(heroMap){
 
 /* ============================= RENDER: TABS ============================= */
 function resetFiltersForTabSwitch(){
+  state.comicsView="landing";
   state.f1="all"; state.f2="all"; state.f3="all"; state.chip="all"; state.search="";
   state.sortMode="newest";
   state.gameMode="all"; state.gamePlatform="all";
@@ -918,7 +920,7 @@ function buildTabs(){
 /* ============================= RENDER: FILTERS ============================= */
 function buildFilters(){
   const cat = state.cat;
-  if(cat==="home" || cat==="journey"){
+  if(cat==="home" || cat==="journey" || isComicsLanding()){
     introEl.textContent = "";
     introEl.style.display = "none";
   } else {
@@ -928,7 +930,7 @@ function buildFilters(){
   filterRow.innerHTML = "";
   chipRow.innerHTML = "";
 
-  if(cat==="home" || cat==="journey") return;
+  if(cat==="home" || cat==="journey" || isComicsLanding()) return;
 
   if(cat==="movies" || cat==="series"){
     buildMovieSeriesFilters(cat);
@@ -1414,6 +1416,7 @@ function renderGenericCards(){
     // (comics-v2/explorer.js — an independent module; it delegates clicks on this button's id
     // rather than app.js calling into it directly, since this grid re-renders on every filter change).
     // This is purely additive — the flat catalogue below is completely untouched.
+    html += `<button class="cl-back-landing" id="comicsBackToLandingBtn">← Comics home · Story Map</button>`;
     html += `<button class="cp-entry-card" id="comicsExplorerEntryBtn"><span>🧭 Explore the DC Comics Continuity</span><span class="cp-entry-sub">Characters → continuities → series → runs → stories → issues →</span></button>`;
     html += `<button class="cp-entry-card" id="comicsTabPathBtn"><span>📖 Not sure where to start? Build a reading path</span><span class="cp-entry-sub">Hero → continuity → read in order, with progress tracking →</span></button>`;
   }
@@ -1433,6 +1436,8 @@ function renderGenericCards(){
   wireFilterBarHandlers(gridEl, chips);
   const comicsTabPathBtn = $("#comicsTabPathBtn");
   if(comicsTabPathBtn) comicsTabPathBtn.addEventListener("click", ()=> openComicsPath(null));
+  const backToLanding = $("#comicsBackToLandingBtn");
+  if(backToLanding) backToLanding.addEventListener("click", ()=> goToCategory("comics"));
   attachCardHandlers(cat);
 }
 
@@ -1441,8 +1446,30 @@ function renderCards(){
   if(state.cat==="home") renderHome();
   else if(state.cat==="journey") renderJourney();
   else if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
+  else if(isComicsLanding()) renderComicsLanding();
   else renderGenericCards();
 }
+
+/* ============================= RENDER: COMICS LANDING (Pointer 4) =============================
+   The Comics tab opens a dedicated landing (comics-v2/landing.js — an independent module, reached
+   through window.__comicsV2Landing). The old flat catalogue is one tap away ("Browse all comics")
+   and is still what any era/canon/line filter shows. If the module hasn't loaded, fall back to the
+   catalogue so Comics can never break. */
+function isComicsLanding(){
+  return state.cat==="comics" && state.comicsView!=="browse" &&
+    state.f1==="all" && state.f2==="all" && state.f3==="all" && state.chip==="all"; // search uses the global dropdown
+}
+function renderComicsLanding(){
+  const landing = window.__comicsV2Landing;
+  if(!landing || typeof landing.render!=="function"){ renderGenericCards(); return; }
+  countEl.textContent = "";
+  landing.render(gridEl, {
+    catalogueCount: (DATA.comics||[]).length,
+    onBrowseAll: ()=>{ state.comicsView = "browse"; buildFilters(); renderCards(); window.scrollTo(0,0); },
+    onReadingPath: ()=> openComicsPath(null),
+  });
+}
+document.addEventListener("comicsv2:landing-ready", ()=>{ if(loaded && isComicsLanding()){ buildFilters(); renderCards(); } });
 
 /* ============================= RENDER: HOME ============================= */
 function stripCardHtml(cat, d){
@@ -1852,7 +1879,14 @@ function renderJourney(opts){
   }
 }
 
-function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); syncHistoryForTab(); }
+let lastRenderedView = "";
+function render(){
+  buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); syncHistoryForTab();
+  // Pointer 4: entering the Comics landing always starts at the top (never a stale catalogue scroll position).
+  const view = state.cat + (isComicsLanding() ? ":landing" : "");
+  if(view==="comics:landing") window.scrollTo(0,0);
+  lastRenderedView = view;
+}
 
 /* ---- Phase 14: back button + refresh ----
    Each tab gets a URL hash (#journey, #comics…), so the browser/phone back button returns to the previous
