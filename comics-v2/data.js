@@ -83,10 +83,25 @@ export async function getContinuitiesForUniverse(universeId) {
   return docsOf(await getDocs(q));
 }
 
+/**
+ * All continuities, most-recent-first-ish (capped — this is a landing-level browse list, not the
+ * whole graph). Used only by the Comics Explorer's "Continuities / Eras" entry screen.
+ */
+export async function getAllContinuities(max = 100) {
+  const q = query(collection(db, COLLECTIONS.CONTINUITIES), fsLimit(max));
+  return docsOf(await getDocs(q));
+}
+
 /* ---------------------------------------------------------------------------
    Character
 --------------------------------------------------------------------------- */
 export const getCharacter = (id) => getEntity(COLLECTIONS.CHARACTERS, id);
+
+/** All characters, capped — the Comics Explorer's "Characters" browse screen (one targeted, capped read). */
+export async function getAllCharacters(max = 200) {
+  const q = query(collection(db, COLLECTIONS.CHARACTERS), fsLimit(max));
+  return docsOf(await getDocs(q));
+}
 
 /** "All series for a character" — queried from Series (source of truth), not a cached array on Character. */
 export async function getSeriesForCharacter(characterId) {
@@ -104,6 +119,12 @@ export async function getSeriesForContinuity(continuityId) {
    Series / Run
 --------------------------------------------------------------------------- */
 export const getSeries = (id) => getEntity(COLLECTIONS.SERIES, id);
+
+/** All series, capped — the Comics Explorer's "Series" browse-directly entry screen. */
+export async function getAllSeries(max = 200) {
+  const q = query(collection(db, COLLECTIONS.SERIES), fsLimit(max));
+  return docsOf(await getDocs(q));
+}
 
 /** "All runs for a series". */
 export async function getRunsForSeries(seriesId) {
