@@ -3184,7 +3184,8 @@ $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
     } else collSkipped = true;
 
     const baseTotal = Object.values(base?.written || {}).reduce((a,b)=>a+b, 0);
-    const collTotal = Object.values(collResult?.written || {}).reduce((a,b)=>a+b, 0);
+    // collResult.written is a plain number (not an object like base.written) — sum only if it's an object.
+    const collTotal = typeof collResult?.written === "number" ? collResult.written : Object.values(collResult?.written || {}).reduce((a,b)=>a+b, 0);
     const allErrors = [...(base?.errors||[]), ...(collResult?.errors||[])];
     if(allErrors.length){
       msg.textContent = `Wrote ${baseTotal + collTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
@@ -3549,39 +3550,6 @@ $("#moreQuickNerd").addEventListener("click", ()=>{
 $("#moreQuickAccount").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
   profileToggle.click();
-});
-
-/* ============================= ADMIN: IMPORT STARTER DATA (first-time, all 4) ============================= */
-const importBtn = $("#importBtn");
-const importMsg = $("#importMsg");
-importBtn.addEventListener("click", async ()=>{
-  const alreadyHas = CATS.some(c => DATA[c.id].length > 0);
-  if(alreadyHas && !confirm("Some collections already have entries. Importing again may create duplicates. Continue anyway?")) return;
-  importBtn.disabled = true;
-  importMsg.className = "form-msg";
-  try{
-    importMsg.textContent = "Fetching seed-data.json…";
-    const res = await fetch("./seed-data.json", { cache: "no-store" });
-    if(!res.ok) throw new Error("seed-data.json not found next to index.html");
-    const seed = await res.json();
-    for(const cat of Object.keys(seed)){
-      const items = seed[cat];
-      for(let i=0;i<items.length;i++){
-        importMsg.textContent = `Importing ${cat}: ${i+1} / ${items.length}…`;
-        const ref = await addDoc(collection(db, cat), items[i]);
-        DATA[cat].push({ id: ref.id, ...items[i] });
-      }
-    }
-    importMsg.textContent = "Done — all starter entries imported.";
-    importMsg.className = "form-msg ok";
-    buildTabs();
-    renderCards();
-  }catch(err){
-    importMsg.textContent = "Import failed: " + err.message;
-    importMsg.className = "form-msg err";
-  }finally{
-    importBtn.disabled = false;
-  }
 });
 
 /* ============================= ADMIN: REPLACE MOVIES + SERIES (expanded dataset) ============================= */
