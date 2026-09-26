@@ -18,7 +18,8 @@ import * as schema from "./schema.js";
 import * as slug from "./slug.js";
 import * as data from "./data.js";
 import { COLLECTIONS } from "./schema.js";
-import { collectionIsReachable } from "./data.js";
+import { collectionIsReachable, upsertEntity, upsertCollectionEdition } from "./data.js";
+import { dataset as batmanNew52Dataset, validateDataset as validateBatmanNew52, importDataset as importBatmanNew52Dataset } from "./seed-batman-new52.js";
 
 /* ---------------------------------------------------------------------------
    Foundation self-test — the "minimal developer utility necessary to verify
@@ -77,4 +78,17 @@ export async function selfTest() {
   return { passed, failed, results };
 }
 
-window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest };
+/* ---------------------------------------------------------------------------
+   PHASE 2 — New 52 Batman dataset (comics-v2/seed-batman-new52.js).
+   Read-only inspection (`batmanNew52.dataset`, `batmanNew52.validate()`) never
+   writes anything. The actual import is an explicit opt-in call
+   (`await __comicsV2.batmanNew52.import()`) so nothing is written just by
+   loading this module on every page load.
+--------------------------------------------------------------------------- */
+const batmanNew52 = {
+  dataset: batmanNew52Dataset,
+  validate: validateBatmanNew52,
+  import: () => importBatmanNew52Dataset({ upsertEntity, upsertCollectionEdition, COLLECTIONS }),
+};
+
+window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52 };
