@@ -581,6 +581,15 @@ export function openComicsExplorer() {
   openCxSheet();
   renderCurrentLevel();
 }
+/* Pointer 4: the Story Map hands off to these same screens ("Open Story", "View Series", …) instead of
+   duplicating them. `trail` is [{ level, label, params }] using the exact level names/params above, built
+   from entities the map already fetched — so the breadcrumb mirrors the map path and Back walks up it. */
+export function openComicsExplorerAt(trail) {
+  const valid = (trail || []).filter(t => t && LEVELS[t.level]);
+  cxStack = [{ level: "root", label: "Comics", params: {} }, ...valid.map(t => ({ level: t.level, label: t.label || "", params: t.params || {} }))];
+  openCxSheet();
+  renderCurrentLevel();
+}
 
 /* ============================= wiring (minimal, additive) =============================
    Entry point button lives inside the existing Comics tab's card grid (app.js
@@ -606,4 +615,4 @@ if (_nerdToggleEl) {
   });
 }
 
-window.__comicsExplorer = { open: openComicsExplorer };
+window.__comicsExplorer = { open: openComicsExplorer, openAt: openComicsExplorerAt };

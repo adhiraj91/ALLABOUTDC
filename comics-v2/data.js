@@ -236,3 +236,59 @@ export async function getReadingPathsForContinuity(continuityId) {
   const q = query(collection(db, COLLECTIONS.READING_PATHS), where("continuityId", "==", continuityId));
   return docsOf(await getDocs(q));
 }
+
+/* ---------------------------------------------------------------------------
+   Pointer 4 — batched reads for the Comics landing + Story Map.
+   Each helper turns "one query per entity" into "one query per 30 entities"
+   (Firestore's `in` operator limit), so expanding a map level with many
+   children never becomes an N+1 fan-out. All still targeted — never a full
+   collection download.
+--------------------------------------------------------------------------- */
+const IN_LIMIT = 30;
+function chunk(arr, n) {
+  const out = [];
+  for (let i = 0; i < arr.length; i += n) out.push(arr.slice(i, i + n));
+  return out;
+}
+
+/** Fetch many docs by id in batches (every comic* doc stores its own `id` field — see upsertEntity). */
+export async function getEntitiesByIds(collectionName, ids) {
+  const uniq = [...new Set((ids || []).filter(Boolean))];
+  if (!uniq.length) return [];
+  const snaps = await Promise.all(chunk(uniq, IN_LIMIT).map(part =>
+    getDocs(query(collection(db, collectionName), where("id", "in", part)))));
+  return snaps.flatMap(docsOf);
+}
+
+/** All universes, capped (landing-level browse list). */
+export async function getAllUniverses(max = 20) {
+  return docsOf(await getDocs(query(collection(db, COLLECTIONS.UNIVERSES), fsLimit(max))));
+}
+
+/** A capped list of creative runs — the Comics landing's "Featured story maps" rail. */
+export async function getAllRuns(max = 24) {
+  return docsOf(await getDocs(query(collection(db, COLLECTIONS.RUNS), fsLimit(max))));
+}
+
+/** Runs for several series at once (one query per 30 series instead of one per series). */
+export async function getRunsForSeriesIds(seriesIds) {
+  const uniq = [...new Set((seriesIds || []).filter(Boolean))];
+  if (!uniq.length) return [];
+  const snaps = await Promise.all(chunk(uniq, IN_LIMIT).map(part =>
+    getDocs(query(collection(db, COLLECTIONS.RUNS), where("seriesId", "in", part)))));
+  return snaps.flatMap(docsOf);
+}
+
+/** Relationships touching ANY of the given entity ids (as source or target), batched and de-duplicated. */
+export async function getRelationshipsForEntities(entityIds) {
+  const uniq = [...new Set((entityIds || []).filter(Boolean))];
+  if (!uniq.length) return [];
+  const parts = chunk(uniq, IN_LIMIT);
+  const snaps = await Promise.all(parts.flatMap(part => [
+    getDocs(query(collection(db, COLLECTIONS.RELATIONSHIPS), where("sourceId", "in", part))),
+    getDocs(query(collection(db, COLLECTIONS.RELATIONSHIPS), where("targetId", "in", part))),
+  ]));
+  const byId = new Map();
+  snaps.flatMap(docsOf).forEach(r => byId.set(r.id, r));
+  return [...byId.values()];
+}
