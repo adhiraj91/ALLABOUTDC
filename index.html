@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=35">
 </head>
 <body>
 
@@ -121,6 +121,17 @@
   <button class="sheet-close" id="comicsPathClose">✕</button>
   <div class="sheet-handle"></div>
   <div id="comicsPathContent"></div>
+</div>
+
+<!-- Interactive Comics Continuity Explorer (Pointer 3, comics-v2/explorer.js) — character-first
+     drill-down over the new normalized Comics data model: Comics -> Characters/Continuities/Series
+     -> Character -> Continuity/Era -> Series -> Creative Run -> Story -> Issues -> Issue detail.
+     Reuses the site's existing bottom-sheet pattern on its own dedicated sheet element. -->
+<div class="sheet-backdrop" id="comicsExplorerBackdrop"></div>
+<div class="sheet" id="comicsExplorerSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="comicsExplorerClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="comicsExplorerContent"></div>
 </div>
 
 <!-- Detail sheet -->
@@ -340,9 +351,13 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=43"></script>
+<script type="module" src="app.js?v=44"></script>
 <!-- Comics domain-model foundation (Phase 1) — independent of app.js, renders nothing, adds no UI.
      Loading it only attaches window.__comicsV2 for developer verification (see comics-v2/index.js). -->
 <script type="module" src="comics-v2/index.js?v=1"></script>
+<!-- Interactive Comics Continuity Explorer (Phase 3 / Pointer 3) — independent of app.js, same as
+     comics-v2/index.js. Adds one entry-point button inside the existing Comics tab (app.js renders
+     it, id="comicsExplorerEntryBtn") plus its own sheet UI (#comicsExplorerSheet above). -->
+<script type="module" src="comics-v2/explorer.js?v=1"></script>
 </body>
 </html>

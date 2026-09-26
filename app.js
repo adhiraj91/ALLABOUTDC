@@ -1410,6 +1410,11 @@ function renderGenericCards(){
   }
   let html = activeFilterBarHtml(chips);
   if(cat==="comics"){
+    // Pointer 3: entry point into the new character-first Comics Continuity Explorer
+    // (comics-v2/explorer.js — an independent module; it delegates clicks on this button's id
+    // rather than app.js calling into it directly, since this grid re-renders on every filter change).
+    // This is purely additive — the flat catalogue below is completely untouched.
+    html += `<button class="cp-entry-card" id="comicsExplorerEntryBtn"><span>🧭 Explore the DC Comics Continuity</span><span class="cp-entry-sub">Characters → continuities → series → runs → stories → issues →</span></button>`;
     html += `<button class="cp-entry-card" id="comicsTabPathBtn"><span>📖 Not sure where to start? Build a reading path</span><span class="cp-entry-sub">Hero → continuity → read in order, with progress tracking →</span></button>`;
   }
   if(cat==="games" && state.gameMode==="story"){
