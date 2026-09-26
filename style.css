@@ -1005,12 +1005,23 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .reader-forgot{ text-align:right; margin:-6px 0 12px; font-size:12px; }
 .reader-forgot a{ color:var(--ink-dim); text-decoration:underline; text-underline-offset:2px; }
 .form-msg.ok{ color:var(--good); }
-.more-row-admin{ color:var(--ink-dim); }
-.more-row-admin span{ font-weight:500; font-size:12px; color:var(--ink-faint); }
-@media (max-width:700px){
-  /* Readers on phones reach Admin Access via More; the header shows it only for the signed-in admin. */
-  body:not([data-admin="true"]) #adminToggle{ display:none; }
-}
+
+/* ---- Account/Admin cleanup: one Account button, Admin Access tucked inside the logged-out auth flow ---- */
+.reader-admin-link{ text-align:center; margin-top:14px; font-size:12px; }
+.reader-admin-link a{ color:var(--ink-faint); text-decoration:underline; text-underline-offset:2px; }
+
+.admin-tool-row{ margin-bottom:12px; }
+.admin-tool-row .btn{ width:100%; }
+.btn-danger{ background:none; border:1px solid color-mix(in srgb, var(--bad) 45%, var(--line)); color:var(--bad); }
+
+.setting-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+.setting-row:last-child{ border-bottom:none; }
+.setting-row select{ font-family:var(--font-body); font-size:13px; padding:5px 8px; border-radius:8px; border:1px solid var(--line); background:var(--bg-2); color:var(--ink); }
+.setting-toggle{ font-family:var(--font-mono); font-size:11.5px; font-weight:600; letter-spacing:0.04em; padding:5px 14px; border-radius:20px; border:1px solid var(--line); background:none; color:var(--ink-dim); cursor:pointer; }
+.setting-toggle[data-on="true"]{ border-color:var(--good); color:var(--good); }
+
+.settings-static-row{ display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--ink-dim); padding:8px 0 0; }
+.settings-static-row span:first-child{ color:var(--ink-faint); font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; }
 
 .journey-seq-toggle{ width:auto !important; padding:7px 12px; font-size:12px; white-space:nowrap; }
 .empty-actions{ flex-direction:column; align-items:stretch; max-width:340px; margin:0 auto; }

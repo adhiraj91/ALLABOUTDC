@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=33">
+<link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
 
@@ -23,16 +23,12 @@
       <button class="admin-toggle" id="nerdToggle" title="Nerd Mode" data-active="false">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1 .8-1.8 1.8-1.8h2.4c1 0 1.8.8 1.8 1.8v2c0 1-.8 1.8-1.8 1.8h-2.4A1.8 1.8 0 0 1 9 12.5z"/><path d="M12 8.7V7M9.2 9.5 7.8 8M14.8 9.5 16.2 8"/></svg>
       </button>
-      <button class="admin-toggle profile-toggle-labeled" id="profileToggle" title="Sign In">
+      <button class="admin-toggle profile-toggle-labeled" id="profileToggle" title="Account">
         <span class="profile-avatar-fallback" id="profileAvatarFallback">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6.4 7-6.4s7 2.8 7 6.4"/></svg>
         </span>
         <img id="profileAvatarImg" alt="" style="display:none;">
         <span class="profile-toggle-label" id="profileToggleLabel">Sign In</span>
-      </button>
-      <button class="admin-toggle admin-toggle-labeled" id="adminToggle" title="Admin access">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
-        <span class="admin-toggle-label">Admin</span>
       </button>
     </div>
   </div>
@@ -98,7 +94,7 @@
     <button class="more-row" id="moreQuickGlossary">DC Glossary</button>
     <button class="more-row" id="moreQuickMultiverse">Multiverse Map</button>
     <button class="more-row" id="moreQuickNerd">🤓 Nerd Mode: OFF</button>
-    <button class="more-row more-row-admin" id="moreAdmin">🔒 Admin Access <span>(site owner only)</span></button>
+    <button class="more-row" id="moreQuickAccount">👤 Account</button>
   </div>
   <p class="more-about">AllAboutDC is an unofficial fan-made DC reading &amp; watch guide.</p>
 </div>
@@ -162,6 +158,7 @@
       <span id="readerModeSignup">New here? <a href="#" id="readerToggleMode">Create an account</a></span>
       <span id="readerModeLogin" style="display:none;">Already have an account? <a href="#" id="readerToggleModeBack">Sign in</a></span>
     </p>
+    <p class="reader-admin-link"><a href="#" id="readerAdminAccessLink">Admin Access</a></p>
   </div>
 
   <div id="readerProfileArea" style="display:none;">
@@ -177,6 +174,8 @@
       <button class="more-row" id="readerGoJourney">🧭 My Journey</button>
       <button class="more-row" id="readerGoFavorites">♥ Favorites</button>
       <button class="more-row" id="readerGoProgress">✓ Progress</button>
+      <button class="more-row" id="readerGoAdminTools" style="display:none;">🛠 Admin Tools</button>
+      <button class="more-row" id="readerGoSettings">⚙ Settings</button>
     </div>
     <div class="form-msg" id="readerSyncMsg" style="margin-top:10px;"></div>
     <div class="form-actions" style="margin-top:16px;"><button class="btn btn-ghost" id="readerLogoutBtn">Sign out</button></div>
@@ -199,37 +198,112 @@
     </div>
     <div class="form-msg" id="loginMsg"></div>
   </div>
-  <div id="signedInArea" style="display:none;">
-    <p class="sheet-body">Signed in as <span id="signedInEmail" style="color:var(--ink);font-weight:600;"></span>.</p>
-    <div class="form-actions"><button class="btn btn-ghost" id="logoutBtn">Sign out</button></div>
-    <div class="sheet-section" style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px;">
-      <div class="sheet-label">DATA HEALTH — NEW TO DC &amp; READING PATHS</div>
-      <div class="sheet-body admin-health" id="adminDataHealth" style="font-size:12.5px;color:var(--ink-dim);"></div>
-    </div>
-    <div class="sheet-section" style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px;">
-      <div class="sheet-label">ONE-TIME SETUP</div>
-      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Loads the starter entries (movies, series, games, comics) into an empty database. Safe to run once, on a fresh site.</p>
-      <div class="form-actions"><button class="btn btn-ghost" id="importBtn">Import starter data</button></div>
-      <div class="form-msg" id="importMsg"></div>
-    </div>
-    <div class="sheet-section" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px;">
-      <div class="sheet-label">UPDATE</div>
-      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Replaces all Movies, Series, and Games entries with the expanded dataset — deletes the old ones first, so it's safe to run even if you already imported before.</p>
-      <div class="form-actions"><button class="btn btn-ghost" id="replaceMSBtn">Replace Movies, Series & Games</button></div>
+</div>
+
+<!-- Admin Tools sheet (reached only from Account → Admin Tools, once signed in as the authorized admin) -->
+<div class="sheet-backdrop" id="adminToolsBackdrop"></div>
+<div class="sheet" id="adminToolsSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="adminToolsClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>Admin Tools</h2>
+
+  <div class="sheet-section" style="margin-top:14px;">
+    <div class="sheet-label">CONTENT</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="replaceMSBtn">Replace Movies, Series &amp; Games</button>
       <div class="form-msg" id="replaceMSMsg"></div>
     </div>
-    <div class="sheet-section" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px;">
-      <div class="sheet-label">UPDATE</div>
-      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Replaces all Comics entries with the current dataset — deletes the old ones first, so it's safe to run even if you already imported before.</p>
-      <div class="form-actions"><button class="btn btn-ghost" id="replaceComicsBtn">Replace Comics</button></div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="replaceComicsBtn">Replace Comics</button>
       <div class="form-msg" id="replaceComicsMsg"></div>
     </div>
-    <div class="sheet-section" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px;">
-      <div class="sheet-label">UPDATE</div>
-      <p class="sheet-body" style="font-size:12.5px;color:var(--ink-dim);">Replaces the "New to DC?" beginner-guide recommendations (Start Here paths &amp; starter picks) with the current curated dataset — deletes the old ones first, so it's safe to run even if you already imported before.</p>
-      <div class="form-actions"><button class="btn btn-ghost" id="replaceBeginnerBtn">Replace Beginner Guide</button></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">JOURNEYS</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="replaceBeginnerBtn">Replace Beginner Guide</button>
       <div class="form-msg" id="replaceBeginnerMsg"></div>
     </div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">DATA</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="importBtn">Import Starter Data</button>
+      <div class="form-msg" id="importMsg"></div>
+    </div>
+    <div class="sheet-label" style="margin-top:14px;">DATA QUALITY</div>
+    <div class="sheet-body admin-health" id="adminDataHealth" style="font-size:12.5px;color:var(--ink-dim);"></div>
+  </div>
+</div>
+
+<!-- Settings sheet (Account → Settings) -->
+<div class="sheet-backdrop" id="settingsBackdrop"></div>
+<div class="sheet" id="settingsSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="settingsClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>Settings</h2>
+
+  <div class="sheet-section" style="margin-top:14px;">
+    <div class="sheet-label">ACCOUNT</div>
+    <div class="form-group"><label>Display name</label><input type="text" id="settingsDisplayName"></div>
+    <div class="form-actions"><button class="btn btn-ghost" id="settingsSaveNameBtn">Save name</button></div>
+    <div class="form-msg" id="settingsNameMsg"></div>
+    <div class="settings-static-row"><span>Email</span><span id="settingsEmailValue"></span></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">EXPERIENCE</div>
+    <div class="setting-row">
+      <span>Spoiler Protection</span>
+      <button class="setting-toggle" id="settingSpoilerToggle" data-on="true">On</button>
+    </div>
+    <div class="setting-row">
+      <span>Default Content</span>
+      <select id="settingDefaultContent">
+        <option value="all">All</option>
+        <option value="movies">Movies</option>
+        <option value="series">Series</option>
+        <option value="comics">Comics</option>
+        <option value="games">Games</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <span>Continue Where I Left Off</span>
+      <button class="setting-toggle" id="settingContinueToggle" data-on="true">On</button>
+    </div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">JOURNEY &amp; PROGRESS</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsResetJourneyBtn">Reset Current Journey</button>
+    </div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsResetProgressBtn">Reset All Journey Progress</button>
+    </div>
+    <div class="form-msg" id="settingsJourneyMsg"></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">PRIVACY &amp; DATA</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsExportBtn">Export My Data</button>
+    </div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsClearLocalBtn">Clear Local Data</button>
+    </div>
+    <div class="form-msg" id="settingsDataMsg"></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">ACCOUNT</div>
+    <div class="form-actions"><button class="btn btn-ghost" id="settingsSignOutBtn">Sign Out</button></div>
+    <div class="admin-tool-row" style="margin-top:10px;">
+      <button class="btn btn-danger" id="settingsDeleteAccountBtn">Delete Account</button>
+    </div>
+    <div class="form-msg" id="settingsAccountMsg"></div>
   </div>
 </div>
 
@@ -258,6 +332,6 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=42"></script>
+<script type="module" src="app.js?v=43"></script>
 </body>
 </html>

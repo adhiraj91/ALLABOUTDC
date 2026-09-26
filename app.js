@@ -4,7 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import {
   signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
-  signOut, onAuthStateChanged, sendPasswordResetEmail
+  signOut, onAuthStateChanged, sendPasswordResetEmail, updateProfile, deleteUser
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 /* ============================= CONFIG ============================= */
@@ -280,9 +280,14 @@ async function loadAll(){
     }
   }
   loaded = true;
-  // Phase 14: a refresh restores the tab you were on (from the URL hash) instead of dumping you on Home.
-  const fromHash = tabFromHash();
+  // Phase 14: a refresh restores the tab you were on (from the URL hash) instead of dumping you on Home —
+  // unless the reader turned off "Continue Where I Left Off" in Settings, in which case always start fresh.
+  const fromHash = continueWhereLeftOffOn() ? tabFromHash() : null;
   if(fromHash) state.cat = fromHash;
+  else{
+    const def = defaultContentSetting();
+    if(def && def!=="all") state.cat = def;
+  }
   history.replaceState({cat:state.cat}, "", location.href);
   render();
 }
@@ -2586,13 +2591,14 @@ function extraDetailsHtml(cat, d){
     html += `<button class="trailer-btn">▶ Watch Trailer${trailers.length>1?"s":""}${trailers.length>1?` (${trailers.length})`:""}</button><div class="trailer-strip" id="trailerStrip"></div>`;
   }
   if(d.plot){
+    const spoilerOn = spoilerProtectionOn();
     html += `<div class="sheet-section spoiler-section">
       <div class="sheet-label">FULL PLOT</div>
-      <div class="spoiler-gate">
+      ${spoilerOn ? `<div class="spoiler-gate">
         <span>⚠ Contains major plot details</span>
         <button class="spoiler-reveal-btn">Reveal spoilers</button>
-      </div>
-      <div class="sheet-body spoiler-body" data-revealed="false">${d.plot}</div>
+      </div>` : ``}
+      <div class="sheet-body spoiler-body" data-revealed="${spoilerOn ? "false" : "true"}">${d.plot}</div>
     </div>`;
   }
   const credits = [];
@@ -2895,14 +2901,16 @@ document.addEventListener("click", e=>{
   if(!e.target.closest(".search-row")){ globalSearchResults.dataset.open = "false"; }
 });
 
-/* ============================= ADMIN: LOGIN ============================= */
-const adminToggle = $("#adminToggle");
+/* ============================= ADMIN: LOGIN =============================
+   Account/Admin cleanup: the header no longer has a separate Admin button. Admin sign-in is reached only
+   via the small "Admin Access" link inside the logged-out Account flow (readerAdminAccessLink below), or
+   automatically skipped straight to Admin Tools if the signed-in user is already the admin. This loginSheet
+   is now a plain sign-in form — the admin-only tools it used to hold live in their own Admin Tools sheet. */
 const loginBackdrop = $("#loginBackdrop"), loginSheet = $("#loginSheet");
-const loginArea = $("#loginArea"), signedInArea = $("#signedInArea");
+const loginArea = $("#loginArea");
 const loginEmail = $("#loginEmail"), loginPassword = $("#loginPassword"), loginMsg = $("#loginMsg");
 const fab = $("#fabAdd");
 
-adminToggle.addEventListener("click", ()=>{ renderAdminDataHealth(); openSheetEl(loginBackdrop, loginSheet); });
 /* ---- Phase 18: read-only data-health panel for the admin ----
    Shows the gaps that limit New to DC / journeys / comics reading paths, so the admin knows what to add
    next via the existing Replace/Import tools — without growing the admin UI into a full editor. */
@@ -2946,16 +2954,22 @@ $("#loginCancel").addEventListener("click", ()=> closeSheetEl(loginBackdrop, log
 $("#loginSubmit").addEventListener("click", async ()=>{
   loginMsg.textContent = ""; loginMsg.className = "form-msg";
   try{
-    await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+    const cred = await signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value);
+    const ok = await checkIsAdmin(cred.user.uid);
+    if(!ok){
+      await signOut(auth);
+      loginMsg.textContent = "That account isn't authorized for admin access.";
+      loginMsg.className = "form-msg err";
+      return;
+    }
+    loginEmail.value = ""; loginPassword.value = "";
     closeSheetEl(loginBackdrop, loginSheet);
+    renderAdminDataHealth();
+    openSheetEl(adminToolsBackdrop, adminToolsSheet);
   }catch(err){
     loginMsg.textContent = "Sign-in failed — check the email and password.";
     loginMsg.className = "form-msg err";
   }
-});
-$("#logoutBtn").addEventListener("click", async ()=>{
-  await signOut(auth);
-  closeSheetEl(loginBackdrop, loginSheet);
 });
 
 /* ============================= READER ACCOUNT (Phase 1) ============================= */
@@ -3090,23 +3104,190 @@ $("#readerGoProgress").addEventListener("click", ()=>{
   setTimeout(()=> document.getElementById("journeyProgressSection")?.scrollIntoView({behavior:"smooth"}), 250);
 });
 
+/* ---- Account/Admin cleanup: one Account button, role-specific rows inside it ----
+   Logged out: the reader auth form, plus a small "Admin Access" link that leads to the admin sign-in
+   form (loginSheet) — never a header button. Signed in as the admin: the same Account sheet additionally
+   shows "Admin Tools", which opens its own sheet holding the existing Replace/Import actions untouched. */
+const adminToolsBackdrop = $("#adminToolsBackdrop"), adminToolsSheet = $("#adminToolsSheet");
+adminToolsBackdrop.addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
+$("#adminToolsClose").addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
+
+$("#readerGoAdminTools").addEventListener("click", ()=>{
+  closeSheetEl(readerBackdrop, readerSheet);
+  renderAdminDataHealth();
+  openSheetEl(adminToolsBackdrop, adminToolsSheet);
+});
+$("#readerAdminAccessLink").addEventListener("click", (e)=>{
+  e.preventDefault();
+  closeSheetEl(readerBackdrop, readerSheet);
+  if(isAdmin){
+    renderAdminDataHealth();
+    openSheetEl(adminToolsBackdrop, adminToolsSheet);
+  }else{
+    loginMsg.textContent = ""; loginMsg.className = "form-msg";
+    openSheetEl(loginBackdrop, loginSheet);
+  }
+});
+
+/* ---- Settings (Account → Settings) ---- */
+const settingsBackdrop = $("#settingsBackdrop"), settingsSheet = $("#settingsSheet");
+settingsBackdrop.addEventListener("click", ()=> closeSheetEl(settingsBackdrop, settingsSheet));
+$("#settingsClose").addEventListener("click", ()=> closeSheetEl(settingsBackdrop, settingsSheet));
+
+const LS_SPOILER_KEY = "dc_spoiler_protection";   // "on" | "off" — default on
+const LS_DEFAULT_CONTENT_KEY = "dc_default_content"; // "all"|"movies"|"series"|"comics"|"games" — default "all"
+const LS_CONTINUE_TAB_KEY = "dc_continue_last_tab"; // "on" | "off" — default on
+function spoilerProtectionOn(){ return localStorage.getItem(LS_SPOILER_KEY) !== "off"; }
+function defaultContentSetting(){ return localStorage.getItem(LS_DEFAULT_CONTENT_KEY) || "all"; }
+function continueWhereLeftOffOn(){ return localStorage.getItem(LS_CONTINUE_TAB_KEY) !== "off"; }
+
+function renderSettingsSheet(){
+  $("#settingsDisplayName").value = readerUser ? (readerUser.displayName || "") : "";
+  $("#settingsEmailValue").textContent = readerUser ? (readerUser.email || "") : "";
+  const spoilerBtn = $("#settingSpoilerToggle");
+  const spoilerOn = spoilerProtectionOn();
+  spoilerBtn.dataset.on = spoilerOn ? "true" : "false";
+  spoilerBtn.textContent = spoilerOn ? "On" : "Off";
+  $("#settingDefaultContent").value = defaultContentSetting();
+  const continueBtn = $("#settingContinueToggle");
+  const continueOn = continueWhereLeftOffOn();
+  continueBtn.dataset.on = continueOn ? "true" : "false";
+  continueBtn.textContent = continueOn ? "On" : "Off";
+  ["settingsNameMsg","settingsJourneyMsg","settingsDataMsg","settingsAccountMsg"].forEach(id=>{
+    const el = $("#"+id); if(el){ el.textContent=""; el.className="form-msg"; }
+  });
+}
+$("#readerGoSettings").addEventListener("click", ()=>{
+  closeSheetEl(readerBackdrop, readerSheet);
+  renderSettingsSheet();
+  openSheetEl(settingsBackdrop, settingsSheet);
+});
+$("#settingSpoilerToggle").addEventListener("click", ()=>{
+  const on = !spoilerProtectionOn();
+  localStorage.setItem(LS_SPOILER_KEY, on ? "on" : "off");
+  renderSettingsSheet();
+});
+$("#settingContinueToggle").addEventListener("click", ()=>{
+  const on = !continueWhereLeftOffOn();
+  localStorage.setItem(LS_CONTINUE_TAB_KEY, on ? "on" : "off");
+  renderSettingsSheet();
+});
+$("#settingDefaultContent").addEventListener("change", (e)=>{
+  localStorage.setItem(LS_DEFAULT_CONTENT_KEY, e.target.value);
+});
+
+$("#settingsSaveNameBtn").addEventListener("click", async ()=>{
+  const msg = $("#settingsNameMsg");
+  if(!readerUser){ msg.textContent = "Sign in first."; msg.className = "form-msg err"; return; }
+  const name = $("#settingsDisplayName").value.trim();
+  msg.textContent = "Saving…"; msg.className = "form-msg";
+  try{
+    await updateProfile(readerUser, { displayName: name });
+    await upsertReaderProfile(readerUser);
+    updateReaderProfileUI();
+    msg.textContent = "Saved."; msg.className = "form-msg ok";
+  }catch(err){
+    msg.textContent = "Couldn't save: " + err.message; msg.className = "form-msg err";
+  }
+});
+
+$("#settingsResetJourneyBtn").addEventListener("click", ()=>{
+  const msg = $("#settingsJourneyMsg");
+  const store = getJourneyStore();
+  const active = getJourneyById(store.activeId);
+  if(!active){ msg.textContent = "No active journey to reset."; msg.className = "form-msg"; return; }
+  if(!confirm(`This removes your current journey ("${journeyTitle(active)}") so you can start it over. Your watched/read progress and favorites are not affected. Continue?`)) return;
+  store.journeys = store.journeys.filter(j=>j.id!==active.id);
+  store.activeId = store.journeys.length ? store.journeys[store.journeys.length-1].id : null;
+  saveJourneyStore(store);
+  msg.textContent = "Current journey reset."; msg.className = "form-msg ok";
+  if(state.cat==="journey") renderJourney();
+  if(state.cat==="home") renderCards();
+});
+$("#settingsResetProgressBtn").addEventListener("click", async ()=>{
+  const msg = $("#settingsJourneyMsg");
+  if(!confirm("This marks every title in every journey as not done again. Favorites are not affected. Continue?")) return;
+  lsSetJson(LS_PROGRESS_KEY, {});
+  const store = getJourneyStore();
+  store.journeys.forEach(j=>{ j.completedAt = {}; j.updatedAt = new Date().toISOString(); });
+  saveJourneyStore(store);
+  if(readerUser){
+    try{
+      const progSnap = await getDocs(collection(db, "users", readerUser.uid, "progress"));
+      await Promise.all(progSnap.docs.map(d=>deleteDoc(doc(db, "users", readerUser.uid, "progress", d.id))));
+    }catch(e){ console.warn("[Settings] cloud progress reset failed:", e.message); }
+  }
+  msg.textContent = "All journey progress reset."; msg.className = "form-msg ok";
+  if(state.cat==="journey") renderJourney();
+  renderCards();
+});
+
+$("#settingsExportBtn").addEventListener("click", ()=>{
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    account: readerUser ? { displayName: readerUser.displayName, email: readerUser.email } : null,
+    favorites: getFavorites(),
+    progress: getProgress(),
+    journeys: getJourneyStore(),
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "allaboutdc-my-data.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+$("#settingsClearLocalBtn").addEventListener("click", ()=>{
+  const msg = $("#settingsDataMsg");
+  if(!confirm("This clears your favorites, progress and journeys saved on this device. If you're not signed in, this can't be undone. Continue?")) return;
+  lsSetJson(LS_FAV_KEY, []);
+  lsSetJson(LS_PROGRESS_KEY, {});
+  localStorage.removeItem(LS_JOURNEYS_KEY);
+  localStorage.removeItem("dc_journey");
+  msg.textContent = "Local data cleared."; msg.className = "form-msg ok";
+  renderCards();
+  if(state.cat==="journey") renderJourney();
+});
+
+$("#settingsSignOutBtn").addEventListener("click", async ()=>{
+  await signOut(auth);
+  closeSheetEl(settingsBackdrop, settingsSheet);
+});
+$("#settingsDeleteAccountBtn").addEventListener("click", async ()=>{
+  const msg = $("#settingsAccountMsg");
+  if(!readerUser){ msg.textContent = "Sign in first."; msg.className = "form-msg err"; return; }
+  const ok = confirm("Delete your account permanently?\n\nThis deletes your profile, favorites, progress and journeys stored in the cloud, and signs you out. Data saved only on this device (if any) is not affected by this action — use Clear Local Data for that. This cannot be undone.");
+  if(!ok) return;
+  msg.textContent = "Deleting…"; msg.className = "form-msg";
+  try{
+    const uid = readerUser.uid;
+    for(const sub of ["favorites","progress","preferences","meta"]){
+      const snap = await getDocs(collection(db, "users", uid, sub));
+      await Promise.all(snap.docs.map(d=>deleteDoc(doc(db, "users", uid, sub, d.id))));
+    }
+    await deleteDoc(doc(db, "users", uid)).catch(()=>{});
+    await deleteUser(auth.currentUser);
+    closeSheetEl(settingsBackdrop, settingsSheet);
+  }catch(err){
+    if(err.code === "auth/requires-recent-login"){
+      msg.textContent = "For security, please sign out and sign back in, then try Delete Account again right away.";
+    }else{
+      msg.textContent = "Couldn't delete account: " + err.message;
+    }
+    msg.className = "form-msg err";
+  }
+});
+
 onAuthStateChanged(auth, async (user)=>{
   const wasSignedIn = !!readerUser;
   readerUser = user || null;
 
   // Admin is a separate, server-checked role — never inferred from "a user is signed in".
   isAdmin = user ? await checkIsAdmin(user.uid) : false;
-  adminToggle.dataset.signedIn = isAdmin ? "true" : "false";
   document.body.dataset.admin = isAdmin ? "true" : "false";
   fab.dataset.visible = isAdmin ? "true" : "false";
-  if(isAdmin){
-    loginArea.style.display = "none";
-    signedInArea.style.display = "block";
-    $("#signedInEmail").textContent = user.email;
-  }else{
-    loginArea.style.display = "block";
-    signedInArea.style.display = "none";
-  }
+  const adminToolsRow = $("#readerGoAdminTools");
+  if(adminToolsRow) adminToolsRow.style.display = isAdmin ? "block" : "none";
 
   updateReaderProfileUI();
   if(user && !wasSignedIn){
@@ -3275,10 +3456,9 @@ $("#moreQuickNerd").addEventListener("click", ()=>{
   nerdToggle.click();
   $("#moreQuickNerd").textContent = state.nerdMode ? "🤓 Nerd Mode: ON" : "🤓 Nerd Mode: OFF";
 });
-$("#moreAdmin").addEventListener("click", ()=>{
-  renderAdminDataHealth();
+$("#moreQuickAccount").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
-  openSheetEl(loginBackdrop, loginSheet);
+  profileToggle.click();
 });
 
 /* ============================= ADMIN: IMPORT STARTER DATA (first-time, all 4) ============================= */
