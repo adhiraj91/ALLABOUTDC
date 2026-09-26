@@ -31,8 +31,16 @@
 //     Pointer 3 requires, without this module needing to touch app.js's
 //     shared tab/history logic at all.
 // ============================================================================
-import * as data from "./data.js";
+// "?v=p5" — data.js gained new Pointer 5 helpers (reading paths / collection overlap);
+// the query string busts GitHub Pages' ~10min cache the same way Pointer 4 did for storymap.js.
+import * as data from "./data.js?v=p5";
 import { COLLECTIONS } from "./schema.js";
+import {
+  pathTypeLabel, sortPathsByType, pathEntryCount, locateInPath,
+  groupCoverageBySeries, compressCoverageRows, coverageSummaryLines,
+  hasPartialCoverage, coverageBarSegments,
+  formatEditionMeta, verificationLabel,
+} from "./reading-collections.js";
 
 /* ============================= small utils ============================= */
 function esc(s) {
@@ -147,15 +155,66 @@ function nerdBlock(obj) {
   if (!lines.length) return "";
   return `<div class="cx-nerd-block">${lines.map(esc).join("<br>")}</div>`;
 }
-function collectedInHtml(list) {
+/**
+ * Part 11 (Story Map) / Part 9 (Explorer): "Collected in: [collection name +
+ * coverage]" from a Story or Issue's own detail — collections are reached
+ * from here, never shown as their own primary browse level and never turned
+ * into Story Map graph nodes. Each row shows the STRUCTURED coverage (never
+ * prose) for the series currently being viewed, plus verification status, and
+ * opens the Collection detail level on tap.
+ */
+async function collectedInHtml(list) {
   if (!list || !list.length) return "";
-  const rows = list.map(c => `<div class="cx-row" style="cursor:default;">
+  const seriesIds = [...new Set(list.flatMap(c => (c.issueCoverage || []).map(r => r.seriesId).filter(Boolean)))];
+  const seriesEnts = await Promise.all(seriesIds.map(id => cachedGet(COLLECTIONS.SERIES, id)));
+  const titleFor = (id) => { const s = seriesEnts.find(x => x && x.id === id); return s ? s.title : null; };
+  const rows = list.map((c, idx) => {
+    const lines = coverageSummaryLines(c.issueCoverage, titleFor);
+    const partial = hasPartialCoverage(c.issueCoverage) ? `<span class="tag" style="margin-left:6px;">partial</span>` : "";
+    return `<div class="cx-row" data-coll-idx="${idx}">
       <div class="cx-row-body">
-        <div class="cx-row-title">${esc(c.title)}</div>
-        <div class="cx-row-sub">${esc([c.format, c.publicationDate].filter(Boolean).join(" · "))}</div>
+        <div class="cx-row-title">${esc(c.title)}${partial}</div>
+        <div class="cx-row-sub">${esc(formatEditionMeta(c))}</div>
+        ${lines.length ? `<div class="cx-row-sub cx-coverage-line">${lines.map(esc).join(" · ")}</div>` : ""}
       </div>
-    </div>`).join("");
-  return `<div class="sheet-section"><div class="sheet-label">COLLECTED IN</div><div class="cx-list">${rows}</div></div>`;
+      <div class="cx-row-chevron">›</div>
+    </div>`;
+  }).join("");
+  return {
+    html: `<div class="sheet-section"><div class="sheet-label">COLLECTED IN</div><div class="cx-list">${rows}</div></div>`,
+    wire(container) {
+      container.querySelectorAll("[data-coll-idx]").forEach(row => {
+        row.addEventListener("click", () => {
+          const c = list[+row.dataset.collIdx];
+          pushLevel("collection", c.title, { collectionEntity: c });
+        });
+      });
+    },
+  };
+}
+
+/* ============================= Reading Paths (Part 2/3/4) =============================
+   Progressive disclosure: a compact row of path-type chips (only for path types the
+   data actually has) — tapping one opens the full ordered path as its own level, never
+   a wall of buttons and never a fabricated/derived order (entries come straight off the
+   comicReadingPaths record). */
+function readingPathsChipsHtml(paths, anchorEntityId) {
+  if (!paths || !paths.length) return "";
+  const sorted = sortPathsByType(paths);
+  const chips = sorted.map((p, idx) => {
+    const onPath = anchorEntityId ? locateInPath(p, anchorEntityId).index !== -1 : false;
+    return `<button class="cx-chip" data-path-idx="${idx}" data-on-path="${onPath}">${esc(pathTypeLabel(p.pathType))}<span class="cx-chip-n">${pathEntryCount(p)}</span></button>`;
+  }).join("");
+  return `<div class="sheet-section"><div class="sheet-label">READING PATHS</div><div class="cx-chip-row">${chips}</div></div>`;
+}
+function wireReadingPathChips(container, paths, anchorEntityId, contextLabel) {
+  if (!paths || !paths.length) return;
+  container.querySelectorAll("[data-path-idx]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const p = sortPathsByType(paths)[+btn.dataset.pathIdx];
+      pushLevel("readingPath", p.title, { path: p, anchorEntityId, contextLabel });
+    });
+  });
 }
 
 /* ============================= level renderers =============================
@@ -328,9 +387,10 @@ async function levelSeriesList() {
 
 async function levelSeries(params) {
   const s = params.series;
-  const [runs, creators] = await Promise.all([
+  const [runs, creators, readingPaths] = await Promise.all([
     data.getRunsForSeries(s.id),
     Promise.all((s.creatorIds || []).map(id => cachedGet(COLLECTIONS.CREATORS, id))),
+    data.getReadingPathsFor({ continuityId: (s.continuityIds || [])[0] || null }),
   ]);
   const runLabels = await Promise.all(runs.map(r => runLabel(r)));
 
@@ -348,6 +408,7 @@ async function levelSeries(params) {
     html += runs.map((r, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(runLabels[idx])}</div>${runRangeText(r) ? `<div class="cx-row-sub">${esc(runRangeText(r))}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
     html += `</div></div>`;
   }
+  html += readingPathsChipsHtml(readingPaths, s.id);
   if (isNerd()) html += nerdBlock({ id: s.id, universeId: s.universeId, continuityIds: s.continuityIds, characterIds: s.characterIds, verification: s.sourceInfo });
   return {
     html,
@@ -358,6 +419,7 @@ async function levelSeries(params) {
           pushLevel("run", runLabels[idx], { run: runs[idx], series: s });
         });
       });
+      wireReadingPathChips(container, readingPaths, s.id, s.title);
     },
   };
 }
@@ -365,7 +427,10 @@ async function levelSeries(params) {
 async function levelRun(params) {
   const r = params.run, s = params.series;
   const label = await runLabel(r);
-  const stories = await data.getStoriesForRun(r.id);
+  const [stories, readingPaths] = await Promise.all([
+    data.getStoriesForRun(r.id),
+    data.getReadingPathsFor({ continuityId: (s.continuityIds || [])[0] || null }),
+  ]);
   // NOTE: comicRuns/comicStories has no explicit "order within run" field in the
   // current Phase 1 schema, so this list is shown in the order Firestore returns
   // it (matching import/insertion order) rather than invented by re-sorting —
@@ -381,6 +446,7 @@ async function levelRun(params) {
     html += stories.map((st, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(st.title)}</div>${st.issueIds && st.issueIds.length ? `<div class="cx-row-sub">${st.issueIds.length} issue${st.issueIds.length === 1 ? "" : "s"}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
     html += `</div></div>`;
   }
+  html += readingPathsChipsHtml(readingPaths, r.seriesId);
   if (isNerd()) html += nerdBlock({ id: r.id, seriesId: r.seriesId, creatorIds: r.creatorIds, verification: r.sourceInfo });
   return {
     html,
@@ -391,6 +457,7 @@ async function levelRun(params) {
           pushLevel("story", st.title, { story: st, series: s, run: r });
         });
       });
+      wireReadingPathChips(container, readingPaths, r.seriesId, label);
     },
   };
 }
@@ -398,13 +465,14 @@ async function levelRun(params) {
 async function levelStory(params) {
   const st = params.story;
   const seriesIdsToResolve = (st.seriesIds && st.seriesIds.length) ? st.seriesIds : (params.series ? [params.series.id] : []);
-  const [issues, collections, seriesEntities, continuityEnt, characters, creators] = await Promise.all([
+  const [issues, collections, seriesEntities, continuityEnt, characters, creators, readingPaths] = await Promise.all([
     data.getIssuesForStory(st.id),
-    data.getCollectionsContainingStory(st.id),
+    data.getCollectionsForStory(st.id, st.issueIds),
     Promise.all(seriesIdsToResolve.map(id => cachedGet(COLLECTIONS.SERIES, id))),
     st.continuityId ? cachedGet(COLLECTIONS.CONTINUITIES, st.continuityId) : null,
     Promise.all((st.characterIds || []).map(id => cachedGet(COLLECTIONS.CHARACTERS, id))),
     Promise.all((st.creatorIds || []).map(id => cachedGet(COLLECTIONS.CREATORS, id))),
+    data.getReadingPathsFor({ continuityId: st.continuityId }),
   ]);
   sortIssuesInPlace(issues);
 
@@ -424,7 +492,9 @@ async function levelStory(params) {
     html += issues.map((iss, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(iss.issueLabel || iss.title || "Issue")}</div>${iss.title && iss.issueLabel ? `<div class="cx-row-sub">${esc(iss.title)}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
     html += `</div></div>`;
   }
-  html += collectedInHtml(collections);
+  html += readingPathsChipsHtml(readingPaths, st.id);
+  const collectedIn = await collectedInHtml(collections);
+  html += collectedIn.html || "";
   if (isNerd()) html += nerdBlock({ id: st.id, seriesIds: st.seriesIds, runId: st.runId, continuityId: st.continuityId, universeId: st.universeId, eventId: st.eventId, verification: st.sourceInfo });
   return {
     html,
@@ -435,6 +505,8 @@ async function levelStory(params) {
           pushLevel("issue", iss.issueLabel || iss.title || "Issue", { issue: iss, story: st });
         });
       });
+      if (collectedIn.wire) collectedIn.wire(container);
+      wireReadingPathChips(container, readingPaths, st.id, st.title);
     },
   };
 }
@@ -476,7 +548,8 @@ async function levelIssue(params) {
   }))).filter(Boolean);
   if (relLines.length) html += `<div class="sheet-section"><div class="sheet-label">RELATED</div><div class="sheet-body">${relLines.map(l => `<div>${esc(l)}</div>`).join("")}</div></div>`;
 
-  html += collectedInHtml(collections);
+  const collectedIn = await collectedInHtml(collections);
+  html += collectedIn.html || "";
   if (isNerd()) html += nerdBlock({ id: iss.id, seriesId: iss.seriesId, storyIds: iss.storyIds, continuityId: iss.continuityId, universeId: iss.universeId, eventIds: iss.eventIds, verification: iss.sourceInfo });
   return {
     html,
@@ -487,8 +560,146 @@ async function levelIssue(params) {
           pushLevel("story", stt.title, { story: stt });
         });
       });
+      if (collectedIn.wire) collectedIn.wire(container);
     },
   };
+}
+
+/* ============================= Reading Path detail (Part 4) ============================= */
+async function levelReadingPath(params) {
+  const p = params.path;
+  const { index: curIdx, next } = locateInPath(p, params.anchorEntityId);
+  const entries = p.entries || [];
+  const resolved = await Promise.all(entries.map(async (e) => {
+    const meta = ENTITY_META[e.entityType];
+    const ent = meta ? await cachedGet(meta.col, e.entityId) : null;
+    return { entry: e, entity: ent, label: ent ? meta.name(ent) : (e.entityId || "Unknown") };
+  }));
+
+  let html = `<div class="cx-kicker">READING PATH${params.contextLabel ? " · " + esc(params.contextLabel) : ""}</div><h2 class="cx-title">${esc(p.title)}</h2>`;
+  html += `<div class="cx-tag-row"><span class="tag">${esc(pathTypeLabel(p.pathType))}</span><span class="tag">${entries.length} step${entries.length === 1 ? "" : "s"}</span></div>`;
+  if (p.description) html += `<div class="sheet-section"><div class="sheet-label">WHY THIS PATH</div><div class="sheet-body">${esc(p.description)}</div></div>`;
+  if (curIdx !== -1) {
+    html += `<div class="sheet-section"><div class="sheet-label">YOUR POSITION</div><div class="sheet-body">Step ${curIdx + 1} of ${entries.length}${next ? ` — next up: ${esc(resolved[curIdx + 1] ? resolved[curIdx + 1].label : "")}` : " — this is the final step on this path."}</div></div>`;
+  }
+  html += `<div class="sheet-section"><div class="sheet-label">ORDER</div><div class="cx-list">`;
+  html += resolved.map((r, idx) => {
+    const isCurrent = idx === curIdx;
+    return `<div class="cx-row" data-entry-idx="${idx}" data-current="${isCurrent}">
+      <div class="cx-path-order">${r.entry.order != null ? r.entry.order : idx + 1}</div>
+      <div class="cx-row-body">
+        <div class="cx-row-title">${esc(r.label)}${isCurrent ? ` <span class="tag">you are here</span>` : ""}</div>
+        ${r.entry.note ? `<div class="cx-row-sub">${esc(r.entry.note)}</div>` : ""}
+      </div>
+      <div class="cx-row-chevron">›</div>
+    </div>`;
+  }).join("");
+  html += `</div></div>`;
+  if (p.branches && p.branches.length) {
+    html += `<div class="sheet-section"><div class="sheet-label">ALTERNATE / BRANCH</div>`;
+    html += p.branches.map(b => `<div class="sheet-body"><strong>${esc(b.label)}</strong>${(b.entries || []).map(e => `<div class="cx-row-sub">${esc(e.note || e.entityId)}</div>`).join("")}</div>`).join("");
+    html += `</div>`;
+  }
+  if (isNerd()) html += nerdBlock({ id: p.id, pathType: p.pathType, characterId: p.characterId, continuityId: p.continuityId, verification: p.sourceInfo });
+  return {
+    html,
+    wire(container) {
+      container.querySelectorAll("[data-entry-idx]").forEach(row => {
+        row.addEventListener("click", () => {
+          const r = resolved[+row.dataset.entryIdx];
+          if (!r.entity) return;
+          const type = r.entry.entityType;
+          if (type === "story") pushLevel("story", r.label, { story: r.entity });
+          else if (type === "series") pushLevel("series", r.label, { series: r.entity });
+          else if (type === "issue") pushLevel("issue", r.label, { issue: r.entity });
+          else if (type === "run") pushLevel("run", r.label, { run: r.entity, series: params.series });
+          else if (type === "collection") pushLevel("collection", r.label, { collectionEntity: r.entity });
+        });
+      });
+    },
+  };
+}
+
+/* ============================= Collection / Edition detail (Parts 5-10) ============================= */
+async function levelCollection(params) {
+  const c = params.collectionEntity;
+  const seriesIds = [...new Set((c.issueCoverage || []).map(r => r.seriesId).filter(Boolean).concat(c.seriesIds || []))];
+  const [seriesEnts, overlapping] = await Promise.all([
+    Promise.all(seriesIds.map(id => cachedGet(COLLECTIONS.SERIES, id))),
+    data.getCollectionsSharingIssues((c.issueCoverage || []).map(r => r.issueId), c.id),
+  ]);
+  const seriesById = new Map(seriesEnts.filter(Boolean).map(s => [s.id, s]));
+  const titleFor = (id) => (seriesById.get(id) || {}).title || null;
+  const bySeries = groupCoverageBySeries(c.issueCoverage || []);
+
+  let html = `<div class="cx-kicker">COLLECTED EDITION</div><h2 class="cx-title">${esc(c.title)}</h2>`;
+  html += `<div class="cx-tag-row"><span class="tag">${esc(c.format || "Collection")}</span>${hasPartialCoverage(c.issueCoverage) ? `<span class="tag">partial coverage</span>` : ""}<span class="tag">${esc(verificationLabel(c.sourceInfo))}</span></div>`;
+  const factsRows = [
+    ["Publisher", c.publisher], ["Publication date", c.publicationDate], ["Pages", c.pageCount ? String(c.pageCount) : ""],
+    ["ISBN", c.isbn], ["Edition", c.editionInfo && (c.editionInfo.editionName || c.editionInfo.editionNumber) ? [c.editionInfo.editionName, c.editionInfo.editionNumber].filter(Boolean).join(" ") : ""],
+  ].filter(([, v]) => v);
+  if (factsRows.length) {
+    html += `<div class="sheet-section"><div class="cx-fact-list">${factsRows.map(([k, v]) => `<div class="cx-fact"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join("")}</div></div>`;
+  }
+  html += `<div class="sheet-section"><div class="sheet-label">EXACT ISSUE COVERAGE</div>`;
+  for (const [seriesId, rows] of bySeries.entries()) {
+    const nums = rows.map(r => parseFloat(String(r.issueLabel || "").replace(/[^\d.]/g, ""))).filter(n => !isNaN(n));
+    const domain = nums.length ? { min: Math.min(...nums), max: Math.max(...nums) } : { min: 0, max: 1 };
+    const segs = coverageBarSegments(rows, domain.min, domain.max);
+    html += `<div class="cx-coverage-row">
+      <div class="cx-coverage-row-title">${esc(titleFor(seriesId) || seriesId)}</div>
+      <div class="cx-coverage-bar"><div class="cx-coverage-track">${segs.map(s => `<div class="cx-coverage-seg" style="left:${s.leftPct}%;width:${s.widthPct}%;"></div>`).join("")}</div></div>
+      <div class="cx-coverage-row-range">${esc(compressCoverageRows(rows))}</div>
+    </div>`;
+  }
+  html += `</div>`;
+  html += `<div class="sheet-section"><div class="sheet-label">ALL ISSUES IN THIS EDITION</div><div class="cx-list" id="cxIssueExpandList" data-collapsed="true">`;
+  const allRows = (c.issueCoverage || []);
+  html += allRows.map(r => `<div class="cx-row" style="cursor:default;"><div class="cx-row-body"><div class="cx-row-title">${esc(titleFor(r.seriesId) || "")} ${esc(displayLabelSafe(r))}</div></div>${r.coveragePart === "partial" ? `<span class="tag">partial</span>` : ""}</div>`).join("");
+  html += `</div><button class="cx-entry-btn" id="cxToggleIssues" style="margin-top:8px;">Show individual issues</button></div>`;
+
+  if (overlapping.length) {
+    html += `<div class="sheet-section"><div class="sheet-label">OTHER EDITIONS COVERING SOME OF THE SAME ISSUES</div><div class="cx-compare-list">`;
+    html += [c, ...overlapping].map(ed => `<div class="cx-compare-card">
+        <div class="cx-compare-format">${esc(ed.format || "Collection")}${ed.id === c.id ? ` <span class="tag">this edition</span>` : ""}</div>
+        <div class="cx-row-title">${esc(ed.title)}</div>
+        <div class="cx-row-sub">${esc(formatEditionMeta(ed))}${ed.isbn ? ` · ISBN ${esc(ed.isbn)}` : ""}</div>
+        <div class="cx-row-sub">${esc(coverageSummaryLines(ed.issueCoverage, titleFor).join(" · "))}</div>
+      </div>`).join("");
+    html += `</div><div class="cx-hint">Shown factually, side by side — no ranking or "best pick" between editions.</div></div>`;
+  }
+  html += `<div class="sheet-section"><div class="cx-entry-grid">
+    ${seriesEnts.filter(Boolean).length === 1 ? `<button class="cx-entry-btn" data-act="view-series"><span class="cx-entry-btn-label">View Series</span></button>` : ""}
+  </div></div>`;
+  if (isNerd()) html += nerdBlock({ id: c.id, seriesIds: c.seriesIds, storyIds: c.storyIds, verification: c.sourceInfo });
+  return {
+    html,
+    wire(container) {
+      const toggle = container.querySelector("#cxToggleIssues");
+      const list = container.querySelector("#cxIssueExpandList");
+      if (toggle && list) {
+        list.style.display = "none";
+        toggle.addEventListener("click", () => {
+          const open = list.style.display !== "none";
+          list.style.display = open ? "none" : "";
+          toggle.textContent = open ? "Show individual issues" : "Hide individual issues";
+        });
+      }
+      const viewSeriesBtn = container.querySelector('[data-act="view-series"]');
+      if (viewSeriesBtn) {
+        viewSeriesBtn.addEventListener("click", () => {
+          const s = seriesEnts.filter(Boolean)[0];
+          if (s) pushLevel("series", s.title, { series: s });
+        });
+      }
+    },
+  };
+}
+function displayLabelSafe(row) {
+  const lbl = row.issueLabel;
+  if (lbl == null) return "?";
+  const s = String(lbl);
+  return s.startsWith("#") || /^[A-Za-z]/.test(s) ? s : `#${s}`;
 }
 
 const LEVELS = {
@@ -502,6 +713,8 @@ const LEVELS = {
   run: levelRun,
   story: levelStory,
   issue: levelIssue,
+  readingPath: levelReadingPath,
+  collection: levelCollection,
 };
 
 /* ============================= shell (breadcrumb + back) ============================= */

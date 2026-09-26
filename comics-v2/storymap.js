@@ -28,8 +28,13 @@
 // "?v=p4" — data.js gained new batched helpers in Pointer 4; the query string makes
 // browsers fetch the new file even if an older data.js is still cached (GitHub Pages
 // caches for ~10 min). It is only a separate module instance of the same stateless file.
-import * as data from "./data.js?v=p4";
+import * as data from "./data.js?v=p5";
 import { COLLECTIONS } from "./schema.js";
+import {
+  pathTypeLabel, sortPathsByType, pathEntryCount, locateInPath,
+  groupCoverageBySeries, compressCoverageRows, coverageSummaryLines,
+  hasPartialCoverage, formatEditionMeta, verificationLabel,
+} from "./reading-collections.js";
 
 /* ============================= utils ============================= */
 const esc = (s) => s == null ? "" : String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -121,6 +126,13 @@ async function ensureRels(ids) {
 }
 const relsFor = (id) => [...(RELS_BY_ENT.get(id) || [])].map(rid => RELS.get(rid)).filter(Boolean);
 
+/* Pointer 5 — small per-node UI state for the detail panel's Reading Path
+   picker and Collection accordion (progressive disclosure). Keyed by the
+   map node's key so switching selected nodes doesn't leak state between them;
+   cleared whenever a fresh Story Map session opens (see newSession). */
+let SM_PATH_SELECTION = new Map();   // nodeKey -> selected readingPath id
+let SM_COLL_EXPANDED = new Map();    // nodeKey -> Set(collection id) currently expanded
+
 /* runs for many series in one batched read */
 const RUNS_BY_SERIES = new Map();
 async function ensureRunsFor(seriesIds) {
@@ -207,6 +219,8 @@ function runIssueRange(r) {
 let S = null; // current map session
 
 function newSession(rootType, rootId, opts) {
+  SM_PATH_SELECTION = new Map();
+  SM_COLL_EXPANDED = new Map();
   return {
     rootType, rootId, opts: opts || {},
     nodes: new Map(), rootKey: null, focusKey: null, selectedKey: null,
@@ -882,6 +896,68 @@ async function renderDetail() {
   requestAnimationFrame(() => { if (S && S.selectedKey === n.key) focusOn(n, false); });
 }
 function factRow(label, value) { return value ? `<div class="sm-d-fact"><span>${esc(label)}</span><span>${esc(value)}</span></div>` : ""; }
+
+/* ============================= Pointer 5: Reading Paths + Collections in the detail panel =============================
+   Both render entirely inside the existing sm-detail panel — collections/paths never become their own Story Map
+   graph nodes (Part 11: the graph stays narrative-only), and picking one re-renders the SAME detail panel via the
+   existing renderDetail() pipeline (state kept in SM_PATH_SELECTION / SM_COLL_EXPANDED, keyed by node). */
+async function readingPathsSectionHtml(nodeKey, paths, anchorEntityId) {
+  if (!paths || !paths.length) return "";
+  const sorted = sortPathsByType(paths);
+  const chips = sorted.map((p, idx) => {
+    const onPath = anchorEntityId ? locateInPath(p, anchorEntityId).index !== -1 : false;
+    const selected = SM_PATH_SELECTION.get(nodeKey) === p.id;
+    return `<button class="sm-d-path-chip" data-pathtype-idx="${idx}" data-on-path="${onPath}" data-selected="${selected}">${esc(pathTypeLabel(p.pathType))}<span class="sm-d-path-n">${pathEntryCount(p)}</span></button>`;
+  }).join("");
+  let out = `<div class="sm-d-section"><div class="sm-d-label">Reading paths</div><div class="sm-d-path-chips">${chips}</div>`;
+  const selectedId = SM_PATH_SELECTION.get(nodeKey);
+  const selectedPath = selectedId ? sorted.find(p => p.id === selectedId) : null;
+  if (selectedPath) {
+    const entries = selectedPath.entries || [];
+    const { index: curIdx, next } = locateInPath(selectedPath, anchorEntityId);
+    const resolved = await Promise.all(entries.map(async (en) => {
+      const col = COL_BY_TYPE[en.entityType];
+      const ent = col ? await getOne(col, en.entityId) : null;
+      return { en, label: ent ? entityTitle(en.entityType, ent) : (en.entityId || "Unknown") };
+    }));
+    out += `<div class="sm-d-path-detail">`;
+    if (selectedPath.description) out += `<p class="sm-d-desc">${esc(selectedPath.description)}</p>`;
+    if (curIdx !== -1) {
+      out += `<div class="sm-d-hint">Step ${curIdx + 1} of ${entries.length}${next ? ` — next: ${esc(resolved[curIdx + 1] ? resolved[curIdx + 1].label : "")}` : " — final step on this path."}</div>`;
+    }
+    out += resolved.map((r, i) => `<div class="sm-d-path-entry" data-current="${i === curIdx}"><span class="sm-d-path-order">${r.en.order != null ? r.en.order : i + 1}</span><span>${esc(r.label)}</span>${r.en.note ? `<span class="sm-d-path-note">${esc(r.en.note)}</span>` : ""}</div>`).join("");
+    out += `</div>`;
+  }
+  out += `</div>`;
+  return out;
+}
+async function collectedInSectionHtml(nodeKey, collections) {
+  if (!collections || !collections.length) return "";
+  const seriesIds = [...new Set(collections.flatMap(c => (c.issueCoverage || []).map(r => r.seriesId).filter(Boolean)))];
+  const seriesEnts = await getMany(COLLECTIONS.SERIES, seriesIds);
+  const titleFor = (id) => { const s = seriesEnts.find(x => x.id === id); return s ? entityTitle("series", s) : null; };
+  const rows = collections.map((c, idx) => {
+    const expanded = (SM_COLL_EXPANDED.get(nodeKey) || new Set()).has(c.id);
+    const lines = coverageSummaryLines(c.issueCoverage, titleFor);
+    let card = `<button class="sm-d-coll-card" data-coll-idx="${idx}" data-expanded="${expanded}">
+      <div class="sm-d-coll-title">${esc(c.title)}${hasPartialCoverage(c.issueCoverage) ? ` <span class="sm-d-coll-tag">partial</span>` : ""}</div>
+      <div class="sm-d-coll-meta">${esc(formatEditionMeta(c))}</div>
+      <div class="sm-d-coll-meta">${esc(lines.join(" · "))}</div>
+    </button>`;
+    if (expanded) {
+      const bySeries = groupCoverageBySeries(c.issueCoverage);
+      const rangeLines = [...bySeries.entries()].map(([sid, rws]) => `${esc(titleFor(sid) || sid)} ${esc(compressCoverageRows(rws))}`);
+      card += `<div class="sm-d-coll-expand">
+        ${factRow("ISBN", c.isbn)}
+        ${factRow("Verification", verificationLabel(c.sourceInfo))}
+        ${rangeLines.map(l => `<div class="sm-d-fact"><span>Coverage</span><span>${l}</span></div>`).join("")}
+        <button class="sm-d-action" data-goto-type="collection" data-goto-id="${esc(c.id)}">Open full collection page</button>
+      </div>`;
+    }
+    return card;
+  }).join("");
+  return `<div class="sm-d-section"><div class="sm-d-label">Collected in</div><div class="sm-d-coll-list">${rows}</div></div>`;
+}
 async function detailBodyHtml(n, t) {
   const e = n.e;
   const parts = [];
@@ -908,6 +984,8 @@ async function detailBodyHtml(n, t) {
     if (runs) facts.push(factRow("Creative runs", String(runs.length)));
     if (creators.length) facts.push(factRow("Creators", creators.map(c => c.displayName || c.name).join(", ")));
     if (e.description) parts.push(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
+    const seriesPaths = await memo("rp:series:" + e.id, () => data.getReadingPathsFor({ continuityId: (e.continuityIds || [])[0] || null }));
+    parts.push(await readingPathsSectionHtml(n.key, seriesPaths, e.id));
   } else if (t === "run") {
     const [creators, series] = await Promise.all([getMany(COLLECTIONS.CREATORS, e.creatorIds || []), getOne(COLLECTIONS.SERIES, e.seriesId)]);
     facts.push(factRow("Series", series && entityTitle("series", series)));
@@ -916,6 +994,8 @@ async function detailBodyHtml(n, t) {
     facts.push(factRow("Years", yearRange(e.startDate, e.endDate)));
     if (n.pool) facts.push(factRow("Stories", String(n.pool.length)));
     if (e.description) parts.push(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
+    const runPaths = await memo("rp:run:" + e.id, () => data.getReadingPathsFor({ continuityId: series ? (series.continuityIds || [])[0] || null : null }));
+    parts.push(await readingPathsSectionHtml(n.key, runPaths, e.seriesId));
   } else if (t === "story" || t === "event") {
     const [issues, series, creators, chars, run] = await Promise.all([
       memo("ifs:" + e.id, () => data.getIssuesForStory(e.id)).then(l => remember(COLLECTIONS.ISSUES, l)),
@@ -934,6 +1014,10 @@ async function detailBodyHtml(n, t) {
     if (coverage.length) parts.push(`<div class="sm-d-section"><div class="sm-d-label">Issue coverage</div><div class="sm-d-coverage">${coverage.map(c => `<div>${esc(c)}</div>`).join("")}</div></div>`);
     if (chars.length) parts.push(`<div class="sm-d-section"><div class="sm-d-label">Characters</div><div class="sm-d-names">${chars.slice(0, 8).map(c => esc(c.displayName || c.name)).join(" · ")}${chars.length > 8 ? ` · +${chars.length - 8}` : ""}</div></div>`);
     if (e.description) parts.unshift(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
+    const storyPaths = await memo("rp:story:" + e.id, () => data.getReadingPathsFor({ continuityId: e.continuityId || null }));
+    parts.push(await readingPathsSectionHtml(n.key, storyPaths, e.id));
+    const storyColls = await memo("cs:" + e.id, () => data.getCollectionsForStory(e.id, e.issueIds));
+    parts.push(await collectedInSectionHtml(n.key, storyColls));
   } else if (t === "issue") {
     const [series, stories, creators] = await Promise.all([
       getOne(COLLECTIONS.SERIES, e.seriesId), getMany(COLLECTIONS.STORIES, e.storyIds || []), getMany(COLLECTIONS.CREATORS, e.creatorIds || []),
@@ -943,6 +1027,8 @@ async function detailBodyHtml(n, t) {
     facts.push(factRow("Published", e.publicationDate || e.coverDate));
     if (stories.length) facts.push(factRow("Story", stories.map(s => s.title).join(", ")));
     if (creators.length) facts.push(factRow("Creators", creators.map(c => c.displayName || c.name).join(" · ")));
+    const issueColls = await memo("ci:" + e.id, () => data.getCollectionsContainingIssue(e.id));
+    parts.push(await collectedInSectionHtml(n.key, issueColls));
   }
   // Relationships (both directions), with the other end resolved to a name.
   await ensureRels([e.id]);
@@ -1252,13 +1338,46 @@ function wireShell() {
       const col = COL_BY_TYPE[type];
       const ent = col ? await getOne(col, id) : null;
       if (!ent) return;
-      const lvl = { story: "story", event: "story", series: "series", run: "run", issue: "issue", character: "character", continuity: "continuity" }[type];
+      const lvl = { story: "story", event: "story", series: "series", run: "run", issue: "issue", character: "character", continuity: "continuity", collection: "collection" }[type];
       if (!lvl) return;
-      const params = lvl === "story" ? { story: ent } : lvl === "run" ? { run: ent, series: await getOne(COLLECTIONS.SERIES, ent.seriesId) } : { [lvl]: ent };
-      openExplorer([{ level: lvl, label: entityTitle(type === "event" ? "story" : type, ent), params }]);
+      const params = lvl === "story" ? { story: ent }
+        : lvl === "run" ? { run: ent, series: await getOne(COLLECTIONS.SERIES, ent.seriesId) }
+        : lvl === "collection" ? { collectionEntity: ent }
+        : { [lvl]: ent };
+      openExplorer([{ level: lvl, label: lvl === "collection" ? ent.title : entityTitle(type === "event" ? "story" : type, ent), params }]);
     }
     const d = e.target.closest(".sm-d-desc[data-clamp]");
     if (d) d.dataset.clamp = d.dataset.clamp === "true" ? "false" : "true";
+
+    // Pointer 5: reading-path chip select/deselect (progressive disclosure — never a wall of buttons).
+    const pathBtn = e.target.closest("[data-pathtype-idx]");
+    if (pathBtn && n) {
+      const t = displayType(n);
+      const paths = t === "series" ? await memo("rp:series:" + n.id, () => data.getReadingPathsFor({ continuityId: (n.e.continuityIds || [])[0] || null }))
+        : t === "run" ? await memo("rp:run:" + n.id, async () => { const s = await getOne(COLLECTIONS.SERIES, n.e.seriesId); return data.getReadingPathsFor({ continuityId: s ? (s.continuityIds || [])[0] || null : null }); })
+        : (t === "story" || t === "event") ? await memo("rp:story:" + n.id, () => data.getReadingPathsFor({ continuityId: n.e.continuityId || null }))
+        : [];
+      const p = sortPathsByType(paths)[+pathBtn.dataset.pathtypeIdx];
+      if (p) SM_PATH_SELECTION.set(n.key, SM_PATH_SELECTION.get(n.key) === p.id ? null : p.id);
+      renderDetail();
+      return;
+    }
+    // Pointer 5: collection accordion expand/collapse ("Collected in").
+    const collBtn = e.target.closest("[data-coll-idx]");
+    if (collBtn && n) {
+      const t = displayType(n);
+      const list = (t === "story" || t === "event") ? await memo("cs:" + n.id, () => data.getCollectionsForStory(n.id, n.e.issueIds))
+        : t === "issue" ? await memo("ci:" + n.id, () => data.getCollectionsContainingIssue(n.id))
+        : [];
+      const c = list[+collBtn.dataset.collIdx];
+      if (c) {
+        const set = SM_COLL_EXPANDED.get(n.key) || new Set();
+        if (set.has(c.id)) set.delete(c.id); else set.add(c.id);
+        SM_COLL_EXPANDED.set(n.key, set);
+      }
+      renderDetail();
+      return;
+    }
   });
   // Bottom-nav taps (phones) leave the map — the site's nav must always work (Phase 14 rule).
   const mnav = document.getElementById("mobileNav");

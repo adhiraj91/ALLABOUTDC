@@ -20,6 +20,7 @@ import * as data from "./data.js";
 import { COLLECTIONS } from "./schema.js";
 import { collectionIsReachable, upsertEntity, upsertCollectionEdition } from "./data.js";
 import { dataset as batmanNew52Dataset, validateDataset as validateBatmanNew52, importDataset as importBatmanNew52Dataset } from "./seed-batman-new52.js";
+import { collectionAdditions as batmanNew52CollectionAdditions, validateCollectionAdditions as validateBatmanNew52CollectionAdditions, importCollectionAdditions as importBatmanNew52CollectionAdditions } from "./seed-batman-new52-collections.js";
 
 /* ---------------------------------------------------------------------------
    Foundation self-test — the "minimal developer utility necessary to verify
@@ -91,4 +92,22 @@ const batmanNew52 = {
   import: () => importBatmanNew52Dataset({ upsertEntity, upsertCollectionEdition, COLLECTIONS }),
 };
 
-window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52 };
+/* ---------------------------------------------------------------------------
+   POINTER 5 — Batman New 52 collection RESEARCH ADDITIONS
+   (comics-v2/seed-batman-new52-collections.js).
+   Same opt-in shape as batmanNew52 above: read-only inspection
+   (`batmanNew52Collections.additions` / `.validate()`) never writes anything.
+   NOT auto-imported anywhere in this file or in any UI button — importing is
+   a deliberate, explicit console call (`await __comicsV2.batmanNew52Collections.import()`)
+   a human runs only after reviewing the additions (5 new comicCollections
+   records — Zero Year x2, Endgame, Superheavy, Bloom — see the Pointer 5
+   final report for the full added/updated/sources breakdown). It never
+   touches or overwrites the seed-batman-new52.js dataset already imported.
+--------------------------------------------------------------------------- */
+const batmanNew52Collections = {
+  additions: batmanNew52CollectionAdditions,
+  validate: validateBatmanNew52CollectionAdditions,
+  import: () => importBatmanNew52CollectionAdditions({ upsertCollectionEdition }),
+};
+
+window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52, batmanNew52Collections };

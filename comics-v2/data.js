@@ -182,7 +182,7 @@ export async function getCollectionsContainingIssue(issueId) {
   return docsOf(await getDocs(q));
 }
 
-/** "What collections contain this story". */
+/** "What collections contain this story" — by the collection's own explicit storyIds link. */
 export async function getCollectionsContainingStory(storyId) {
   const q = query(collection(db, COLLECTIONS.COLLECTIONS), where("storyIds", "array-contains", storyId));
   return docsOf(await getDocs(q));
@@ -235,6 +235,67 @@ export async function getReadingPathsForCharacter(characterId) {
 export async function getReadingPathsForContinuity(continuityId) {
   const q = query(collection(db, COLLECTIONS.READING_PATHS), where("continuityId", "==", continuityId));
   return docsOf(await getDocs(q));
+}
+
+/**
+ * Pointer 5 — "offer reading paths from a series/run/story": reading paths are
+ * scoped by characterId/continuityId/universeId (there is no seriesId/runId
+ * field on comicReadingPaths — see schema.js), so this merges the character-
+ * scoped and continuity-scoped queries above (whichever ids the caller has),
+ * de-duplicated by id. Still two targeted queries at most, never a bulk scan.
+ */
+export async function getReadingPathsFor({ characterId, continuityId } = {}) {
+  const [byChar, byCont] = await Promise.all([
+    characterId ? getReadingPathsForCharacter(characterId) : [],
+    continuityId ? getReadingPathsForContinuity(continuityId) : [],
+  ]);
+  const byId = new Map();
+  [...byChar, ...byCont].forEach(p => byId.set(p.id, p));
+  return [...byId.values()];
+}
+
+/**
+ * Pointer 5 — "compare editions covering the same story/run": collections
+ * whose issueCoverage overlaps ANY of the given issue ids (excluding the
+ * collection the caller already has). Bounded fan-out: at most 12 targeted
+ * array-contains reads regardless of how big the source collection's own
+ * coverage is (a long omnibus samples across its range rather than firing
+ * one query per issue), so this stays contextual/capped per Step 19.
+ */
+export async function getCollectionsSharingIssues(issueIds, excludeId = null) {
+  const uniq = [...new Set((issueIds || []).filter(Boolean))];
+  if (!uniq.length) return [];
+  const sample = uniq.length > 12
+    ? uniq.filter((_, i) => i % Math.ceil(uniq.length / 12) === 0)
+    : uniq;
+  const lists = await Promise.all(sample.map(id => getCollectionsContainingIssue(id)));
+  const byId = new Map();
+  lists.flat().forEach(c => { if (c.id !== excludeId) byId.set(c.id, c); });
+  return [...byId.values()];
+}
+
+/**
+ * "What collections cover this story" — the ROBUST version of
+ * getCollectionsContainingStory(), for callers that have the story's own
+ * issueIds handy (every comicStories document already has this — see
+ * schema.js's makeStory). Collections in the ALREADY-IMPORTED Batman New 52
+ * dataset (Pointer 2) only ever recorded issueCoverage, never storyIds (that
+ * field existed in the schema but wasn't populated), so looking a story up
+ * by storyIds alone silently misses every one of those real, already-in-
+ * production collections. This merges BOTH signals — storyIds (for any
+ * collection that does set it, including this pointer's own additions) and
+ * issue overlap (for every collection that doesn't) — so "Collected in"
+ * works against real production data as it already exists, not just newly
+ * authored records.
+ */
+export async function getCollectionsForStory(storyId, issueIds) {
+  const [byStoryId, byIssues] = await Promise.all([
+    getCollectionsContainingStory(storyId),
+    getCollectionsSharingIssues(issueIds || []),
+  ]);
+  const byId = new Map();
+  [...byStoryId, ...byIssues].forEach(c => byId.set(c.id, c));
+  return [...byId.values()];
 }
 
 /* ---------------------------------------------------------------------------
