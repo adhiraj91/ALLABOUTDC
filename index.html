@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=35">
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 
@@ -351,13 +351,17 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=44"></script>
+<script type="module" src="app.js?v=45"></script>
 <!-- Comics domain-model foundation (Phase 1) — independent of app.js, renders nothing, adds no UI.
      Loading it only attaches window.__comicsV2 for developer verification (see comics-v2/index.js). -->
 <script type="module" src="comics-v2/index.js?v=1"></script>
 <!-- Interactive Comics Continuity Explorer (Phase 3 / Pointer 3) — independent of app.js, same as
      comics-v2/index.js. Adds one entry-point button inside the existing Comics tab (app.js renders
      it, id="comicsExplorerEntryBtn") plus its own sheet UI (#comicsExplorerSheet above). -->
-<script type="module" src="comics-v2/explorer.js?v=1"></script>
+<script type="module" src="comics-v2/explorer.js?v=2"></script>
+<!-- Pointer 4: dedicated Comics landing (what the Comics tab opens; app.js delegates to it and falls back to
+     the old catalogue if it hasn't loaded) + the zoomable/expandable Comics Story Map. Both independent of app.js. -->
+<script type="module" src="comics-v2/landing.js?v=1"></script>
+<script type="module" src="comics-v2/storymap.js?v=1"></script>
 </body>
 </html>
