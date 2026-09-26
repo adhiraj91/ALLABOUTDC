@@ -3112,6 +3112,42 @@ const adminToolsBackdrop = $("#adminToolsBackdrop"), adminToolsSheet = $("#admin
 adminToolsBackdrop.addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 $("#adminToolsClose").addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 
+/* Comics-v2 (beta): one-tap import button for the New 52 Batman dataset built in comics-v2/seed-batman-new52.js.
+   Fully independent of the rest of Admin Tools — talks only to window.__comicsV2 (comics-v2/index.js). */
+$("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
+  const btn = $("#importBatmanNew52Btn"), msg = $("#importBatmanNew52Msg");
+  if(!window.__comicsV2 || !window.__comicsV2.batmanNew52){
+    msg.textContent = "Comics v2 module not loaded — check that comics-v2/index.js is uploaded.";
+    msg.className = "form-msg err";
+    return;
+  }
+  btn.disabled = true;
+  msg.textContent = "Importing…";
+  msg.className = "form-msg";
+  try{
+    const result = await window.__comicsV2.batmanNew52.import();
+    if(result?.validation && !result.validation.valid){
+      msg.textContent = "Dataset failed validation — nothing was written: " + JSON.stringify(result.validation.errors || result.validation);
+      msg.className = "form-msg err";
+      return;
+    }
+    const total = Object.values(result?.written || {}).reduce((a,b)=>a+b, 0);
+    if(result?.errors?.length){
+      msg.textContent = `Wrote ${total} records, but ${result.errors.length} failed: ${result.errors.slice(0,3).join(" | ")}`;
+      msg.className = "form-msg err";
+    }else{
+      msg.textContent = `Done — imported ${total} records across ${Object.keys(result?.written||{}).length} collections.`;
+      msg.className = "form-msg ok";
+    }
+  }catch(err){
+    console.error(err);
+    msg.textContent = "Import failed: " + (err?.message || err);
+    msg.className = "form-msg err";
+  }finally{
+    btn.disabled = false;
+  }
+});
+
 $("#readerGoAdminTools").addEventListener("click", ()=>{
   closeSheetEl(readerBackdrop, readerSheet);
   renderAdminDataHealth();
