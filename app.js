@@ -4,7 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import {
   signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider,
-  signOut, onAuthStateChanged
+  signOut, onAuthStateChanged, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
 /* ============================= CONFIG ============================= */
@@ -190,10 +190,14 @@ async function upsertReaderProfile(user){
     else await setDoc(ref, { ...base, createdAt: serverTimestamp() });
   }catch(e){ console.warn("[Reader] profile upsert failed:", e.message); }
 }
-// Admin is a separate ROLE, not "any signed-in user" — checked against a server-side allowlist
-// (admins/{uid}) that only Firestore security rules and the site owner (via the Firebase console) can
-// write to. A reader signing up/in through Google or email/password can never become admin this way.
+// Admin is a separate ROLE, not "any signed-in user". The REAL enforcement is firestore.rules, which grants
+// catalogue writes to exactly one hardcoded UID. This client-side check only decides whether to SHOW the
+// admin tools, and mirrors the same UID so the UI and the rules can never disagree. (The legacy
+// admins/{uid} lookup is kept as a fallback for older rule versions; with the current rules that read is
+// denied and simply returns false.) A reader signing in via Google/email can never become admin.
+const ADMIN_UID = "LKn2UQKsUMcb26Fe4eFeuTxmONm1";
 async function checkIsAdmin(uid){
+  if(uid === ADMIN_UID) return true;
   try{
     const snap = await getDoc(doc(db, "admins", uid));
     return snap.exists();
@@ -276,6 +280,10 @@ async function loadAll(){
     }
   }
   loaded = true;
+  // Phase 14: a refresh restores the tab you were on (from the URL hash) instead of dumping you on Home.
+  const fromHash = tabFromHash();
+  if(fromHash) state.cat = fromHash;
+  history.replaceState({cat:state.cat}, "", location.href);
   render();
 }
 loadAll().catch(err=>{
@@ -487,115 +495,242 @@ function getRecommendations(heroId, medium, intent, opts){
   return ranked.slice(0, limit);
 }
 
-/* ---- Journey persistence: the saved "sequence" from a completed New to DC flow (Phase 2) ----
-   Stored locally (fast, always available) and mirrored to users/{uid}/preferences/dcJourney when
-   signed in. Titles are referenced by the same stable "cat::title::year" titleKey used by curated
-   recommendation data — never a raw Firestore doc id, which changes on every catalogue re-import. */
-const LS_JOURNEY_KEY = "dc_journey";
-function getSavedJourney(){ return lsGetJson(LS_JOURNEY_KEY, null); }
-function setSavedJourney(journey){
-  lsSetJson(LS_JOURNEY_KEY, journey);
-  if(readerUser) syncJourneyToCloud(readerUser.uid, journey);
+/* ============================= JOURNEYS (Phases 8, 10, 11, 12, 15) =============================
+   A reader can have MANY journeys at once — a New to DC starter path, branches spawned from it ("Go deeper",
+   "Keep watching"…), and comics reading paths. Starting a new journey never deletes an old one.
+
+   Storage (logged out): localStorage "dc_journeys" = { activeId, journeys:[…] }.
+   Storage (logged in):  the same object mirrored to users/{uid}/preferences/dcJourneys, merged per-journey by
+                         id on login (newest updatedAt wins), so journeys follow the reader across devices.
+   Journeys store ONLY ids + state — titles are referenced by the stable "cat::title::year" titleKey (never a
+   Firestore doc id, which changes on every catalogue re-import) and never duplicated.
+   Done/not-done is the site-wide progress store (isDone), so finishing a title counts in every journey.
+
+   Journey shape: { id, kind:"starter"|"branch"|"comics", title, heroGroup, selectedHero, selectedMedium,
+                    selectedIntent, parentId, branchMode, continuity, pathOrder, recommendedTitleKeys[],
+                    completedAt{itemKey:iso}, createdAt, updatedAt }
+   The legacy single-journey key "dc_journey" (and cloud doc preferences/dcJourney) is migrated once. */
+const LS_JOURNEY_KEY = "dc_journey";     // legacy single journey — read once for migration, never written
+const LS_JOURNEYS_KEY = "dc_journeys";
+function newJourneyId(){ return "j_" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function legacyJourneyToEntry(legacy){
+  if(!legacy || !Array.isArray(legacy.recommendedTitleKeys)) return null;
+  // Deterministic id from createdAt so the same legacy journey migrated on two devices merges, not duplicates.
+  return { ...legacy, id: legacy.id || ("legacy_" + (legacy.createdAt || "0")), kind: legacy.kind || "starter" };
 }
-function syncJourneyToCloud(uid, journey){
-  if(!journey) return;
-  const ref = doc(db, "users", uid, "preferences", "dcJourney");
-  setDoc(ref, { ...journey, updatedAt: serverTimestamp() }).catch(e=>console.warn("[Reader] journey sync failed:", e.message));
+function getJourneyStore(){
+  let store = lsGetJson(LS_JOURNEYS_KEY, null);
+  if(!store || !Array.isArray(store.journeys)){
+    store = { activeId:null, journeys:[] };
+    const migrated = legacyJourneyToEntry(lsGetJson(LS_JOURNEY_KEY, null));
+    if(migrated){ store.journeys.push(migrated); store.activeId = migrated.id; }
+    lsSetJson(LS_JOURNEYS_KEY, store);
+  }
+  if(store.journeys.length && !store.journeys.some(j=>j.id===store.activeId)){
+    store.activeId = [...store.journeys].sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""))[0].id;
+  }
+  return store;
+}
+function saveJourneyStore(store, opts){
+  lsSetJson(LS_JOURNEYS_KEY, store);
+  if(readerUser && !(opts && opts.noSync)) syncJourneysToCloud(readerUser.uid, store);
+}
+function getAllJourneys(){ return getJourneyStore().journeys; }
+function getJourneyById(id){ return getAllJourneys().find(j=>j.id===id) || null; }
+// The ACTIVE journey (what "Continue" shows). Kept under its old name so older call sites keep working.
+function getSavedJourney(){ const s = getJourneyStore(); return s.journeys.find(j=>j.id===s.activeId) || null; }
+// Upsert a journey. `makeActive` defaults to true for brand-new journeys only.
+function upsertJourney(journey, makeActive){
+  const store = getJourneyStore();
+  if(!journey.id) journey.id = newJourneyId();
+  journey.kind = journey.kind || "starter";
+  journey.updatedAt = new Date().toISOString();
+  const idx = store.journeys.findIndex(j=>j.id===journey.id);
+  const isNew = idx<0;
+  if(isNew) store.journeys.unshift(journey); else store.journeys[idx] = journey;
+  if(makeActive===true || (makeActive===undefined && isNew)) store.activeId = journey.id;
+  saveJourneyStore(store);
+  return journey;
+}
+function setSavedJourney(journey){ return upsertJourney(journey, true); }
+function setActiveJourney(id){
+  const store = getJourneyStore();
+  if(!store.journeys.some(j=>j.id===id)) return;
+  store.activeId = id;
+  saveJourneyStore(store);
+}
+function syncJourneysToCloud(uid, store){
+  const ref = doc(db, "users", uid, "preferences", "dcJourneys");
+  setDoc(ref, { activeId: store.activeId || null, journeys: store.journeys, updatedAt: serverTimestamp() })
+    .catch(e=>console.warn("[Reader] journeys sync failed:", e.message));
 }
 async function pullJourneyFromCloud(uid){
   try{
-    const snap = await getDoc(doc(db, "users", uid, "preferences", "dcJourney"));
-    const local = getSavedJourney();
-    if(snap.exists() && !local){
-      lsSetJson(LS_JOURNEY_KEY, snap.data());
-    } else if(local){
-      // Local journey is the source of truth if both exist (avoid over-engineering a merge here) —
-      // still push it up so a fresh device without one adopts it.
-      syncJourneyToCloud(uid, local);
-    }
+    const local = getJourneyStore();
+    const [snap, legacySnap] = await Promise.all([
+      getDoc(doc(db, "users", uid, "preferences", "dcJourneys")),
+      getDoc(doc(db, "users", uid, "preferences", "dcJourney")),
+    ]);
+    const cloudJourneys = snap.exists() && Array.isArray(snap.data().journeys) ? snap.data().journeys : [];
+    const legacyCloud = legacySnap.exists() ? legacyJourneyToEntry(legacySnap.data()) : null;
+    const byId = new Map();
+    [...cloudJourneys, ...(legacyCloud?[legacyCloud]:[]), ...local.journeys].forEach(j=>{
+      if(!j || !j.id) return;
+      const prev = byId.get(j.id);
+      if(!prev || (j.updatedAt||"") >= (prev.updatedAt||"")) byId.set(j.id, j);   // newest edit wins, never deletes
+    });
+    const merged = [...byId.values()].sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+    let activeId = local.activeId;
+    if(!merged.some(j=>j.id===activeId)) activeId = snap.exists() ? snap.data().activeId : null;
+    if(!merged.some(j=>j.id===activeId)) activeId = merged[0] ? merged[0].id : null;
+    const store = { activeId, journeys: merged };
+    saveJourneyStore(store, {noSync:true});
+    syncJourneysToCloud(uid, store);
   }catch(e){ console.warn("[Reader] journey pull failed:", e.message); }
 }
-/* ---- Phase 8 (CRITICAL): journey must not stop dead at completion. When every item is marked done,
-   we surface real, working next-step choices. Each choice re-scores the catalogue with the same ranked
-   engine used to build the original journey (scoreCandidate / buildCandidatePool / buildBroaderPool —
-   never a random fill) and APPENDS new picks onto the same journey, excluding anything already in it —
-   so the journey keeps growing rather than being replaced or duplicated. */
-const JOURNEY_BRANCH_OPTIONS = [
-  { id:"deeper",       label:h=>`Go deeper into ${h}`,          sub:"More of everything for this hero" },
-  { id:"comics",       label:h=>`Explore ${h} comics`,          sub:"Add comic-book picks to your journey" },
-  { id:"wider",        label:()=>"Explore the wider DC Universe", sub:"Branch out to shared-universe titles" },
-  { id:"keepwatching", label:()=>"Keep watching",                sub:"More movies & series for this hero" },
-  { id:"surprise",     label:()=>"Surprise me",                  sub:"A wildcard pick from the whole compendium" },
-];
-function journeyExistingKeys(journey){
-  return new Set(journey.recommendedTitleKeys||[]);
+
+/* ---- Journey helpers ---- */
+function journeyHero(journey){
+  // Starter journeys reference a BEGINNER_CHARACTERS id; comics/branch journeys may reference any real
+  // hero/team group (e.g. "Justice League"). Either way we return the {id,label,group} shape scoring uses.
+  const b = BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero);
+  if(b) return b;
+  const g = journey.heroGroup || journey.selectedHero;
+  return g ? { id:g, label:g, group:g } : null;
 }
-// Extends (never replaces) the saved journey with new ranked picks. Returns how many were actually added
-// so the UI can say plainly when a branch has nothing left to offer, instead of pretending it worked.
-function extendJourney(mode){
-  const journey = getSavedJourney();
-  if(!journey) return { added:0 };
-  const hero = BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero);
-  if(!hero) return { added:0 };
-  const existingKeys = journeyExistingKeys(journey);
+function journeyItems(journey){ return (journey.recommendedTitleKeys||[]).map(resolveTitleKey).filter(Boolean); }
+function journeyStats(journey){
+  const items = journeyItems(journey);
+  const done = items.filter(it=>isDone(it.cat, it.d.id)).length;
+  return { items, done, total:items.length, complete: items.length>0 && done===items.length };
+}
+function journeyTitle(journey){
+  if(journey.title) return journey.title;
+  const h = journeyHero(journey);
+  return `${h ? h.label : "DC"} starting path`;
+}
+const JOURNEY_KIND_LABEL = { starter:"Starting path", branch:"Journey", comics:"Comics reading path" };
 
-  let pool;
-  if(mode==="wider" || mode==="surprise"){
-    pool = buildBroaderPool(new Set()); // score against the whole catalogue, exclude below by key
-  } else {
-    pool = buildCandidatePool(hero); // same hero group — "deeper"/"comics"/"keepwatching"
-  }
-  if(mode==="comics") pool = pool.filter(p=>p.cat==="comics");
-  if(mode==="keepwatching") pool = pool.filter(p=>p.cat==="movies" || p.cat==="series");
-
-  const curated = buildCuratedMap(journey.selectedHero);
-  const scoreIntent = mode==="wider" ? "universe" : (mode==="surprise" ? "surprise" : (journey.selectedIntent||"easiest"));
-  const scoreMedium = mode==="comics" ? "comics" : (mode==="keepwatching" ? "movies" : (journey.selectedMedium||"all"));
-
-  const scored = pool
-    .map(p=>({ cat:p.cat, d:p.d, key:`${p.cat}::${p.d.t}::${p.d.y}` }))
-    .filter(p=>!existingKeys.has(p.key))
-    .map(p=>({ ...p, score:scoreCandidate(p.cat, p.d, hero, scoreMedium, scoreIntent, curated) }))
+/* ---- Phase 8 + 11: past-completion branching ----
+   A finished journey becomes a branch point. Each choice either opens a real existing destination
+   (comics reading paths, the Multiverse Map of continuities) or creates a NEW child journey whose picks are
+   re-scored by the same ranked engine that built the starter path (scoreCandidate — never random, never
+   rating-only). The parent journey is kept, so the reader's history of journeys grows rather than being
+   overwritten. Titles already in ANY journey, or already marked done, are never re-suggested. */
+const JOURNEY_BRANCH_OPTIONS = [
+  { id:"deeper",       label:h=>`Go deeper into ${h}`,           sub:"More essential stories for this hero" },
+  { id:"comics",       label:h=>`Explore ${h} comics`,           sub:"Pick a continuity and start a reading path" },
+  { id:"continuities", label:()=>"Explore DC continuities",      sub:"See how every DC timeline fits together" },
+  { id:"wider",        label:()=>"Explore the wider DC Universe", sub:"Connected team-ups and shared-universe picks" },
+  { id:"keepwatching", label:()=>"Keep watching",                 sub:"More movies & series" },
+  { id:"surprise",     label:()=>"Surprise me",                   sub:"A wildcard path from the whole compendium" },
+];
+function comicsCountForGroup(group){ return (DATA.comics||[]).filter(d=>d.group===group).length; }
+function allJourneyKeys(){
+  const s = new Set();
+  getAllJourneys().forEach(j=>(j.recommendedTitleKeys||[]).forEach(k=>s.add(k)));
+  return s;
+}
+function titleKeyOf(cat, d){ return `${cat}::${d.t}::${d.y}`; }
+function rankBranchPicks(parent, mode, limit){
+  const hero = journeyHero(parent);
+  if(!hero) return [];
+  const exclude = allJourneyKeys();
+  const curated = buildCuratedMap(hero.id);
+  const intent = mode==="wider" ? "universe" : (mode==="surprise" ? "surprise" : (parent.selectedIntent || "meet-hero"));
+  const medium = mode==="keepwatching" ? "movies" : (parent.selectedMedium || "all");
+  const rank = pool => pool
+    .map(p=>({ cat:p.cat, d:p.d, key:titleKeyOf(p.cat, p.d) }))
+    .filter(p=>!exclude.has(p.key) && !isDone(p.cat, p.d.id))
+    .map(p=>({ ...p, score:scoreCandidate(p.cat, p.d, hero, medium, intent, curated) }))
     .sort((a,b)=>b.score-a.score);
 
-  const picks = scored.slice(0, 4);
-  if(!picks.length) return { added:0 };
-
-  journey.recommendedTitleKeys = [...(journey.recommendedTitleKeys||[]), ...picks.map(p=>p.key)];
-  journey.updatedAt = new Date().toISOString();
-  journey.branchHistory = journey.branchHistory || [];
-  journey.branchHistory.push({ mode, at:journey.updatedAt, addedCount:picks.length });
-  setSavedJourney(journey);
-  return { added:picks.length, journey };
+  const heroKeys = new Set(buildCandidatePool(hero).map(p=>itemKey(p.cat,p.d.id)));
+  let tiers;
+  if(mode==="deeper"){
+    tiers = [ buildCandidatePool(hero), buildRelatedPool(hero, heroKeys) ];
+  } else if(mode==="keepwatching"){
+    const ms = p=>p.cat==="movies"||p.cat==="series";
+    tiers = [ buildCandidatePool(hero).filter(ms), buildRelatedPool(hero, heroKeys).filter(ms) ];
+  } else if(mode==="wider"){
+    // Explicitly NOT this hero's own titles: team-ups featuring the hero first, then shared-universe titles.
+    tiers = [ buildRelatedPool(hero, heroKeys), buildBroaderPool(heroKeys) ];
+  } else {
+    tiers = [ buildBroaderPool(new Set()) ];
+  }
+  const out = [], seen = new Set();
+  tiers.forEach(pool=>{
+    rank(pool).forEach(p=>{ if(out.length<limit && !seen.has(p.key)){ seen.add(p.key); out.push(p); } });
+  });
+  return out;
 }
-// Records when a journey item was marked done (journey-scoped only, not the site-wide progress store) so
-// the "Recently Completed" section on My Journey (Phase 12) can show real completion order.
+// Returns { journey } on success, or { error } with a plain-language reason.
+function branchFromJourney(parent, mode){
+  const hero = journeyHero(parent);
+  const heroLabel = hero ? hero.label : "DC";
+  // Re-use an existing branch of the same kind instead of creating duplicates.
+  const existing = getAllJourneys().find(j=>j.parentId===parent.id && j.branchMode===mode);
+  if(existing){ setActiveJourney(existing.id); return { journey:existing }; }
+  const picks = rankBranchPicks(parent, mode, 6);
+  if(!picks.length) return { error:"Nothing new left for this path yet — try another option." };
+  const opt = JOURNEY_BRANCH_OPTIONS.find(o=>o.id===mode);
+  const child = {
+    id: newJourneyId(), kind:"branch", parentId: parent.id, branchMode: mode,
+    title: mode==="surprise" ? "Surprise path" : (mode==="wider" ? "The wider DC Universe" : `${heroLabel}: ${opt.label(heroLabel).replace(/^Go deeper into .*/,"Going deeper")}`),
+    heroGroup: hero ? hero.group : null, selectedHero: parent.selectedHero,
+    selectedMedium: parent.selectedMedium, selectedIntent: parent.selectedIntent,
+    recommendedTitleKeys: picks.map(p=>p.key), completedAt:{}, createdAt: new Date().toISOString(),
+  };
+  setSavedJourney(child);
+  return { journey:child };
+}
+// Journey-scoped completion timestamps (for "Recently Completed"). Applied to EVERY journey that contains the
+// title, since done-state is shared across journeys.
 function recordJourneyCompletion(cat, id, done){
-  const journey = getSavedJourney();
-  if(!journey) return;
-  const key = itemKey(cat, id);
-  journey.completedAt = journey.completedAt || {};
-  if(done) journey.completedAt[key] = new Date().toISOString();
-  else delete journey.completedAt[key];
-  setSavedJourney(journey);
+  const d = (DATA[cat]||[]).find(x=>x.id===id);
+  if(!d) return;
+  const key = titleKeyOf(cat, d), ik = itemKey(cat, id);
+  const store = getJourneyStore();
+  let changed = false;
+  store.journeys.forEach(j=>{
+    if(!(j.recommendedTitleKeys||[]).includes(key)) return;
+    j.completedAt = j.completedAt || {};
+    if(done) j.completedAt[ik] = new Date().toISOString(); else delete j.completedAt[ik];
+    j.updatedAt = new Date().toISOString();
+    changed = true;
+  });
+  if(changed) saveJourneyStore(store);
 }
-function journeyCompletionHtml(journey, heroLabel){
-  const buttons = JOURNEY_BRANCH_OPTIONS.map(opt=>
-    `<button class="journey-branch-btn" data-branch="${opt.id}">
-       <span class="journey-branch-label">${opt.label(heroLabel)}</span>
-       <span class="journey-branch-sub">${opt.sub}</span>
-     </button>`
-  ).join("");
+
+/* ---- Journey rendering ---- */
+function journeyCompletionHtml(journey){
+  const hero = journeyHero(journey);
+  const heroLabel = hero ? hero.label : "DC";
+  const hasComics = hero && comicsCountForGroup(hero.group) > 0;
+  const buttons = JOURNEY_BRANCH_OPTIONS
+    .filter(opt=> opt.id!=="comics" || hasComics)   // never offer a comics path for a hero with no comics in the data
+    .filter(opt=> !(journey.kind==="comics" && opt.id==="comics"))
+    .map(opt=>{
+      const existing = getAllJourneys().find(j=>j.parentId===journey.id && j.branchMode===opt.id);
+      return `<button class="journey-branch-btn" data-branch="${opt.id}">
+         <span class="journey-branch-label">${opt.label(heroLabel)}</span>
+         <span class="journey-branch-sub">${existing ? "Continue this path →" : opt.sub}</span>
+       </button>`;
+    }).join("");
+  const title = journey.kind==="starter"
+    ? `${heroLabel.toUpperCase()} STARTING PATH COMPLETE ✓`
+    : `${journeyTitle(journey).toUpperCase()} COMPLETE ✓`;
+  const sub = journey.kind==="starter" ? "You've got the basics. Where do you want to go next?" : "Where do you want to go next?";
   return `<div class="journey-complete-block" id="journeyCompleteBlock">
-      <div class="journey-complete-title">${heroLabel.toUpperCase()} STARTING PATH COMPLETE ✓</div>
-      <div class="journey-complete-sub">You've got the basics. Where do you want to go next?</div>
+      <div class="journey-complete-title">${title}</div>
+      <div class="journey-complete-sub">${sub}</div>
       <div class="journey-branch-grid">${buttons}</div>
     </div>`;
 }
-function journeyNextUpHtml(nextItem){
+function journeyNextUpHtml(nextItem, idAttr){
   if(!nextItem) return "";
   const catLabel = (CATS.find(c=>c.id===nextItem.cat)||{}).label || nextItem.cat;
-  return `<div class="journey-next-up" id="journeyNextUp" data-cat="${nextItem.cat}" data-id="${nextItem.d.id}">
+  return `<div class="journey-next-up" id="${idAttr||"journeyNextUp"}" data-cat="${nextItem.cat}" data-id="${nextItem.d.id}">
       <span class="journey-next-up-label">NEXT UP</span>
       <span class="journey-next-up-title">${nextItem.d.t}<span class="bc-year">${nextItem.d.y||""}</span></span>
       <span class="journey-next-up-meta">${CAT_ICON[nextItem.cat]||""} ${catLabel}</span>
@@ -603,30 +738,41 @@ function journeyNextUpHtml(nextItem){
     </div>`;
 }
 function renderJourneySequenceHtml(journey){
-  const items = (journey.recommendedTitleKeys||[]).map(resolveTitleKey).filter(Boolean);
+  const { items, done:doneCount, complete } = journeyStats(journey);
   if(!items.length) return "";
-  const heroLabel = (BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero)||{}).label || "DC";
-  const doneCount = items.filter(it=>isDone(it.cat, it.d.id)).length;
+  const hero = journeyHero(journey);
+  const theme = groupTheme(hero ? hero.group : "");
   const rows = items.map((it,i)=>{
     const done = isDone(it.cat, it.d.id);
     const catLabel = (CATS.find(c=>c.id===it.cat)||{}).label || it.cat;
-    return `<div class="journey-seq-item" data-cat="${it.cat}" data-id="${it.d.id}">
+    const extra = it.cat==="comics" && it.d.era ? ` · ${it.d.era}` : "";
+    return `<div class="journey-seq-item" data-cat="${it.cat}" data-id="${it.d.id}" data-done="${done}">
         <div class="journey-seq-num" data-done="${done}">${done?"✓":i+1}</div>
         <div class="journey-seq-body">
           <div class="journey-seq-title">${it.d.t}<span class="bc-year">${it.d.y||""}</span></div>
-          <div class="journey-seq-meta">${CAT_ICON[it.cat]||""} ${catLabel}</div>
+          <div class="journey-seq-meta">${CAT_ICON[it.cat]||""} ${catLabel}${extra}</div>
         </div>
-        <button class="btn btn-small journey-seq-toggle" data-cat="${it.cat}" data-id="${it.d.id}">${done?"Done":"Mark done"}</button>
+        <button class="btn btn-small journey-seq-toggle" data-cat="${it.cat}" data-id="${it.d.id}">${done?"Done ✓":"Mark done"}</button>
       </div>`;
   }).join("");
-  const allDone = doneCount===items.length;
-  const nextItem = !allDone ? items.find(it=>!isDone(it.cat, it.d.id)) : null;
-  const tail = allDone ? journeyCompletionHtml(journey, heroLabel) : journeyNextUpHtml(nextItem);
-  return `<div class="home-section" id="journeySequenceSection">
-      <div class="home-section-head"><h3>Your DC Journey — ${heroLabel}</h3><span class="home-section-sub">${doneCount}/${items.length}</span></div>
+  const nextItem = !complete ? items.find(it=>!isDone(it.cat, it.d.id)) : null;
+  const tail = complete ? journeyCompletionHtml(journey) : journeyNextUpHtml(nextItem);
+  const pct = Math.round((doneCount/items.length)*100);
+  const parent = journey.parentId ? getJourneyById(journey.parentId) : null;
+  return `<div class="home-section journey-active" id="journeySequenceSection" style="--theme-a:${theme.a};--theme-b:${theme.b}">
+      <div class="journey-active-head">
+        <div class="journey-active-kind">${(JOURNEY_KIND_LABEL[journey.kind]||"Journey").toUpperCase()}${parent?` · FROM ${escapeAttr(journeyTitle(parent)).toUpperCase()}`:""}</div>
+        <h3 class="journey-active-title">${escapeAttr(journeyTitle(journey))}</h3>
+        <div class="journey-active-progress"><div class="journey-progress-bar"><div class="journey-progress-fill" style="width:${pct}%"></div></div><span>${doneCount}/${items.length}</span></div>
+      </div>
+      ${complete ? "" : tail}
       <div class="journey-seq-list">${rows}</div>
-      ${tail}
+      ${complete ? tail : ""}
     </div>`;
+}
+function openJourneyTitle(cat, id){
+  const d = (DATA[cat]||[]).find(x=>x.id===id);
+  if(d) openSheet(d, cat);
 }
 function wireJourneySequenceHandlers(root){
   root.querySelectorAll(".journey-seq-toggle").forEach(btn=>{
@@ -634,41 +780,33 @@ function wireJourneySequenceHandlers(root){
       e.stopPropagation();
       const nowDone = toggleDone(btn.dataset.cat, btn.dataset.id);
       recordJourneyCompletion(btn.dataset.cat, btn.dataset.id, nowDone);
-      if(state.cat==="journey") renderJourney();
+      if(state.cat==="journey") renderJourney({skipRefresh:true});
     });
   });
   root.querySelectorAll(".journey-seq-item").forEach(item=>{
     item.addEventListener("click", e=>{
       if(e.target.closest(".journey-seq-toggle")) return;
-      const cat = item.dataset.cat, id = item.dataset.id;
-      const d = (DATA[cat]||[]).find(x=>x.id===id);
-      if(!d) return;
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
+      openJourneyTitle(item.dataset.cat, item.dataset.id);
     });
   });
-  const nextUp = root.querySelector("#journeyNextUp");
-  if(nextUp){
-    nextUp.addEventListener("click", ()=>{
-      const cat = nextUp.dataset.cat, id = nextUp.dataset.id;
-      const d = (DATA[cat]||[]).find(x=>x.id===id);
-      if(!d) return;
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
-    });
-  }
+  root.querySelectorAll("#journeyNextUp").forEach(nextUp=>{
+    nextUp.addEventListener("click", ()=> openJourneyTitle(nextUp.dataset.cat, nextUp.dataset.id));
+  });
   root.querySelectorAll(".journey-branch-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const mode = btn.dataset.branch;
-      const result = extendJourney(mode);
-      if(!result.added){
-        btn.querySelector(".journey-branch-sub").textContent = "Nothing new to add here right now — try another option.";
+      const parent = getSavedJourney();
+      if(!parent) return;
+      const hero = journeyHero(parent);
+      if(mode==="comics"){ openComicsPath(hero ? hero.group : null, parent.id); return; }
+      if(mode==="continuities"){ openMultiverseMap(); return; }
+      const result = branchFromJourney(parent, mode);
+      if(result.error){
+        btn.querySelector(".journey-branch-sub").textContent = result.error;
         return;
       }
-      if(state.cat==="journey") renderJourney();
-      setTimeout(()=> document.getElementById("journeySequenceSection")?.scrollIntoView({behavior:"smooth", block:"start"}), 60);
+      goToCategory("journey");
+      window.scrollTo({top:0, behavior:"smooth"});
     });
   });
 }
@@ -775,7 +913,7 @@ function buildTabs(){
 /* ============================= RENDER: FILTERS ============================= */
 function buildFilters(){
   const cat = state.cat;
-  if(cat==="home"){
+  if(cat==="home" || cat==="journey"){
     introEl.textContent = "";
     introEl.style.display = "none";
   } else {
@@ -855,19 +993,19 @@ function buildMovieSeriesFilters(cat){
       <label class="radio-pill ${cat}"><input type="radio" name="typeFilter" value="Animated" ${state.typeFilter==="Animated"?"checked":""}> Animated</label>
     </div>
     <div class="select-row">
-      <select id="selViewerLevel"><option value="all">Any viewer level</option>${VL_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
-      <select id="selComplexity"><option value="all">Any complexity</option>${CX_OPTIONS.map(o=>`<option value="${o}">${o}</option>`).join("")}</select>
-      <select id="selCanonStatus"><option value="all">Any canon status</option>${CANON_OPTIONS.map(o=>`<option value="${o}">${canonShort(o)}</option>`).join("")}</select>
+      <select id="selViewerLevel"><option value="all">Any viewer level</option>${VL_OPTIONS.map(o=>`<option value="${o}">${o} (${msCountWith({viewerLevelFilter:o})})</option>`).join("")}</select>
+      <select id="selComplexity"><option value="all">Any complexity</option>${CX_OPTIONS.map(o=>`<option value="${o}">${o} (${msCountWith({complexityFilter:o})})</option>`).join("")}</select>
+      <select id="selCanonStatus"><option value="all">Any canon status</option>${CANON_OPTIONS.map(o=>`<option value="${o}">${canonShort(o)} (${msCountWith({canonFilter:o})})</option>`).join("")}</select>
     </div>`;
   filterRow.querySelectorAll('input[name="typeFilter"]').forEach(r=>{
-    r.addEventListener("change", e=>{ state.typeFilter = e.target.value; renderCards(); });
+    r.addEventListener("change", e=>{ state.typeFilter = e.target.value; buildFilters(); renderCards(); });
   });
   $("#selViewerLevel").value = state.viewerLevelFilter;
   $("#selComplexity").value = state.complexityFilter;
   $("#selCanonStatus").value = state.canonFilter;
-  $("#selViewerLevel").addEventListener("change", e=>{ state.viewerLevelFilter = e.target.value; renderCards(); });
-  $("#selComplexity").addEventListener("change", e=>{ state.complexityFilter = e.target.value; renderCards(); });
-  $("#selCanonStatus").addEventListener("change", e=>{ state.canonFilter = e.target.value; renderCards(); });
+  $("#selViewerLevel").addEventListener("change", e=>{ state.viewerLevelFilter = e.target.value; buildFilters(); renderCards(); });
+  $("#selComplexity").addEventListener("change", e=>{ state.complexityFilter = e.target.value; buildFilters(); renderCards(); });
+  $("#selCanonStatus").addEventListener("change", e=>{ state.canonFilter = e.target.value; buildFilters(); renderCards(); });
 
   const modes = [
     {id:"newest", label:"Newest → Oldest"},
@@ -962,11 +1100,12 @@ function activeFilterBarHtml(chips){
   const pills = chips.map((c,i)=>`<button class="active-filter-chip" data-clear-i="${i}">${escapeAttr(c.label)} <span class="x">✕</span></button>`).join("");
   return `<div class="active-filter-bar">${pills}<button class="active-filter-clearall" id="clearAllFiltersBtn">Clear all</button></div>`;
 }
-function noMatchesHtml(chips){
-  if(!chips.length){
+function noMatchesHtml(chips, extra){
+  if(!chips.length && !extra){
     return `<div class="empty">Nothing here yet.</div>`;
   }
-  const removeBtns = chips.map((c,i)=>`<button class="btn btn-small" data-clear-i="${i}">Remove: ${escapeAttr(c.label)}</button>`).join("");
+  const removeBtns = (extra ? `<button class="btn btn-small btn-primary" id="emptyExtraBtn">${escapeAttr(extra.label)}</button>` : "") +
+    chips.map((c,i)=>`<button class="btn btn-small" data-clear-i="${i}">Remove: ${escapeAttr(c.label)}</button>`).join("");
   return `<div class="empty empty-broaden">
       <div class="empty-title">No exact matches</div>
       <div class="empty-sub">Nothing in the compendium matches all of these filters together. Broaden your search:</div>
@@ -987,6 +1126,16 @@ function wireFilterBarHandlers(root, chips){
       buildFilters(); renderCards();
     });
   }
+}
+
+// How many titles a filter option WOULD return given every other active filter — shown next to each option
+// ("Hardcore Fan (0)") so readers can see a genuinely empty combination before choosing it.
+function msCountWith(overrides){
+  const saved = {};
+  Object.keys(overrides).forEach(k=>{ saved[k] = state[k]; state[k] = overrides[k]; });
+  const n = filteredMovieSeries().length;
+  Object.keys(saved).forEach(k=>{ state[k] = saved[k]; });
+  return n;
 }
 
 /* ============================= RENDER: CARDS (movies/series) ============================= */
@@ -1152,20 +1301,27 @@ function renderMovieSeriesCards(){
   const chips = activeMovieSeriesFilterChips();
   countEl.textContent = `${items.length} title${items.length===1?"":"s"}`;
   if(items.length===0){
-    gridEl.innerHTML = activeFilterBarHtml(chips) + noMatchesHtml(chips);
+    // "Show related titles" suggestion: the same filters in the OTHER format (Live Action ↔ Animated),
+    // offered as an explicit button — the reader's selection is never changed silently.
+    const other = state.typeFilter==="Live Action" ? "Animated" : "Live Action";
+    const otherN = msCountWith({typeFilter:other});
+    const extra = otherN ? { label:`Show ${otherN} ${other} match${otherN===1?"":"es"} instead` } : null;
+    gridEl.innerHTML = activeFilterBarHtml(chips) + noMatchesHtml(chips, extra);
     wireFilterBarHandlers(gridEl, chips);
+    const extraBtn = $("#emptyExtraBtn");
+    if(extraBtn) extraBtn.addEventListener("click", ()=>{ state.typeFilter = other; buildFilters(); renderCards(); });
     return;
   }
 
   let html = activeFilterBarHtml(chips);
   if(state.sortMode==="newest"){
     const sorted = [...items].sort((a,b)=>firstYear(b.y)-firstYear(a.y));
-    html = sorted.map(d=>cardHtml(cat,d)).join("");
+    html += sorted.map(d=>cardHtml(cat,d)).join("");
   }
   else if(state.sortMode==="rating"){
     const rated = items.filter(d=>ratingScore(d)!==null).sort((a,b)=>ratingScore(b)-ratingScore(a));
     const unrated = items.filter(d=>ratingScore(d)===null).sort((a,b)=>firstYear(b.y)-firstYear(a.y));
-    html = rated.map(d=>cardHtml(cat,d)).join("");
+    html += rated.map(d=>cardHtml(cat,d)).join("");
     if(unrated.length){
       html += groupHeaderHtml("Not yet rated", unrated.length) + unrated.map(d=>cardHtml(cat,d)).join("");
     }
@@ -1216,7 +1372,7 @@ function attachCardHandlers(cat){
     c.addEventListener("click", (e)=>{
       if(e.target.closest("[data-del]") || e.target.closest(".fav-btn")) return;
       const d = DATA[cat].find(x=>x.id===c.dataset.id);
-      if(d) openSheet(d);
+      if(d) openSheet(d, cat);
     });
   });
   gridEl.querySelectorAll("[data-del]").forEach(btn=>{
@@ -1248,6 +1404,9 @@ function renderGenericCards(){
     return;
   }
   let html = activeFilterBarHtml(chips);
+  if(cat==="comics"){
+    html += `<button class="cp-entry-card" id="comicsTabPathBtn"><span>📖 Not sure where to start? Build a reading path</span><span class="cp-entry-sub">Hero → continuity → read in order, with progress tracking →</span></button>`;
+  }
   if(cat==="games" && state.gameMode==="story"){
     const groups = {};
     items.forEach(d=>{ (groups[d.fr||"Other"] = groups[d.fr||"Other"] || []).push(d); });
@@ -1262,6 +1421,8 @@ function renderGenericCards(){
     gridEl.innerHTML = html;
   }
   wireFilterBarHandlers(gridEl, chips);
+  const comicsTabPathBtn = $("#comicsTabPathBtn");
+  if(comicsTabPathBtn) comicsTabPathBtn.addEventListener("click", ()=> openComicsPath(null));
   attachCardHandlers(cat);
 }
 
@@ -1357,7 +1518,8 @@ function renderHome(){
     ...resolveKeys(progressKeys.filter(k=>!favKeys.includes(k))),
   ];
   const activeJourney = getSavedJourney();
-  const journeyHeroGroup = activeJourney ? (BEGINNER_CHARACTERS.find(h=>h.id===activeJourney.selectedHero)||{}).group : null;
+  const activeHero = activeJourney ? journeyHero(activeJourney) : null;
+  const journeyHeroGroup = activeHero ? activeHero.group : null;
   if(journeyHeroGroup){
     journeyItems = [...journeyItems].sort((a,b)=>{
       const aMatch = groupOf(a.cat, a.d)===journeyHeroGroup ? 1 : 0;
@@ -1375,8 +1537,20 @@ function renderHome(){
       <button class="btn-cta" id="heroExploreBtn">Explore the DC Universe</button>
     </section>`;
 
+  // Phase 12/15: the active journey's next step is one tap from Home — works logged out (local) or in (synced).
+  if(activeJourney){
+    const st = journeyStats(activeJourney);
+    if(st.total){
+      const nextIt = st.items.find(it=>!isDone(it.cat, it.d.id));
+      html += `<div class="home-section" id="homeJourneyNext">
+          <div class="home-section-head"><h3>Your Journey</h3><span class="home-section-sub">${escapeAttr(journeyTitle(activeJourney))} · ${st.done}/${st.total}</span></div>
+          ${nextIt ? journeyNextUpHtml(nextIt, "homeNextUp") :
+            `<div class="journey-next-up" id="homeNextUpDone"><span class="journey-next-up-label">PATH COMPLETE ✓</span><span class="journey-next-up-title">Choose where to go next</span><span class="journey-next-up-cta">Open My Journey →</span></div>`}
+        </div>`;
+    }
+  }
   if(journeyItems.length){
-    html += stripHtml("homeJourneyStrip", "Continue Your Journey", "Your favorites & progress on this device", journeyItems);
+    html += stripHtml("homeJourneyStrip", "Continue Your Journey", "Your favorites & progress", journeyItems);
   }
 
   html += `
@@ -1449,9 +1623,7 @@ function renderHome(){
       const cat = c.dataset.cat, id = c.dataset.id;
       const d = DATA[cat].find(x=>x.id===id);
       if(!d) return;
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
+      openSheet(d, cat);
     });
   });
   const eventTile = gridEl.querySelector('[data-hub="event"]');
@@ -1481,6 +1653,10 @@ function renderHome(){
   });
   const spc = $("#startingPointCard");
   if(spc) spc.addEventListener("click", openStartSheet);
+  const homeNextUp = $("#homeNextUp");
+  if(homeNextUp) homeNextUp.addEventListener("click", ()=> goToCategory("journey"));
+  const homeNextUpDone = $("#homeNextUpDone");
+  if(homeNextUpDone) homeNextUpDone.addEventListener("click", ()=> goToCategory("journey"));
   const heroBtn = $("#heroExploreBtn");
   if(heroBtn) heroBtn.addEventListener("click", ()=>{
     buildExploreGrid();
@@ -1521,38 +1697,65 @@ function renderJourney(opts){
         <p>Favorites and progress live in this browser only right now. <a href="#" id="journeySignInLink" style="color:var(--ink);text-decoration:underline;">Sign in</a> to sync them across every device.</p>
       </div>`;
 
+  // ---- Phase 12: My Journey is a hub — CONTINUE / YOUR JOURNEYS / RECENTLY COMPLETED / DISCOVER NEXT ----
+  const journeys = getAllJourneys();
   const journey = getSavedJourney();
   if(journey){
     html += `<div class="home-section-head journey-section-label"><h3>CONTINUE</h3></div>`;
     html += renderJourneySequenceHtml(journey);
-
-    // ---- Phase 12: RECENTLY COMPLETED — journey items marked done, most-recently-completed first ----
-    const completedItems = (journey.recommendedTitleKeys||[]).map(resolveTitleKey).filter(Boolean)
-      .filter(it=>isDone(it.cat, it.d.id));
-    if(completedItems.length){
-      const completedAt = journey.completedAt || {};
-      const sorted = [...completedItems].sort((a,b)=>{
-        const ta = completedAt[itemKey(a.cat,a.d.id)] || "";
-        const tb = completedAt[itemKey(b.cat,b.d.id)] || "";
-        return tb.localeCompare(ta); // newest first; items with no timestamp (pre-existing) sink to the end
-      });
-      html += `<div class="home-section" id="journeyRecentlyCompletedSection">
-          <div class="home-section-head"><h3>RECENTLY COMPLETED</h3><span class="home-section-sub">${sorted.length}</span></div>
-          <div class="home-strip">${sorted.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
-        </div>`;
-    }
   } else {
     html += `<div class="journey-empty-cta home-section" id="journeyEmptyCta">
         <div class="home-section-head"><h3>CONTINUE</h3></div>
-        <p class="journey-empty">You haven't started a DC journey yet.</p>
+        <p class="journey-empty">You haven't started a DC journey yet — no sign-in needed.</p>
         <button class="btn btn-primary" id="journeyStartCtaBtn">New to DC? Start Here</button>
+        <button class="btn btn-ghost journey-comics-cta" id="journeyComicsCtaBtn">📖 Start a comics reading path</button>
       </div>`;
   }
 
-  // ---- Phase 12: DISCOVER NEXT — other real, data-backed heroes to branch into ----
+  if(journeys.length){
+    const cards = journeys.map(j=>{
+      const st = journeyStats(j);
+      const hero = journeyHero(j);
+      const t = groupTheme(hero ? hero.group : "");
+      const active = journey && j.id===journey.id;
+      const badge = st.complete ? `<span class="jc-badge done">✓ Complete</span>` : (active ? `<span class="jc-badge">Active</span>` : "");
+      return `<div class="journey-card" data-journey-id="${j.id}" data-active="${active}" style="--theme-a:${t.a};--theme-b:${t.b}">
+          <div class="jc-kind">${(JOURNEY_KIND_LABEL[j.kind]||"Journey").toUpperCase()}</div>
+          <div class="jc-title">${escapeAttr(journeyTitle(j))}</div>
+          <div class="jc-foot"><span>${st.done}/${st.total}</span>${badge}</div>
+        </div>`;
+    }).join("");
+    html += `<div class="home-section" id="journeyListSection">
+        <div class="home-section-head"><h3>YOUR JOURNEYS</h3><span class="home-section-sub">${journeys.length}</span></div>
+        <div class="home-strip journey-card-strip">${cards}
+          <div class="journey-card journey-card-new" id="journeyNewCard"><div class="jc-title">＋ New journey</div><div class="jc-kind">Pick a hero</div></div>
+          <div class="journey-card journey-card-new" id="journeyNewComicsCard"><div class="jc-title">📖 Comics path</div><div class="jc-kind">Pick a continuity</div></div>
+        </div>
+      </div>`;
+
+    // RECENTLY COMPLETED — titles finished inside any journey, most recent first
+    const seen = new Set(), done = [];
+    journeys.forEach(j=>{
+      journeyItems(j).forEach(it=>{
+        const ik = itemKey(it.cat, it.d.id);
+        if(seen.has(ik) || !isDone(it.cat, it.d.id)) return;
+        seen.add(ik);
+        done.push({ ...it, at: (j.completedAt||{})[ik] || "" });
+      });
+    });
+    done.sort((a,b)=>b.at.localeCompare(a.at));
+    if(done.length){
+      html += `<div class="home-section" id="journeyRecentlyCompletedSection">
+          <div class="home-section-head"><h3>RECENTLY COMPLETED</h3><span class="home-section-sub">${done.length}</span></div>
+          <div class="home-strip">${done.slice(0,15).map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
+        </div>`;
+    }
+  }
+
+  // DISCOVER NEXT — heroes the reader hasn't started a journey for yet (real groups with real titles)
   {
-    const currentHeroGroup = journey ? (BEGINNER_CHARACTERS.find(h=>h.id===journey.selectedHero)||{}).group : null;
-    const otherHeroes = realHeroGroups().filter(h=>h.group!==currentHeroGroup).slice(0,6);
+    const startedGroups = new Set(journeys.map(j=>{ const h = journeyHero(j); return h ? h.group : null; }));
+    const otherHeroes = realHeroGroups().filter(h=>!startedGroups.has(h.group)).slice(0,8);
     if(otherHeroes.length){
       html += `<div class="home-section" id="journeyDiscoverNextSection">
           <div class="home-section-head"><h3>DISCOVER NEXT</h3></div>
@@ -1604,15 +1807,26 @@ function renderJourney(opts){
       const cat = c.dataset.cat, id = c.dataset.id;
       const d = DATA[cat].find(x=>x.id===id);
       if(!d) return;
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
+      openSheet(d, cat);
     });
   });
   const signInLink = $("#journeySignInLink");
   if(signInLink) signInLink.addEventListener("click", (e)=>{ e.preventDefault(); openSheetEl(readerBackdrop, readerSheet); });
   const startCtaBtn = $("#journeyStartCtaBtn");
   if(startCtaBtn) startCtaBtn.addEventListener("click", openStartSheet);
+  const comicsCtaBtn = $("#journeyComicsCtaBtn");
+  if(comicsCtaBtn) comicsCtaBtn.addEventListener("click", ()=> openComicsPath(null));
+  const newCard = $("#journeyNewCard");
+  if(newCard) newCard.addEventListener("click", openStartSheet);
+  const newComicsCard = $("#journeyNewComicsCard");
+  if(newComicsCard) newComicsCard.addEventListener("click", ()=> openComicsPath(null));
+  gridEl.querySelectorAll(".journey-card[data-journey-id]").forEach(c=>{
+    c.addEventListener("click", ()=>{
+      setActiveJourney(c.dataset.journeyId);
+      renderJourney({skipRefresh:true});
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+  });
   gridEl.querySelectorAll("#journeyDiscoverRail .explore-rail-tile").forEach(t=>{
     t.addEventListener("click", ()=> openHub(t.dataset.group));
   });
@@ -1622,13 +1836,43 @@ function renderJourney(opts){
   // localStorage (read above) already renders instantly; this just quietly catches it up if stale.
   // skipRefresh on the follow-up render prevents this from looping.
   if(signedIn && !opts.skipRefresh){
-    pullCloudDataToLocal(readerUser.uid).then(()=>{
+    Promise.all([pullCloudDataToLocal(readerUser.uid), pullJourneyFromCloud(readerUser.uid)]).then(()=>{
       if(state.cat==="journey") renderJourney({skipRefresh:true});
     }).catch(()=>{});
   }
 }
 
-function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); }
+function render(){ buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); syncHistoryForTab(); }
+
+/* ---- Phase 14: back button + refresh ----
+   Each tab gets a URL hash (#journey, #comics…), so the browser/phone back button returns to the previous
+   tab and a refresh reopens the same tab (journeys themselves live in localStorage/Firestore, so a refresh
+   never loses them). Opening a sheet adds one history entry, so "back" closes the sheet first instead of
+   leaving the site. */
+const VALID_TABS = ["home","journey","movies","series","games","comics"];
+function tabFromHash(){
+  const h = (location.hash||"").replace(/^#/,"");
+  return VALID_TABS.includes(h) ? h : null;
+}
+let applyingHistory = false;
+function syncHistoryForTab(){
+  if(applyingHistory) return;
+  const want = state.cat==="home" ? "" : "#"+state.cat;
+  if((location.hash||"") !== want){
+    history.pushState({cat:state.cat}, "", want || (location.pathname + location.search));
+  }
+}
+window.addEventListener("popstate", ()=>{
+  if(document.querySelector('.sheet[data-open="true"]')){ closeAllSheets(); return; }
+  const cat = tabFromHash() || "home";
+  if(cat !== state.cat && loaded){
+    applyingHistory = true;
+    state.cat = cat;
+    resetFiltersForTabSwitch();
+    render();
+    applyingHistory = false;
+  }
+});
 
 /* ============================= CHARACTER / TEAM HUB (Phase 2) ============================= */
 const hubBackdrop = $("#hubBackdrop"), hubSheet = $("#hubSheet"), hubContent = $("#hubContent");
@@ -1656,13 +1900,18 @@ function openHub(group){
   CATS.forEach(c=>{
     const list = byCat[c.id];
     if(!list.length) return;
+    const pathBtn = c.id==="comics"
+      ? `<button class="cp-entry-card" id="hubComicsPathBtn" data-group="${escapeAttr(group)}"><span>📖 Start a ${group} reading path</span><span class="cp-entry-sub">Pick a continuity and read in order →</span></button>` : "";
     html += `<div class="home-section">
         <div class="home-section-head"><h3>${CAT_ICON[c.id]||""} ${c.label}</h3><span class="home-section-sub">${list.length}</span></div>
+        ${pathBtn}
         <div class="home-strip">${list.map(({d,cat})=>stripCardHtml(cat,d)).join("")}</div>
       </div>`;
   });
 
   hubContent.innerHTML = html;
+  const hubPathBtn = hubContent.querySelector("#hubComicsPathBtn");
+  if(hubPathBtn) hubPathBtn.addEventListener("click", ()=> openComicsPath(hubPathBtn.dataset.group));
   wireImageFallbacks(hubContent);
   hubContent.querySelectorAll(".strip-card").forEach(c=>{
     c.addEventListener("click", (e)=>{
@@ -1671,9 +1920,7 @@ function openHub(group){
       const d = (DATA[cat]||[]).find(x=>x.id===id);
       if(!d) return;
       closeSheetEl(hubBackdrop, hubSheet);
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
+      openSheet(d, cat);
     });
   });
   openSheetEl(hubBackdrop, hubSheet);
@@ -1771,9 +2018,7 @@ function openCreatorHub(name){
       const d = (DATA[cat]||[]).find(x=>x.id===id);
       if(!d) return;
       closeSheetEl(hubBackdrop, hubSheet);
-      state.cat = cat;
-      if(d.type) state.typeFilter = d.type;
-      openSheet(d);
+      openSheet(d, cat);
     });
   });
   openSheetEl(hubBackdrop, hubSheet);
@@ -1910,9 +2155,7 @@ function openEventHub(){
     const d = (DATA[cat]||[]).find(x=>x.id===id);
     if(!d) return;
     closeSheetEl(hubBackdrop, hubSheet);
-    state.cat = cat;
-    if(d.type) state.typeFilter = d.type;
-    openSheet(d);
+    openSheet(d, cat);
   };
   hubContent.querySelectorAll(".timeline-row, .event-detail-row").forEach(r=>{
     r.addEventListener("click", ()=> openItem(r.dataset.cat, r.dataset.id));
@@ -1948,9 +2191,7 @@ function openUniverseHub(connected){
     const d = (DATA[cat]||[]).find(x=>x.id===id);
     if(!d) return;
     closeSheetEl(hubBackdrop, hubSheet);
-    state.cat = cat;
-    if(d.type) state.typeFilter = d.type;
-    openSheet(d);
+    openSheet(d, cat);
   };
   hubContent.querySelectorAll(".strip-card").forEach(c=>{
     c.addEventListener("click", (e)=>{
@@ -1987,9 +2228,7 @@ function openStartTitle(cat, id){
   const d = (DATA[cat]||[]).find(x=>x.id===id);
   if(!d) return;
   closeSheetEl(startBackdrop, startSheet);
-  state.cat = cat;
-  if(d.type) state.typeFilter = d.type;
-  openSheet(d);
+  openSheet(d, cat);
 }
 function renderStartStepHero(){
   let html = `<div class="sheet-eyebrow">YOUR DC STARTING POINT</div>
@@ -2059,20 +2298,29 @@ function renderStartResults(){
   const journeyBtn = $("#startJourneyBtn");
   if(journeyBtn) journeyBtn.addEventListener("click", ()=>{
     if(!recs.length) return;
-    const journey = {
-      selectedHero: startState.heroId,
-      selectedMedium: startState.medium,
-      selectedIntent: startState.intent,
-      recommendedTitleKeys: recs.map(r=>`${r.cat}::${r.d.t}::${r.d.y}`),
-      currentPosition: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    setSavedJourney(journey);
+    // Phase 11: a new starter path is ADDED to the reader's journeys — it never replaces or deletes an
+    // existing one. Re-running the exact same choices just re-opens that journey instead of duplicating it.
+    const keys = recs.map(r=>`${r.cat}::${r.d.t}::${r.d.y}`);
+    const same = getAllJourneys().find(j=>j.kind==="starter" && j.selectedHero===startState.heroId &&
+      j.selectedMedium===startState.medium && j.selectedIntent===startState.intent);
+    if(same){
+      setActiveJourney(same.id);
+    } else {
+      setSavedJourney({
+        kind: "starter",
+        title: `${hero ? hero.label : "DC"} starting path`,
+        heroGroup: hero ? hero.group : null,
+        selectedHero: startState.heroId,
+        selectedMedium: startState.medium,
+        selectedIntent: startState.intent,
+        recommendedTitleKeys: keys,
+        completedAt: {},
+        createdAt: new Date().toISOString(),
+      });
+    }
     closeSheetEl(startBackdrop, startSheet);
-    state.cat = "journey";
-    resetFiltersForTabSwitch();
-    render();
+    goToCategory("journey");
+    window.scrollTo({top:0});
   });
 }
 function renderStartSheet(){
@@ -2088,6 +2336,194 @@ function openStartSheet(){
 }
 startBackdrop.addEventListener("click", ()=> closeSheetEl(startBackdrop, startSheet));
 $("#startClose").addEventListener("click", ()=> closeSheetEl(startBackdrop, startSheet));
+
+/* ============================= COMICS READING PATHS (Phases 9 + 10) =============================
+   Hero → Continuity → Reading order → Reading Journey.
+   Everything shown is derived from the real comics catalogue: only heroes that actually have comics, only
+   continuities that actually contain that hero's comics (the `continuity` field), and only reading orders
+   that can be reliably generated from real fields — publication order (`y`) and easiest-first (`readingLevel`).
+   In-story chronological order and per-issue "series/run" breakdowns are NOT offered: the catalogue stores a
+   run as one entry and has no in-story timeline field, and inventing either would be fabricated data. */
+const comicsPathBackdrop = $("#comicsPathBackdrop"), comicsPathSheet = $("#comicsPathSheet"), comicsPathContent = $("#comicsPathContent");
+let cpState = { step:"hero", group:null, continuity:null, order:null, parentId:null };
+const READING_LEVEL_RANK = { "New Reader":0, "Familiar Reader":1, "Experienced Reader":2, "Hardcore":3 };
+const ALL_CONTINUITIES = "__all__";
+const COMICS_READING_ORDERS = [
+  { id:"publication", label:"Publication order", sub:"Oldest to newest, the order they came out",
+    available: ()=>true },
+  { id:"beginner",    label:"Easiest first",     sub:"New-reader-friendly books first, then builds up",
+    available: items=> new Set(items.map(d=>d.readingLevel).filter(Boolean)).size > 1 },
+];
+function comicsHeroGroups(){
+  const counts = {};
+  (DATA.comics||[]).forEach(d=>{ const g = d.group || "Other DC Characters"; counts[g] = (counts[g]||0)+1; });
+  return sortHeroNames(counts).filter(g=>g!=="Other DC Characters").map(g=>({ group:g, count:counts[g] }));
+}
+function comicsFor(group, continuity){
+  return (DATA.comics||[]).filter(d=>d.group===group && (continuity===ALL_CONTINUITIES || !continuity || d.continuity===continuity));
+}
+function continuitiesFor(group){
+  const map = {};
+  comicsFor(group, ALL_CONTINUITIES).forEach(d=>{
+    const c = d.continuity || "Unspecified continuity";
+    const y = firstYear(d.y);
+    const m = map[c] = map[c] || { continuity:c, count:0, yMin:9999, yMax:0, eras:new Set(), easiest:9 };
+    m.count++;
+    if(y){ m.yMin = Math.min(m.yMin, y); m.yMax = Math.max(m.yMax, y); }
+    if(d.era) m.eras.add(d.era);
+    m.easiest = Math.min(m.easiest, READING_LEVEL_RANK[d.readingLevel] ?? 9);
+  });
+  return Object.values(map).sort((a,b)=>a.yMin-b.yMin);
+}
+// Last year of a "2011–2015" / "2024–" span (open-ended = still running) — publication-order tie-breaker so a
+// single launch issue ("Batman (2011) #1") comes before the multi-year run that follows it.
+function lastYearOf(y){
+  const s = String(y||"");
+  if(/[–-]\s*$/.test(s)) return 9999;
+  const m = s.match(/\d{4}/g);
+  return m ? parseInt(m[m.length-1]) : 9999;
+}
+function orderComics(items, order){
+  const arr = [...items];
+  const pub = (a,b)=>(firstYear(a.y)-firstYear(b.y)) || (lastYearOf(a.y)-lastYearOf(b.y)) || String(a.t).localeCompare(String(b.t));
+  if(order==="beginner"){
+    arr.sort((a,b)=>((READING_LEVEL_RANK[a.readingLevel]??9)-(READING_LEVEL_RANK[b.readingLevel]??9)) || pub(a,b));
+  } else {
+    arr.sort(pub);
+  }
+  return arr;
+}
+function yearSpan(a,b){ return a===9999 ? "" : (a===b ? `${a}` : `${a}–${b}`); }
+function cpHeader(title, sub, showBack){
+  const trail = [cpState.group, cpState.continuity && (cpState.continuity===ALL_CONTINUITIES ? "Every continuity" : cpState.continuity)]
+    .filter(Boolean).map(escapeAttr).join(" › ");
+  return `<div class="sheet-eyebrow">COMICS READING PATH${trail?` · ${trail.toUpperCase()}`:""}</div>
+    ${showBack ? `<div class="start-back" id="cpBackBtn">‹ Back</div>` : ""}
+    <h2>${title}</h2>
+    ${sub ? `<p class="sheet-body" style="color:var(--ink-dim);margin-bottom:16px;">${sub}</p>` : ""}`;
+}
+function cpGo(step){ cpState.step = step; renderComicsPath(); comicsPathSheet.scrollTop = 0; }
+function renderComicsPath(){
+  const st = cpState;
+  let html = "";
+  if(st.step==="hero"){
+    const groups = comicsHeroGroups();
+    html = cpHeader("Whose comics do you want to read?", "Only heroes with comics in the compendium are shown.", false) +
+      `<div class="cp-card-grid">${groups.map(g=>{
+        const t = groupTheme(g.group);
+        return `<div class="cp-dest-card themed" data-group="${escapeAttr(g.group)}" style="--theme-a:${t.a};--theme-b:${t.b}">
+            <div class="cp-dest-title">${g.group}</div><div class="cp-dest-sub">${g.count} comic${g.count===1?"":"s"}</div></div>`;
+      }).join("")}</div>`;
+    comicsPathContent.innerHTML = html;
+    comicsPathContent.querySelectorAll("[data-group]").forEach(c=>c.addEventListener("click", ()=>{
+      st.group = c.dataset.group; st.continuity = null; st.order = null; cpGo("continuity");
+    }));
+    return;
+  }
+  if(st.step==="continuity"){
+    const conts = continuitiesFor(st.group);
+    if(!conts.length){
+      comicsPathContent.innerHTML = cpHeader(`No ${escapeAttr(st.group)} comics yet`,
+        `The compendium doesn't have any ${escapeAttr(st.group)} comics catalogued yet, so there's no reading path to build.`, false) +
+        `<button class="btn btn-primary" id="cpPickHero" style="width:100%">Choose another hero</button>`;
+      $("#cpPickHero").addEventListener("click", ()=>{ st.group=null; cpGo("hero"); });
+      return;
+    }
+    if(conts.length===1){ st.continuity = conts[0].continuity; cpGo("order"); return; }
+    const total = conts.reduce((n,c)=>n+c.count,0);
+    html = cpHeader(`Pick a ${escapeAttr(st.group)} continuity`,
+      "Each DC continuity is its own timeline. These are the ones your comics actually come from.", true) +
+      `<div class="cp-card-list">${conts.map(c=>`
+        <div class="cp-dest-card" data-cont="${escapeAttr(c.continuity)}">
+          <div class="cp-dest-title">${c.continuity}</div>
+          <div class="cp-dest-sub">${yearSpan(c.yMin,c.yMax)} · ${[...c.eras].join(", ")}</div>
+          <div class="cp-dest-foot">${c.count} comic${c.count===1?"":"s"}</div>
+        </div>`).join("")}
+        <div class="cp-dest-card" data-cont="${ALL_CONTINUITIES}">
+          <div class="cp-dest-title">Every continuity</div>
+          <div class="cp-dest-sub">All ${total} ${escapeAttr(st.group)} comics across every timeline</div>
+        </div>
+      </div>`;
+    comicsPathContent.innerHTML = html;
+    $("#cpBackBtn").addEventListener("click", ()=>{ st.group=null; cpGo("hero"); });
+    comicsPathContent.querySelectorAll("[data-cont]").forEach(c=>c.addEventListener("click", ()=>{
+      st.continuity = c.dataset.cont; st.order = null; cpGo("order");
+    }));
+    return;
+  }
+  const items = comicsFor(st.group, st.continuity);
+  const orders = COMICS_READING_ORDERS.filter(o=>o.available(items));
+  if(st.step==="order"){
+    if(orders.length===1){ st.order = orders[0].id; cpGo("preview"); return; }
+    html = cpHeader("How do you want to read it?", "", true) +
+      `<div class="cp-card-list">${orders.map(o=>`
+        <div class="cp-dest-card" data-order="${o.id}"><div class="cp-dest-title">${o.label}</div><div class="cp-dest-sub">${o.sub}</div></div>`).join("")}
+      </div>
+      <p class="cp-note">In-story chronological order isn't offered yet — the compendium doesn't track where each story sits in its timeline, and we won't guess.</p>`;
+    comicsPathContent.innerHTML = html;
+    $("#cpBackBtn").addEventListener("click", ()=>{
+      const conts = continuitiesFor(st.group);
+      if(conts.length<=1){ st.group=null; st.continuity=null; cpGo("hero"); } else { st.continuity=null; cpGo("continuity"); }
+    });
+    comicsPathContent.querySelectorAll("[data-order]").forEach(c=>c.addEventListener("click", ()=>{ st.order = c.dataset.order; cpGo("preview"); }));
+    return;
+  }
+  // preview → start the reading journey
+  const ordered = orderComics(items, st.order);
+  const orderLabel = (COMICS_READING_ORDERS.find(o=>o.id===st.order)||{}).label || "";
+  const contLabel = st.continuity===ALL_CONTINUITIES ? "Every continuity" : st.continuity;
+  html = cpHeader(`Your ${escapeAttr(st.group)} reading path`, `${escapeAttr(contLabel)} · ${orderLabel} · ${ordered.length} stop${ordered.length===1?"":"s"}`, true) +
+    `<div class="cp-path-list">${ordered.map((d,i)=>`
+      <div class="cp-path-row" data-id="${d.id}">
+        <div class="journey-seq-num" data-done="${isDone("comics", d.id)}">${isDone("comics", d.id)?"✓":i+1}</div>
+        <div class="cp-path-body">
+          <div class="cp-path-title">${d.t}<span class="bc-year">${d.y||""}</span></div>
+          <div class="cp-path-meta">${d.era||""}${d.readingLevel?` · <span class="qf-pill rl-${readingLevelClass(d.readingLevel)}">${d.readingLevel}</span>`:""}</div>
+          ${d.ord ? `<div class="cp-path-ord">${firstSentence(d.ord)}</div>` : ""}
+        </div>
+      </div>`).join("")}
+    </div>
+    <button class="btn btn-primary" id="cpStartBtn" style="width:100%;margin-top:16px;">Start Reading Journey</button>`;
+  comicsPathContent.innerHTML = html;
+  $("#cpBackBtn").addEventListener("click", ()=>{
+    if(orders.length>1) cpGo("order");
+    else if(continuitiesFor(st.group).length>1){ st.continuity=null; cpGo("continuity"); }
+    else { st.group=null; st.continuity=null; cpGo("hero"); }
+  });
+  comicsPathContent.querySelectorAll(".cp-path-row").forEach(r=>r.addEventListener("click", ()=>{
+    const d = (DATA.comics||[]).find(x=>x.id===r.dataset.id);
+    if(d){ closeSheetEl(comicsPathBackdrop, comicsPathSheet); openSheet(d, "comics"); }
+  }));
+  $("#cpStartBtn").addEventListener("click", ()=>{
+    const keys = ordered.map(d=>titleKeyOf("comics", d));
+    const same = getAllJourneys().find(j=>j.kind==="comics" && j.heroGroup===st.group && j.continuity===st.continuity && j.pathOrder===st.order);
+    if(same){
+      setActiveJourney(same.id);
+    } else {
+      const beginner = BEGINNER_CHARACTERS.find(h=>h.group===st.group);
+      setSavedJourney({
+        kind:"comics", title:`${st.group} comics — ${contLabel}`,
+        heroGroup: st.group, selectedHero: beginner ? beginner.id : st.group,
+        selectedMedium:"comics", selectedIntent:"comics",
+        continuity: st.continuity, pathOrder: st.order, parentId: st.parentId || null,
+        branchMode: st.parentId ? "comics" : null,
+        recommendedTitleKeys: keys, completedAt:{}, createdAt: new Date().toISOString(),
+      });
+    }
+    closeSheetEl(comicsPathBackdrop, comicsPathSheet);
+    goToCategory("journey");
+    window.scrollTo({top:0});
+  });
+}
+function openComicsPath(group, parentId){
+  cpState = { step: group ? "continuity" : "hero", group: group||null, continuity:null, order:null, parentId: parentId||null };
+  // Close anything else that might be open so the path sheet is never stacked under another sheet.
+  closeAllSheets();
+  renderComicsPath();
+  openSheetEl(comicsPathBackdrop, comicsPathSheet);
+}
+comicsPathBackdrop.addEventListener("click", ()=> closeSheetEl(comicsPathBackdrop, comicsPathSheet));
+$("#comicsPathClose").addEventListener("click", ()=> closeSheetEl(comicsPathBackdrop, comicsPathSheet));
 
 /* ============================= DETAIL SHEET ============================= */
 const backdrop = $("#backdrop"), sheet = $("#sheet"), sheetContent = $("#sheetContent");
@@ -2187,8 +2623,14 @@ function heroHtml(cat, d){
   return `<div class="sheet-hero ${cat}${theme?" themed":""}"${themeStyle}><div class="sheet-hero-fallback">${d.t}</div></div>`;
 }
 
-function openSheet(d){
-  const cat = state.cat;
+// `catOverride` lets any view (Home, My Journey, hubs, Start Here) open a detail sheet WITHOUT mutating
+// state.cat. Previously every caller set state.cat to the title's category first, which silently desynced
+// the app from what was on screen (e.g. My Journey stopped refreshing after 'Mark done' in the sheet,
+// Nerd Mode re-rendered a movies grid under the Home tab, bottom-nav active state went wrong).
+let sheetCat = null;
+function openSheet(d, catOverride){
+  const cat = catOverride || state.cat;
+  sheetCat = cat;
   if(cat==="movies"||cat==="series"){
     const theme = groupTheme(d.group);
     sheet.style.setProperty("--theme-a", theme.a);
@@ -2285,7 +2727,7 @@ function openSheet(d){
       b.dataset.active = nowFav ? "true" : "false";
       b.textContent = nowFav ? "♥" : "♡";
     });
-    if(state.cat==="journey") renderJourney();
+    if(state.cat==="journey" || state.cat==="home") renderCards();
   });
   const doneToggleBtn = sheetContent.querySelector(".done-toggle");
   if(doneToggleBtn) doneToggleBtn.addEventListener("click", ()=>{
@@ -2294,7 +2736,10 @@ function openSheet(d){
     const verb = PROGRESS_VERB[c] || "Done";
     doneToggleBtn.dataset.active = nowDone ? "true" : "false";
     doneToggleBtn.textContent = nowDone ? `✓ ${verb}` : `Mark as ${verb}`;
-    if(state.cat==="journey") renderJourney();
+    // Marking done from the detail sheet must advance any journey containing this title (Phase 8) and
+    // refresh whichever personalised view is underneath (My Journey / Home "Continue" rail).
+    recordJourneyCompletion(c, id, nowDone);
+    if(state.cat==="journey" || state.cat==="home") renderCards();
   });
 
   const hubBtn = sheetContent.querySelector(".hub-link-btn");
@@ -2359,16 +2804,23 @@ function openSheet(d){
       const rcat = row.dataset.relatedCat, rid = row.dataset.relatedId;
       const rd = DATA[rcat].find(x=>x.id===rid);
       if(rd){
-        state.cat = rcat;
-        if(rd.type) state.typeFilter = rd.type;
-        openSheet(rd);
+        openSheet(rd, rcat);
       }
     });
   });
   openSheetEl(backdrop, sheet);
 }
-function openSheetEl(bd, sh){ bd.dataset.open="true"; sh.dataset.open="true"; }
+function openSheetEl(bd, sh){
+  bd.dataset.open="true"; sh.dataset.open="true";
+  if(!(history.state && history.state.sheet)) history.pushState({cat:state.cat, sheet:true}, "", location.href);
+}
 function closeSheetEl(bd, sh){ bd.dataset.open="false"; sh.dataset.open="false"; }
+// Phase 14: one call that guarantees no sheet/backdrop is left open (used by bottom nav, back button and
+// before opening a new flow) — a stale open backdrop was what could leave the page untappable.
+function closeAllSheets(){
+  if(typeof stopAllTrailers==="function") stopAllTrailers();
+  document.querySelectorAll('.sheet[data-open="true"], .sheet-backdrop[data-open="true"]').forEach(el=>{ el.dataset.open = "false"; });
+}
 function stopAllTrailers(){
   // Removing/blanking the iframe src actually halts YouTube playback;
   // hiding the sheet with CSS alone leaves the audio/video running.
@@ -2450,7 +2902,28 @@ const loginArea = $("#loginArea"), signedInArea = $("#signedInArea");
 const loginEmail = $("#loginEmail"), loginPassword = $("#loginPassword"), loginMsg = $("#loginMsg");
 const fab = $("#fabAdd");
 
-adminToggle.addEventListener("click", ()=> openSheetEl(loginBackdrop, loginSheet));
+adminToggle.addEventListener("click", ()=>{ renderAdminDataHealth(); openSheetEl(loginBackdrop, loginSheet); });
+/* ---- Phase 18: read-only data-health panel for the admin ----
+   Shows the gaps that limit New to DC / journeys / comics reading paths, so the admin knows what to add
+   next via the existing Replace/Import tools — without growing the admin UI into a full editor. */
+function renderAdminDataHealth(){
+  const el = $("#adminDataHealth");
+  if(!el || !loaded) return;
+  const recs = DATA.beginnerRecommendations || [];
+  const unresolved = recs.filter(r=>!resolveTitleKey(r.titleKey)).length;
+  const rows = BEGINNER_CHARACTERS.map(h=>{
+    const curated = recs.filter(r=>(r.characterIds||[]).includes(h.id)).length;
+    const comics = comicsCountForGroup(h.group);
+    const conts = comics ? continuitiesFor(h.group).length : 0;
+    const warn = (!comics || curated<3) ? " ⚠" : "";
+    return `<li><b>${h.label}</b>: ${curated} curated starter pick${curated===1?"":"s"} · ${comics} comic${comics===1?"":"s"} across ${conts} continuit${conts===1?"y":"ies"}${warn}</li>`;
+  }).join("");
+  const noCont = (DATA.comics||[]).filter(d=>!d.continuity).length;
+  el.innerHTML = `<ul style="margin:6px 0 8px 16px;padding:0;line-height:1.6;">${rows}</ul>
+    <div>${recs.length} beginner-guide records · ${unresolved} pointing at titles that no longer exist${unresolved?" ⚠":""}</div>
+    <div>${noCont} comic${noCont===1?"":"s"} missing a continuity (excluded from reading paths)${noCont?" ⚠":""}</div>
+    <div style="margin-top:6px;color:var(--ink-faint);">⚠ = a hero with no comics gets no "Explore comics" option; fewer than 3 curated picks means New to DC relies more on automatic ranking.</div>`;
+}
 
 /* ============================= NERD MODE (Phase 4, Task 22) ============================= */
 const nerdToggle = $("#nerdToggle");
@@ -2514,6 +2987,8 @@ function updateReaderProfileUI(){
   const signedIn = !!readerUser;
   profileToggle.dataset.signedIn = signedIn ? "true" : "false";
   profileToggle.title = signedIn ? (readerUser.displayName || readerUser.email || "Account") : "Sign In";
+  const ptl = $("#profileToggleLabel");
+  if(ptl) ptl.textContent = signedIn ? "Account" : "Sign In";
   if(signedIn && readerUser.photoURL){
     profileAvatarImg.src = readerUser.photoURL;
     profileAvatarImg.style.display = "block";
@@ -2549,6 +3024,20 @@ $("#readerCancel").addEventListener("click", ()=> closeSheetEl(readerBackdrop, r
 $("#readerToggleMode").addEventListener("click", (e)=>{ e.preventDefault(); setReaderAuthMode("signup"); });
 $("#readerToggleModeBack").addEventListener("click", (e)=>{ e.preventDefault(); setReaderAuthMode("login"); });
 
+$("#readerForgotLink").addEventListener("click", async (e)=>{
+  e.preventDefault();
+  readerMsg.className = "form-msg";
+  const email = readerEmail.value.trim();
+  if(!email){ readerMsg.textContent = "Type your email above first, then tap Forgot password."; readerMsg.className = "form-msg err"; return; }
+  try{
+    await sendPasswordResetEmail(auth, email);
+    readerMsg.textContent = `If an account exists for ${email}, a reset link is on its way.`;
+    readerMsg.className = "form-msg ok";
+  }catch(err){
+    readerMsg.textContent = "Couldn't send a reset email: " + err.message;
+    readerMsg.className = "form-msg err";
+  }
+});
 $("#googleSignInBtn").addEventListener("click", async ()=>{
   readerMsg.textContent = ""; readerMsg.className = "form-msg";
   try{
@@ -2608,6 +3097,7 @@ onAuthStateChanged(auth, async (user)=>{
   // Admin is a separate, server-checked role — never inferred from "a user is signed in".
   isAdmin = user ? await checkIsAdmin(user.uid) : false;
   adminToggle.dataset.signedIn = isAdmin ? "true" : "false";
+  document.body.dataset.admin = isAdmin ? "true" : "false";
   fab.dataset.visible = isAdmin ? "true" : "false";
   if(isAdmin){
     loginArea.style.display = "none";
@@ -2712,14 +3202,18 @@ function buildExploreGrid(){
 }
 
 function updateMobileNavActive(){
+  const section = state.cat==="home" ? "home" : (state.cat==="journey" ? "more" : "explore");
   mobileNav.querySelectorAll(".mobile-nav-btn").forEach(btn=>{
-    btn.dataset.active = (btn.dataset.mnav==="home" && state.cat==="home") ? "true" : "false";
+    btn.dataset.active = btn.dataset.mnav===section ? "true" : "false";
   });
 }
 
 mobileNav.querySelectorAll(".mobile-nav-btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     const which = btn.dataset.mnav;
+    // Phase 14: the bottom nav always works — whatever sheet/flow is open is closed first, so a stale
+    // backdrop can never swallow the tap or leave the page untappable.
+    closeAllSheets();
     if(which==="home"){
       goToCategory("home");
     } else if(which==="explore"){
@@ -2744,6 +3238,10 @@ $("#moreClose").addEventListener("click", ()=> closeSheetEl(moreBackdrop, moreSh
 $("#moreQuickStart").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
   openStartSheet();
+});
+$("#moreQuickComicsPath").addEventListener("click", ()=>{
+  closeSheetEl(moreBackdrop, moreSheet);
+  openComicsPath(null);
 });
 $("#moreQuickJourney").addEventListener("click", ()=>{
   closeSheetEl(moreBackdrop, moreSheet);
@@ -2778,6 +3276,7 @@ $("#moreQuickNerd").addEventListener("click", ()=>{
   $("#moreQuickNerd").textContent = state.nerdMode ? "🤓 Nerd Mode: ON" : "🤓 Nerd Mode: OFF";
 });
 $("#moreAdmin").addEventListener("click", ()=>{
+  renderAdminDataHealth();
   closeSheetEl(moreBackdrop, moreSheet);
   openSheetEl(loginBackdrop, loginSheet);
 });

@@ -754,7 +754,8 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 .more-about{ font-size:12px; color:var(--ink-faint); margin-top:6px; }
 
 @media (max-width:700px){
-  .mobile-nav{ display:flex; }
+  .mobile-nav{ display:flex; z-index:45; }  /* above sheets/backdrops so it's always tappable (Phase 14) */
+  .sheet{ padding-bottom:calc(84px + env(safe-area-inset-bottom,0px)); }
   body{ padding-bottom:calc(58px + env(safe-area-inset-bottom,0px)); }
   .fab{ bottom:calc(74px + env(safe-area-inset-bottom,0px)); }
   nav.tabs{ display:none; }
@@ -934,3 +935,83 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 @media (max-width:520px){
   .stats-grid{ grid-template-columns:repeat(3,1fr); }
 }
+
+/* ============ Phase 10/11/12: active journey header, journey cards ============ */
+.journey-active{ border-radius:16px; padding:0; }
+.journey-active-head{
+  border-radius:14px; padding:16px 16px 14px; margin-bottom:12px; color:#fff;
+  background:linear-gradient(135deg, var(--theme-a,#3a3f4a), var(--theme-b,#0d0d10));
+}
+.journey-active-kind{ font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:0.08em; opacity:0.8; }
+.journey-active-title{ font-family:var(--font-display); font-weight:400; font-size:22px; line-height:1.05; margin:4px 0 10px; }
+.journey-active-progress{ display:flex; align-items:center; gap:10px; font-size:12px; font-weight:700; }
+.journey-active-progress .journey-progress-bar{ flex:1; background:rgba(255,255,255,0.22); }
+.journey-active-progress .journey-progress-fill{ background:#fff; }
+.journey-active .journey-next-up{ margin:0 0 12px; }
+.journey-seq-item[data-done="true"] .journey-seq-title{ opacity:0.6; }
+
+.journey-card-strip{ padding-bottom:6px; }
+.journey-card{
+  flex:0 0 auto; width:168px; min-height:104px; scroll-snap-align:start; cursor:pointer;
+  display:flex; flex-direction:column; border-radius:12px; padding:12px; color:#fff;
+  background:linear-gradient(135deg, var(--theme-a,#3a3f4a), var(--theme-b,#0d0d10));
+  border:2px solid transparent;
+}
+.journey-card[data-active="true"]{ border-color:var(--ink); }
+.jc-kind{ font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:0.08em; opacity:0.8; }
+.jc-title{ font-family:var(--font-display); font-weight:400; font-size:15.5px; line-height:1.1; margin-top:4px; }
+.jc-foot{ margin-top:auto; padding-top:8px; display:flex; align-items:center; justify-content:space-between; font-size:11.5px; font-weight:700; }
+.jc-badge{ font-size:10px; padding:2px 7px; border-radius:10px; background:rgba(255,255,255,0.22); }
+.jc-badge.done{ background:var(--good); color:#06231a; }
+.journey-card-new{ background:var(--panel-2); color:var(--ink); border:1px dashed var(--line); justify-content:center; }
+.journey-card-new .jc-kind{ color:var(--ink-faint); margin-top:4px; }
+.journey-comics-cta{ width:100%; margin-top:8px; }
+
+/* ============ Phase 9/10: comics reading path ============ */
+.cp-card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.cp-card-list{ display:flex; flex-direction:column; gap:10px; }
+.cp-dest-card{
+  cursor:pointer; border-radius:12px; padding:14px; background:var(--panel-2); border:1px solid var(--line); color:var(--ink);
+}
+.cp-dest-card:active{ border-color:var(--ink-faint); }
+.cp-dest-card.themed{ color:#fff; border-color:transparent; background:linear-gradient(135deg, var(--theme-a), var(--theme-b)); min-height:78px; }
+.cp-dest-title{ font-family:var(--font-display); font-weight:400; font-size:17px; line-height:1.1; }
+.cp-dest-sub{ font-size:12px; opacity:0.85; margin-top:4px; }
+.cp-dest-card:not(.themed) .cp-dest-sub{ color:var(--ink-dim); opacity:1; }
+.cp-dest-foot{ font-size:11.5px; color:var(--ink-faint); margin-top:6px; }
+.cp-friendly{ color:var(--good); font-weight:700; }
+.cp-note{ font-size:11.5px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
+.cp-path-list{ display:flex; flex-direction:column; gap:8px; }
+.cp-path-row{ display:flex; gap:12px; align-items:flex-start; cursor:pointer; background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+.cp-path-body{ flex:1; min-width:0; }
+.cp-path-title{ font-size:13.5px; font-weight:700; line-height:1.25; }
+.cp-path-meta{ font-size:11px; color:var(--ink-faint); margin-top:3px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.cp-path-ord{ font-size:12px; color:var(--ink-dim); margin-top:5px; line-height:1.45; }
+.cp-entry-card{
+  width:100%; display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left; cursor:pointer;
+  font-family:var(--font-body); font-size:13.5px; font-weight:700; color:var(--ink);
+  background:linear-gradient(135deg, color-mix(in srgb, var(--comics) 18%, var(--panel-2)), var(--panel-2));
+  border:1px solid color-mix(in srgb, var(--comics) 40%, var(--line)); border-radius:12px; padding:12px 14px; margin-bottom:10px;
+}
+.cp-entry-sub{ font-size:11.5px; font-weight:500; color:var(--ink-dim); }
+
+/* ============ Phase 1: one obvious reader button; admin entry clearly labeled and out of readers' way ============ */
+.profile-toggle-labeled{ width:auto; border-radius:16px; gap:6px; padding:0 11px 0 4px; }
+.profile-toggle-labeled .profile-avatar-fallback,
+.profile-toggle-labeled img{ width:24px !important; height:24px !important; border-radius:50%; flex-shrink:0; }
+.profile-avatar-fallback{ display:flex; align-items:center; justify-content:center; }
+.profile-toggle-label{ font-size:12px; font-weight:700; color:var(--ink); white-space:nowrap; }
+#profileToggle[data-signed-in="true"]{ overflow:visible; }
+.reader-forgot{ text-align:right; margin:-6px 0 12px; font-size:12px; }
+.reader-forgot a{ color:var(--ink-dim); text-decoration:underline; text-underline-offset:2px; }
+.form-msg.ok{ color:var(--good); }
+.more-row-admin{ color:var(--ink-dim); }
+.more-row-admin span{ font-weight:500; font-size:12px; color:var(--ink-faint); }
+@media (max-width:700px){
+  /* Readers on phones reach Admin Access via More; the header shows it only for the signed-in admin. */
+  body:not([data-admin="true"]) #adminToggle{ display:none; }
+}
+
+.journey-seq-toggle{ width:auto !important; padding:7px 12px; font-size:12px; white-space:nowrap; }
+.empty-actions{ flex-direction:column; align-items:stretch; max-width:340px; margin:0 auto; }
+.empty-actions .btn{ width:100%; }
