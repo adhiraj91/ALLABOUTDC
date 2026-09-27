@@ -57,7 +57,7 @@ function heroHtml() {
 const EXPLORE_ENTRIES = [
   { key: "character", label: "By Character", sub: "Major characters with meaningful standalone comic catalogues." },
   { key: "era", label: "By Continuity / Era", sub: "Explore by publishing era and continuity." },
-  { key: "storymap", label: "Story Map", sub: "Explore the DC Comics universe visually." },
+  { key: "storymap", label: "Story Map", sub: "Explore DC eras, transitions, continuities and reading lanes." },
   { key: "paths", label: "Reading Paths", sub: "Follow curated reading journeys." },
 ];
 function exploreGridHtml() {
@@ -114,9 +114,10 @@ export function renderComicsLanding(container, hooks = {}) {
     if (my !== renderSeq || !container.isConnected) return;
     const btn = container.querySelector("#clOpenMapBtn");
     if (!btn) return;
-    const uni = d.universes[0];
-    if (uni) { btn.disabled = false; btn.dataset.universeId = uni.id; }
-    else { btn.disabled = true; btn.querySelector(".cl-explore-sub").textContent = "Not mapped yet."; }
+    // Story Map is now a static, research-first DC Universe map. It no longer
+    // depends on a Firestore universe record existing before the map can open.
+    btn.disabled = false;
+    btn.dataset.universeId = "dc-universe";
   });
 }
 
@@ -129,8 +130,7 @@ function onLandingClick(e) {
     const key = explore.dataset.explore;
     if (key === "storymap") {
       const sm = window.__comicsStoryMap;
-      const uniId = explore.dataset.universeId;
-      if (sm && uniId) sm.open("universe", uniId);
+      if (sm) sm.open();
       return;
     }
     const ex = window.__comicsExplorer;

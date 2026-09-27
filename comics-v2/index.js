@@ -17,12 +17,9 @@
 import * as schema from "./schema.js";
 import * as slug from "./slug.js";
 import * as data from "./data.js";
+import { auditNew52 } from "./new52-map-data.js";
 import { COLLECTIONS } from "./schema.js";
 import { collectionIsReachable, upsertEntity, upsertCollectionEdition } from "./data.js";
-import { dataset as batmanNew52Dataset, validateDataset as validateBatmanNew52, importDataset as importBatmanNew52Dataset } from "./seed-batman-new52.js";
-import { collectionAdditions as batmanNew52CollectionAdditions, validateCollectionAdditions as validateBatmanNew52CollectionAdditions, importCollectionAdditions as importBatmanNew52CollectionAdditions } from "./seed-batman-new52-collections.js";
-import { importComicsDataAudit, validateAuditDefinitions, collectionAdditions as auditCollectionAdditions, seriesMetadataCorrections as auditSeriesMetadataCorrections } from "./seed-comics-data-audit.js";
-
 /* ---------------------------------------------------------------------------
    Foundation self-test — the "minimal developer utility necessary to verify
    it works" (Step 20). Three parts, none of which write anything:
@@ -80,42 +77,4 @@ export async function selfTest() {
   return { passed, failed, results };
 }
 
-/* ---------------------------------------------------------------------------
-   PHASE 2 — New 52 Batman dataset (comics-v2/seed-batman-new52.js).
-   Read-only inspection (`batmanNew52.dataset`, `batmanNew52.validate()`) never
-   writes anything. The actual import is an explicit opt-in call
-   (`await __comicsV2.batmanNew52.import()`) so nothing is written just by
-   loading this module on every page load.
---------------------------------------------------------------------------- */
-const batmanNew52 = {
-  dataset: batmanNew52Dataset,
-  validate: validateBatmanNew52,
-  import: () => importBatmanNew52Dataset({ upsertEntity, upsertCollectionEdition, COLLECTIONS }),
-};
-
-/* ---------------------------------------------------------------------------
-   POINTER 5 — Batman New 52 collection RESEARCH ADDITIONS
-   (comics-v2/seed-batman-new52-collections.js).
-   Same opt-in shape as batmanNew52 above: read-only inspection
-   (`batmanNew52Collections.additions` / `.validate()`) never writes anything.
-   NOT auto-imported anywhere in this file or in any UI button — importing is
-   a deliberate, explicit console call (`await __comicsV2.batmanNew52Collections.import()`)
-   a human runs only after reviewing the additions (5 new comicCollections
-   records — Zero Year x2, Endgame, Superheavy, Bloom — see the Pointer 5
-   final report for the full added/updated/sources breakdown). It never
-   touches or overwrites the seed-batman-new52.js dataset already imported.
---------------------------------------------------------------------------- */
-const batmanNew52Collections = {
-  additions: batmanNew52CollectionAdditions,
-  validate: validateBatmanNew52CollectionAdditions,
-  import: () => importBatmanNew52CollectionAdditions({ upsertCollectionEdition }),
-};
-
-const comicsDataAudit = {
-  validate: validateAuditDefinitions,
-  seriesMetadataCorrections: auditSeriesMetadataCorrections,
-  collectionAdditions: auditCollectionAdditions,
-  import: () => importComicsDataAudit({ upsertEntity, getEntity: data.getEntity, upsertCollectionEdition, COLLECTIONS }),
-};
-
-window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52, batmanNew52Collections, comicsDataAudit };
+window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, new52: { audit: auditNew52 } };
