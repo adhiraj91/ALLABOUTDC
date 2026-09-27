@@ -3183,15 +3183,31 @@ $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
       }
     } else collSkipped = true;
 
+    // The audit/repair dataset is part of the same one-tap admin import. It
+    // adds missing issue records, corrects audited series counts/creator data,
+    // and adds the researched collection coverage. It is upsert/additive and
+    // safe to run repeatedly.
+    let auditResult = null, auditSkipped = false;
+    if(window.__comicsV2.comicsDataAudit){
+      auditResult = await window.__comicsV2.comicsDataAudit.import();
+      if(auditResult?.validation && !auditResult.validation.valid){
+        msg.textContent = "Comics data audit failed validation — nothing was written for the audit: " + JSON.stringify(auditResult.validation.errors || auditResult.validation);
+        msg.className = "form-msg err";
+        return;
+      }
+    } else auditSkipped = true;
+
     const baseTotal = Object.values(base?.written || {}).reduce((a,b)=>a+b, 0);
-    // collResult.written is a plain number (not an object like base.written) — sum only if it's an object.
+    // collResult.written may be a number or an object depending on the importer.
     const collTotal = typeof collResult?.written === "number" ? collResult.written : Object.values(collResult?.written || {}).reduce((a,b)=>a+b, 0);
-    const allErrors = [...(base?.errors||[]), ...(collResult?.errors||[])];
+    const auditTotal = typeof auditResult?.written === "number" ? auditResult.written : Object.values(auditResult?.written || {}).reduce((a,b)=>a+b, 0);
+    const allErrors = [...(base?.errors||[]), ...(collResult?.errors||[]), ...(auditResult?.errors||[])];
     if(allErrors.length){
-      msg.textContent = `Wrote ${baseTotal + collTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
+      msg.textContent = `Wrote ${baseTotal + collTotal + auditTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
       msg.className = "form-msg err";
     }else{
-      msg.textContent = `Done — ${baseTotal} base records` + (collSkipped ? " (collections file not found — skipped)." : ` + ${collTotal} collection records (Zero Year, Endgame, Superheavy, Bloom).`);
+      const auditNote = auditSkipped ? " (audit module not found — skipped)." : ` + ${auditTotal} audited repair records.`;
+      msg.textContent = `Done — ${baseTotal} base records` + (collSkipped ? " (collections file not found — skipped)." : ` + ${collTotal} collection records.`) + auditNote;
       msg.className = "form-msg ok";
     }
   }catch(err){
