@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AllAboutDC — DC Movies, Series, Games &amp; Comics</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💥</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=38">
+</head>
+<body>
+
+<div class="batarang-flash" id="batarangFlash" aria-hidden="true">
+  <img src="data:image/png;base64,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" alt="">
+</div>
+
+<header>
+  <div class="brand">
+    <div class="brand-left"><span class="dot"></span><h1>ALLABOUTDC</h1></div>
+    <div class="brand-actions">
+      <button class="admin-toggle" id="nerdToggle" title="Nerd Mode" data-active="false">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1 .8-1.8 1.8-1.8h2.4c1 0 1.8.8 1.8 1.8v2c0 1-.8 1.8-1.8 1.8h-2.4A1.8 1.8 0 0 1 9 12.5z"/><path d="M12 8.7V7M9.2 9.5 7.8 8M14.8 9.5 16.2 8"/></svg>
+      </button>
+      <button class="admin-toggle profile-toggle-labeled" id="profileToggle" title="Account">
+        <span class="profile-avatar-fallback" id="profileAvatarFallback">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6.4 7-6.4s7 2.8 7 6.4"/></svg>
+        </span>
+        <img id="profileAvatarImg" alt="" style="display:none;">
+        <span class="profile-toggle-label" id="profileToggleLabel">Sign In</span>
+      </button>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<p class="intro" id="introText"></p>
+
+<div class="controls">
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="Search all of AllAboutDC — movies, series, games, comics…" autocomplete="off">
+    <div class="global-search-results" id="globalSearchResults"></div>
+  </div>
+  <div class="filter-row" id="filterRow"></div>
+  <div class="chip-scroller" id="chipRow"></div>
+</div>
+<div class="result-count" id="resultCount"></div>
+
+<main><div class="grid" id="grid"><div class="skeleton">Loading the compendium…</div></div></main>
+<footer class="site-stats-footer" id="siteStatsFooter" style="display:none"></footer>
+
+<button class="fab" id="fabAdd" data-visible="false">＋</button>
+
+<!-- Mobile bottom nav -->
+<nav class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-btn" data-mnav="home"><span class="mnav-icon">🏠</span><span class="mnav-label">Home</span></button>
+  <button class="mobile-nav-btn" data-mnav="explore"><span class="mnav-icon">🧭</span><span class="mnav-label">Explore</span></button>
+  <button class="mobile-nav-btn" data-mnav="search"><span class="mnav-icon">🔎</span><span class="mnav-label">Search</span></button>
+  <button class="mobile-nav-btn" data-mnav="more"><span class="mnav-icon">⋯</span><span class="mnav-label">More</span></button>
+</nav>
+
+<!-- Explore sheet (mobile bottom nav) -->
+<div class="sheet-backdrop" id="exploreBackdrop"></div>
+<div class="sheet" id="exploreSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="exploreClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>Explore</h2>
+  <div class="home-discover-grid" id="exploreGrid"></div>
+  <div class="explore-rail-section">
+    <div class="home-section-head"><h3>Explore by Hero</h3></div>
+    <div class="explore-hero-rail" id="exploreHeroRail"></div>
+  </div>
+  <div class="explore-rail-section">
+    <div class="home-section-head"><h3>Explore by Era</h3></div>
+    <div class="explore-era-rail" id="exploreEraRail"></div>
+  </div>
+</div>
+
+<!-- More sheet (mobile bottom nav) -->
+<div class="sheet-backdrop" id="moreBackdrop"></div>
+<div class="sheet" id="moreSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="moreClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>More</h2>
+  <div class="more-list">
+    <button class="more-row" id="moreQuickStart">🧭 New to DC? Start Here</button>
+    <button class="more-row" id="moreQuickJourney">♥ My Journey</button>
+    <button class="more-row" id="moreQuickComicsPath">📖 Comics Reading Paths</button>
+    <button class="more-row" id="moreQuickHero">By Hero / Team</button>
+    <button class="more-row" id="moreQuickStory">Connected Story</button>
+    <button class="more-row" id="moreQuickTopRated">Top Rated</button>
+    <button class="more-row" id="moreQuickEvents">Multiverse Events</button>
+    <button class="more-row" id="moreQuickGlossary">DC Glossary</button>
+    <button class="more-row" id="moreQuickMultiverse">Multiverse Map</button>
+    <button class="more-row" id="moreQuickNerd">🤓 Nerd Mode: OFF</button>
+    <button class="more-row" id="moreQuickAccount">👤 Account</button>
+  </div>
+  <p class="more-about">AllAboutDC is an unofficial fan-made DC reading &amp; watch guide.</p>
+</div>
+
+<!-- Character / Team hub sheet -->
+<div class="sheet-backdrop" id="hubBackdrop"></div>
+<div class="sheet" id="hubSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="hubClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="hubContent"></div>
+</div>
+
+<!-- DC Starting Point (beginner guide) sheet -->
+<div class="sheet-backdrop" id="startBackdrop"></div>
+<div class="sheet" id="startSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="startClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="startContent"></div>
+</div>
+
+<!-- Comics reading path sheet (Hero → Continuity → Reading order → Reading journey) -->
+<div class="sheet-backdrop" id="comicsPathBackdrop"></div>
+<div class="sheet" id="comicsPathSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="comicsPathClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="comicsPathContent"></div>
+</div>
+
+<!-- Interactive Comics Continuity Explorer (Pointer 3, comics-v2/explorer.js) — character-first
+     drill-down over the new normalized Comics data model: Comics -> Characters/Continuities/Series
+     -> Character -> Continuity/Era -> Series -> Creative Run -> Story -> Issues -> Issue detail.
+     Reuses the site's existing bottom-sheet pattern on its own dedicated sheet element. -->
+<div class="sheet-backdrop" id="comicsExplorerBackdrop"></div>
+<div class="sheet" id="comicsExplorerSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="comicsExplorerClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="comicsExplorerContent"></div>
+</div>
+
+<!-- Detail sheet -->
+<div class="sheet-backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="sheetClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div id="sheetContent"></div>
+</div>
+
+<!-- Reader account sheet (sign in / sign up / profile) -->
+<div class="sheet-backdrop" id="readerBackdrop"></div>
+<div class="sheet" id="readerSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="readerClose">✕</button>
+  <div class="sheet-handle"></div>
+
+  <div id="readerAuthArea">
+    <div class="sheet-eyebrow">YOUR ACCOUNT</div>
+    <h2 id="readerHeading">Sign In</h2>
+    <p class="sheet-body" style="color:var(--ink-dim);font-size:13px;margin-bottom:16px;">Sign in to sync your favorites and progress across devices. Browsing and My Journey still work fine without an account.</p>
+    <button class="btn btn-google" id="googleSignInBtn">
+      <svg viewBox="0 0 18 18" width="16" height="16"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.56 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    <div class="reader-auth-divider"><span>or</span></div>
+    <div class="form-group"><label>Email</label><input type="email" id="readerEmail" autocomplete="email"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="readerPassword" autocomplete="current-password"></div>
+    <div class="reader-forgot"><a href="#" id="readerForgotLink">Forgot password?</a></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="readerCancel">Cancel</button>
+      <button class="btn btn-primary" id="readerSubmit">Sign In</button>
+    </div>
+    <div class="form-msg" id="readerMsg"></div>
+    <p class="reader-auth-switch">
+      <span id="readerModeSignup">New here? <a href="#" id="readerToggleMode">Create an account</a></span>
+      <span id="readerModeLogin" style="display:none;">Already have an account? <a href="#" id="readerToggleModeBack">Sign in</a></span>
+    </p>
+    <p class="reader-admin-link"><a href="#" id="readerAdminAccessLink">Admin Access</a></p>
+  </div>
+
+  <div id="readerProfileArea" style="display:none;">
+    <div class="reader-profile-head">
+      <span class="reader-profile-avatar" id="readerProfileAvatarFallback"></span>
+      <img id="readerProfileAvatarImg" alt="" style="display:none;">
+      <div>
+        <div class="reader-profile-name" id="readerProfileName"></div>
+        <div class="reader-profile-email" id="readerProfileEmail"></div>
+      </div>
+    </div>
+    <div class="more-list" style="margin-top:16px;">
+      <button class="more-row" id="readerGoJourney">🧭 My Journey</button>
+      <button class="more-row" id="readerGoFavorites">♥ Favorites</button>
+      <button class="more-row" id="readerGoProgress">✓ Progress</button>
+      <button class="more-row" id="readerGoAdminTools" style="display:none;">🛠 Admin Tools</button>
+      <button class="more-row" id="readerGoSettings">⚙ Settings</button>
+    </div>
+    <div class="form-msg" id="readerSyncMsg" style="margin-top:10px;"></div>
+    <div class="form-actions" style="margin-top:16px;"><button class="btn btn-ghost" id="readerLogoutBtn">Sign out</button></div>
+  </div>
+</div>
+
+<!-- Login sheet -->
+<div class="sheet-backdrop" id="loginBackdrop"></div>
+<div class="sheet" id="loginSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="loginClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-eyebrow">ADMIN ACCESS</div>
+  <h2 id="loginHeading">Admin Sign In</h2>
+  <div id="loginArea">
+    <div class="form-group"><label>Email</label><input type="email" id="loginEmail"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="loginPassword"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" id="loginCancel">Cancel</button>
+      <button class="btn btn-primary" id="loginSubmit">Sign in</button>
+    </div>
+    <div class="form-msg" id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- Admin Tools sheet (reached only from Account → Admin Tools, once signed in as the authorized admin) -->
+<div class="sheet-backdrop" id="adminToolsBackdrop"></div>
+<div class="sheet" id="adminToolsSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="adminToolsClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>Admin Tools</h2>
+
+  <div class="sheet-section" style="margin-top:14px;">
+    <div class="sheet-label">CONTENT</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="replaceMSBtn">Replace Movies, Series &amp; Games</button>
+      <div class="form-msg" id="replaceMSMsg"></div>
+    </div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="replaceComicsBtn">Replace Comics</button>
+      <div class="form-msg" id="replaceComicsMsg"></div>
+    </div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">JOURNEYS</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="replaceBeginnerBtn">Replace Beginner Guide</button>
+      <div class="form-msg" id="replaceBeginnerMsg"></div>
+    </div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <details>
+      <summary class="sheet-label" style="cursor:pointer;">DATA QUALITY</summary>
+      <div class="sheet-body admin-health" id="adminDataHealth" style="font-size:12.5px;color:var(--ink-dim);margin-top:8px;"></div>
+    </details>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">COMICS V2 (BETA)</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="importBatmanNew52Btn">Import / Update Batman New 52 Data</button>
+      <div class="form-msg" id="importBatmanNew52Msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings sheet (Account → Settings) -->
+<div class="sheet-backdrop" id="settingsBackdrop"></div>
+<div class="sheet" id="settingsSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="settingsClose">✕</button>
+  <div class="sheet-handle"></div>
+  <h2>Settings</h2>
+
+  <div class="sheet-section" style="margin-top:14px;">
+    <div class="sheet-label">ACCOUNT</div>
+    <div class="form-group"><label>Display name</label><input type="text" id="settingsDisplayName"></div>
+    <div class="form-actions"><button class="btn btn-ghost" id="settingsSaveNameBtn">Save name</button></div>
+    <div class="form-msg" id="settingsNameMsg"></div>
+    <div class="settings-static-row"><span>Email</span><span id="settingsEmailValue"></span></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">EXPERIENCE</div>
+    <div class="setting-row">
+      <span>Spoiler Protection</span>
+      <button class="setting-toggle" id="settingSpoilerToggle" data-on="true">On</button>
+    </div>
+    <div class="setting-row">
+      <span>Default Content</span>
+      <select id="settingDefaultContent">
+        <option value="all">All</option>
+        <option value="movies">Movies</option>
+        <option value="series">Series</option>
+        <option value="comics">Comics</option>
+        <option value="games">Games</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <span>Continue Where I Left Off</span>
+      <button class="setting-toggle" id="settingContinueToggle" data-on="true">On</button>
+    </div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">JOURNEY &amp; PROGRESS</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsResetJourneyBtn">Reset Current Journey</button>
+    </div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsResetProgressBtn">Reset All Journey Progress</button>
+    </div>
+    <div class="form-msg" id="settingsJourneyMsg"></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">PRIVACY &amp; DATA</div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsExportBtn">Export My Data</button>
+    </div>
+    <div class="admin-tool-row">
+      <button class="btn btn-ghost" id="settingsClearLocalBtn">Clear Local Data</button>
+    </div>
+    <div class="form-msg" id="settingsDataMsg"></div>
+  </div>
+
+  <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+    <div class="sheet-label">ACCOUNT</div>
+    <div class="form-actions"><button class="btn btn-ghost" id="settingsSignOutBtn">Sign Out</button></div>
+    <div class="admin-tool-row" style="margin-top:10px;">
+      <button class="btn btn-danger" id="settingsDeleteAccountBtn">Delete Account</button>
+    </div>
+    <div class="form-msg" id="settingsAccountMsg"></div>
+  </div>
+</div>
+
+<!-- Add-entry sheet -->
+<div class="sheet-backdrop" id="addBackdrop"></div>
+<div class="sheet" id="addSheet" role="dialog" aria-modal="true">
+  <button class="sheet-close" id="addClose">✕</button>
+  <div class="sheet-handle"></div>
+  <div class="sheet-eyebrow">ADD ENTRY</div>
+  <h2>New title</h2>
+  <div class="form-group">
+    <label>Category</label>
+    <select id="addCategory">
+      <option value="movies">Movies</option>
+      <option value="series">Series</option>
+      <option value="games">Games</option>
+      <option value="comics">Comics</option>
+    </select>
+  </div>
+  <div id="addFormFields"></div>
+  <div class="form-actions">
+    <button class="btn btn-ghost" id="addCancel">Cancel</button>
+    <button class="btn btn-primary" id="addSubmit">Add to compendium</button>
+  </div>
+  <div class="form-msg" id="addMsg"></div>
+</div>
+
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="app.js?v=46"></script>
+<!-- Comics domain-model foundation (Phase 1) — independent of app.js, renders nothing, adds no UI.
+     Loading it only attaches window.__comicsV2 for developer verification (see comics-v2/index.js). -->
+<script type="module" src="comics-v2/index.js?v=1"></script>
+<!-- Interactive Comics Continuity Explorer (Phase 3 / Pointer 3) — independent of app.js, same as
+     comics-v2/index.js. Adds one entry-point button inside the existing Comics tab (app.js renders
+     it, id="comicsExplorerEntryBtn") plus its own sheet UI (#comicsExplorerSheet above). -->
+<script type="module" src="comics-v2/explorer.js?v=4"></script>
+<!-- Pointer 4: dedicated Comics landing (what the Comics tab opens; app.js delegates to it and falls back to
+     the old catalogue if it hasn't loaded) + the zoomable/expandable Comics Story Map. Both independent of app.js. -->
+<script type="module" src="comics-v2/landing.js?v=2"></script>
+<script type="module" src="comics-v2/storymap.js?v=3"></script>
+</body>
+</html>
