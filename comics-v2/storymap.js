@@ -28,13 +28,16 @@
 // "?v=p4" — data.js gained new batched helpers in Pointer 4; the query string makes
 // browsers fetch the new file even if an older data.js is still cached (GitHub Pages
 // caches for ~10 min). It is only a separate module instance of the same stateless file.
-import * as data from "./data.js?v=p5";
+import * as data from "./data.js?v=p6";
 import { COLLECTIONS } from "./schema.js";
+// Pointer 6 — reading progress (derived; subtle on the map) + the contextual Story Graph in the detail panel.
+import * as RP from "./reading-progress.js?v=p6";
+import { groupConnections, isNonOrderingGroup } from "./story-graph.js?v=p6";
 import {
   pathTypeLabel, sortPathsByType, pathEntryCount, locateInPath,
   groupCoverageBySeries, compressCoverageRows, coverageSummaryLines,
   hasPartialCoverage, formatEditionMeta, verificationLabel,
-} from "./reading-collections.js";
+} from "./reading-collections.js?v=p6";
 
 /* ============================= utils ============================= */
 const esc = (s) => s == null ? "" : String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -221,6 +224,7 @@ let S = null; // current map session
 function newSession(rootType, rootId, opts) {
   SM_PATH_SELECTION = new Map();
   SM_COLL_EXPANDED = new Map();
+  SM_GRAPH_ITEMS = new Map();
   return {
     rootType, rootId, opts: opts || {},
     nodes: new Map(), rootKey: null, focusKey: null, selectedKey: null,
@@ -361,7 +365,7 @@ function visibleTree() {
   return out;
 }
 
-function chipWidth(n) { return Math.max(46, Math.min(190, 18 + entityTitle("issue", n.e).length * 6.6)); }
+function chipWidth(n) { return Math.max(46, Math.min(204, 18 + entityTitle("issue", n.e).length * 6.6 + (S && S.snap && S.snap.sets.issue.has(n.id) ? 14 : 0))); }
 
 function computeLayout() {
   const vp = el.viewport.getBoundingClientRect();
@@ -549,6 +553,15 @@ function nodeSub(n) {
   }
   return "";
 }
+/* Pointer 6: progress on the map stays secondary — a small "✓" or "3/6" on story nodes and a tick on
+   read issue chips. Unread shows nothing, runs/series/eras show nothing (no progress-bar walls). */
+function nodeProgress(n, snap) {
+  const t = displayType(n);
+  if (t !== "story" && t !== "event") return null;
+  const p = RP.storyProgress(n.e, snap);
+  if (p.state === "unread") return null;
+  return { state: p.state, text: p.state === "complete" ? "✓" : (p.total ? `${p.read}/${p.total}` : "…"), label: p.state === "complete" ? "Read" : (p.total ? `${p.read} of ${p.total} issues read` : "In progress") };
+}
 function childCountHint(n) {
   if (n.children) return n.children.length;
   if (n.type === "continuity" && n.pool) return n.pool.length;
@@ -566,7 +579,8 @@ function nodeHtml(n, p, isNew) {
   const common = `data-key="${esc(n.key)}" data-type="${t}" data-selected="${sel}" data-related="${!!related}" data-dim="${!!dim}"${isNew ? ' data-enter="true"' : ""}`;
   const style = `transform:translate(${p.x}px,${p.y}px);width:${p.w}px;height:${p.h}px`;
   if (p.chip) {
-    return `<button class="sm-chip" ${common} style="${style}" title="${esc(title)}">${esc(title)}</button>`;
+    const st = RP.issueState(n.id, S.snap || RP.snapshot());
+    return `<button class="sm-chip" ${common} data-read="${st}" style="${style}" title="${esc(title)}${st === "read" ? " — read" : st === "reading" ? " — reading" : ""}">${st === "read" ? `<span class="sm-chip-tick" aria-hidden="true">✓</span>` : ""}${esc(title)}</button>`;
   }
   let toggle = "";
   if (canExpand(n)) {
@@ -576,10 +590,12 @@ function nodeHtml(n, p, isNew) {
     toggle = `<button class="sm-toggle" data-toggle="${esc(n.key)}" data-status="${n.status}" aria-label="${aria} ${esc(title)}" aria-expanded="${n.expanded}">${label}</button>`;
   }
   const sub = nodeSub(n);
+  const prog = nodeProgress(n, S.snap || RP.snapshot());
+  const progHtml = prog ? `<span class="sm-node-prog" data-state="${prog.state}" title="${esc(prog.label)}" aria-label="${esc(prog.label)}">${esc(prog.text)}</span>` : "";
   const mono = t === "character" ? `<span class="sm-mono" aria-hidden="true">${esc(String(title).trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase())}</span>` : "";
   return `<div class="sm-node" ${common} data-expanded="${n.expanded}" style="${style}">
       <button class="sm-node-main" data-select="${esc(n.key)}" title="${esc(title)}">
-        ${mono}<span class="sm-node-text"><span class="sm-node-kicker">${esc(nodeKicker(n))}</span><span class="sm-node-title">${esc(title)}</span>${sub ? `<span class="sm-node-sub">${esc(sub)}</span>` : ""}</span>
+        ${mono}${progHtml}<span class="sm-node-text"><span class="sm-node-kicker">${esc(nodeKicker(n))}</span><span class="sm-node-title">${esc(title)}</span>${sub ? `<span class="sm-node-sub">${esc(sub)}</span>` : ""}</span>
       </button>${toggle}
     </div>`;
 }
@@ -600,6 +616,7 @@ function relayout() { render(); }
 
 function render() {
   if (!S || !el.root) return;
+  S.snap = RP.snapshot(); // one progress read per render pass
   const L = computeLayout();
   S.layout = L;
   const vis = visibleTree();
@@ -873,15 +890,18 @@ function closeDetail() {
   el.detail.dataset.open = "false";
   el.root.dataset.detail = "false";
 }
-async function renderDetail() {
+async function renderDetail(opts) {
   const n = S && S.nodes.get(S.selectedKey);
   if (!n) { closeDetail(); return; }
   const my = ++detailToken;
+  // Pointer 6: a progress change re-draws the SAME node's panel without the loading flash or losing scroll.
+  const keep = !!(opts && opts.keepScroll) && el.detail.dataset.open === "true" && el.detailBody.dataset.key === n.key;
+  const prevScroll = keep ? el.detailBody.scrollTop : 0;
   el.detail.dataset.open = "true";
   el.root.dataset.detail = "true";
   const t = displayType(n), e = n.e;
   const head = `<div class="sm-d-kicker" data-type="${t}">${esc(TYPE_LABEL[t] || t)}</div><h2 class="sm-d-title">${esc(entityTitle(n.type, e))}</h2>`;
-  el.detailBody.innerHTML = head + `<div class="sm-d-loading">Loading details…</div>`;
+  if (!keep) el.detailBody.innerHTML = head + `<div class="sm-d-loading">Loading details…</div>`;
   let body = "";
   try {
     body = await detailBodyHtml(n, t);
@@ -891,7 +911,9 @@ async function renderDetail() {
   }
   if (my !== detailToken || !S || S.selectedKey !== n.key) return;
   el.detailBody.innerHTML = head + body + actionsHtml(n, t) + (isNerd() ? nerdHtml(n) : "");
-  el.detailBody.scrollTop = 0;
+  el.detailBody.dataset.key = n.key;
+  el.detailBody.scrollTop = prevScroll;
+  if (keep) return;
   // the sheet's final height is only known now — keep the selected node clear of it
   requestAnimationFrame(() => { if (S && S.selectedKey === n.key) focusOn(n, false); });
 }
@@ -958,6 +980,85 @@ async function collectedInSectionHtml(nodeKey, collections) {
   }).join("");
   return `<div class="sm-d-section"><div class="sm-d-label">Collected in</div><div class="sm-d-coll-list">${rows}</div></div>`;
 }
+/* ============================= Pointer 6: progress + Story Graph in the detail panel ============================= */
+let SM_GRAPH_ITEMS = new Map(); // nodeKey -> grouped connection items (for the concise connected-story hand-off)
+function storyProgressSectionHtml(story, issues) {
+  const p = RP.storyProgress(story, RP.snapshot());
+  let out = `<div class="sm-d-section sm-d-progress"><div class="sm-d-label">Your progress</div>`;
+  out += `<div class="sm-d-prog-line" data-state="${p.state}">${esc(RP.storySummaryText(p))}</div>`;
+  if (p.derived) {
+    const nx = p.state !== "complete" && p.nextIssueId ? issues.find(i => i.id === p.nextIssueId) : null;
+    if (nx) {
+      const s = cached(COLLECTIONS.SERIES, nx.seriesId);
+      out += `<button class="sm-d-rel sm-d-next" data-rel-kind="seq" data-prog-act="sm-open-issue" data-issue-id="${esc(nx.id)}"><span class="sm-d-rel-type">${p.state === "unread" ? "Start with" : "Continue with"}</span><span class="sm-d-rel-name">${esc(RP.issueLabelWith(nx, s))}</span><span class="sm-d-rel-go">Open</span></button>`;
+    }
+    out += `<div class="sm-d-actions sm-d-prog-actions"><button class="sm-d-action" data-prog-act="sm-story-all" data-read="${p.state !== "complete"}">${p.state === "complete" ? `Mark all ${p.total} unread` : `Mark all ${p.total} read`}</button></div>`;
+  } else {
+    out += `<div class="sheet-journey-row sm-d-prog-actions"><button class="journey-btn done-toggle" data-prog-act="sm-story-explicit" data-active="${p.state === "complete"}">${p.state === "complete" ? "✓ Read" : "Mark story as Read"}</button></div>`;
+  }
+  return out + `</div>`;
+}
+function issueProgressSectionHtml(issue) {
+  const st = RP.issueState(issue.id, RP.snapshot());
+  const read = st === "read", reading = st === "reading";
+  return `<div class="sm-d-section sm-d-progress"><div class="sm-d-label">Your progress</div><div class="sheet-journey-row sm-d-prog-actions">
+      <button class="journey-btn done-toggle" data-prog-act="sm-issue-read" data-active="${read}">${read ? "✓ Read" : "Mark as Read"}</button>
+      ${read ? "" : `<button class="journey-btn cx-reading-toggle" data-prog-act="sm-issue-reading" data-active="${reading}">${reading ? "Reading now" : "Start reading"}</button>`}
+    </div></div>`;
+}
+async function storyGraphSectionHtml(n, rels) {
+  const groups = groupConnections(n.id, rels);
+  const items = [];
+  for (const g of groups) {
+    for (const it of g.items) {
+      const col = COL_BY_TYPE[it.otherType];
+      const other = col ? await getOne(col, it.otherId) : null;
+      if (other) items.push({ ...it, entity: other, group: g });
+    }
+  }
+  SM_GRAPH_ITEMS.set(n.key, items);
+  const label = `<div class="sm-d-label">Connected stories</div>`;
+  if (!items.length) return `<div class="sm-d-section sm-d-graph">${label}<div class="sm-d-graph-empty">No connected stories recorded for this ${displayType(n) === "event" ? "event" : "story"} yet.</div></div>`;
+  const snap = RP.snapshot();
+  let out = `<div class="sm-d-section sm-d-graph">${label}`;
+  groups.forEach(g => {
+    const rows = items.filter(it => it.group.id === g.id);
+    if (!rows.length) return;
+    out += `<div class="sm-d-graph-group" data-group="${g.id}"><div class="sm-d-graph-label">${esc(g.label)}</div><div class="sm-d-rels">`;
+    out += rows.map(it => {
+      const idx = items.indexOf(it);
+      const onMap = visibleKeyFor(it.otherId);
+      const isStory = it.otherType === "story" || it.otherType === "event";
+      const p = isStory ? RP.storyProgress(it.entity, snap) : null;
+      const mark = p ? RP.markText(p) : "";
+      return `<button class="sm-d-rel" data-rel-kind="${isNonOrderingGroup(g.id) ? "struct" : "seq"}" data-graph-idx="${idx}" data-goto="${esc(onMap || "")}">
+          <span class="sm-d-rel-type">${esc(it.phrase)}</span><span class="sm-d-rel-name">${esc(entityTitle(isStory ? "story" : it.otherType, it.entity))}${mark ? ` <span class="sm-d-rel-mark" data-state="${p.state}">${esc(mark)}</span>` : ""}</span>
+          <span class="sm-d-rel-go">${onMap ? "Show" : "View"}</span></button>`;
+    }).join("");
+    out += `</div></div>`;
+  });
+  return out + `<div class="sm-d-hint">Recorded connections — not a reading order. Reading paths decide what comes next.</div></div>`;
+}
+async function onProgressAction(a, n) {
+  const b = RP.bridge(); if (!b || !n) return;
+  const act = a.dataset.progAct;
+  const storyAnc = n.type === "story" ? n : ancestorOfType(n, "story");
+  const ctx = { storyId: storyAnc ? storyAnc.id : null, pathId: null };
+  if (act === "sm-issue-read") b.setRead("issue", n.id, !b.isRead("issue", n.id), ctx);
+  else if (act === "sm-issue-reading") b.setReading(n.id, RP.issueState(n.id, RP.snapshot()) !== "reading", ctx);
+  else if (act === "sm-story-explicit") b.setRead("story", n.id, !b.isRead("story", n.id), { storyId: n.id });
+  else if (act === "sm-story-all") {
+    const ids = n.e.issueIds || [];
+    if (ids.length) b.setRead("issue", ids, a.dataset.read === "true", { storyId: n.id });
+  } else if (act === "sm-open-issue") {
+    const iss = await getOne(COLLECTIONS.ISSUES, a.dataset.issueId);
+    if (!iss) return;
+    const trail = explorerTrailFor(n);
+    trail.push({ level: "issue", label: RP.issueLabelWith(iss, cached(COLLECTIONS.SERIES, iss.seriesId)), params: { issue: iss, story: n.e } });
+    openExplorer(trail);
+  }
+}
+
 async function detailBodyHtml(n, t) {
   const e = n.e;
   const parts = [];
@@ -993,6 +1094,10 @@ async function detailBodyHtml(n, t) {
     facts.push(factRow("Issues", runIssueRange(e)));
     facts.push(factRow("Years", yearRange(e.startDate, e.endDate)));
     if (n.pool) facts.push(factRow("Stories", String(n.pool.length)));
+    if (n.pool && n.pool.length) {
+      const rp = RP.runProgress(n.pool, RP.snapshot());
+      if (rp.state !== "unread") facts.push(factRow("Your progress", rp.state === "complete" ? "✓ Every story read" : `${rp.complete} of ${rp.total} stories complete`));
+    }
     if (e.description) parts.push(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
     const runPaths = await memo("rp:run:" + e.id, () => data.getReadingPathsFor({ continuityId: series ? (series.continuityIds || [])[0] || null : null }));
     parts.push(await readingPathsSectionHtml(n.key, runPaths, e.seriesId));
@@ -1011,6 +1116,7 @@ async function detailBodyHtml(n, t) {
     facts.push(factRow(series.length > 1 ? "Series" : "Series", series.map(s => entityTitle("series", s)).join(", ")));
     if (run) facts.push(factRow("Creative run", run.title || runCreatorsLabel(run)));
     if (creators.length) facts.push(factRow("Creators", creators.map(c => c.displayName || c.name).join(" · ")));
+    parts.push(storyProgressSectionHtml(e, issues));
     if (coverage.length) parts.push(`<div class="sm-d-section"><div class="sm-d-label">Issue coverage</div><div class="sm-d-coverage">${coverage.map(c => `<div>${esc(c)}</div>`).join("")}</div></div>`);
     if (chars.length) parts.push(`<div class="sm-d-section"><div class="sm-d-label">Characters</div><div class="sm-d-names">${chars.slice(0, 8).map(c => esc(c.displayName || c.name)).join(" · ")}${chars.length > 8 ? ` · +${chars.length - 8}` : ""}</div></div>`);
     if (e.description) parts.unshift(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
@@ -1025,6 +1131,7 @@ async function detailBodyHtml(n, t) {
     facts.push(factRow("Series", series && entityTitle("series", series)));
     facts.push(factRow("Title", e.title));
     facts.push(factRow("Published", e.publicationDate || e.coverDate));
+    parts.push(issueProgressSectionHtml(e));
     if (stories.length) facts.push(factRow("Story", stories.map(s => s.title).join(", ")));
     if (creators.length) facts.push(factRow("Creators", creators.map(c => c.displayName || c.name).join(" · ")));
     const issueColls = await memo("ci:" + e.id, () => data.getCollectionsContainingIssue(e.id));
@@ -1033,7 +1140,10 @@ async function detailBodyHtml(n, t) {
   // Relationships (both directions), with the other end resolved to a name.
   await ensureRels([e.id]);
   const rels = relsFor(e.id);
-  if (rels.length) {
+  if (t === "story" || t === "event") {
+    // Pointer 6: stories get the grouped, contextual Story Graph instead of a flat list.
+    parts.push(await storyGraphSectionHtml(n, rels));
+  } else if (rels.length) {
     const rows = await Promise.all(rels.map(async r => {
       const outgoing = r.sourceId === e.id;
       const otherId = outgoing ? r.targetId : r.sourceId, otherType = outgoing ? r.targetType : r.sourceType;
@@ -1328,8 +1438,26 @@ function wireShell() {
   el.root.querySelector("#smRelToggle").addEventListener("change", (e) => { if (!S) return; S.showRels = e.target.checked; render(); });
   el.detail.addEventListener("click", async (e) => {
     if (!S) return;
-    const a = e.target.closest("[data-act]");
     const n = S.nodes.get(S.selectedKey);
+    const pa = e.target.closest("[data-prog-act]");
+    if (pa && n) { onProgressAction(pa, n); return; }
+    const gr = e.target.closest("[data-graph-idx]");
+    if (gr && n) {
+      if (gr.dataset.goto) { select(gr.dataset.goto); return; }
+      const it = (SM_GRAPH_ITEMS.get(n.key) || [])[+gr.dataset.graphIdx];
+      if (!it) return;
+      if (it.otherType === "story" || it.otherType === "event") {
+        // Part 14: a concise connected-story view (reused Explorer screen), with Open Story / Issues / Paths.
+        const trail = explorerTrailFor(n);
+        trail.push({ level: "connected", label: it.entity.title, params: { story: it.entity, from: n.e, rel: it.rel, group: it.group } });
+        openExplorer(trail);
+      } else {
+        const lvl = { series: "series", issue: "issue", character: "character", run: "run" }[it.otherType];
+        if (lvl) openExplorer([{ level: lvl, label: entityTitle(it.otherType, it.entity), params: lvl === "run" ? { run: it.entity, series: await getOne(COLLECTIONS.SERIES, it.entity.seriesId) } : { [lvl]: it.entity } }]);
+      }
+      return;
+    }
+    const a = e.target.closest("[data-act]");
     if (a && n) { onDetailAction(a.dataset.act, n); return; }
     const g = e.target.closest("[data-goto-id]");
     if (g) {
@@ -1397,6 +1525,14 @@ function wireShell() {
     }
   });
 }
+
+/* Pointer 6: any progress change (map panel, Explorer, another view, login merge) re-draws node marks and
+   the open detail panel in place — from memory, no new Firestore reads (detail reads are memoised). */
+document.addEventListener("readerprogress:change", () => {
+  if (!S || !el.root || el.root.dataset.open !== "true") return;
+  render();
+  if (S.selectedKey && el.detail.dataset.open === "true") renderDetail({ keepScroll: true });
+});
 
 /* ============================= public API ============================= */
 window.__comicsStoryMap = {

@@ -33,14 +33,19 @@
 // ============================================================================
 // "?v=p5" — data.js gained new Pointer 5 helpers (reading paths / collection overlap);
 // the query string busts GitHub Pages' ~10min cache the same way Pointer 4 did for storymap.js.
-import * as data from "./data.js?v=p5";
+import * as data from "./data.js?v=p6";
 import { COLLECTIONS } from "./schema.js";
+// Pointer 6 — personal reading progress (derived from the site's one progress store via
+// window.__readerProgress) + the contextual Story Graph. Same "?v=p6" specifier everywhere so
+// every comics-v2 module shares one instance of each.
+import * as RP from "./reading-progress.js?v=p6";
+import { groupConnections, connectionSentence, isNonOrderingGroup } from "./story-graph.js?v=p6";
 import {
   pathTypeLabel, sortPathsByType, pathEntryCount, locateInPath,
   groupCoverageBySeries, compressCoverageRows, coverageSummaryLines,
   hasPartialCoverage, coverageBarSegments,
   formatEditionMeta, verificationLabel,
-} from "./reading-collections.js";
+} from "./reading-collections.js?v=p6";
 
 /* ============================= small utils ============================= */
 function esc(s) {
@@ -191,6 +196,112 @@ async function collectedInHtml(list) {
       });
     },
   };
+}
+
+/* ============================= Pointer 6: progress fragments =============================
+   Small, text-first marks (✓ / 3/7) and the site's existing journey-btn toggles — never bars.
+   Every control is re-drawn IN PLACE from the progress store on "readerprogress:change"
+   (see currentLevelUpdate below), so tapping one never re-fetches anything from Firestore. */
+function readToggleHtml(issueId, state, label) {
+  const read = state === "read";
+  const aria = read ? `Mark ${label} as unread` : `Mark ${label} as read`;
+  return `<button class="cx-read-toggle" data-issue-toggle="${esc(issueId)}" data-label="${esc(label)}" data-state="${state}" aria-pressed="${read}" aria-label="${esc(aria)}" title="${esc(aria)}"><span aria-hidden="true">${read ? "✓" : ""}</span></button>`;
+}
+function patchIssueToggles(container, snap) {
+  container.querySelectorAll("[data-issue-toggle]").forEach(b => {
+    const st = RP.issueState(b.dataset.issueToggle, snap);
+    const read = st === "read", label = b.dataset.label || "issue";
+    b.dataset.state = st;
+    b.setAttribute("aria-pressed", String(read));
+    const aria = read ? `Mark ${label} as unread` : `Mark ${label} as read`;
+    b.setAttribute("aria-label", aria); b.title = aria;
+    b.innerHTML = `<span aria-hidden="true">${read ? "✓" : ""}</span>`;
+  });
+}
+function markHtml(p, attrs) {
+  const t = RP.markText(p);
+  return `<span class="cx-mark" data-state="${p ? p.state : "unread"}"${attrs || ""}>${esc(t)}</span>`;
+}
+function patchStoryMarks(container, stories, snap) {
+  const byId = new Map((stories || []).filter(Boolean).map(st => [st.id, st]));
+  container.querySelectorAll("[data-mark-story]").forEach(el => {
+    const st = byId.get(el.dataset.markStory);
+    if (!st) return;
+    const p = RP.storyProgress(st, snap);
+    el.dataset.state = p.state;
+    el.textContent = RP.markText(p);
+  });
+}
+function updateBlocks(container, blocks) {
+  container.querySelectorAll("[data-prog-block]").forEach(el => {
+    const f = blocks[el.dataset.progBlock];
+    if (f) el.innerHTML = f();
+  });
+}
+function progressApi() { return RP.bridge(); }
+function toggleIssueRead(issueId, ctx) {
+  const b = progressApi(); if (!b) return;
+  b.setRead("issue", issueId, !b.isRead("issue", issueId), ctx);
+}
+
+/* ============================= Pointer 6: Story Graph (contextual) =============================
+   One story at a time: its recorded comicRelationships, grouped Before / After / Part of event /
+   In this event / Crossover / Tie-ins / Related (only groups the data actually has). Selecting a
+   connected story opens a concise "connected" level — never a giant web, never a reading order. */
+async function storyGraphHtml(story, rels) {
+  const groups = groupConnections(story.id, rels);
+  const typeCol = { story: COLLECTIONS.STORIES, event: COLLECTIONS.STORIES, series: COLLECTIONS.SERIES, issue: COLLECTIONS.ISSUES, character: COLLECTIONS.CHARACTERS, run: COLLECTIONS.RUNS, collection: COLLECTIONS.COLLECTIONS };
+  const items = [];
+  for (const g of groups) {
+    for (const it of g.items) {
+      const col = typeCol[it.otherType];
+      it.entity = col ? await cachedGet(col, it.otherId) : null;
+      it.group = g;
+      if (it.entity) items.push(it);
+    }
+  }
+  const label = `<div class="sheet-label">CONNECTED STORIES</div>`;
+  if (!items.length) {
+    return { html: `<div class="sheet-section cx-graph">${label}<div class="cx-graph-empty">No connected stories are recorded for ${esc(story.title)} yet.</div></div>`, items };
+  }
+  const snap = RP.snapshot();
+  let html = `<div class="sheet-section cx-graph">${label}`;
+  groups.forEach(g => {
+    const rows = items.filter(it => it.group.id === g.id);
+    if (!rows.length) return;
+    html += `<div class="cx-graph-group" data-group="${g.id}"><div class="cx-graph-label">${esc(g.label)}</div><div class="cx-list">`;
+    html += rows.map(it => {
+      const idx = items.indexOf(it);
+      const e = it.entity;
+      const isStory = it.otherType === "story" || it.otherType === "event";
+      const title = isStory ? e.title : (ENTITY_META[it.otherType] ? ENTITY_META[it.otherType].name(e) : e.title || e.name);
+      const n = isStory ? (e.issueIds || []).length : 0;
+      const multi = isStory && (e.seriesIds || []).length > 1 ? `across ${(e.seriesIds || []).length} series` : "";
+      const sub = [it.phrase, n ? `${n} issue${n === 1 ? "" : "s"}` : "", multi].filter(Boolean).join(" · ");
+      const prog = isStory ? RP.storyProgress(e, snap) : null;
+      return `<div class="cx-row cx-graph-row" data-graph-idx="${idx}" data-kind="${isNonOrderingGroup(g.id) ? "link" : "order"}">
+          <div class="cx-row-body"><div class="cx-row-title">${esc(title)}</div><div class="cx-row-sub">${esc(sub)}</div></div>
+          ${prog ? markHtml(prog, ` data-mark-story="${esc(e.id)}"`) : ""}<div class="cx-row-chevron">›</div>
+        </div>`;
+    }).join("");
+    html += `</div></div>`;
+  });
+  html += `<div class="cx-hint">Recorded connections, not a reading order — a reading path decides what to read next.</div></div>`;
+  return { html, items };
+}
+function wireStoryGraph(container, story, items) {
+  container.querySelectorAll("[data-graph-idx]").forEach(row => {
+    row.addEventListener("click", () => {
+      const it = items[+row.dataset.graphIdx];
+      if (!it) return;
+      const e = it.entity;
+      if (it.otherType === "story" || it.otherType === "event") pushLevel("connected", e.title, { story: e, from: story, rel: it.rel, group: it.group });
+      else if (it.otherType === "series") pushLevel("series", e.title, { series: e });
+      else if (it.otherType === "issue") pushLevel("issue", e.issueLabel || "Issue", { issue: e });
+      else if (it.otherType === "character") pushLevel("character", e.displayName || e.name, { character: e });
+      else if (it.otherType === "collection") pushLevel("collection", e.title, { collectionEntity: e });
+    });
+  });
 }
 
 /* ============================= Reading Paths (Part 2/3/4) =============================
@@ -398,6 +509,18 @@ async function levelSeries(params) {
   html += `<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2>`;
   const sub = [seriesDateRange(s), s.issueCount ? `${s.issueCount} issues` : ""].filter(Boolean).join(" · ");
   if (sub) html += `<div class="cx-subtitle">${esc(sub)}</div>`;
+  // Pointer 6: series progress from its issue records — exact only when those records cover the series.
+  let seriesIssues = RP.hasAnyComicsActivity() ? await RP.issuesForSeries(s.id).catch(() => []) : null;
+  const seriesProgressBlock = () => {
+    if (!seriesIssues) return "";
+    const sp = RP.seriesProgress(s, seriesIssues, RP.snapshot());
+    if (!sp.read) return "";
+    const text = sp.exact
+      ? (sp.state === "complete" ? `✓ Every issue read (${sp.total})` : `${sp.read} / ${sp.total} issues read`)
+      : `${sp.read} issue${sp.read === 1 ? "" : "s"} read`;
+    return `<span class="cx-progress-text" data-state="${sp.state}">${esc(text)}</span>`;
+  };
+  html += `<div class="cx-progress-line" data-prog-block="series-progress">${seriesProgressBlock()}</div>`;
   const credNames = creators.filter(Boolean).map(c => c.displayName || c.name);
   if (credNames.length) html += `<div class="cx-tag-row">${credNames.map(n => `<span class="tag">${esc(n)}</span>`).join("")}</div>`;
   if (s.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(s.description)}</div></div>`;
@@ -412,6 +535,10 @@ async function levelSeries(params) {
   if (isNerd()) html += nerdBlock({ id: s.id, universeId: s.universeId, continuityIds: s.continuityIds, characterIds: s.characterIds, verification: s.sourceInfo });
   return {
     html,
+    async update(container) {
+      if (!seriesIssues && RP.hasAnyComicsActivity()) seriesIssues = await RP.issuesForSeries(s.id).catch(() => []);
+      updateBlocks(container, { "series-progress": seriesProgressBlock });
+    },
     wire(container) {
       container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
         row.addEventListener("click", () => {
@@ -436,20 +563,33 @@ async function levelRun(params) {
   // it (matching import/insertion order) rather than invented by re-sorting —
   // see the final report's "genuine limitations" section.
 
+  // Pointer 6: run progress is derived from its stories (each derived from its issues) — no run-level store.
+  const runSummary = () => {
+    const rp = RP.runProgress(stories, RP.snapshot());
+    if (!stories.length || rp.state === "unread") return "";
+    return rp.state === "complete" ? `✓ Every story in this run read` : `${rp.complete} of ${rp.total} stories complete`;
+  };
   let html = `<div class="cx-kicker">${esc(s.title)}</div><h2 class="cx-title">${esc(label)}</h2>`;
   if (runRangeText(r)) html += `<div class="cx-subtitle">${esc(runRangeText(r))}</div>`;
+  html += `<div class="cx-progress-line" data-prog-block="run-summary">${esc(runSummary())}</div>`;
   if (r.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(r.description)}</div></div>`;
   if (!stories.length) {
     html += emptyHtml("No stories recorded yet for this run.");
   } else {
+    const snap = RP.snapshot();
     html += `<div class="sheet-section"><div class="sheet-label">STORIES</div><div class="cx-list">`;
-    html += stories.map((st, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(st.title)}</div>${st.issueIds && st.issueIds.length ? `<div class="cx-row-sub">${st.issueIds.length} issue${st.issueIds.length === 1 ? "" : "s"}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
+    html += stories.map((st, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(st.title)}</div>${st.issueIds && st.issueIds.length ? `<div class="cx-row-sub">${st.issueIds.length} issue${st.issueIds.length === 1 ? "" : "s"}</div>` : ""}</div>${markHtml(RP.storyProgress(st, snap), ` data-mark-story="${esc(st.id)}"`)}<div class="cx-row-chevron">›</div></div>`).join("");
     html += `</div></div>`;
   }
   html += readingPathsChipsHtml(readingPaths, r.seriesId);
   if (isNerd()) html += nerdBlock({ id: r.id, seriesId: r.seriesId, creatorIds: r.creatorIds, verification: r.sourceInfo });
   return {
     html,
+    update(container) {
+      const snap = RP.snapshot();
+      updateBlocks(container, { "run-summary": () => esc(runSummary()) });
+      patchStoryMarks(container, stories, snap);
+    },
     wire(container) {
       container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
         row.addEventListener("click", () => {
@@ -465,7 +605,7 @@ async function levelRun(params) {
 async function levelStory(params) {
   const st = params.story;
   const seriesIdsToResolve = (st.seriesIds && st.seriesIds.length) ? st.seriesIds : (params.series ? [params.series.id] : []);
-  const [issues, collections, seriesEntities, continuityEnt, characters, creators, readingPaths] = await Promise.all([
+  const [issues, collections, seriesEntities, continuityEnt, characters, creators, readingPaths, relationships] = await Promise.all([
     data.getIssuesForStory(st.id),
     data.getCollectionsForStory(st.id, st.issueIds),
     Promise.all(seriesIdsToResolve.map(id => cachedGet(COLLECTIONS.SERIES, id))),
@@ -473,12 +613,49 @@ async function levelStory(params) {
     Promise.all((st.characterIds || []).map(id => cachedGet(COLLECTIONS.CHARACTERS, id))),
     Promise.all((st.creatorIds || []).map(id => cachedGet(COLLECTIONS.CREATORS, id))),
     data.getReadingPathsFor({ continuityId: st.continuityId }),
+    data.getRelationshipsForEntity(st.id).catch(() => []),
   ]);
   sortIssuesInPlace(issues);
+  // Keep the story's OWN issue order (its canonical issueIds) wherever it's recorded.
+  if ((st.issueIds || []).length) {
+    const order = new Map(st.issueIds.map((id, i) => [id, i]));
+    issues.sort((a, b) => (order.has(a.id) ? order.get(a.id) : 1e6) - (order.has(b.id) ? order.get(b.id) : 1e6));
+  }
 
   const seriesTitles = seriesEntities.filter(Boolean).map(x => x.title);
+  const seriesTitleById = new Map(seriesEntities.filter(Boolean).map(x => [x.id, x.title]));
+  const multiSeries = new Set(issues.map(i => i.seriesId)).size > 1;
+  const issueRowLabel = (iss) => {
+    const lbl = iss.issueLabel || iss.title || "Issue";
+    const t = seriesTitleById.get(iss.seriesId);
+    return multiSeries && t && /^#/.test(lbl) ? `${t} ${lbl}` : lbl;
+  };
+  const fullLabel = (iss) => { const t = seriesTitleById.get(iss.seriesId); const lbl = iss.issueLabel || "Issue"; return t && /^#/.test(lbl) ? `${t} ${lbl}` : lbl; };
+  const pctx = { storyId: st.id, pathId: params.pathId || null };
+  const summaryBlock = () => {
+    const p = RP.storyProgress(st, RP.snapshot());
+    let out = `<span class="cx-progress-text" data-state="${p.state}">${esc(RP.storySummaryText(p))}</span>`;
+    if (p.derived && p.state === "in_progress" && p.nextIssueId) {
+      const nx = issues.find(i => i.id === p.nextIssueId);
+      if (nx) out += `<button class="cx-continue-row" data-prog-act="open-issue" data-issue-id="${esc(nx.id)}"><span class="cx-continue-k">Continue</span><span class="cx-continue-t">${esc(fullLabel(nx))}</span><span class="cx-row-chevron">›</span></button>`;
+    }
+    if (!p.derived) {
+      out += `<div class="sheet-journey-row cx-progress-row"><button class="journey-btn done-toggle" data-prog-act="story-explicit" data-active="${p.state === "complete"}">${p.state === "complete" ? "✓ Read" : "Mark story as Read"}</button></div>`;
+    }
+    return out;
+  };
+  const bulkBlock = () => {
+    if (!issues.length) return "";
+    const p = RP.storyProgress(st, RP.snapshot());
+    return p.state === "complete"
+      ? `<button class="cx-text-btn" data-prog-act="story-all" data-read="false">Mark all ${issues.length} as unread</button>`
+      : `<button class="cx-text-btn" data-prog-act="story-all" data-read="true">Mark all ${issues.length} as read</button>`;
+  };
+  const graph = await storyGraphHtml(st, relationships);
+
   const runLabelText = params.run ? await runLabel(params.run) : "";
   let html = `<div class="cx-kicker">${[runLabelText, seriesTitles.join(", ")].filter(Boolean).map(esc).join(" · ")}</div><h2 class="cx-title">${esc(st.title)}</h2>`;
+  html += `<div class="cx-progress-block" data-prog-block="story-summary">${summaryBlock()}</div>`;
   if (continuityEnt) html += `<div class="cx-tag-row"><span class="tag">${esc(continuityEnt.name)}</span></div>`;
   if (st.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(st.description)}</div></div>`;
   const charNames = characters.filter(Boolean).map(c => c.displayName || c.name);
@@ -488,25 +665,49 @@ async function levelStory(params) {
   if (!issues.length) {
     html += emptyHtml("No issues recorded for this story yet.");
   } else {
-    html += `<div class="sheet-section"><div class="sheet-label">ISSUES</div><div class="cx-list">`;
-    html += issues.map((iss, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(iss.issueLabel || iss.title || "Issue")}</div>${iss.title && iss.issueLabel ? `<div class="cx-row-sub">${esc(iss.title)}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
-    html += `</div></div>`;
+    const snap = RP.snapshot();
+    html += `<div class="sheet-section" data-section="issues"><div class="sheet-label">ISSUES</div><div class="cx-list">`;
+    html += issues.map((iss, idx) => `<div class="cx-row cx-issue-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(issueRowLabel(iss))}</div>${iss.title && iss.issueLabel ? `<div class="cx-row-sub">${esc(iss.title)}</div>` : ""}</div>${readToggleHtml(iss.id, RP.issueState(iss.id, snap), fullLabel(iss))}</div>`).join("");
+    html += `</div><div data-prog-block="story-bulk">${bulkBlock()}</div></div>`;
   }
+  html += graph.html;
   html += readingPathsChipsHtml(readingPaths, st.id);
   const collectedIn = await collectedInHtml(collections);
   html += collectedIn.html || "";
   if (isNerd()) html += nerdBlock({ id: st.id, seriesIds: st.seriesIds, runId: st.runId, continuityId: st.continuityId, universeId: st.universeId, eventId: st.eventId, verification: st.sourceInfo });
   return {
     html,
+    update(container) {
+      const snap = RP.snapshot();
+      updateBlocks(container, { "story-summary": summaryBlock, "story-bulk": bulkBlock });
+      patchIssueToggles(container, snap);
+      patchStoryMarks(container, graph.items.map(it => it.entity), snap);
+    },
+    onAct(el) {
+      const b = progressApi(); if (!b) return;
+      if (el.dataset.issueToggle) { toggleIssueRead(el.dataset.issueToggle, pctx); return; }
+      const act = el.dataset.progAct;
+      if (act === "story-all") b.setRead("issue", issues.map(i => i.id), el.dataset.read === "true", pctx);
+      else if (act === "story-explicit") b.setRead("story", st.id, !b.isRead("story", st.id), pctx);
+      else if (act === "open-issue") {
+        const iss = issues.find(i => i.id === el.dataset.issueId);
+        if (iss) pushLevel("issue", fullLabel(iss), { issue: iss, story: st, pathId: params.pathId || null });
+      }
+    },
     wire(container) {
       container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
         row.addEventListener("click", () => {
           const iss = issues[+row.dataset.idx];
-          pushLevel("issue", iss.issueLabel || iss.title || "Issue", { issue: iss, story: st });
+          pushLevel("issue", fullLabel(iss), { issue: iss, story: st, pathId: params.pathId || null });
         });
       });
+      wireStoryGraph(container, st, graph.items);
       if (collectedIn.wire) collectedIn.wire(container);
       wireReadingPathChips(container, readingPaths, st.id, st.title);
+      if (params.focus === "issues") {
+        const sec = container.querySelector('[data-section="issues"]');
+        if (sec) requestAnimationFrame(() => sec.scrollIntoView({ block: "start" }));
+      }
     },
   };
 }
@@ -523,11 +724,41 @@ async function levelIssue(params) {
     data.getRelationshipsForEntity(iss.id),
   ]);
   const storyList = stories.filter(Boolean);
+  // Pointer 6: the story this issue is being read as part of — the one we came from, else its arc story.
+  const ctxStory = (params.story && (params.story.issueIds || []).includes(iss.id)) ? params.story
+    : (storyList.find(x => x.runId) || storyList[0] || null);
+  const pctx = { storyId: ctxStory ? ctxStory.id : null, pathId: params.pathId || null };
+  let nextInStory = null;
+  if (ctxStory) {
+    const ids = ctxStory.issueIds || [];
+    const at = ids.indexOf(iss.id);
+    if (at !== -1 && ids[at + 1]) nextInStory = await cachedGet(COLLECTIONS.ISSUES, ids[at + 1]);
+  }
+  const nextSeries = nextInStory && nextInStory.seriesId !== iss.seriesId ? await cachedGet(COLLECTIONS.SERIES, nextInStory.seriesId) : series;
+  const nextLabel = nextInStory ? RP.issueLabelWith(nextInStory, nextSeries) : "";
+  const progressBlock = () => {
+    const snap = RP.snapshot();
+    const state = RP.issueState(iss.id, snap);
+    const read = state === "read", reading = state === "reading";
+    let out = `<div class="sheet-journey-row cx-progress-row">
+        <button class="journey-btn done-toggle" data-prog-act="issue-read" data-active="${read}">${read ? "✓ Read" : "Mark as Read"}</button>
+        ${read ? "" : `<button class="journey-btn cx-reading-toggle" data-prog-act="issue-reading" data-active="${reading}">${reading ? "Reading now" : "Start reading"}</button>`}
+      </div>`;
+    if (ctxStory) {
+      const sp = RP.storyProgress(ctxStory, snap);
+      out += `<div class="cx-progress-line"><span class="cx-progress-text" data-state="${sp.state}">${esc(ctxStory.title)} · ${esc(RP.storySummaryText(sp))}</span></div>`;
+    }
+    return out;
+  };
 
   let html = coverBlockHtml(iss.coverImage, series ? series.title : iss.issueLabel);
   html += `<div class="cx-kicker">${series ? esc(series.title) : ""}</div><h2 class="cx-title">${esc(iss.issueLabel || (iss.issueNumber ? "#" + iss.issueNumber : "Issue"))}${iss.title ? ` — ${esc(iss.title)}` : ""}</h2>`;
   const dateStr = iss.publicationDate || iss.coverDate;
   if (dateStr) html += `<div class="cx-subtitle">${esc(dateStr)}</div>`;
+  html += `<div class="cx-progress-block" data-prog-block="issue">${progressBlock()}</div>`;
+  if (nextInStory) {
+    html += `<div class="sheet-section"><div class="sheet-label">NEXT IN ${esc((ctxStory.title || "").toUpperCase())}</div><div class="cx-list"><div class="cx-row" data-act="next-issue"><div class="cx-row-body"><div class="cx-row-title">${esc(nextLabel)}</div></div>${readToggleHtml(nextInStory.id, RP.issueState(nextInStory.id, RP.snapshot()), nextLabel)}</div></div></div>`;
+  }
   if (continuityEnt) html += `<div class="cx-tag-row"><span class="tag">${esc(continuityEnt.name)}</span></div>`;
   if (storyList.length) {
     html += `<div class="sheet-section"><div class="sheet-label">STORY</div><div class="cx-list">`;
@@ -553,31 +784,94 @@ async function levelIssue(params) {
   if (isNerd()) html += nerdBlock({ id: iss.id, seriesId: iss.seriesId, storyIds: iss.storyIds, continuityId: iss.continuityId, universeId: iss.universeId, eventIds: iss.eventIds, verification: iss.sourceInfo });
   return {
     html,
+    update(container) {
+      updateBlocks(container, { issue: progressBlock });
+      patchIssueToggles(container, RP.snapshot());
+    },
+    onAct(el) {
+      const b = progressApi(); if (!b) return;
+      if (el.dataset.issueToggle) { toggleIssueRead(el.dataset.issueToggle, pctx); return; }
+      const act = el.dataset.progAct;
+      if (act === "issue-read") b.setRead("issue", iss.id, !b.isRead("issue", iss.id), pctx);
+      else if (act === "issue-reading") b.setReading(iss.id, RP.issueState(iss.id, RP.snapshot()) !== "reading", pctx);
+    },
     wire(container) {
       container.querySelectorAll("[data-story-idx]").forEach(row => {
         row.addEventListener("click", () => {
           const stt = storyList[+row.dataset.storyIdx];
-          pushLevel("story", stt.title, { story: stt });
+          pushLevel("story", stt.title, { story: stt, pathId: params.pathId || null });
         });
       });
+      const nx = container.querySelector('[data-act="next-issue"]');
+      if (nx && nextInStory) nx.addEventListener("click", () => pushLevel("issue", nextLabel, { issue: nextInStory, story: ctxStory, pathId: params.pathId || null }));
       if (collectedIn.wire) collectedIn.wire(container);
     },
   };
 }
 
-/* ============================= Reading Path detail (Part 4) ============================= */
+/* ============================= Reading Path detail (Part 4) + Pointer 6 progress ============================= */
 async function levelReadingPath(params) {
   const p = params.path;
   const { index: curIdx, next } = locateInPath(p, params.anchorEntityId);
   const entries = p.entries || [];
+  // Pointer 6: one batched load for the whole path (stories/issues/series by id, `in` queries) instead of
+  // one read per entry — the same context also drives the path's derived progress.
+  const ctx = await RP.loadPathContext(p);
+  const fromCtx = (e) => e.entityType === "story" ? ctx.stories.get(e.entityId) : e.entityType === "issue" ? ctx.issues.get(e.entityId) : e.entityType === "series" ? ctx.series.get(e.entityId) : undefined;
   const resolved = await Promise.all(entries.map(async (e) => {
     const meta = ENTITY_META[e.entityType];
-    const ent = meta ? await cachedGet(meta.col, e.entityId) : null;
-    return { entry: e, entity: ent, label: ent ? meta.name(ent) : (e.entityId || "Unknown") };
+    let ent = fromCtx(e);
+    if (ent === undefined) ent = meta ? await cachedGet(meta.col, e.entityId) : null;
+    let label = ent && meta ? meta.name(ent) : (e.entityId || "Unknown");
+    if (ent && e.entityType === "issue") label = await RP.issueLabel(ent);
+    return { entry: e, entity: ent || null, label };
   }));
+  const pathCtx = { pathId: p.id };
+  const following = () => { const st = RP.readingState(); return !!(st.activePath && st.activePath.id === p.id); };
+  const summaryBlock = () => {
+    const pp = RP.pathProgress(p, ctx, RP.snapshot());
+    const bits = [];
+    if (pp.total) bits.push(pp.state === "complete" ? `✓ Path complete · ${pp.total} ${pp.unit}` : `${pp.complete} / ${pp.total} ${pp.unit} complete`);
+    if (pp.currentIdx !== -1 && resolved[pp.currentIdx]) bits.push(`Current: ${resolved[pp.currentIdx].label}`);
+    const nx = pp.currentIdx !== -1 ? pp.per.findIndex((q, i) => i > pp.currentIdx && q.state !== "complete" && q.state !== "unknown") : pp.nextIdx;
+    if (nx !== -1 && nx != null && resolved[nx] && pp.state !== "complete") bits.push(`Next: ${resolved[nx].label}`);
+    let out = `<div class="cx-progress-line"><span class="cx-progress-text" data-state="${pp.state}">${bits.map(esc).join(" · ")}</span></div>`;
+    const f = following();
+    out += `<div class="sheet-journey-row cx-progress-row"><button class="journey-btn done-toggle" data-prog-act="path-follow" data-active="${f}">${f ? "✓ Following this path" : "Follow this path"}</button></div>`;
+    const t = pp.targetIdx;
+    if (t != null && t !== -1 && pp.state !== "complete") {
+      const ep = pp.per[t];
+      const iss = ep.nextIssueId ? ctx.issues.get(ep.nextIssueId) || null : null;
+      const label = iss ? (issueLabelCache.get(iss.id) || resolved[t].label) : resolved[t].label;
+      out += `<button class="cx-continue-row" data-prog-act="path-continue"><span class="cx-continue-k">${pp.state === "unread" ? "Start" : "Continue"}</span><span class="cx-continue-t">${esc(resolved[t].label)}${iss ? ` · ${esc(label)}` : ""}</span><span class="cx-row-chevron">›</span></button>`;
+    }
+    return out;
+  };
+  // Resolve (and remember) the label of each entry's "next issue" once, so re-draws stay synchronous.
+  const issueLabelCache = new Map();
+  async function primeNextIssue() {
+    const pp = RP.pathProgress(p, ctx, RP.snapshot());
+    const t = pp.targetIdx;
+    if (t == null || t === -1) return;
+    const id = pp.per[t].nextIssueId;
+    if (!id || issueLabelCache.has(id)) return;
+    let iss = ctx.issues.get(id);
+    if (!iss) { iss = await cachedGet(COLLECTIONS.ISSUES, id); if (iss) ctx.issues.set(id, iss); }
+    if (iss) issueLabelCache.set(id, await RP.issueLabel(iss));
+  }
+  await primeNextIssue();
+  const entryMark = (idx) => {
+    const pp = RP.pathProgress(p, ctx, RP.snapshot());
+    const ep = pp.per[idx];
+    const upNext = idx === pp.targetIdx && pp.state !== "complete";
+    let out = markHtml(ep);
+    if (ep.canMark) out += `<button class="cx-read-toggle" data-entry-toggle="${idx}" data-state="${ep.state === "complete" ? "read" : "unread"}" aria-pressed="${ep.state === "complete"}" aria-label="${esc(ep.state === "complete" ? "Mark as unread" : "Mark as read")}" title="${esc(ep.state === "complete" ? "Mark as unread" : "Mark as read — the issue list for this entry isn't complete, so it can't be worked out from issues")}"><span aria-hidden="true">${ep.state === "complete" ? "✓" : ""}</span></button>`;
+    return { html: out, upNext };
+  };
 
   let html = `<div class="cx-kicker">READING PATH${params.contextLabel ? " · " + esc(params.contextLabel) : ""}</div><h2 class="cx-title">${esc(p.title)}</h2>`;
   html += `<div class="cx-tag-row"><span class="tag">${esc(pathTypeLabel(p.pathType))}</span><span class="tag">${entries.length} step${entries.length === 1 ? "" : "s"}</span></div>`;
+  html += `<div class="cx-progress-block" data-prog-block="path-summary">${summaryBlock()}</div>`;
   if (p.description) html += `<div class="sheet-section"><div class="sheet-label">WHY THIS PATH</div><div class="sheet-body">${esc(p.description)}</div></div>`;
   if (curIdx !== -1) {
     html += `<div class="sheet-section"><div class="sheet-label">YOUR POSITION</div><div class="sheet-body">Step ${curIdx + 1} of ${entries.length}${next ? ` — next up: ${esc(resolved[curIdx + 1] ? resolved[curIdx + 1].label : "")}` : " — this is the final step on this path."}</div></div>`;
@@ -585,12 +879,14 @@ async function levelReadingPath(params) {
   html += `<div class="sheet-section"><div class="sheet-label">ORDER</div><div class="cx-list">`;
   html += resolved.map((r, idx) => {
     const isCurrent = idx === curIdx;
-    return `<div class="cx-row" data-entry-idx="${idx}" data-current="${isCurrent}">
+    const m = entryMark(idx);
+    return `<div class="cx-row" data-entry-idx="${idx}" data-current="${isCurrent}" data-up-next="${m.upNext}">
       <div class="cx-path-order">${r.entry.order != null ? r.entry.order : idx + 1}</div>
       <div class="cx-row-body">
         <div class="cx-row-title">${esc(r.label)}${isCurrent ? ` <span class="tag">you are here</span>` : ""}</div>
         ${r.entry.note ? `<div class="cx-row-sub">${esc(r.entry.note)}</div>` : ""}
       </div>
+      <span class="cx-entry-prog" data-entry-prog="${idx}">${m.html}</span>
       <div class="cx-row-chevron">›</div>
     </div>`;
   }).join("");
@@ -601,20 +897,57 @@ async function levelReadingPath(params) {
     html += `</div>`;
   }
   if (isNerd()) html += nerdBlock({ id: p.id, pathType: p.pathType, characterId: p.characterId, continuityId: p.continuityId, verification: p.sourceInfo });
+  const openEntry = (r) => {
+    if (!r || !r.entity) return;
+    const type = r.entry.entityType;
+    if (type === "story") pushLevel("story", r.label, { story: r.entity, pathId: p.id });
+    else if (type === "series") pushLevel("series", r.label, { series: r.entity });
+    else if (type === "issue") pushLevel("issue", r.label, { issue: r.entity, pathId: p.id });
+    else if (type === "run") pushLevel("run", r.label, { run: r.entity, series: params.series });
+    else if (type === "collection") pushLevel("collection", r.label, { collectionEntity: r.entity });
+  };
   return {
     html,
+    async update(container) {
+      await primeNextIssue();
+      updateBlocks(container, { "path-summary": summaryBlock });
+      const pp = RP.pathProgress(p, ctx, RP.snapshot());
+      container.querySelectorAll("[data-entry-prog]").forEach(el => {
+        const idx = +el.dataset.entryProg;
+        const m = entryMark(idx);
+        el.innerHTML = m.html;
+        const row = el.closest("[data-entry-idx]");
+        if (row) row.dataset.upNext = String(idx === pp.targetIdx && pp.state !== "complete");
+      });
+    },
+    onAct(el) {
+      const b = progressApi(); if (!b) return;
+      if (el.dataset.entryToggle != null) {
+        const r = resolved[+el.dataset.entryToggle];
+        if (!r) return;
+        const kind = r.entry.entityType === "series" ? "series" : "story";
+        b.setRead(kind, r.entry.entityId, !b.isRead(kind, r.entry.entityId), { ...pathCtx, storyId: kind === "story" ? r.entry.entityId : null });
+        return;
+      }
+      const act = el.dataset.progAct;
+      if (act === "path-follow") b.followPath(following() ? null : p.id);
+      else if (act === "path-continue") {
+        const pp = RP.pathProgress(p, ctx, RP.snapshot());
+        const t = pp.targetIdx;
+        const r = resolved[t];
+        if (!r || !r.entity) return;
+        const iss = pp.per[t].nextIssueId ? ctx.issues.get(pp.per[t].nextIssueId) : null;
+        if (r.entry.entityType === "story" && iss) {
+          cxStack.push({ level: "story", label: r.label, params: { story: r.entity, pathId: p.id } });
+          pushLevel("issue", issueLabelCache.get(iss.id) || iss.issueLabel || "Issue", { issue: iss, story: r.entity, pathId: p.id });
+        } else if (iss && r.entry.entityType !== "issue") {
+          pushLevel("issue", issueLabelCache.get(iss.id) || iss.issueLabel || "Issue", { issue: iss, pathId: p.id });
+        } else openEntry(r);
+      }
+    },
     wire(container) {
       container.querySelectorAll("[data-entry-idx]").forEach(row => {
-        row.addEventListener("click", () => {
-          const r = resolved[+row.dataset.entryIdx];
-          if (!r.entity) return;
-          const type = r.entry.entityType;
-          if (type === "story") pushLevel("story", r.label, { story: r.entity });
-          else if (type === "series") pushLevel("series", r.label, { series: r.entity });
-          else if (type === "issue") pushLevel("issue", r.label, { issue: r.entity });
-          else if (type === "run") pushLevel("run", r.label, { run: r.entity, series: params.series });
-          else if (type === "collection") pushLevel("collection", r.label, { collectionEntity: r.entity });
-        });
+        row.addEventListener("click", () => openEntry(resolved[+row.dataset.entryIdx]));
       });
     },
   };
@@ -641,6 +974,13 @@ async function levelCollection(params) {
   if (factsRows.length) {
     html += `<div class="sheet-section"><div class="cx-fact-list">${factsRows.map(([k, v]) => `<div class="cx-fact"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join("")}</div></div>`;
   }
+  // Pointer 6: progress straight from the edition's structured coverage — the issue stays the only unit.
+  const collProgressBlock = () => {
+    const cp = RP.collectionProgress(c, RP.snapshot());
+    if (!cp.total || !cp.read) return "";
+    return `<span class="cx-progress-text" data-state="${cp.state}">${cp.state === "complete" ? `✓ You've read every issue in this edition (${cp.total})` : `You've read ${cp.read} / ${cp.total} issues in this edition`}</span>`;
+  };
+  html += `<div class="cx-progress-line" data-prog-block="collection-progress">${collProgressBlock()}</div>`;
   html += `<div class="sheet-section"><div class="sheet-label">EXACT ISSUE COVERAGE</div>`;
   for (const [seriesId, rows] of bySeries.entries()) {
     const nums = rows.map(r => parseFloat(String(r.issueLabel || "").replace(/[^\d.]/g, ""))).filter(n => !isNaN(n));
@@ -655,7 +995,8 @@ async function levelCollection(params) {
   html += `</div>`;
   html += `<div class="sheet-section"><div class="sheet-label">ALL ISSUES IN THIS EDITION</div><div class="cx-list" id="cxIssueExpandList" data-collapsed="true">`;
   const allRows = (c.issueCoverage || []);
-  html += allRows.map(r => `<div class="cx-row" style="cursor:default;"><div class="cx-row-body"><div class="cx-row-title">${esc(titleFor(r.seriesId) || "")} ${esc(displayLabelSafe(r))}</div></div>${r.coveragePart === "partial" ? `<span class="tag">partial</span>` : ""}</div>`).join("");
+  const snapC = RP.snapshot();
+  html += allRows.map(r => `<div class="cx-row" style="cursor:default;"><div class="cx-row-body"><div class="cx-row-title">${esc(titleFor(r.seriesId) || "")} ${esc(displayLabelSafe(r))}</div></div>${r.coveragePart === "partial" ? `<span class="tag">partial</span>` : ""}${r.issueId ? `<span class="cx-mark" data-mark-issue="${esc(r.issueId)}" data-state="${snapC.sets.issue.has(r.issueId) ? "complete" : "unread"}">${snapC.sets.issue.has(r.issueId) ? "✓" : ""}</span>` : ""}</div>`).join("");
   html += `</div><button class="cx-entry-btn" id="cxToggleIssues" style="margin-top:8px;">Show individual issues</button></div>`;
 
   if (overlapping.length) {
@@ -674,6 +1015,14 @@ async function levelCollection(params) {
   if (isNerd()) html += nerdBlock({ id: c.id, seriesIds: c.seriesIds, storyIds: c.storyIds, verification: c.sourceInfo });
   return {
     html,
+    update(container) {
+      updateBlocks(container, { "collection-progress": collProgressBlock });
+      const snap = RP.snapshot();
+      container.querySelectorAll("[data-mark-issue]").forEach(el => {
+        const read = snap.sets.issue.has(el.dataset.markIssue);
+        el.dataset.state = read ? "complete" : "unread"; el.textContent = read ? "✓" : "";
+      });
+    },
     wire(container) {
       const toggle = container.querySelector("#cxToggleIssues");
       const list = container.querySelector("#cxIssueExpandList");
@@ -695,6 +1044,66 @@ async function levelCollection(params) {
     },
   };
 }
+/* ============================= Pointer 6: connected story (concise detail, Part 14) ============================= */
+async function levelConnected(params) {
+  const o = params.story, from = params.from, rel = params.rel;
+  const [seriesEnts, cont, paths] = await Promise.all([
+    Promise.all((o.seriesIds || []).map(id => cachedGet(COLLECTIONS.SERIES, id))),
+    o.continuityId ? cachedGet(COLLECTIONS.CONTINUITIES, o.continuityId) : null,
+    data.getReadingPathsFor({ continuityId: o.continuityId || null }).catch(() => []),
+  ]);
+  const onPaths = sortPathsByType(paths).filter(p => locateInPath(p, o.id).index !== -1);
+  const titleOf = (id) => id === o.id ? o.title : (from && id === from.id ? from.title : "");
+  const sentence = rel ? connectionSentence(rel, titleOf(rel.sourceId), titleOf(rel.targetId)) : "";
+  const progLine = () => {
+    const p = RP.storyProgress(o, RP.snapshot());
+    return p.state === "unread" && p.derived ? "" : `<div class="cx-fact"><span>Your progress</span><span data-prog-block="connected-progress">${esc(RP.storySummaryText(p))}</span></div>`;
+  };
+  let html = `<div class="cx-kicker">CONNECTED STORY${params.group ? " · " + esc(String(params.group.label).toUpperCase()) : ""}</div><h2 class="cx-title">${esc(o.title)}</h2>`;
+  if (sentence) html += `<div class="sheet-section"><div class="sheet-label">CONNECTION</div><div class="sheet-body cx-connection">${esc(sentence)}</div></div>`;
+  const n = (o.issueIds || []).length;
+  const facts = [
+    ["Series", seriesEnts.filter(Boolean).map(x => x.title).join(", ")],
+    ["Continuity", cont ? cont.name : ""],
+    ["Issues", n ? `${n} issue${n === 1 ? "" : "s"}` : ""],
+  ].filter(([, v]) => v);
+  html += `<div class="sheet-section"><div class="cx-fact-list">${facts.map(([k, v]) => `<div class="cx-fact"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join("")}${progLine()}</div></div>`;
+  if (params.group && isNonOrderingGroup(params.group.id)) html += `<div class="cx-hint">A connection, not a reading order — use a reading path to decide what to read next.</div>`;
+  html += `<div class="sheet-section"><div class="sm-d-actions">
+      <button class="sm-d-action sm-d-primary" data-cn-act="open">Open Story</button>
+      ${n ? `<button class="sm-d-action" data-cn-act="issues">View Issues</button>` : ""}
+      ${onPaths.length ? `<button class="sm-d-action" data-cn-act="paths" aria-expanded="false">View Reading Paths</button>` : ""}
+    </div>
+    ${onPaths.length ? `<div class="cx-list cx-connected-paths" hidden>${onPaths.map((p, i) => `<div class="cx-row" data-cn-path="${i}"><div class="cx-row-body"><div class="cx-row-title">${esc(p.title)}</div><div class="cx-row-sub">${esc(pathTypeLabel(p.pathType))} · step ${locateInPath(p, o.id).index + 1} of ${(p.entries || []).length}</div></div><div class="cx-row-chevron">›</div></div>`).join("")}</div>` : ""}
+  </div>`;
+  return {
+    html,
+    update(container) {
+      const sec = container.querySelector(".cx-fact-list");
+      if (!sec) return;
+      const old = sec.querySelector("[data-prog-block='connected-progress']");
+      if (old) old.closest(".cx-fact").remove();
+      sec.insertAdjacentHTML("beforeend", progLine());
+    },
+    wire(container) {
+      container.querySelectorAll("[data-cn-act]").forEach(b => b.addEventListener("click", () => {
+        const a = b.dataset.cnAct;
+        if (a === "open") pushLevel("story", o.title, { story: o });
+        else if (a === "issues") pushLevel("story", o.title, { story: o, focus: "issues" });
+        else if (a === "paths") {
+          const list = container.querySelector(".cx-connected-paths");
+          if (onPaths.length === 1) { pushLevel("readingPath", onPaths[0].title, { path: onPaths[0], anchorEntityId: o.id, contextLabel: o.title }); return; }
+          if (list) { list.hidden = !list.hidden; b.setAttribute("aria-expanded", String(!list.hidden)); }
+        }
+      }));
+      container.querySelectorAll("[data-cn-path]").forEach(row => row.addEventListener("click", () => {
+        const p = onPaths[+row.dataset.cnPath];
+        pushLevel("readingPath", p.title, { path: p, anchorEntityId: o.id, contextLabel: o.title });
+      }));
+    },
+  };
+}
+
 function displayLabelSafe(row) {
   const lbl = row.issueLabel;
   if (lbl == null) return "?";
@@ -715,11 +1124,13 @@ const LEVELS = {
   issue: levelIssue,
   readingPath: levelReadingPath,
   collection: levelCollection,
+  connected: levelConnected,
 };
 
 /* ============================= shell (breadcrumb + back) ============================= */
 let cxStack = [];
 let cxLoadToken = 0;
+let cxCurrent = null; // { result, token } of the level on screen — for Pointer 6 in-place progress updates
 
 function shellHtml(bodyHtml) {
   const crumbs = cxStack.map((item, idx) => {
@@ -756,8 +1167,31 @@ async function renderCurrentLevel() {
   if (myToken !== cxLoadToken) return;
   setShell(result.html);
   wireCovers(contentEl);
+  cxCurrent = { result, token: myToken };
   if (result.wire) result.wire(contentEl);
 }
+/* Pointer 6: progress controls. One capturing listener on the sheet content hands any progress control
+   to the level on screen (so a ✓ inside a tappable row never also opens that row), and every progress
+   change — from here, the Story Map, another tab of the site or a login merge — redraws the marks in
+   place from the progress store, without re-fetching the level. */
+const _cxContentEl = document.getElementById("comicsExplorerContent");
+if (_cxContentEl) {
+  _cxContentEl.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-prog-act], [data-issue-toggle], [data-entry-toggle]");
+    if (!a || !_cxContentEl.contains(a)) return;
+    e.stopPropagation();
+    e.preventDefault();
+    const cur = cxCurrent && cxCurrent.token === cxLoadToken ? cxCurrent.result : null;
+    if (cur && cur.onAct) cur.onAct(a, e);
+  }, true);
+}
+document.addEventListener("readerprogress:change", () => {
+  const sh = document.getElementById("comicsExplorerSheet");
+  const cur = cxCurrent && cxCurrent.token === cxLoadToken ? cxCurrent.result : null;
+  if (!sh || sh.dataset.open !== "true" || !cur || !cur.update || !_cxContentEl) return;
+  try { Promise.resolve(cur.update(_cxContentEl)).catch(err => console.warn("[Comics Explorer] progress refresh failed", err)); }
+  catch (err) { console.warn("[Comics Explorer] progress refresh failed", err); }
+});
 
 function pushLevel(level, label, levelParams) {
   cxStack.push({ level, label, params: levelParams || {} });

@@ -14,7 +14,9 @@
 // per page and cached). Characters or eras with no recorded series are shown
 // honestly as "not mapped yet", never padded with invented data.
 // ============================================================================
-import * as data from "./data.js?v=p4";
+import * as data from "./data.js?v=p6";
+// Pointer 6: "Continue Reading" (or a data-driven "Start reading" point) at the top of Comics Home.
+import { renderContinueCard } from "./reading-progress.js?v=p6";
 
 const esc = (s) => s == null ? "" : String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const yearOf = (d) => { const m = String(d || "").match(/\d{4}/); return m ? m[0] : ""; };
@@ -60,6 +62,7 @@ function heroHtml(hooks) {
       <button class="cl-browse-link" id="comicsBrowseAllBtn">Browse all comics${n ? ` · ${n}` : ""} →</button>
     </div>
   </section>
+  <section class="cl-continue" id="clContinue" hidden></section>
   <nav class="cl-pillars" aria-label="Explore comics by">
     <button class="cl-pillar" data-jump="clCharacters"><span class="cl-pillar-k">01</span><span class="cl-pillar-l">Characters</span><span class="cl-pillar-n" data-count="characters"></span></button>
     <button class="cl-pillar" data-jump="clEras"><span class="cl-pillar-k">02</span><span class="cl-pillar-l">Continuities / Eras</span><span class="cl-pillar-n" data-count="eras"></span></button>
@@ -151,6 +154,7 @@ export function renderComicsLanding(container, hooks = {}) {
       <section class="cl-section" id="clStories"><div class="cl-head"><h3>Stories &amp; Issues</h3><span>Other ways in</span></div>${storiesSection()}</section>
       ${catalogueCard(hooks)}
     </div>`;
+  renderContinueCard(container.querySelector("#clContinue")).catch(e => console.warn("[Comics landing] continue card", e));
   loadLandingData().then(d => {
     if (my !== renderSeq || !container.isConnected || !container.querySelector(".cl-wrap")) return;
     const charCounts = new Map(), contCounts = new Map(), seriesById = new Map();
@@ -223,6 +227,12 @@ function renderSafe(container, hooks) {
   container._clHooks = hooks;
   renderComicsLanding(container, hooks);
 }
+
+// Progress changed (Explorer, Story Map, login merge …) while Comics Home is showing: refresh just the card.
+document.addEventListener("readerprogress:change", () => {
+  const slot = document.getElementById("clContinue");
+  if (slot && slot.isConnected) renderContinueCard(slot).catch(() => {});
+});
 
 window.__comicsV2Landing = { render: renderSafe, preload: loadLandingData };
 document.dispatchEvent(new CustomEvent("comicsv2:landing-ready"));

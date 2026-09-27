@@ -71,19 +71,24 @@ function numericOf(row) {
   const raw = row.issueId && /#(-?[\d.]+)$/.test(row.issueId) ? null : null; // (kept for clarity — number comes from issueLabel/issueNumber below)
   void raw;
   const src = row.issueLabel != null ? row.issueLabel : row.issueNumber;
-  const m = String(src == null ? "" : src).match(/-?\d+(?:\.\d+)?/);
-  return m ? parseFloat(m[0]) : null;
+  // Only a plain issue number ("#7", "7", "#23.2") is numeric. Labels like "annual-1" are NOT issue #-1
+  // (Pointer 6 fix: that used to render the Omnibus as "Batman #-2–23").
+  const m = String(src == null ? "" : src).trim().match(/^#?(\d+(?:\.\d+)?)$/);
+  return m ? parseFloat(m[1]) : null;
 }
 function displayLabel(row) {
   const lbl = row.issueLabel || row.issueNumber;
   if (lbl == null) return "?";
+  const ann = String(lbl).match(/^annual[\s-]*(\d+)$/i);
+  if (ann) return `Annual #${ann[1]}`;
   const s = String(lbl);
   return /^#/.test(s) || /^\D/.test(s) === false ? (s.startsWith("#") ? s : `#${s}`) : s;
 }
 /** "#1–7" style compression of a list of coverage rows for ONE series, non-contiguous ranges kept separate ("#25–27, #29–33"). */
 export function compressCoverageRows(rows) {
   const nums = [], other = [];
-  rows.forEach(r => { const n = numericOf(r); if (n != null) nums.push(n); else other.push(displayLabel(r)); });
+  // Point-one specials (#23.2) are listed after the ranges rather than splitting "#0–33" in two.
+  rows.forEach(r => { const n = numericOf(r); if (n != null && Number.isInteger(n)) nums.push(n); else other.push(displayLabel(r)); });
   nums.sort((a, b) => a - b);
   const parts = [];
   for (let i = 0; i < nums.length; i++) {

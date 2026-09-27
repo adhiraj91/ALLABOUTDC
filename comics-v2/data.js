@@ -238,6 +238,16 @@ export async function getReadingPathsForContinuity(continuityId) {
 }
 
 /**
+ * Pointer 6 — a capped, read-only list of reading paths. Used ONLY to offer a
+ * sensible "Start reading" point when a reader has no progress at all yet
+ * (never to compute progress — progress always loads the one selected path).
+ */
+export async function getAllReadingPaths(max = 20) {
+  const q = query(collection(db, COLLECTIONS.READING_PATHS), fsLimit(max));
+  return docsOf(await getDocs(q));
+}
+
+/**
  * Pointer 5 — "offer reading paths from a series/run/story": reading paths are
  * scoped by characterId/continuityId/universeId (there is no seriesId/runId
  * field on comicReadingPaths — see schema.js), so this merges the character-
