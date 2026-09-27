@@ -31,6 +31,7 @@ const issueLabel = (s,i) => s.title + (i ? ` #${i}` : '');
 
 let root = null, viewport = null, world = null, nodesEl = null, edgesEl = null, detail = null, controls = null;
 let state = null;
+let touchPoints = new Map();
 
 function makeNode(type, data, parent=null, extra={}) {
   const id = `${type}:${data.id}`;
@@ -58,7 +59,7 @@ function shell() {
     <div class="sm-controls" id="smControls">
       <button class="sm-ctl" data-c="out">−</button><button class="sm-ctl" data-c="in">+</button>
       <button class="sm-ctl sm-ctl-text" data-c="fit">Fit</button><button class="sm-ctl sm-ctl-text" data-c="reset">Reset</button>
-      <button class="sm-ctl sm-ctl-text" data-c="collapse">Collapse</button><button class="sm-ctl sm-ctl-text" data-c="key">Key</button>
+      <button class="sm-ctl sm-ctl-text" data-c="collapse">Collapse</button><button class="sm-ctl sm-ctl-text" data-c="focus">Focus</button><button class="sm-ctl sm-ctl-text" data-c="key">Key</button>
     </div>
     <div class="sm-legend" id="smLegend" hidden>
       <div class="sm-legend-row"><span><b>Era</b> — publishing/continuity period</span></div>
@@ -78,21 +79,45 @@ function shell() {
   root.querySelector('#smDetailClose').onclick=()=>select(null);
   controls.onclick=e=>{
     const b=e.target.closest('[data-c]'); if(!b)return;
-    if(b.dataset.c==='in') zoom(1.25); if(b.dataset.c==='out') zoom(.8); if(b.dataset.c==='fit') fit();
-    if(b.dataset.c==='reset') reset(); if(b.dataset.c==='collapse') collapseAll();
+    if(b.dataset.c==='in') zoomAt(1.25, viewport.clientWidth/2, viewport.clientHeight/2);
+    if(b.dataset.c==='out') zoomAt(.8, viewport.clientWidth/2, viewport.clientHeight/2);
+    if(b.dataset.c==='fit') fit();
+    if(b.dataset.c==='reset') reset();
+    if(b.dataset.c==='collapse') collapseAll();
+    if(b.dataset.c==='focus') focusSelected();
     if(b.dataset.c==='key') root.querySelector('#smLegend').hidden=!root.querySelector('#smLegend').hidden;
   };
-  viewport.addEventListener('pointerdown',e=>{state.drag={x:e.clientX,y:e.clientY,tx:state.view.tx,ty:state.view.ty};viewport.setPointerCapture(e.pointerId);viewport.classList.add('sm-dragging')});
-  viewport.addEventListener('pointermove',e=>{if(!state.drag)return;state.view.tx=state.drag.tx+e.clientX-state.drag.x;state.view.ty=state.drag.ty+e.clientY-state.drag.y;applyView(false)});
-  viewport.addEventListener('pointerup',()=>{state.drag=null;viewport.classList.remove('sm-dragging')});
-  viewport.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?1.12:.89)}, {passive:false});
+  viewport.addEventListener('pointerdown',e=>{
+    touchPoints.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(touchPoints.size===1){
+      state.drag={x:e.clientX,y:e.clientY,tx:state.view.tx,ty:state.view.ty};
+      viewport.setPointerCapture?.(e.pointerId); viewport.classList.add('sm-dragging');
+    } else if(touchPoints.size===2){
+      state.drag=null;
+      const pts=[...touchPoints.values()]; state.pinch={distance:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),scale:state.view.k};
+    }
+  });
+  viewport.addEventListener('pointermove',e=>{
+    if(!touchPoints.has(e.pointerId))return; touchPoints.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(touchPoints.size>=2 && state.pinch){
+      const pts=[...touchPoints.values()]; const d=Math.max(20,Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y));
+      const mid={x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2};
+      const f=Math.max(.65,Math.min(1.45,d/state.pinch.distance)); zoomAtFromBase(f,state.pinch.scale,mid.x,mid.y);
+    } else if(state.drag){
+      state.view.tx=state.drag.tx+e.clientX-state.drag.x; state.view.ty=state.drag.ty+e.clientY-state.drag.y; applyView(false);
+    }
+  });
+  const endPointer=e=>{touchPoints.delete(e.pointerId); if(touchPoints.size<2)state.pinch=null; if(touchPoints.size===0){state.drag=null;viewport.classList.remove('sm-dragging');}};
+  viewport.addEventListener('pointerup',endPointer); viewport.addEventListener('pointercancel',endPointer); viewport.addEventListener('pointerleave',()=>{if(touchPoints.size===0){state.drag=null;viewport.classList.remove('sm-dragging')}});
+  viewport.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.deltaY<0?1.12:.89,e.clientX-viewport.getBoundingClientRect().left,e.clientY-viewport.getBoundingClientRect().top)}, {passive:false});
+  viewport.addEventListener('dblclick',e=>{ if(e.target.closest('.sm-node,.sm-chip,.sm-controls'))return; const r=viewport.getBoundingClientRect(); zoomAt(1.35,e.clientX-r.left,e.clientY-r.top); });
   window.addEventListener('resize',()=>{if(root.dataset.open==='true'){render();fit()}});
 }
 
 function open() {
   shell(); session(); root.dataset.open='true'; document.documentElement.classList.add('sm-lock');
   const dc={id:'dc-universe',title:'DC Universe',years:'All eras'};
-  const n=makeNode('universe',dc); state.root=n.id; buildEraChildren(n); n.expanded=true; render(); fit();
+  const n=makeNode('universe',dc); state.root=n.id; buildEraChildren(n); n.expanded=true; render(); window.requestAnimationFrame(()=>focusNode(n.id)); fit();
   root.querySelector('#smCrumbs').innerHTML='<button class="sm-crumb sm-crumb-current">DC Universe</button>';
 }
 function buildEraChildren(n) {
@@ -143,23 +168,20 @@ function buildSeriesLane(n){
 }
 function buildSeries(n){
   const s=n.data;
-  const runs=[];
-  if(s.title==='Batman'){
-    runs.push({id:'batman-snyder-capullo',title:'Scott Snyder / Greg Capullo',from:0,to:52,notes:'Core flagship Batman run; major arcs: Court of Owls, Death of the Family, Zero Year, Endgame, Superheavy, Bloom, Epilogue.'});
-  } else if(s.title==='Justice League'){
-    runs.push({id:'jl-geoff-johns',title:'Geoff Johns / Jim Lee / Ivan Reis era',from:0,to:39,notes:'Origin through Forever Heroes/Injustice League period.'},{id:'jl-darkseid-war',title:'Darkseid War',from:40,to:50,notes:'Final major Justice League New 52 story.'});
-  } else {
+  const runs=(s.runs&&s.runs.length?s.runs:[]);
+  if(!runs.length){
     runs.push({id:`${s.id}-core-run`,title:'New 52 publication run',from:s.issueSpec?.from ?? 1,to:s.issueSpec?.to ?? (s.issues?.length||1),notes:s.notes||''});
   }
-  const children=runs.map(r=>makeNode('run',r,n.id).id);
-  // Keep editions visible directly from the series, alongside the issue path.
-  if(s.collections?.length) children.push(makeNode('story',{id:`${s.id}-collections`,title:'Collected Editions',kind:'collections',collections:s.collections},n.id).id);
+  const children=[];
+  runs.forEach((r,i)=>children.push(makeNode('run',{...r,id:r.id||`${s.id}-run-${i}`},n.id).id));
+  children.push(makeNode('story',{id:`${s.id}-issues`,title:'Issues',kind:'issues',series:s},n.id).id);
+  children.push(makeNode('story',{id:`${s.id}-publications`,title:'Collected Editions',kind:'collections',collections:s.collections||[]},n.id).id);
   n.children=children;
 }
 function buildRun(n){
-  const s=findSeriesAncestor(n); const issues=[];
-  if(n.data.from!=null && n.data.to!=null){ for(let i=n.data.from;i<=n.data.to;i++) issues.push({id:`${n.id}-${i}`,title:s?.title||'Issue',issue:i}); }
-  n.children=issues.map(x=>makeNode('issue',x,n.id).id);
+  // Runs are narrative/creator groupings. Individual issues are deliberately NOT map branches.
+  // Issues live in the series detail panel so the map remains a universe/reading map rather than a database dump.
+  n.children=[];
 }
 function findSeriesAncestor(n){let p=n.parent?state.nodes.get(n.parent):null;while(p){if(p.type==='series')return p.data;p=p.parent?state.nodes.get(p.parent):null}return null}
 function expand(n){
@@ -173,36 +195,54 @@ function expand(n){
   else if(n.type==='run') buildRun(n);
   else if(n.type==='event' && n.data.editions) n.children=n.data.editions.map((e,i)=>makeNode('story',{id:`${n.data.id}-edition-${i}`,title:e.title,format:e.format,coverage:e.coverage,notes:e.notes},n.id).id);
   else if(n.type==='event' && n.data.id==='crossover-spine') buildLane(n);
-  else if(n.type==='story' && n.data.kind==='collections') n.children=(n.data.collections||[]).map((c,i)=>makeNode('story',{id:`${n.id}-${i}`,title:c.title,format:c.format,coverage:c.coverage,notes:c.notes},n.id).id);
+  else if(n.type==='story' && n.data.kind==='collections') n.children=[];
+  else if(n.type==='story' && n.data.kind==='issues') n.children=[];
   else n.children=[];
-  n.expanded=true; render();
+  n.expanded=true; render(); window.requestAnimationFrame(()=>focusNode(n.id));
 }
 function collapse(n){n.expanded=false;(n.children||[]).forEach(id=>{const c=state.nodes.get(id);if(c)collapse(c)});}
 function collapseAll(){collapse(state.nodes.get(state.root));state.selected=null;closeDetail();render();fit()}
 
 const sizes={universe:[270,76],continuity:[260,68],character:[290,70],series:[270,64],run:[280,64],story:[280,62],event:[300,68],issue:[130,34]};
 function layout(){
-  const pos=new Map(); let cursor=0; const colGap=92,rowGap=14;
-  const place=n=>{
-    const [w,h]=sizes[n.type]||sizes.story; const x=n.depth*(w+colGap);
-    const kids=(n.expanded&&n.children||[]).map(id=>state.nodes.get(id)).filter(Boolean);
-    if(!kids.length){pos.set(n.id,{x,y:cursor,w,h});cursor+=h+rowGap;return;}
-    if(kids.every(k=>k.type==='issue')){
-      let cx=0,cy=0,maxW=440; const bx=x+w+colGap/2, by=cursor;
-      kids.forEach(k=>{const [cw,ch]=sizes.issue;if(cx+cw>maxW){cx=0;cy+=ch+8}pos.set(k.id,{x:bx+cx,y:by+cy,w:cw,h:ch,chip:true});cx+=cw+8});
-      cursor=by+cy+34+rowGap; pos.set(n.id,{x,y:by+cy/2-h/2,w,h});return;
-    }
-    kids.forEach(place); const a=pos.get(kids[0].id),b=pos.get(kids[kids.length-1].id); const mid=(a.y+a.h/2+b.y+b.h/2)/2;pos.set(n.id,{x,y:mid-h/2,w,h});
+  // Constellation layout: the map grows in visual groups rather than a rigid old-school tree.
+  const pos=new Map(); const colGap=26,rowGap=20,levelGap=72;
+  const nodeSize=t=>{const base=sizes[t]||sizes.story; return t==='issue'?[150,38]:[Math.min(300,Math.max(230,base[0])),Math.max(base[1],68)]};
+  const visibleKids=n=>(n.expanded&&n.children||[]).map(id=>state.nodes.get(id)).filter(Boolean);
+  const blocks=[];
+  const measure=n=>{
+    const [w,h]=nodeSize(n.type); const kids=visibleKids(n);
+    if(!kids.length){n._mw=w;n._mh=h;return [w,h];}
+    const cols=Math.min(4,Math.max(1,Math.ceil(Math.sqrt(kids.length))));
+    const rows=Math.ceil(kids.length/cols);
+    let rowHeights=Array(rows).fill(0), colWidths=Array(cols).fill(0);
+    kids.forEach((k,i)=>{const [cw,ch]=measure(k);const c=i%cols,r=Math.floor(i/cols);colWidths[c]=Math.max(colWidths[c],cw);rowHeights[r]=Math.max(rowHeights[r],ch);});
+    const gw=colWidths.reduce((a,b)=>a+b,0)+colGap*(cols-1);
+    const gh=rowHeights.reduce((a,b)=>a+b,0)+rowGap*(rows-1);
+    n._mw=Math.max(w,gw); n._mh=h+levelGap+gh; n._cols=cols;n._colWidths=colWidths;n._rowHeights=rowHeights;
+    return [n._mw,n._mh];
   };
-  const r=state.nodes.get(state.root); r.depth=0;
-  const assignDepth=n=>{(n.children||[]).forEach(id=>{const c=state.nodes.get(id);c.depth=n.depth+1;assignDepth(c)})}; assignDepth(r); place(r);
-  return pos;
+  const place=(n,x,y)=>{
+    const [w,h]=nodeSize(n.type); const totalW=n._mw||w; pos.set(n.id,{x:x+(totalW-w)/2,y,w,h});
+    const kids=visibleKids(n); if(!kids.length)return;
+    const cols=n._cols, widths=n._colWidths, heights=n._rowHeights;
+    const gw=widths.reduce((a,b)=>a+b,0)+colGap*(cols-1); let sx=x+(totalW-gw)/2, cy=y+h+levelGap;
+    const colX=[]; let acc=sx; for(let c=0;c<cols;c++){colX[c]=acc;acc+=widths[c]+colGap;}
+    let rowY=cy;
+    heights.forEach((rh,r)=>{
+      for(let c=0;c<cols;c++){const i=r*cols+c;if(i>=kids.length)break;const k=kids[i];place(k,colX[c],rowY);}
+      rowY+=rh+rowGap;
+    });
+  };
+  const r=state.nodes.get(state.root); measure(r); place(r,0,0);
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity; for(const p of pos.values()){minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x+p.w);maxY=Math.max(maxY,p.y+p.h);}
+  const dx=-minX+40,dy=-minY+40; pos.forEach(v=>{v.x+=dx;v.y+=dy;});
+  return {pos,width:maxX-minX+80,height:maxY-minY+80};
 }
 function render(){
-  if(!state)return; const pos=layout(); nodesEl.innerHTML='';edgesEl.innerHTML='';
+  if(!state)return; const lay=layout(); const pos=lay.pos; nodesEl.innerHTML='';edgesEl.innerHTML='';
   const visible=[]; const walk=n=>{visible.push(n);if(n.expanded)(n.children||[]).forEach(id=>{const c=state.nodes.get(id);if(c)walk(c)})};walk(state.nodes.get(state.root));
-  let minX=Infinity,minY=Infinity,maxX=0,maxY=0; visible.forEach(n=>{const p=pos.get(n.id);if(!p)return;minX=Math.min(minX,p.x);minY=Math.min(minY,p.y);maxX=Math.max(maxX,p.x+p.w);maxY=Math.max(maxY,p.y+p.h);});
-  const dx=-minX+20,dy=-minY+20; visible.forEach(n=>{const p=pos.get(n.id);if(p){p.x+=dx;p.y+=dy;}}); world.style.width=`${maxX-minX+40}px`;world.style.height=`${maxY-minY+40}px`;
+  world.style.width=`${lay.width}px`;world.style.height=`${lay.height}px`;
   visible.forEach(n=>{const p=pos.get(n.id); if(!p)return; const div=document.createElement(n.type==='issue'?'button':'div'); div.className=n.type==='issue'?'sm-chip':'sm-node'; div.dataset.key=n.id;div.dataset.type=n.type;div.dataset.expanded=n.expanded;div.style.cssText=`position:absolute;left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px`;
     const d=n.data; const isSelected=state.selected===n.id; if(isSelected)div.dataset.selected='true';
     if(n.type==='issue'){div.innerHTML=esc(d.title+' #'+d.issue);}
@@ -241,11 +281,21 @@ function renderDetail(n){
     if(d.type)html+=`<div class="sm-d-section"><div class="sm-d-section-title">ROLE</div><div class="sm-d-desc">${esc(d.type)}</div></div>`;
   }
   if(n.type==='series'){
-    if(d.issueSpec)html+=`<div class="sm-d-facts"><div><b>Issue coverage:</b> ${d.issueSpec.from===0?'#0–':''}${d.issueSpec.from!=null&&d.issueSpec.to!=null?`#${d.issueSpec.from}–#${d.issueSpec.to}`:''}</div><div><b>Recorded issues:</b> ${d.issueCount}</div></div>`;
-    html+=`<div class="sm-d-section"><div class="sm-d-section-title">COLLECTED EDITIONS · FORMAT VIEW</div><div class="sm-format-tabs">`;
+    if(d.issueSpec)html+=`<div class="sm-d-facts"><div><b>Issue coverage:</b> ${d.issueSpec.from===0?'#0–':''}${d.issueSpec.from!=null&&d.issueSpec.to!=null?`#${d.issueSpec.from}–#${d.issueSpec.to}`:''}</div><div><b>Issues in map:</b> ${d.issueCount}</div></div>`;
+    const labels=(d.issues||[]);
+    html+=`<div class="sm-d-section"><div class="sm-d-section-title">ISSUES · LIST VIEW</div><div class="sm-issue-list">${labels.map(x=>`<span class="sm-issue-pill">#${esc(x)}</span>`).join('')}</div></div>`;
+    html+=`<div class="sm-d-section"><div class="sm-d-section-title">PUBLICATIONS · COLLECTED FORMATS</div><div class="sm-format-tabs">`;
     const formats=['Trade Paperback','Hardcover','Omnibus','Deluxe / Absolute'];
     formats.forEach((f,i)=>html+=`<button class="sm-format-tab" data-format="${esc(f)}" data-series="${esc(d.id)}" aria-selected="${i===0}">${esc(f)}</button>`);
     html+=`</div><div class="sm-format-panel" id="smFormatPanel"></div></div>`;
+  }
+  if(n.type==='story' && d.kind==='issues'){
+    const s=d.series||{}; html+=`<div class="sm-d-section"><div class="sm-d-section-title">ALL ISSUES</div><div class="sm-issue-list sm-issue-list-large">${(s.issues||[]).map(x=>`<span class="sm-issue-pill">#${esc(x)}</span>`).join('')}</div></div>`;
+  }
+  if(n.type==='story' && d.kind==='collections'){
+    html+=`<div class="sm-d-section"><div class="sm-d-section-title">PUBLICATIONS</div>`;
+    const cs=d.collections||[]; html+=cs.length?`<div class="sm-publication-list">${cs.map(c=>`<article class="sm-publication-card"><div class="sm-publication-title">${esc(c.title)}</div><span class="sm-publication-format">${esc(c.format)}</span><div class="sm-publication-coverage">${esc(c.coverage)}</div>${c.notes?`<div class="sm-publication-note">${esc(c.notes)}</div>`:''}</article>`).join('')}</div>`:`<div class="sm-format-empty">No verified collected-edition records are attached to this series yet.</div>`;
+    html+='</div>';
   }
   if(n.type==='run')html+=`<div class="sm-d-facts"><div><b>Issue span:</b> #${esc(d.from)}–#${esc(d.to)}</div></div>`;
   if(n.type==='issue')html+=`<div class="sm-d-facts"><div><b>Issue:</b> #${esc(d.issue)}</div><div><b>Parent series:</b> ${esc(d.title)}</div></div>`;
@@ -256,10 +306,14 @@ function renderDetail(n){
 }
 function back(){if(state.selected){const n=state.nodes.get(state.selected);if(n?.parent)select(n.parent);else close();}else close();}
 function close(){if(!root)return;root.dataset.open='false';root.dataset.detail='false';document.documentElement.classList.remove('sm-lock');state=null;}
-function applyView(anim=false){if(!world||!state)return;world.style.transform=`translate(${state.view.tx}px,${state.view.ty}px) scale(${state.view.k})`;}
-function zoom(f){const r=viewport.getBoundingClientRect();const cx=r.width/2,cy=r.height/2;state.view.tx=cx-(cx-state.view.tx)*f;state.view.ty=cy-(cy-state.view.ty)*f;state.view.k=Math.max(.35,Math.min(2.5,state.view.k*f));applyView(true)}
-function fit(){if(!state)return;const r=viewport.getBoundingClientRect(), w=parseFloat(world.style.width)||100,h=parseFloat(world.style.height)||100;const k=Math.min((r.width-40)/w,(r.height-120)/h);state.view.k=Math.max(.35,Math.min(1,k));state.view.tx=(r.width-w*state.view.k)/2;state.view.ty=Math.max(24,(r.height-h*state.view.k)/2);applyView(false)}
-function reset(){state.view={k:1,tx:20,ty:20};applyView(false)}
+function applyView(anim=false){if(!world||!state)return;world.classList.toggle('sm-world-animating',!!anim);world.style.transform=`translate3d(${state.view.tx}px,${state.view.ty}px,0) scale(${state.view.k})`; if(anim)window.clearTimeout(state.animTimer),state.animTimer=window.setTimeout(()=>world.classList.remove('sm-world-animating'),320);}
+function zoomAt(f,cx,cy){if(!state)return; const old=state.view.k; const next=Math.max(.3,Math.min(3.2,old*f)); const ratio=next/old; state.view.tx=cx-(cx-state.view.tx)*ratio; state.view.ty=cy-(cy-state.view.ty)*ratio; state.view.k=next; applyView(true);}
+function zoomAtFromBase(f,base,cx,cy){if(!state)return; const target=Math.max(.3,Math.min(3.2,base*f)); const old=state.view.k; const ratio=target/old; state.view.tx=cx-(cx-state.view.tx)*ratio; state.view.ty=cy-(cy-state.view.ty)*ratio; state.view.k=target; applyView(false);}
+function zoom(f){zoomAt(f,viewport.clientWidth/2,viewport.clientHeight/2)}
+function focusNode(id){if(!state||!id)return; const el=nodesEl.querySelector(`[data-key="${CSS.escape(id)}"]`); if(!el)return; const r=el.getBoundingClientRect(), vr=viewport.getBoundingClientRect(); const cx=r.left+r.width/2-vr.left, cy=r.top+r.height/2-vr.top; state.view.tx += vr.width/2-cx; state.view.ty += vr.height/2-cy; applyView(true);}
+function focusSelected(){focusNode(state?.selected||state?.root);}
+function fit(){if(!state)return;const r=viewport.getBoundingClientRect(), w=parseFloat(world.style.width)||100,h=parseFloat(world.style.height)||100;const k=Math.min((r.width-44)/w,(r.height-150)/h);state.view.k=Math.max(.3,Math.min(1.05,k));state.view.tx=(r.width-w*state.view.k)/2;state.view.ty=Math.max(20,(r.height-h*state.view.k)/2);applyView(true)}
+function reset(){state.view={k:1,tx:20,ty:20};applyView(true)}
 
 window.__comicsStoryMap={open,close,isOpen:()=>!!(root&&root.dataset.open==='true'),nodes:()=>state?[...state.nodes.values()].map(n=>({id:n.id,type:n.type,title:n.data.title,expanded:n.expanded})) : [],audit:()=>auditNew52()};
 document.dispatchEvent(new CustomEvent('comicsv2:storymap-ready'));
