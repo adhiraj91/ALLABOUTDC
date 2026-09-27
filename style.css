@@ -1264,14 +1264,12 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
 @media (min-width:520px){ .cl-explore-grid{ grid-template-columns:1fr 1fr; } }
 .cl-explore-tile{
   display:flex; flex-direction:column; gap:4px; text-align:left; cursor:pointer;
-  color:var(--ink);
-  font-family:var(--font-body);
   padding:16px; border-radius:14px; border:1px solid var(--line); background:var(--bg-2);
 }
 .cl-explore-tile:hover{ border-color:color-mix(in srgb, var(--comics) 45%, var(--line)); }
 .cl-explore-tile:active{ transform:scale(.98); }
 .cl-explore-tile:disabled{ opacity:.55; cursor:progress; }
-.cl-explore-label{ font-family:var(--font-display); font-size:18px; font-weight:400; color:var(--ink); }
+.cl-explore-label{ font-family:var(--font-display); font-size:18px; font-weight:400; }
 .cl-explore-sub{ font-size:12px; color:var(--ink-faint); line-height:1.35; }
 
 /* ============ Pointer 4: Comics Story Map (comics-v2/storymap.js) ============ */
@@ -1653,3 +1651,12 @@ button.journey-comics-row:active{ background:var(--bg-2); }
 .cl-continue-next{ font-size:12.5px; color:var(--ink-dim); margin-top:2px; }
 .cl-continue-next b{ color:var(--ink); }
 .cl-continue-go{ font-size:12.5px; font-weight:700; color:var(--ink); margin-top:6px; }
+/* New 52 map — collected-edition format tabs */
+.sm-format-tabs{display:flex;gap:5px;overflow-x:auto;margin:6px -2px 10px;padding-bottom:4px;scrollbar-width:none}
+.sm-format-tabs::-webkit-scrollbar{display:none}
+.sm-format-tab{flex:0 0 auto;border:1px solid var(--line);background:var(--bg-2);color:var(--ink-faint);border-radius:9px;padding:7px 9px;font:700 11px var(--font-body);cursor:pointer;white-space:nowrap}
+.sm-format-tab[aria-selected="true"]{color:var(--comics);border-color:var(--comics);background:color-mix(in srgb,var(--comics) 8%,var(--bg-2))}
+.sm-edition-row{border:1px solid var(--line);border-radius:10px;padding:10px;margin:7px 0;background:var(--bg-2)}
+.sm-edition-title{font-size:12.5px;font-weight:800;color:var(--ink);line-height:1.25}
+.sm-edition-coverage{font-size:11.5px;color:var(--ink-dim);line-height:1.4;margin-top:3px}
+.sm-edition-note,.sm-format-empty{font-size:11px;color:var(--ink-faint);line-height:1.4;margin-top:5px}
