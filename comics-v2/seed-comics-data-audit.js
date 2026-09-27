@@ -122,48 +122,156 @@ function coverage(seriesId, values) {
 }
 
 export const collectionAdditions = [
+  // ---------------- Batman main-line TPBs ----------------
   makeCollection({
     id: buildCollectionId("Batman Vol. 1: The Court of Owls (TPB)"),
-    title: "Batman Vol. 1: The Court of Owls",
-    publisher: "DC Comics", format: "TPB", publicationDate: null,
-    seriesIds: [BATMAN],
-    issueCoverage: coverage(BATMAN, [1,2,3,4,5,6,7]),
-    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-1-the-court-of-owls", "The TPB edition collects Batman #1-7. Exact coverage is represented separately from the existing hardcover edition, which collects #1-6."),
+    title: "Batman Vol. 1: The Court of Owls", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [1,2,3,4,5,6,7]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-1-the-court-of-owls", "TPB coverage verified as Batman #1-7. The original New 52 hardcover edition is separately represented below and also covers #1-7 in its original release.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 2: The City of Owls (TPB)"),
+    title: "Batman Vol. 2: The City of Owls", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, [8,9,10,11,12]), ...coverage(BATMAN, ["Annual 1"])],
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-2-the-city-of-owls", "DC confirms Batman #8-12 and Annual #1.")
   }),
   makeCollection({
     id: buildCollectionId("Batman Vol. 3: Death of the Family (TPB)"),
-    title: "Batman Vol. 3: Death of the Family",
-    publisher: "DC Comics", format: "TPB", publicationDate: null,
+    title: "Batman Vol. 3: Death of the Family", publisher: "DC Comics", format: "TPB", publicationDate: null,
     seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [13,14,15,16,17]),
-    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-3-death-of-the-family", "DC's collection description confirms Batman #13-17."),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-3-death-of-the-family", "DC confirms Batman #13-17.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 4: Zero Year – Secret City (TPB)"),
+    title: "Batman Vol. 4: Zero Year – Secret City", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [21,22,23,24]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-4-zero-year-secret-city", "DC confirms Batman #21-24. This audit records the trade-paperback edition separately from the original hardcover edition because format is edition-specific.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 5: Zero Year – Dark City (TPB)"),
+    title: "Batman Vol. 5: Zero Year – Dark City", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [25,26,27,29,30,31,32,33]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-5-zero-year-dark-city", "DC confirms Batman #25-27 and #29-33; #28 is intentionally excluded.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 6: Graveyard Shift (TPB)"),
+    title: "Batman Vol. 6: Graveyard Shift", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, [0,18,19,20,28,34]), ...coverage(BATMAN, ["Annual 2"])],
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-6-graveyard-shift", "DC confirms Batman #0, #18-20, #28, #34 and Annual #2.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 7: Endgame (TPB)"),
+    title: "Batman Vol. 7: Endgame", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [35,36,37,38,39,40]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-7-endgame", "DC confirms Batman #35-40.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 8: Superheavy (TPB)"),
+    title: "Batman Vol. 8: Superheavy", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [41,42,43,44,45]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-8-superheavy", "DC/PRH collection data confirms Batman #41-45; bonus material is outside this series' issue scope.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 9: Bloom (TPB)"),
+    title: "Batman Vol. 9: Bloom", publisher: "DC Comics", format: "TPB", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [46,47,48,49,50]),
+    sourceInfo: sourceInfo("https://www.dc.com/talent/scott-snyder", "DC's catalogue identifies Batman Vol. 9: Bloom; collection sources confirm Batman #46-50, with a Detective Comics #27 bonus story outside this series scope.")
   }),
   makeCollection({
     id: buildCollectionId("Batman Vol. 10: Epilogue (TPB)"),
-    title: "Batman Vol. 10: Epilogue",
-    publisher: "DC Comics", format: "TPB", publicationDate: "2016-12-14",
-    seriesIds: [BATMAN],
-    issueCoverage: [...coverage(BATMAN, [51,52]), ...coverage(BATMAN, ["Annual 4"])],
-    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-10-epilogue", "DC confirms this collection contains Batman #51-52 and Batman Annual #4, plus Batman: Futures End #1 and Batman: Rebirth #1, which are outside this dataset's current Batman series issue scope."),
+    title: "Batman Vol. 10: Epilogue", publisher: "DC Comics", format: "TPB", publicationDate: "2016-12-14",
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, [51,52]), ...coverage(BATMAN, ["Annual 4"])],
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-10-epilogue", "DC confirms Batman #51-52 and Annual #4, plus out-of-scope Batman: Futures End #1 and Batman: Rebirth #1 material.")
+  }),
+
+  // ---------------- Original New 52 hardcover line ----------------
+  // IDs intentionally include the format because the same title exists as both HC and TPB.
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 1: The Court of Owls (Hardcover)"),
+    title: "Batman Vol. 1: The Court of Owls", publisher: "DC Comics", format: "Hardcover", publicationDate: "2012-05-09", isbn: "9781401235413", pageCount: 176,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [1,2,3,4,5,6,7]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-1-the-court-of-owls", "Original New 52 hardcover edition: Batman #1-7. This deliberately updates the older incomplete #1-6 record in the existing seed.")
   }),
   makeCollection({
-    id: buildCollectionId("Batman by Scott Snyder & Greg Capullo Omnibus Vol. 2"),
-    title: "Batman by Scott Snyder & Greg Capullo Omnibus Vol. 2",
-    publisher: "DC Comics", format: "Omnibus", publicationDate: "2021-11-23", isbn: "9781779513267", pageCount: 928,
-    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, Array.from({length:19}, (_,i)=>i+34).concat(["Annual 3","Annual 4"])),
-    sourceInfo: sourceInfo("https://www.penguinrandomhouse.com/books/691314/batman-by-scott-snyder-and-greg-capullo-omnibus-vol-2-by-scott-snyder/", "Penguin Random House confirms Batman #34-52 and Batman Annual #3-4, plus Detective Comics #27, Batman: Futures End #1, DC Sneak Peek: Batman #1, Detective Comics #1000 and Batman: Last Knight on Earth #1-3."),
+    id: buildCollectionId("Batman Vol. 2: The City of Owls (Hardcover)"),
+    title: "Batman Vol. 2: The City of Owls", publisher: "DC Comics", format: "Hardcover", publicationDate: "2013-03-20", isbn: "9781401237776", pageCount: 192,
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, [8,9,10,11,12]), ...coverage(BATMAN, ["Annual 1"])],
+    sourceInfo: sourceInfo("https://www.dc.com/talent/greg-capullo", "Original New 52 hardcover edition; catalogue records confirm Batman #8-12 and Annual #1.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 3: Death of the Family (Hardcover)"),
+    title: "Batman Vol. 3: Death of the Family", publisher: "DC Comics", format: "Hardcover", publicationDate: "2013-10-30", isbn: "9781401242343", pageCount: 176,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [13,14,15,16,17]),
+    sourceInfo: sourceInfo("https://www.dc.com/blog/2013/03/26/dc-entertainment-unveils-upcoming-dc-universe-titles", "DC solicitation explicitly identifies Batman Vol. 3: Death of the Family HC and Batman #13-17.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 4: Zero Year – Secret City (Hardcover)"),
+    title: "Batman Vol. 4: Zero Year – Secret City", publisher: "DC Comics", format: "Hardcover", publicationDate: "2014-05-07", isbn: "9781401245085", pageCount: 176,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [21,22,23,24]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-4-zero-year-secret-city", "DC's collection page describes this hardcover as Batman #21-24.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 5: Zero Year – Dark City (Hardcover)"),
+    title: "Batman Vol. 5: Zero Year – Dark City", publisher: "DC Comics", format: "Hardcover", publicationDate: "2014-10-15", isbn: "9781401248857", pageCount: 240,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [25,26,27,29,30,31,32,33]),
+    sourceInfo: sourceInfo("https://www.dc.com/blog/2014/05/19/collected-editions-group-solicits-august-2014", "DC solicitation confirms the HC edition and Batman #25-27, #29-33.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 6: Graveyard Shift (Hardcover)"),
+    title: "Batman Vol. 6: Graveyard Shift", publisher: "DC Comics", format: "Hardcover", publicationDate: "2015-04-29", isbn: "9781401252304", pageCount: 224,
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, [0,18,19,20,28,34]), ...coverage(BATMAN, ["Annual 2"])],
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-6-graveyard-shift", "Original HC edition: Batman #0, #18-20, #28, #34 and Annual #2.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 7: Endgame (Hardcover)"),
+    title: "Batman Vol. 7: Endgame", publisher: "DC Comics", format: "Hardcover", publicationDate: "2015-09-30", isbn: "9781401256890", pageCount: 192,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [35,36,37,38,39,40]),
+    sourceInfo: sourceInfo("https://www.dc.com/talent/scott-snyder", "Original New 52 hardcover edition; Batman #35-40. The later TPB has a different ISBN/printing and is represented separately.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 8: Superheavy (Hardcover)"),
+    title: "Batman Vol. 8: Superheavy", publisher: "DC Comics", format: "Hardcover", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [41,42,43,44,45]),
+    sourceInfo: sourceInfo("https://www.dc.com/talent/greg-capullo", "Original New 52 hardcover line; Batman #41-45. Later trade listings may describe the same story differently and can include bonus material outside this series scope.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 9: Bloom (Hardcover)"),
+    title: "Batman Vol. 9: Bloom", publisher: "DC Comics", format: "Hardcover", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [46,47,48,49,50]),
+    sourceInfo: sourceInfo("https://www.dc.com/talent/greg-capullo", "Original New 52 hardcover line; Batman #46-50. Bonus Detective Comics #27 material is outside this series scope.")
+  }),
+  makeCollection({
+    id: buildCollectionId("Batman Vol. 10: Epilogue (Hardcover)"),
+    title: "Batman Vol. 10: Epilogue", publisher: "DC Comics", format: "Hardcover", publicationDate: null,
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, [51,52]), ...coverage(BATMAN, ["Annual 4"])],
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-vol-10-epilogue", "Hardcover edition of Epilogue: Batman #51-52 and Annual #4, with additional out-of-scope Futures End/Rebirth material in the published collection.")
+  }),
+
+  // ---------------- Essential Editions actually published for this Batman run ----------------
+  makeCollection({
+    id: buildCollectionId("Batman: The Court of Owls Saga (DC Essential Edition)"),
+    title: "Batman: The Court of Owls Saga (DC Essential Edition)", publisher: "DC Comics", format: "Essential Edition", publicationDate: "2018-09-05", pageCount: 360,
+    seriesIds: [BATMAN], issueCoverage: coverage(BATMAN, [1,2,3,4,5,6,7,8,9,10,11]),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-the-court-of-owls-saga-dc-essential-edition", "DC explicitly confirms Batman #1-11. This is one of the two Batman New 52 Snyder-era Essential Editions found in DC's catalogue.")
   }),
   makeCollection({
     id: buildCollectionId("Batman: Death of the Family Saga (DC Essential Edition)"),
-    title: "Batman: Death of the Family Saga (DC Essential Edition)",
-    publisher: "DC Comics", format: "Essential Edition", publicationDate: "2019-04-10", pageCount: 376,
+    title: "Batman: Death of the Family Saga (DC Essential Edition)", publisher: "DC Comics", format: "Essential Edition", publicationDate: "2019-04-10", pageCount: 376,
     seriesIds: [BATMAN], issueCoverage: [
       ...coverage(BATMAN,[13,14,15,16,17]),
       ...coverage(buildSeriesId("Batgirl",2011),[14,15,16]),
       ...coverage(buildSeriesId("Nightwing",2011),[15,16]),
       ...coverage(buildSeriesId("Batman and Robin",2011),[15,16]),
-      ...coverage(buildSeriesId("Batgirl",2011),["#13"].map(x=>x.replace(/^#/,'13'))),
     ],
-    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-death-of-the-family-saga-dc-essential-edition", "DC confirms the core contents and explicitly lists Batman #13-17, Batgirl #14-16, Nightwing #15-16, Batman and Robin #15-16, plus selected pages from additional tie-ins."),
+    sourceInfo: sourceInfo("https://www.dc.com/graphic-novels/batman-2011/batman-death-of-the-family-saga-dc-essential-edition", "DC confirms Batman #13-17, Batgirl #14-16, Nightwing #15-16 and Batman and Robin #15-16, plus selected pages from additional tie-ins. Selected-page material is intentionally not represented as complete issue coverage.")
+  }),
+
+  // ---------------- Snyder/Capullo Omnibus Vol. 2 ----------------
+  makeCollection({
+    id: buildCollectionId("Batman by Scott Snyder & Greg Capullo Omnibus Vol. 2"),
+    title: "Batman by Scott Snyder & Greg Capullo Omnibus Vol. 2", publisher: "DC Comics", format: "Omnibus", publicationDate: "2021-11-23", isbn: "9781779513267", pageCount: 928,
+    seriesIds: [BATMAN], issueCoverage: [...coverage(BATMAN, Array.from({length:19}, (_,i)=>i+34)), ...coverage(BATMAN, ["Annual 3","Annual 4"])],
+    sourceInfo: sourceInfo("https://www.penguinrandomhouse.com/books/691314/batman-by-scott-snyder-and-greg-capullo-omnibus-vol-2-by-scott-snyder/", "PRH confirms Batman #34-52 and Annual #3-4, plus Detective Comics #27, Batman: Futures End #1, DC Sneak Peek: Batman #1, Detective Comics #1000 and Batman: Last Knight on Earth #1-3. Only Batman-series rows are represented here.")
   }),
 ];
 
@@ -224,10 +332,32 @@ export async function importComicsDataAudit({ upsertEntity, getEntity, upsertCol
   // 3. Add missing researched Batman collections. Existing IDs are left alone.
   for (const c of collectionAdditions) {
     try {
-      const existing = await getEntity(COLLECTIONS.COLLECTIONS, c.id);
+      let existing = await getEntity(COLLECTIONS.COLLECTIONS, c.id);
+      let targetId = c.id;
+      // Older seed records used the display title itself as the ID. For the
+      // format-specific audit records, reuse that legacy ID when it already
+      // represents the same format; otherwise keep the format-qualified ID.
       if (!existing) {
-        await upsertCollectionEdition(c.id, c);
+        const legacyId = buildCollectionId(c.title);
+        if (legacyId !== c.id) {
+          const legacy = await getEntity(COLLECTIONS.COLLECTIONS, legacyId);
+          if (legacy && legacy.format === c.format) {
+            existing = legacy;
+            targetId = legacyId;
+          }
+        }
+      }
+      if (!existing) {
+        await upsertCollectionEdition(targetId, c);
         result.collectionsAdded++;
+      } else {
+        const existingCoverage = JSON.stringify((existing.issueCoverage || []).map(x => `${x.seriesId}|${x.issueId}|${x.coveragePart}`).sort());
+        const auditedCoverage = JSON.stringify((c.issueCoverage || []).map(x => `${x.seriesId}|${x.issueId}|${x.coveragePart}`).sort());
+        const metadataDiff = existing.format !== c.format || existing.isbn !== c.isbn || existing.pageCount !== c.pageCount;
+        if (metadataDiff || existingCoverage !== auditedCoverage) {
+          await upsertCollectionEdition(targetId, { ...existing, ...c, id: targetId, createdAt: existing.createdAt || c.createdAt });
+          result.collectionsAdded++;
+        }
       }
     } catch (e) { result.errors.push(`collection ${c.id}: ${e.message}`); }
   }
