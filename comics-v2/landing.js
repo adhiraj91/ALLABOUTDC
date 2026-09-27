@@ -1,7 +1,7 @@
 // ============================================================================
 // comics-v2 / landing.js
 // ----------------------------------------------------------------------------
-// POINTER 4 — the dedicated COMICS LANDING view (what the "Comics" tab opens).
+// POINTER 4 (Comics Home) — restructured by POINTER 6.5.
 //
 // app.js owns the tab and simply asks this module to render into its #grid when
 // the Comics tab is showing its landing (window.__comicsV2Landing.render). If this
@@ -9,135 +9,93 @@
 // breaks. The old flat catalogue stays one tap away ("Browse all comics") but no
 // longer dominates the first screen.
 //
-// Every entry point is data-driven (comicCharacters / comicContinuities /
-// comicSeries / comicRuns / comicUniverses — capped, targeted reads, fetched once
-// per page and cached). Characters or eras with no recorded series are shown
-// honestly as "not mapped yet", never padded with invented data.
+// Pointer 6.5 simplifies this page down to a small, fixed set of entry points —
+// By Character / By Continuity-Era / Story Map / Reading Paths — plus a Continue
+// Reading card shown ONLY when the reader has real progress, and a de-emphasized
+// Browse All Comics link. The character rail / era rail / "Featured Story Maps"
+// run rail and the old per-tile Story Map deep links this page used to render
+// directly are gone: every one of those routes converged on the SAME Comics
+// Explorer (comics-v2/explorer.js) and Story Map (comics-v2/storymap.js) screens
+// that the four buttons below already reach, so removing them loses no
+// destination — only the duplicate ways of getting there (the spec's "ONE
+// Story Map entry point" / "ONE Character exploration route" / "ONE Era route"
+// / "ONE Reading Paths destination" requirement).
 // ============================================================================
-import * as data from "./data.js?v=p6";
+import * as data from "./data.js?v=p65";
 // Pointer 6: "Continue Reading" (or a data-driven "Start reading" point) at the top of Comics Home.
 import { renderContinueCard } from "./reading-progress.js?v=p6";
 
 const esc = (s) => s == null ? "" : String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const yearOf = (d) => { const m = String(d || "").match(/\d{4}/); return m ? m[0] : ""; };
-function yearRange(a, b) { const ya = yearOf(a), yb = yearOf(b); if (ya && yb) return ya === yb ? ya : `${ya}–${yb}`; if (ya) return `${ya}–`; return yb || ""; }
-const initials = (t) => String(t || "?").trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
 
+// Only what this page itself needs: the one DC universe, so the single Story
+// Map entry point has a generic (never character-specific) root to open at.
+// Nothing character/era/series/run-shaped is fetched here any more — those
+// screens are the Explorer's job now.
 let _dataPromise = null;
 function loadLandingData() {
   if (_dataPromise) return _dataPromise;
-  const safe = (p) => p.then(v => ({ ok: true, v }), e => { console.warn("[Comics landing]", e); return { ok: false, v: [] }; });
-  _dataPromise = Promise.all([
-    safe(data.getAllCharacters(200)), safe(data.getAllContinuities(100)), safe(data.getAllSeries(200)),
-    safe(data.getAllRuns(24)), safe(data.getAllUniverses(10)),
-  ]).then(([ch, ct, se, ru, un]) => {
-    const failed = [ch, ct, se, ru, un].some(r => !r.ok);
-    if (failed) _dataPromise = null; // let a later visit retry
-    return { characters: ch.v, continuities: ct.v, series: se.v, runs: ru.v, universes: un.v, failed, allFailed: !ch.ok && !ct.ok && !se.ok };
-  });
+  _dataPromise = data.getAllUniverses(5).then(
+    (universes) => ({ universes, ok: true }),
+    (e) => { console.warn("[Comics landing]", e); _dataPromise = null; return { universes: [], ok: false }; },
+  );
   return _dataPromise;
 }
 
-function orderContinuities(list) {
-  const before = (a, b) => (a.successorId === b.id) || (b.predecessorId === a.id);
-  return list.slice().sort((a, b) => {
-    if (before(a, b)) return -1;
-    if (before(b, a)) return 1;
-    return String(a.startDate || "9999").localeCompare(String(b.startDate || "9999")) || String(a.name || "").localeCompare(String(b.name || ""));
-  });
-}
-
-function heroHtml(hooks) {
-  const n = hooks && hooks.catalogueCount;
+function heroHtml() {
   return `
-  <section class="cl-hero">
+  <section class="cl-hero cl-hero-compact">
     <div class="cl-eyebrow">COMICS</div>
-    <h2 class="cl-title">The DC Comics<br>Story Map</h2>
-    <p class="cl-lede">Explore DC Comics the way it's actually built — through characters, continuities, series, creative runs and the stories inside them.</p>
-    <div class="cl-ladder" aria-label="How the map is organised">
-      <span>Character</span><i>›</i><span>Continuity</span><i>›</i><span>Series</span><i>›</i><span>Run</span><i>›</i><span>Story</span><i>›</i><span>Issues</span>
-    </div>
-    <div class="cl-hero-actions">
-      <button class="btn-cta cl-open-map" id="clOpenMapBtn" disabled>Open the Story Map</button>
-      <button class="cl-browse-link" id="comicsBrowseAllBtn">Browse all comics${n ? ` · ${n}` : ""} →</button>
-    </div>
+    <h2 class="cl-title">Explore DC Comics</h2>
+    <p class="cl-lede">Through its stories, eras and reading journeys.</p>
   </section>
-  <section class="cl-continue" id="clContinue" hidden></section>
-  <nav class="cl-pillars" aria-label="Explore comics by">
-    <button class="cl-pillar" data-jump="clCharacters"><span class="cl-pillar-k">01</span><span class="cl-pillar-l">Characters</span><span class="cl-pillar-n" data-count="characters"></span></button>
-    <button class="cl-pillar" data-jump="clEras"><span class="cl-pillar-k">02</span><span class="cl-pillar-l">Continuities / Eras</span><span class="cl-pillar-n" data-count="eras"></span></button>
-    <button class="cl-pillar" data-jump="clRuns"><span class="cl-pillar-k">03</span><span class="cl-pillar-l">Series / Runs</span><span class="cl-pillar-n" data-count="series"></span></button>
-    <button class="cl-pillar" data-jump="clStories"><span class="cl-pillar-k">04</span><span class="cl-pillar-l">Stories</span><span class="cl-pillar-n">Arcs, events &amp; issues</span></button>
-  </nav>`;
+  <section class="cl-continue" id="clContinue" hidden></section>`;
 }
 
-function skeletonSection(id, title, sub) {
-  return `<section class="cl-section" id="${id}"><div class="cl-head"><h3>${esc(title)}</h3>${sub ? `<span>${esc(sub)}</span>` : ""}</div><div class="cl-skel"><i></i><i></i><i></i></div></section>`;
-}
-
-function charactersSection(d, counts) {
-  const chars = d.characters.slice().sort((a, b) => (counts.get(b.id) || 0) - (counts.get(a.id) || 0) || String(a.displayName || a.name).localeCompare(String(b.displayName || b.name)));
-  if (!chars.length) return `<div class="cl-empty">No characters have been added to the comics database yet.</div>`;
-  const tiles = chars.map(c => {
-    const n = counts.get(c.id) || 0;
-    return `<button class="cl-char" data-map-type="character" data-map-id="${esc(c.id)}" data-mapped="${n > 0}">
-        <span class="cl-char-mono">${esc(initials(c.displayName || c.name))}</span>
-        <span class="cl-char-name">${esc(c.displayName || c.name)}</span>
-        <span class="cl-char-meta">${n ? `${n} series` : "Not mapped yet"}</span>
-      </button>`;
-  }).join("");
-  return `<div class="cl-rail cl-char-rail">${tiles}</div>`;
-}
-
-function erasSection(d, contCounts) {
-  const conts = orderContinuities(d.continuities);
-  if (!conts.length) return `<div class="cl-empty">No continuities have been added yet.</div>`;
-  const rows = conts.map(ct => {
-    const n = contCounts.get(ct.id) || 0;
-    const sub = [ct.shortName && ct.shortName !== ct.name ? ct.shortName : "", yearRange(ct.startDate, ct.endDate)].filter(Boolean).join(" · ");
-    return `<button class="cl-era" data-map-type="continuity" data-map-id="${esc(ct.id)}" data-mapped="${n > 0}">
-        <span class="cl-era-dot" aria-hidden="true"></span>
-        <span class="cl-era-name">${esc(ct.name)}</span>
-        ${sub ? `<span class="cl-era-sub">${esc(sub)}</span>` : ""}
-        <span class="cl-era-count">${n ? `${n} series` : "No series recorded yet"}</span>
-      </button>`;
-  }).join("");
-  const uni = d.universes[0];
-  const uniLink = d.universes.length === 1
-    ? `<button class="cl-text-link" data-map-type="universe" data-map-id="${esc(uni.id)}">Map every era of the ${esc(uni.name)} →</button>` : "";
-  return `<div class="cl-era-line">${rows}</div>${uniLink}`;
-}
-
-function runsSection(d, seriesById) {
-  const runs = d.runs.filter(r => seriesById.has(r.seriesId) || r.title);
-  if (!runs.length) return `<div class="cl-empty">No creative runs have been mapped yet.</div>`;
-  const cards = runs.map(r => {
-    const s = seriesById.get(r.seriesId);
-    const range = r.startIssue != null && r.endIssue != null ? `Issues #${r.startIssue}–${r.endIssue}` : "";
-    const years = yearRange(r.startDate || (s && s.startDate), r.endDate || (s && s.endDate));
-    return `<button class="cl-run" data-map-type="series" data-map-id="${esc(r.seriesId)}" data-map-run="${esc(r.id)}">
-        <span class="cl-run-k">${esc(s ? `${s.title}${yearOf(s.startDate) ? ` (${yearOf(s.startDate)})` : ""}` : "Series")}</span>
-        <span class="cl-run-t">${esc(r.title || "Creative run")}</span>
-        <span class="cl-run-m">${esc([range, years].filter(Boolean).join(" · "))}</span>
-        <span class="cl-run-go">Open story map →</span>
-      </button>`;
-  }).join("");
-  return `<div class="cl-run-grid">${cards}</div><button class="cl-text-link" id="clSeriesListBtn">All ${d.series.length} mapped series →</button>`;
-}
-
-function storiesSection() {
-  return `<div class="cl-links">
-      <button class="cl-link-row" id="comicsExplorerEntryBtn"><span class="cl-link-t">Continuity Explorer</span><span class="cl-link-s">Step through characters, eras, series, runs, stories and issues as lists</span><span class="cl-link-a">›</span></button>
-      <button class="cl-link-row" id="comicsLandingPathBtn"><span class="cl-link-t">Not sure where to start?</span><span class="cl-link-s">Build a reading path with progress tracking</span><span class="cl-link-a">›</span></button>
-    </div>`;
+// The four curated entry points (Pointer 6.5). Each opens the Explorer sheet
+// directly at the relevant level, or (Story Map) the Story Map itself — every
+// button below is the ONLY way this page links to that destination.
+const EXPLORE_ENTRIES = [
+  { key: "character", label: "By Character", sub: "Major characters with meaningful standalone comic catalogues." },
+  { key: "era", label: "By Continuity / Era", sub: "Explore by publishing era and continuity." },
+  { key: "storymap", label: "Story Map", sub: "Explore the DC Comics universe visually." },
+  { key: "paths", label: "Reading Paths", sub: "Follow curated reading journeys." },
+];
+function exploreGridHtml() {
+  const tiles = EXPLORE_ENTRIES.map(e => `
+    <button class="cl-explore-tile" data-explore="${e.key}" ${e.key === "storymap" ? 'id="clOpenMapBtn" disabled' : ""}>
+      <span class="cl-explore-label">${esc(e.label)}</span>
+      <span class="cl-explore-sub">${esc(e.sub)}</span>
+    </button>`).join("");
+  return `<section class="cl-section" id="clExplore"><div class="cl-head"><h3>Explore</h3></div><div class="cl-explore-grid">${tiles}</div></section>`;
 }
 
 function catalogueCard(hooks) {
   const n = hooks && hooks.catalogueCount;
+  // Pointer 6.5: the ONE "Browse All Comics" entry point on this page (kept as a secondary,
+  // de-emphasized destination, not the default Comics experience) — id unchanged from Pointer 4
+  // (#comicsBrowseAllBtn) since it's still the same single destination.
   return `<section class="cl-catalogue">
-      <div><div class="cl-cat-t">The full comics catalogue</div><div class="cl-cat-s">${n ? `${n} titles · ` : ""}filter by era, canon status and reading level</div></div>
-      <button class="btn btn-ghost" id="comicsBrowseAllBtn2">Browse all comics</button>
+      <div><div class="cl-cat-t">Browse all comics</div><div class="cl-cat-s">${n ? `${n} titles · ` : ""}the complete catalogue, filterable by era and canon status</div></div>
+      <button class="btn btn-ghost" id="comicsBrowseAllBtn">Browse all comics</button>
     </section>`;
+}
+
+// Pointer 6.5: "ONLY display [Continue Reading] when the user actually has comic
+// progress" (Comics Home specifically — the run detail page has its own, separately
+// correct, no-progress-no-button gating in explorer.js's levelRun). reading-progress.js's
+// shared renderContinueCard() is reused UNCHANGED (Pointer 6), including its own
+// data-driven "Start reading" nudge for a reader with zero progress — that nudge is
+// exactly right inside a Character/Run screen the reader has already drilled into, but
+// wrong as the very first thing Comics Home shows a reader who has done nothing yet.
+// So: render it as usual, then hide it here if what came back was that "start" variant,
+// rather than forking reading-progress.js's own resolveContinue() into two behaviors.
+function showContinueCard(container) {
+  if (!container) return;
+  renderContinueCard(container).then(() => {
+    if (!container.isConnected) return;
+    const card = container.querySelector('[data-state="start"]');
+    if (card) { container.hidden = true; container.innerHTML = ""; }
+  }).catch(e => console.warn("[Comics landing] continue card", e));
 }
 
 let renderSeq = 0;
@@ -147,46 +105,18 @@ let renderSeq = 0;
  */
 export function renderComicsLanding(container, hooks = {}) {
   const my = ++renderSeq;
-  container.innerHTML = `<div class="cl-wrap">${heroHtml(hooks)}
-      ${skeletonSection("clCharacters", "Explore by Character", "Start the map from a hero")}
-      ${skeletonSection("clEras", "Explore by Continuity / Era", "Each era has its own map")}
-      ${skeletonSection("clRuns", "Featured Story Maps", "Series → creative runs → story arcs")}
-      <section class="cl-section" id="clStories"><div class="cl-head"><h3>Stories &amp; Issues</h3><span>Other ways in</span></div>${storiesSection()}</section>
+  container.innerHTML = `<div class="cl-wrap">${heroHtml()}
+      ${exploreGridHtml()}
       ${catalogueCard(hooks)}
     </div>`;
-  renderContinueCard(container.querySelector("#clContinue")).catch(e => console.warn("[Comics landing] continue card", e));
+  showContinueCard(container.querySelector("#clContinue"));
   loadLandingData().then(d => {
-    if (my !== renderSeq || !container.isConnected || !container.querySelector(".cl-wrap")) return;
-    const charCounts = new Map(), contCounts = new Map(), seriesById = new Map();
-    d.series.forEach(s => {
-      seriesById.set(s.id, s);
-      (s.characterIds || []).forEach(id => charCounts.set(id, (charCounts.get(id) || 0) + 1));
-      (s.continuityIds || []).forEach(id => contCounts.set(id, (contCounts.get(id) || 0) + 1));
-    });
-    const put = (id, html) => { const sec = container.querySelector("#" + id); if (sec) { const sk = sec.querySelector(".cl-skel"); if (sk) sk.outerHTML = html; } };
-    if (d.allFailed) {
-      const msg = `<div class="cl-empty cl-error">Couldn't reach the comics map right now. You can still <button class="cl-inline-link" data-browse-all>browse all comics</button>.</div>`;
-      ["clCharacters", "clEras", "clRuns"].forEach(id => put(id, msg));
-    } else {
-      put("clCharacters", charactersSection(d, charCounts));
-      put("clEras", erasSection(d, contCounts));
-      put("clRuns", runsSection(d, seriesById));
-    }
-    const setCount = (k, v) => { const e = container.querySelector(`[data-count="${k}"]`); if (e && v) e.textContent = v; };
-    const plural = (n, one, many) => n ? `${n} ${n === 1 ? one : many}` : "";
-    setCount("characters", plural(d.characters.length, "character", "characters"));
-    setCount("eras", plural(d.continuities.length, "era", "eras"));
-    setCount("series", [plural(d.series.length, "series", "series"), plural(d.runs.length, "run", "runs")].filter(Boolean).join(" · "));
-    // Hero CTA: start from the character the data covers most (data-driven, never a hardcoded name).
-    const top = d.characters.slice().sort((a, b) => (charCounts.get(b.id) || 0) - (charCounts.get(a.id) || 0))[0];
-    const cta = container.querySelector("#clOpenMapBtn");
-    if (cta) {
-      if (top && (charCounts.get(top.id) || 0) > 0) {
-        cta.disabled = false;
-        cta.dataset.mapType = "character"; cta.dataset.mapId = top.id;
-        cta.innerHTML = `Open the Story Map <span class="cl-cta-sub">starting with ${esc(top.displayName || top.name)}</span>`;
-      } else cta.remove();
-    }
+    if (my !== renderSeq || !container.isConnected) return;
+    const btn = container.querySelector("#clOpenMapBtn");
+    if (!btn) return;
+    const uni = d.universes[0];
+    if (uni) { btn.disabled = false; btn.dataset.universeId = uni.id; }
+    else { btn.disabled = true; btn.querySelector(".cl-explore-sub").textContent = "Not mapped yet."; }
   });
 }
 
@@ -194,30 +124,23 @@ function onLandingClick(e) {
   const container = e.currentTarget;
   const hooks = container._clHooks || {};
   if (!container.querySelector(".cl-wrap")) return; // grid now shows something else
-  const map = e.target.closest("[data-map-type]");
-  if (map) {
-    const sm = window.__comicsStoryMap;
-    if (!sm) return;
-    const opts = map.dataset.mapRun ? { expandPath: [map.dataset.mapRun] } : {};
-    sm.open(map.dataset.mapType, map.dataset.mapId, opts);
-    return;
-  }
-  if (e.target.closest("#comicsBrowseAllBtn, #comicsBrowseAllBtn2, [data-browse-all]")) { if (hooks.onBrowseAll) hooks.onBrowseAll(); return; }
-  if (e.target.closest("#comicsLandingPathBtn")) { if (hooks.onReadingPath) hooks.onReadingPath(); return; }
-  if (e.target.closest("#clSeriesListBtn")) {
-    const ex = window.__comicsExplorer;
-    if (ex && ex.openAt) ex.openAt([{ level: "seriesList", label: "Series", params: {} }]);
-    return;
-  }
-  const jump = e.target.closest("[data-jump]");
-  if (jump) {
-    const target = container.querySelector("#" + jump.dataset.jump);
-    if (target) {
-      const header = document.querySelector("header");
-      const off = header && getComputedStyle(header).position === "sticky" ? header.getBoundingClientRect().height : 0;
-      window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - off - 12), behavior: "smooth" });
+  const explore = e.target.closest("[data-explore]");
+  if (explore) {
+    const key = explore.dataset.explore;
+    if (key === "storymap") {
+      const sm = window.__comicsStoryMap;
+      const uniId = explore.dataset.universeId;
+      if (sm && uniId) sm.open("universe", uniId);
+      return;
     }
+    const ex = window.__comicsExplorer;
+    if (!ex || !ex.openAt) return;
+    if (key === "character") ex.openAt([{ level: "characterList", label: "Characters", params: {} }]);
+    else if (key === "era") ex.openAt([{ level: "continuityList", label: "Continuities", params: {} }]);
+    else if (key === "paths") ex.openAt([{ level: "readingPathList", label: "Reading Paths", params: {} }]);
+    return;
   }
+  if (e.target.closest("#comicsBrowseAllBtn, [data-browse-all]")) { if (hooks.onBrowseAll) hooks.onBrowseAll(); return; }
 }
 
 // The grid element is reused across tabs, so the delegated listener is attached once per element.
@@ -231,7 +154,7 @@ function renderSafe(container, hooks) {
 // Progress changed (Explorer, Story Map, login merge …) while Comics Home is showing: refresh just the card.
 document.addEventListener("readerprogress:change", () => {
   const slot = document.getElementById("clContinue");
-  if (slot && slot.isConnected) renderContinueCard(slot).catch(() => {});
+  if (slot && slot.isConnected) showContinueCard(slot);
 });
 
 window.__comicsV2Landing = { render: renderSafe, preload: loadLandingData };

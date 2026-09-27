@@ -33,7 +33,7 @@
 // ============================================================================
 // "?v=p5" — data.js gained new Pointer 5 helpers (reading paths / collection overlap);
 // the query string busts GitHub Pages' ~10min cache the same way Pointer 4 did for storymap.js.
-import * as data from "./data.js?v=p6";
+import * as data from "./data.js?v=p65";
 import { COLLECTIONS } from "./schema.js";
 // Pointer 6 — personal reading progress (derived from the site's one progress store via
 // window.__readerProgress) + the contextual Story Graph. Same "?v=p6" specifier everywhere so
@@ -342,11 +342,12 @@ async function levelRoot() {
       <button class="cx-entry-btn" data-nav="characterList"><span class="cx-entry-btn-label">Characters</span><span class="cx-entry-btn-sub">Start with a hero</span></button>
       <button class="cx-entry-btn" data-nav="continuityList"><span class="cx-entry-btn-label">Continuities / Eras</span><span class="cx-entry-btn-sub">Start with an era</span></button>
       <button class="cx-entry-btn" data-nav="seriesList"><span class="cx-entry-btn-label">Series</span><span class="cx-entry-btn-sub">Browse series directly</span></button>
+      <button class="cx-entry-btn" data-nav="readingPathList"><span class="cx-entry-btn-label">Reading Paths</span><span class="cx-entry-btn-sub">Follow a curated journey</span></button>
     </div>`;
   return {
     html,
     wire(container) {
-      const labels = { characterList: "Characters", continuityList: "Continuities", seriesList: "Series" };
+      const labels = { characterList: "Characters", continuityList: "Continuities", seriesList: "Series", readingPathList: "Reading Paths" };
       container.querySelectorAll("[data-nav]").forEach(btn => {
         btn.addEventListener("click", () => pushLevel(btn.dataset.nav, labels[btn.dataset.nav], {}));
       });
@@ -354,24 +355,52 @@ async function levelRoot() {
   };
 }
 
+/**
+ * Pointer 6.5 — the CURATED Character browser. Not every comicCharacters
+ * record: only characters data.curateCharacters() judges to have a genuine
+ * standalone reading journey (see data.js for the exact rule). Supporting
+ * characters stay fully reachable through Stories/Issues/Story Graph/Search —
+ * they just don't clutter this primary entry point.
+ */
 async function levelCharacterList() {
-  const chars = await data.getAllCharacters();
-  chars.sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
-  if (!chars.length) return { html: emptyHtml("No characters have been added to the Comics database yet.") };
-  const rows = chars.map(c => {
+  const [chars, series] = await Promise.all([data.getAllCharacters(), data.getAllSeries()]);
+  const curated = data.curateCharacters(chars, series).sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
+  if (!curated.length) return { html: emptyHtml("No characters with their own comic catalogue have been added yet.") };
+  const rows = curated.map(c => {
     const label = esc(c.displayName || c.name || "Unnamed");
     const sub = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
     return `<div class="cx-row" data-id="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${label}</div>${sub ? `<div class="cx-row-sub">${sub}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`;
   }).join("");
-  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Choose a character</h2><div class="cx-list">${rows}</div>`;
+  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Choose a character</h2><p class="cx-subtitle">Characters with a meaningful standalone comics catalogue.</p><div class="cx-list">${rows}</div>`;
   return {
     html,
     wire(container) {
       container.querySelectorAll(".cx-row[data-id]").forEach(row => {
         row.addEventListener("click", () => {
-          const c = chars.find(x => x.id === row.dataset.id);
+          const c = curated.find(x => x.id === row.dataset.id);
           pushLevel("character", c.displayName || c.name, { character: c });
         });
+      });
+    },
+  };
+}
+
+/**
+ * Pointer 6.5 — a single "Reading Paths" destination: every comicReadingPaths
+ * record, grouped/ordered by path type (sortPathsByType, same helper used
+ * everywhere else paths are listed). Selecting one opens the existing
+ * levelReadingPath detail — no separate reading-path UI.
+ */
+async function levelReadingPathList() {
+  const paths = sortPathsByType(await data.getAllReadingPaths(30));
+  if (!paths.length) return { html: emptyHtml("No reading paths have been added yet.") };
+  const rows = paths.map((p, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(p.title)}</div><div class="cx-row-sub">${esc(pathTypeLabel(p.pathType))} · ${pathEntryCount(p)} step${pathEntryCount(p) === 1 ? "" : "s"}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+  const html = `<div class="cx-kicker">READING PATHS</div><h2 class="cx-title">Follow a curated journey</h2><div class="cx-list">${rows}</div>`;
+  return {
+    html,
+    wire(container) {
+      container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
+        row.addEventListener("click", () => { const p = paths[+row.dataset.idx]; pushLevel("readingPath", p.title, { path: p }); });
       });
     },
   };
@@ -442,37 +471,77 @@ async function levelContinuityList() {
   };
 }
 
+function seriesListSectionHtml(series, label) {
+  const rows = series.map(s => `<div class="cx-row" data-series="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ""}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+  return `<div class="sheet-section"><div class="sheet-label">${esc(label)}</div><div class="cx-list">${rows}</div></div>`;
+}
 async function levelContinuity(params) {
   const ct = params.continuity;
-  let series;
+  // Character-scoped (reached via Character → Era, or Era → Character below): the character's OWN
+  // ecosystem within this era — meaningful parallel series, never every series in the era.
   if (params.character) {
-    const all = await data.getSeriesForCharacter(params.character.id);
-    series = all.filter(s => Array.isArray(s.continuityIds) && s.continuityIds.includes(ct.id));
-  } else {
-    series = await data.getSeriesForContinuity(ct.id);
+    const c = params.character;
+    const all = await data.getSeriesForCharacter(c.id);
+    const series = all.filter(s => Array.isArray(s.continuityIds) && s.continuityIds.includes(ct.id)).sort((a, b) => firstYearOf(a) - firstYearOf(b));
+    let html = `<div class="cx-kicker">${esc((c.displayName || c.name || "").toUpperCase())} · CONTINUITY</div><h2 class="cx-title">${esc(ct.name)}</h2>`;
+    const sub = contDateRange(ct);
+    if (sub) html += `<div class="cx-subtitle">${esc(sub)}</div>`;
+    if (!series.length) { html += emptyHtml(`No ${c.displayName || c.name} comics recorded for this era yet.`); return { html }; }
+    html += seriesListSectionHtml(series, `${(c.displayName || c.name || "").toUpperCase()}'S ${ct.name.toUpperCase()} SERIES`);
+    return {
+      html,
+      wire(container) {
+        container.querySelectorAll("[data-series]").forEach(row => {
+          row.addEventListener("click", () => { const s = series.find(x => x.id === row.dataset.series); pushLevel("series", s.title, { series: s }); });
+        });
+      },
+    };
   }
+  // Entered directly from the era (Pointer 6.5): don't dump the whole era's series list up front —
+  // offer a curated "explore by character" list scoped to this era, with the full series list one
+  // tap away (de-emphasized), never the primary view.
+  const [series, chars] = await Promise.all([data.getSeriesForContinuity(ct.id), data.getAllCharacters()]);
   series.sort((a, b) => firstYearOf(a) - firstYearOf(b));
+  const eraChars = chars.filter(c => Array.isArray(c.continuityIds) && c.continuityIds.includes(ct.id));
+  const curated = data.curateCharacters(eraChars, series).sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
 
-  let html = `<div class="cx-kicker">${params.character ? esc((params.character.displayName || params.character.name || "").toUpperCase()) + " · " : ""}CONTINUITY</div><h2 class="cx-title">${esc(ct.name)}</h2>`;
+  let html = `<div class="cx-kicker">CONTINUITY</div><h2 class="cx-title">${esc(ct.name)}</h2>`;
   const sub = contDateRange(ct);
   if (sub) html += `<div class="cx-subtitle">${esc(sub)}</div>`;
   if (ct.description) html += `<div class="sheet-section"><div class="sheet-body">${esc(ct.description)}</div></div>`;
-  if (!series.length) {
-    html += emptyHtml("No series recorded for this continuity yet.");
-    return { html };
+  if (!series.length) { html += emptyHtml("No series recorded for this continuity yet."); return { html }; }
+  if (curated.length) {
+    html += `<div class="sheet-section"><div class="sheet-label">EXPLORE BY CHARACTER</div><div class="cx-list">`;
+    html += curated.map(c => `<div class="cx-row" data-char="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.displayName || c.name)}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+    html += `</div></div>`;
   }
-  html += `<div class="sheet-section"><div class="sheet-label">SERIES</div><div class="cx-list">`;
-  html += series.map(s => `<div class="cx-row" data-series="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ""}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
-  html += `</div></div>`;
+  html += `<div class="sheet-section"><button class="cx-text-link" id="cxAllSeriesToggle" aria-expanded="false">All ${series.length} series in ${esc(ct.name)} →</button><div class="cx-list" id="cxAllSeriesList" hidden></div></div>`;
   return {
     html,
     wire(container) {
-      container.querySelectorAll("[data-series]").forEach(row => {
+      container.querySelectorAll("[data-char]").forEach(row => {
         row.addEventListener("click", () => {
-          const s = series.find(x => x.id === row.dataset.series);
-          pushLevel("series", s.title, { series: s });
+          const c = curated.find(x => x.id === row.dataset.char);
+          pushLevel("continuity", ct.name, { continuity: ct, character: c });
         });
       });
+      const toggle = container.querySelector("#cxAllSeriesToggle");
+      const list = container.querySelector("#cxAllSeriesList");
+      if (toggle && list) {
+        toggle.addEventListener("click", () => {
+          const open = !list.hidden;
+          if (!open && !list.dataset.filled) {
+            list.innerHTML = series.map(s => `<div class="cx-row" data-series="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ""}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+            list.dataset.filled = "true";
+            list.querySelectorAll("[data-series]").forEach(row => {
+              row.addEventListener("click", () => { const s = series.find(x => x.id === row.dataset.series); pushLevel("series", s.title, { series: s }); });
+            });
+          }
+          list.hidden = open;
+          toggle.setAttribute("aria-expanded", String(!open));
+          toggle.textContent = open ? `All ${series.length} series in ${ct.name} →` : "Hide full series list";
+        });
+      }
     },
   };
 }
@@ -551,55 +620,245 @@ async function levelSeries(params) {
   };
 }
 
+function issueNum(iss) { const n = parseFloat(iss && iss.issueNumber); return isNaN(n) ? null : n; }
+
+/**
+ * Pointer 6.5 — RUN DETAIL PAGE, the centerpiece of this pass.
+ * Header (title, creative team, year range as plain metadata, issue count) +
+ * Continue Reading, then ISSUES | TPB | HARDCOVER | OMNIBUS — four views of
+ * the exact same canonical run data (same issues/collections, just filtered
+ * by format for the collection tabs), plus an Expanded/Optional Reading
+ * section wherever comicRelationships actually distinguishes core from
+ * tie-in/event material for this run (never forced when the data doesn't).
+ */
 async function levelRun(params) {
   const r = params.run, s = params.series;
   const label = await runLabel(r);
-  const [stories, readingPaths] = await Promise.all([
+  const [stories, allSeriesIssues, readingPaths] = await Promise.all([
     data.getStoriesForRun(r.id),
+    data.getIssuesForSeries(r.seriesId),
     data.getReadingPathsFor({ continuityId: (s.continuityIds || [])[0] || null }),
   ]);
-  // NOTE: comicRuns/comicStories has no explicit "order within run" field in the
-  // current Phase 1 schema, so this list is shown in the order Firestore returns
-  // it (matching import/insertion order) rather than invented by re-sorting —
-  // see the final report's "genuine limitations" section.
+  sortIssuesInPlace(allSeriesIssues);
 
-  // Pointer 6: run progress is derived from its stories (each derived from its issues) — no run-level store.
-  const runSummary = () => {
-    const rp = RP.runProgress(stories, RP.snapshot());
-    if (!stories.length || rp.state === "unread") return "";
-    return rp.state === "complete" ? `✓ Every story in this run read` : `${rp.complete} of ${rp.total} stories complete`;
-  };
-  let html = `<div class="cx-kicker">${esc(s.title)}</div><h2 class="cx-title">${esc(label)}</h2>`;
-  if (runRangeText(r)) html += `<div class="cx-subtitle">${esc(runRangeText(r))}</div>`;
-  html += `<div class="cx-progress-line" data-prog-block="run-summary">${esc(runSummary())}</div>`;
-  if (r.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(r.description)}</div></div>`;
-  if (!stories.length) {
-    html += emptyHtml("No stories recorded yet for this run.");
-  } else {
-    const snap = RP.snapshot();
-    html += `<div class="sheet-section"><div class="sheet-label">STORIES</div><div class="cx-list">`;
-    html += stories.map((st, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(st.title)}</div>${st.issueIds && st.issueIds.length ? `<div class="cx-row-sub">${st.issueIds.length} issue${st.issueIds.length === 1 ? "" : "s"}</div>` : ""}</div>${markHtml(RP.storyProgress(st, snap), ` data-mark-story="${esc(st.id)}"`)}<div class="cx-row-chevron">›</div></div>`).join("");
-    html += `</div></div>`;
+  // "This run's issues": every series issue whose number falls inside the run's own
+  // recorded startIssue/endIssue range, plus anything a run story's own issueIds
+  // already claims (e.g. a #0 prologue) — if the run has no recorded range at all,
+  // the whole series' issues stand in for it. Nothing here is guessed beyond what
+  // the run/story records themselves say.
+  const lo = r.startIssue != null ? parseFloat(r.startIssue) : null;
+  const hi = r.endIssue != null ? parseFloat(r.endIssue) : null;
+  const storyIssueIds = new Set(stories.flatMap(st => st.issueIds || []));
+  const runIssues = allSeriesIssues.filter(iss => {
+    if (storyIssueIds.has(iss.id)) return true;
+    if (lo == null || hi == null) return true;
+    const n = issueNum(iss);
+    return n != null && n >= lo && n <= hi;
+  });
+  const runIssueIds = runIssues.map(i => i.id);
+  const byId = new Map(runIssues.map(i => [i.id, i]));
+
+  // Arc groups — one per comicStories record in this run whose issueIds land inside
+  // the run's own issue set, ordered by each arc's own first issue (publication
+  // order — an objective fact of the data, never an invented "reading order").
+  // Anything the run's issues include that no story claims stays visible and
+  // honestly ungrouped, never folded into a fabricated arc.
+  const grouped = new Set();
+  const arcGroups = stories.map(st => {
+    const issues = (st.issueIds || []).filter(id => byId.has(id)).map(id => byId.get(id));
+    sortIssuesInPlace(issues);
+    issues.forEach(i => grouped.add(i.id));
+    return { story: st, issues };
+  }).filter(g => g.issues.length).sort((a, b) => (issueNum(a.issues[0]) ?? 1e6) - (issueNum(b.issues[0]) ?? 1e6));
+  const ungrouped = runIssues.filter(i => !grouped.has(i.id));
+  const orderedRunIssues = [...arcGroups.flatMap(g => g.issues), ...ungrouped];
+
+  const [collections, coreRels] = await Promise.all([
+    data.getCollectionsSharingIssues(runIssueIds),
+    data.getRelationshipsForEntities(stories.map(st => st.id)),
+  ]);
+
+  // Core vs Expanded/Optional (Pointer 6.5): a story connected to one of THIS run's
+  // own stories via part_of_event / tie_in_to / crossover_with, that is not itself
+  // one of the run's own stories, is genuinely "expanded" material per the data —
+  // e.g. Night of the Owls is part_of_event-linked from City of Owls. Only rendered
+  // when a real relationship record says so; never inferred or invented.
+  const coreStoryIds = new Set(stories.map(st => st.id));
+  const EXPANDED_TYPES = new Set(["part_of_event", "tie_in_to", "crossover_with"]);
+  const seenExpanded = new Set();
+  const expandedRefs = [];
+  (coreRels || []).forEach(rel => {
+    if (!EXPANDED_TYPES.has(rel.relationshipType)) return;
+    const fromCore = coreStoryIds.has(rel.sourceId);
+    const otherId = fromCore ? rel.targetId : rel.sourceId;
+    const otherType = fromCore ? rel.targetType : rel.sourceType;
+    const coreId = fromCore ? rel.sourceId : rel.targetId;
+    if (otherType !== "story" || coreStoryIds.has(otherId) || seenExpanded.has(otherId)) return;
+    seenExpanded.add(otherId);
+    expandedRefs.push({ rel, otherId, coreId });
+  });
+  const expandedStories = await Promise.all(expandedRefs.map(x => cachedGet(COLLECTIONS.STORIES, x.otherId)));
+  const expanded = expandedRefs.map((x, i) => ({ ...x, story: expandedStories[i], core: stories.find(st => st.id === x.coreId) })).filter(x => x.story);
+
+  // Collection/edition tabs — TPB | Hardcover | Omnibus are views of these SAME
+  // issues, never a separate dataset. Any format outside that trio (e.g. a DC
+  // "Essential Edition") gets its own honestly-labeled extra tab rather than
+  // being silently dropped.
+  const FIXED_FORMATS = ["TPB", "Hardcover", "Omnibus"];
+  const byFormat = new Map(FIXED_FORMATS.map(f => [f, []]));
+  const extraFormats = [];
+  (collections || []).forEach(c => {
+    const f = c.format || "Other";
+    if (!byFormat.has(f)) { byFormat.set(f, []); extraFormats.push(f); }
+    byFormat.get(f).push(c);
+  });
+  const tabs = [
+    { key: "issues", label: "Issues" },
+    { key: "tpb", label: "TPB", format: "TPB" },
+    { key: "hardcover", label: "Hardcover", format: "Hardcover" },
+    { key: "omnibus", label: "Omnibus", format: "Omnibus" },
+    ...extraFormats.map(f => ({ key: "fmt-" + f.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label: f, format: f })),
+  ];
+
+  const yrOf = (d) => { const m = String(d || "").match(/\d{4}/); return m ? m[0] : ""; };
+  const ya = yrOf(r.startDate || s.startDate), yb = yrOf(r.endDate || s.endDate);
+  const yrs = ya && yb ? (ya === yb ? ya : `${ya}–${yb}`) : (ya || yb || "");
+  const metaLine = [yrs, runIssues.length ? `${runIssues.length} issue${runIssues.length === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ");
+
+  function issueRowHtml(iss, snap) {
+    return `<div class="cx-row cx-issue-row" data-open-issue="${esc(iss.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(RP.issueLabelWith(iss, s))}</div>${iss.title ? `<div class="cx-row-sub">${esc(iss.title)}</div>` : ""}</div>${readToggleHtml(iss.id, RP.issueState(iss.id, snap), RP.issueLabelWith(iss, s))}</div>`;
   }
+  function arcRowHtml(g, snap) {
+    const p = RP.storyProgress(g.story, snap);
+    return `<div class="cx-row" data-arc="${esc(g.story.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(g.story.title)}</div><div class="cx-row-sub">${esc(s.title)} ${esc(compressCoverageRows(g.issues))}</div></div><span class="cx-progress-text cx-arc-status" data-arc-status="${esc(g.story.id)}" data-state="${p.state}">${esc(RP.storySummaryText(p))}</span><div class="cx-row-chevron">›</div></div>`;
+  }
+  function issuesTabHtml(snap) {
+    let out = "";
+    if (arcGroups.length) out += `<div class="cx-list">${arcGroups.map(g => arcRowHtml(g, snap)).join("")}</div>`;
+    if (ungrouped.length) {
+      out += `<div class="sheet-label" style="margin-top:${arcGroups.length ? "14px" : "0"};">${arcGroups.length ? "OTHER ISSUES IN THIS RUN" : "ISSUES"}</div><div class="cx-list">${ungrouped.map(i => issueRowHtml(i, snap)).join("")}</div>`;
+    }
+    if (!arcGroups.length && !ungrouped.length) out += emptyHtml("No issues recorded yet for this run.");
+    return out;
+  }
+  function collectionRowHtml(c, snap) {
+    const rows = (c.issueCoverage || []).filter(row => runIssueIds.includes(row.issueId));
+    const range = compressCoverageRows(rows.length ? rows : (c.issueCoverage || []));
+    const cp = RP.collectionProgress(c, snap);
+    const sub = [formatEditionMeta(c), range ? `${s.title} ${range}` : ""].filter(Boolean).join(" · ");
+    return `<div class="cx-row" data-open-collection="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.title)}</div><div class="cx-row-sub">${esc(sub)}</div></div>${cp.total ? markHtml(cp) : ""}<div class="cx-row-chevron">›</div></div>`;
+  }
+  function formatTabHtml(format) {
+    const list = byFormat.get(format) || [];
+    const snap = RP.snapshot();
+    if (!list.length) return emptyHtml(`No verified ${format.toLowerCase()} collection found for this run.`);
+    return `<div class="cx-list">${list.map(c => collectionRowHtml(c, snap)).join("")}</div>`;
+  }
+  function tabPanelHtml(tab, snap) {
+    if (tab.key === "issues") return issuesTabHtml(snap);
+    return formatTabHtml(tab.format);
+  }
+
+  // Continue Reading: the first unread issue in the run's own publication order
+  // (arc groups, then any ungrouped issues) — only shown once real progress exists.
+  function continueTarget(snap) {
+    const readCount = orderedRunIssues.filter(i => snap.sets.issue.has(i.id)).length;
+    if (!readCount) return null;
+    const next = orderedRunIssues.find(i => !snap.sets.issue.has(i.id));
+    return { next, readCount, total: orderedRunIssues.length };
+  }
+  function continueBlock() {
+    const snap = RP.snapshot();
+    const c = continueTarget(snap);
+    if (!c) return "";
+    if (!c.next) return `<div class="cx-progress-line"><span class="cx-progress-text" data-state="complete">✓ You've read every issue in this run (${c.total})</span></div>`;
+    return `<button class="cx-continue-row" data-run-act="continue"><span class="cx-continue-k">Continue</span><span class="cx-continue-t">${esc(RP.issueLabelWith(c.next, s))}</span><span class="cx-row-chevron">›</span></button>`;
+  }
+  function expandedHtml(snap) {
+    if (!expanded.length) return "";
+    const rows = expanded.map(x => {
+      const titleOf = (id) => id === x.story.id ? x.story.title : (x.core ? x.core.title : "");
+      const sentence = connectionSentence(x.rel, titleOf(x.rel.sourceId), titleOf(x.rel.targetId));
+      const nSeries = (x.story.seriesIds || []).length;
+      const reason = [sentence, nSeries > 1 ? `Spans ${nSeries} series' tie-in issues.` : ""].filter(Boolean).join(" ");
+      const p = RP.storyProgress(x.story, snap);
+      return `<div class="cx-expanded-card" data-expanded-open="${esc(x.story.id)}">
+          <div class="cx-row-title">${esc(x.story.title)}</div>
+          <div class="cx-row-sub">${esc(reason)}</div>
+          <div class="sm-d-actions"><span class="cx-progress-text" data-state="${p.state}">${esc(RP.storySummaryText(p))}</span><button class="sm-d-action" data-expanded-open="${esc(x.story.id)}">Explore</button></div>
+        </div>`;
+    }).join("");
+    return `<div class="sheet-section"><div class="sheet-label">EXPANDED / OPTIONAL READING</div>${rows}</div>`;
+  }
+
+  let html = `<div class="cx-kicker">${esc(s.title)}</div><h2 class="cx-title">${esc(label)}</h2>`;
+  if (metaLine) html += `<div class="cx-subtitle">${esc(metaLine)}</div>`;
+  html += `<div class="cx-progress-block" data-prog-block="run-continue">${continueBlock()}</div>`;
+  if (r.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(r.description)}</div></div>`;
+  html += `<div class="cx-tabs" role="tablist">${tabs.map((t, i) => `<button class="cx-tab" role="tab" data-tab="${t.key}" aria-selected="${i === 0}">${esc(t.label)}</button>`).join("")}</div>`;
+  const snap0 = RP.snapshot();
+  html += tabs.map((t, i) => `<div class="cx-tab-panel" data-tab-panel="${t.key}" ${i === 0 ? "" : "hidden"}>${tabPanelHtml(t, snap0)}</div>`).join("");
+  html += `<div data-expanded-block>${expandedHtml(snap0)}</div>`;
   html += readingPathsChipsHtml(readingPaths, r.seriesId);
   if (isNerd()) html += nerdBlock({ id: r.id, seriesId: r.seriesId, creatorIds: r.creatorIds, verification: r.sourceInfo });
   return {
     html,
     update(container) {
       const snap = RP.snapshot();
-      updateBlocks(container, { "run-summary": () => esc(runSummary()) });
-      patchStoryMarks(container, stories, snap);
+      updateBlocks(container, { "run-continue": continueBlock });
+      container.querySelectorAll("[data-tab-panel]").forEach(panel => {
+        const tab = tabs.find(t => t.key === panel.dataset.tabPanel);
+        if (tab) panel.innerHTML = tabPanelHtml(tab, snap);
+      });
+      const eb = container.querySelector("[data-expanded-block]");
+      if (eb) eb.innerHTML = expandedHtml(snap);
+      wireRunRows(container);
+    },
+    onAct(el) {
+      if (el.dataset.issueToggle) { toggleIssueRead(el.dataset.issueToggle, { storyId: null, pathId: null }); return; }
+      if (el.dataset.runAct === "continue") {
+        const snap = RP.snapshot();
+        const c = continueTarget(snap);
+        if (c && c.next) {
+          const g = arcGroups.find(gr => gr.issues.some(i => i.id === c.next.id));
+          pushLevel("issue", RP.issueLabelWith(c.next, s), { issue: c.next, story: g ? g.story : null });
+        }
+      }
     },
     wire(container) {
-      container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
-        row.addEventListener("click", () => {
-          const st = stories[+row.dataset.idx];
-          pushLevel("story", st.title, { story: st, series: s, run: r });
+      container.querySelectorAll(".cx-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+          container.querySelectorAll(".cx-tab").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
+          container.querySelectorAll("[data-tab-panel]").forEach(p => { p.hidden = p.dataset.tabPanel !== btn.dataset.tab; });
         });
       });
+      wireRunRows(container);
       wireReadingPathChips(container, readingPaths, r.seriesId, label);
     },
   };
+  function wireRunRows(container) {
+    container.querySelectorAll("[data-arc]").forEach(row => {
+      row.addEventListener("click", () => { const g = arcGroups.find(x => x.story.id === row.dataset.arc); if (g) pushLevel("story", g.story.title, { story: g.story, series: s, run: r }); });
+    });
+    container.querySelectorAll("[data-open-issue]").forEach(row => {
+      row.addEventListener("click", (e) => {
+        if (e.target.closest("[data-issue-toggle]")) return;
+        const iss = byId.get(row.dataset.openIssue);
+        if (iss) pushLevel("issue", RP.issueLabelWith(iss, s), { issue: iss });
+      });
+    });
+    container.querySelectorAll("[data-open-collection]").forEach(row => {
+      row.addEventListener("click", () => { const c = (collections || []).find(x => x.id === row.dataset.openCollection); if (c) pushLevel("collection", c.title, { collectionEntity: c }); });
+    });
+    container.querySelectorAll("[data-expanded-open]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const x = expanded.find(e => e.story.id === btn.dataset.expandedOpen);
+        if (!x) return;
+        const groupId = x.rel.relationshipType === "part_of_event" ? "event" : x.rel.relationshipType === "crossover_with" ? "crossover" : "tie_ins";
+        pushLevel("connected", x.story.title, { story: x.story, from: x.core, rel: x.rel, group: { id: groupId, label: "Expanded / Optional Reading" } });
+      });
+    });
+  }
 }
 
 async function levelStory(params) {
@@ -1122,6 +1381,7 @@ const LEVELS = {
   run: levelRun,
   story: levelStory,
   issue: levelIssue,
+  readingPathList: levelReadingPathList,
   readingPath: levelReadingPath,
   collection: levelCollection,
   connected: levelConnected,

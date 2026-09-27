@@ -109,6 +109,45 @@ export async function getSeriesForCharacter(characterId) {
   return docsOf(await getDocs(q));
 }
 
+/* ---------------------------------------------------------------------------
+   Pointer 6.5 — curated Character browser eligibility.
+   ----------------------------------------------------------------------------
+   The Character browser must not list every comicCharacters record (Alfred,
+   Gordon, Red Robin, Court of Owls, ... would all otherwise show up next to
+   Batman). The rule below is derived ENTIRELY from data already on hand — no
+   hardcoded name allowlist:
+     A character is "eligible" (has a genuine standalone reading journey) when
+     they are recorded as the LEAD of at least one comicSeries with a minimum
+     amount of real material — i.e. they are the FIRST id in that series'
+     own characterIds array (the position this dataset's own series
+     descriptions confirm means "protagonist of <series>" — e.g. "Core
+     protagonist of Batman (2011)", "Protagonist of Batgirl (2011)", while
+     Red Robin's character record says outright "not the lead of any of the
+     9 series in this dataset") — AND that series has at least
+     LEAD_SERIES_MIN_ISSUES issues, so a placeholder/stub series can't make a
+     character eligible on its own.
+   A character who only ever appears as a co-star/supporting cast member
+   (Alfred, Gordon, Joker, Riddler, Court of Owls, Red Robin, Robin/Damian in
+   this dataset) never satisfies this, but remains fully reachable through
+   Stories, Issues, the Story Graph, Search and the Story Map — this rule only
+   gates the CURATED top-level Character browser.
+--------------------------------------------------------------------------- */
+export const LEAD_SERIES_MIN_ISSUES = 6;
+
+/** The series (if any) in `seriesList` where `characterId` is recorded as the lead. */
+export function leadSeriesFor(characterId, seriesList) {
+  return (seriesList || []).filter(s =>
+    Array.isArray(s.characterIds) && s.characterIds[0] === characterId &&
+    (s.issueCount || 0) >= LEAD_SERIES_MIN_ISSUES);
+}
+export function isEligibleLeadCharacter(characterId, seriesList) {
+  return leadSeriesFor(characterId, seriesList).length > 0;
+}
+/** Filters `characters` down to the curated set, given the series data needed to judge eligibility. */
+export function curateCharacters(characters, seriesList) {
+  return (characters || []).filter(c => isEligibleLeadCharacter(c.id, seriesList));
+}
+
 /** "All series in a continuity". */
 export async function getSeriesForContinuity(continuityId) {
   const q = query(collection(db, COLLECTIONS.SERIES), where("continuityIds", "array-contains", continuityId));
