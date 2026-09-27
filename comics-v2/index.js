@@ -21,6 +21,7 @@ import { COLLECTIONS } from "./schema.js";
 import { collectionIsReachable, upsertEntity, upsertCollectionEdition } from "./data.js";
 import { dataset as batmanNew52Dataset, validateDataset as validateBatmanNew52, importDataset as importBatmanNew52Dataset } from "./seed-batman-new52.js";
 import { collectionAdditions as batmanNew52CollectionAdditions, validateCollectionAdditions as validateBatmanNew52CollectionAdditions, importCollectionAdditions as importBatmanNew52CollectionAdditions } from "./seed-batman-new52-collections.js";
+import { importComicsDataAudit, validateAuditDefinitions, collectionAdditions as auditCollectionAdditions, seriesMetadataCorrections as auditSeriesMetadataCorrections } from "./seed-comics-data-audit.js";
 
 /* ---------------------------------------------------------------------------
    Foundation self-test — the "minimal developer utility necessary to verify
@@ -110,4 +111,11 @@ const batmanNew52Collections = {
   import: () => importBatmanNew52CollectionAdditions({ upsertCollectionEdition }),
 };
 
-window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52, batmanNew52Collections };
+const comicsDataAudit = {
+  validate: validateAuditDefinitions,
+  seriesMetadataCorrections: auditSeriesMetadataCorrections,
+  collectionAdditions: auditCollectionAdditions,
+  import: () => importComicsDataAudit({ upsertEntity, getEntity: data.getEntity, upsertCollectionEdition, COLLECTIONS }),
+};
+
+window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52, batmanNew52Collections, comicsDataAudit };
