@@ -1,19 +1,15 @@
 // ============================================================================
 // comics-v2 / landing.js
 // ----------------------------------------------------------------------------
-// STEP 3 — Comics Home shell.
+// STEP 4 — Comics Universe Home (visual evolution only).
 //
-// This is the first real redesign of the Comics landing page. It intentionally
-// does NOT change the underlying Comics data model, Explorer, Story Map, or the
-// legacy catalogue. It creates a data-driven home/atlas entry point on top of
-// the existing comics-v2 domain model.
-//
-// The page is deliberately honest about coverage: counts and featured items
-// come from the current comics-v2 Firestore data. Nothing is invented merely
-// to make the UI look populated.
+// Important: this file deliberately reuses the existing Comics Explorer and
+// Story Map entry points. It does not change routing, the data model, the
+// legacy catalogue, or any non-Comics section. The page is an immersive home
+// for the same graph that already powers the current Comics tools.
 // ============================================================================
-import * as data from "./data.js?v=p67";
-import { renderContinueCard } from "./reading-progress.js?v=p6";
+import * as data from "./data.js?v=p68";
+import { renderContinueCard } from "./reading-progress.js?v=p7";
 
 const esc = (s) => s == null ? "" : String(s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;")
@@ -56,128 +52,190 @@ function countIssues(series) {
   return (series || []).reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
 }
 
+function continuityLabel(c) {
+  return c?.shortName || c?.name || "Continuity";
+}
+
 function heroHtml() {
   return `
-    <section class="cl3-hero">
-      <div class="cl3-hero-art" aria-hidden="true">
-        <span class="cl3-orbit cl3-orbit-a"></span>
-        <span class="cl3-orbit cl3-orbit-b"></span>
-        <span class="cl3-city cl3-city-a"></span>
-        <span class="cl3-city cl3-city-b"></span>
-        <span class="cl3-city cl3-city-c"></span>
-        <span class="cl3-sigil">DC</span>
+    <section class="cl4-hero">
+      <div class="cl4-hero-art" aria-hidden="true">
+        <span class="cl4-glow cl4-glow-a"></span>
+        <span class="cl4-glow cl4-glow-b"></span>
+        <span class="cl4-orbit cl4-orbit-a"></span>
+        <span class="cl4-orbit cl4-orbit-b"></span>
+        <span class="cl4-orbit cl4-orbit-c"></span>
+        <span class="cl4-star cl4-star-a"></span><span class="cl4-star cl4-star-b"></span>
+        <span class="cl4-star cl4-star-c"></span><span class="cl4-star cl4-star-d"></span>
+        <span class="cl4-sigil">DC</span>
       </div>
-      <div class="cl3-hero-copy">
-        <div class="cl3-eyebrow">ALLABOUTDC · COMICS</div>
+      <div class="cl4-hero-copy">
+        <div class="cl4-eyebrow">ALLABOUTDC · COMICS</div>
         <h2>DC <span>COMICS</span></h2>
         <p>Every character. Every world. Every story.</p>
-        <div class="cl3-hero-sub">Explore the Comics universe through continuity, characters, events, series and reading paths.</div>
+        <div class="cl4-hero-sub">Explore the DC Comics universe through continuity, characters, events, series and reading paths — all connected to the same underlying graph.</div>
+        <div class="cl4-hero-actions">
+          <button class="cl4-primary" data-action="storymap">Open Universe Atlas <b>→</b></button>
+          <button class="cl4-secondary" data-explore="era">Explore Eras</button>
+        </div>
       </div>
-      <div class="cl3-hero-meta">
-        <div class="cl3-meta-k">CURRENT COMICS GRAPH</div>
-        <div class="cl3-meta-v" id="cl3UniverseMeta">Loading universe data…</div>
+      <div class="cl4-hero-side">
+        <span>THE COMICS UNIVERSE</span>
+        <strong id="cl4HeroMeta">Loading…</strong>
+        <small>One connected place to move from era → event → character → series → issue.</small>
       </div>
     </section>`;
 }
 
 function statStripHtml() {
-  return `<section class="cl3-stats" id="cl3Stats" aria-label="Comics data coverage">
-    <div class="cl3-stat"><b id="cl3StatSeries">—</b><span>Series</span></div>
-    <div class="cl3-stat"><b id="cl3StatIssues">—</b><span>Issues mapped</span></div>
-    <div class="cl3-stat"><b id="cl3StatCharacters">—</b><span>Characters</span></div>
-    <div class="cl3-stat"><b id="cl3StatContinuities">—</b><span>Continuities</span></div>
+  return `<section class="cl4-stats" id="cl4Stats" aria-label="Current Comics data coverage">
+    <div class="cl4-stat"><b id="cl4StatSeries">—</b><span>Series mapped</span></div>
+    <div class="cl4-stat"><b id="cl4StatIssues">—</b><span>Issues mapped</span></div>
+    <div class="cl4-stat"><b id="cl4StatCharacters">—</b><span>Characters</span></div>
+    <div class="cl4-stat"><b id="cl4StatContinuities">—</b><span>Continuities</span></div>
   </section>`;
 }
 
 const EXPLORE_ENTRIES = [
-  { key: "character", icon: "✦", label: "By Character", sub: "Start with a hero, villain or legacy." },
-  { key: "era", icon: "◈", label: "Continuity / Era", sub: "Move through DC's publishing history." },
-  { key: "storymap", icon: "◎", label: "Universe Atlas", sub: "See worlds, events and connections." },
-  { key: "paths", icon: "⌁", label: "Reading Paths", sub: "Follow a curated journey." },
+  { key: "character", icon: "✦", label: "By Character", sub: "Start with a hero, villain or legacy.", tone: "blue" },
+  { key: "era", icon: "◈", label: "Continuity / Era", sub: "Move through DC's publishing history.", tone: "gold" },
+  { key: "storymap", icon: "◎", label: "Universe Atlas", sub: "See worlds, eras and connections.", tone: "violet" },
+  { key: "paths", icon: "⌁", label: "Reading Paths", sub: "Follow a curated journey.", tone: "red" },
 ];
 
 function exploreHtml() {
-  return `<section class="cl3-section">
-    <div class="cl3-section-head"><div><div class="cl3-kicker">START HERE</div><h3>Explore the DC Comics universe</h3></div><span>Choose a lens</span></div>
-    <div class="cl3-explore-grid">
-      ${EXPLORE_ENTRIES.map(e => `<button class="cl3-explore-card" data-explore="${e.key}">
-        <span class="cl3-explore-icon">${e.icon}</span>
-        <span class="cl3-explore-copy"><strong>${esc(e.label)}</strong><small>${esc(e.sub)}</small></span>
-        <span class="cl3-arrow">→</span>
+  return `<section class="cl4-section">
+    <div class="cl4-section-head"><div><div class="cl4-kicker">START HERE</div><h3>Explore the DC Comics universe</h3></div><span>Choose a lens</span></div>
+    <div class="cl4-explore-grid">
+      ${EXPLORE_ENTRIES.map(e => `<button class="cl4-explore-card cl4-tone-${e.tone}" data-explore="${e.key}">
+        <span class="cl4-explore-number">0${EXPLORE_ENTRIES.indexOf(e) + 1}</span>
+        <span class="cl4-explore-icon">${e.icon}</span>
+        <span class="cl4-explore-copy"><strong>${esc(e.label)}</strong><small>${esc(e.sub)}</small></span>
+        <span class="cl4-arrow">→</span>
       </button>`).join("")}
     </div>
   </section>`;
 }
 
 function universeHtml() {
-  return `<section class="cl3-section cl3-universe-section">
-    <div class="cl3-section-head"><div><div class="cl3-kicker">THE UNIVERSE</div><h3>One graph, many ways in</h3></div><span>Same data · different views</span></div>
-    <div class="cl3-universe-grid">
-      <button class="cl3-universe-card cl3-universe-main" data-action="storymap">
-        <div class="cl3-card-glow"></div>
-        <div class="cl3-universe-label">DC UNIVERSE</div>
-        <h4 id="cl3UniverseName">Loading…</h4>
-        <p>Continuities, characters, stories and relationships connected through the same Comics data model.</p>
-        <span class="cl3-card-cta">Open Universe Atlas →</span>
+  return `<section class="cl4-section cl4-atlas-section">
+    <div class="cl4-section-head"><div><div class="cl4-kicker">THE UNIVERSE</div><h3>One graph. Many ways in.</h3></div><span>Same data · different views</span></div>
+    <div class="cl4-atlas-shell">
+      <button class="cl4-atlas-visual" data-action="storymap" aria-label="Open Universe Atlas">
+        <div class="cl4-atlas-grid"></div>
+        <div class="cl4-atlas-line cl4-line-1"></div><div class="cl4-atlas-line cl4-line-2"></div><div class="cl4-atlas-line cl4-line-3"></div>
+        <div class="cl4-atlas-node cl4-node-core"><span>DC</span><small>UNIVERSE</small></div>
+        <div class="cl4-atlas-node cl4-node-era"><b>ERA</b><span id="cl4AtlasEra">Loading</span></div>
+        <div class="cl4-atlas-node cl4-node-character"><b>CHARACTERS</b><span id="cl4AtlasCharacters">—</span></div>
+        <div class="cl4-atlas-node cl4-node-series"><b>SERIES</b><span id="cl4AtlasSeries">—</span></div>
+        <div class="cl4-atlas-node cl4-node-new52"><b>NEW 52</b><span>territory</span></div>
+        <div class="cl4-atlas-watermark">OPEN ATLAS →</div>
       </button>
-      <div class="cl3-mini-stack">
-        <button class="cl3-mini-card" data-explore="era"><b>CONTINUITY</b><span id="cl3ContinuityPreview">Loading…</span><small>Explore eras →</small></button>
-        <button class="cl3-mini-card" data-explore="character"><b>CHARACTERS</b><span id="cl3CharacterPreview">Loading…</span><small>Browse characters →</small></button>
-        <button class="cl3-mini-card" data-explore="paths"><b>READING PATHS</b><span id="cl3PathPreview">Loading…</span><small>Choose a journey →</small></button>
+      <div class="cl4-atlas-info">
+        <div class="cl4-atlas-info-card cl4-atlas-primary">
+          <span class="cl4-mini-kicker">DC UNIVERSE</span>
+          <h4 id="cl4UniverseName">Loading…</h4>
+          <p>Continuities, characters, stories and relationships connected through the same Comics data model.</p>
+          <button data-action="storymap">Open Universe Atlas <b>→</b></button>
+        </div>
+        <button class="cl4-atlas-info-card" data-explore="era"><span>CONTINUITY</span><strong id="cl4ContinuityPreview">Loading…</strong><small>Explore eras →</small></button>
+        <button class="cl4-atlas-info-card" data-explore="character"><span>CHARACTERS</span><strong id="cl4CharacterPreview">Loading…</strong><small>Browse characters →</small></button>
+        <button class="cl4-atlas-info-card" data-explore="paths"><span>READING PATHS</span><strong id="cl4PathPreview">Loading…</strong><small>Choose a journey →</small></button>
       </div>
     </div>
   </section>`;
 }
 
+function timelineHtml() {
+  return `<section class="cl4-section">
+    <div class="cl4-section-head"><div><div class="cl4-kicker">PUBLISHING HISTORY</div><h3>Move through the eras</h3></div><button class="cl4-text-btn" data-explore="era">View all eras →</button></div>
+    <div class="cl4-era-track" id="cl4EraTrack"><div class="cl4-loading-line">Loading continuity history…</div></div>
+  </section>`;
+}
+
 function new52Html() {
-  return `<section class="cl3-section">
-    <div class="cl3-section-head"><div><div class="cl3-kicker">FEATURED TERRITORY</div><h3>New 52</h3></div><span id="cl3New52Status">Current mapped coverage</span></div>
-    <button class="cl3-new52" id="cl3New52Btn" disabled>
-      <div class="cl3-new52-mark">52</div>
-      <div class="cl3-new52-copy">
+  return `<section class="cl4-section">
+    <div class="cl4-section-head"><div><div class="cl4-kicker">FEATURED TERRITORY</div><h3>The New 52</h3></div><span id="cl4New52Status">Current mapped coverage</span></div>
+    <button class="cl4-new52" id="cl4New52Btn" disabled>
+      <div class="cl4-new52-art"><span>52</span><i></i><i></i><i></i></div>
+      <div class="cl4-new52-copy">
+        <span class="cl4-mini-kicker">2011 · EARTH-0</span>
         <strong>The New 52</strong>
-        <span id="cl3New52Sub">Loading current coverage…</span>
-        <small>This is the first deeply populated territory. More of the wider DC catalogue can be added without changing the Atlas architecture.</small>
+        <span id="cl4New52Sub">Loading current coverage…</span>
+        <small>Our first deeply populated territory. Its series, issues and relationships become the model for expanding the wider DC catalogue.</small>
       </div>
-      <span class="cl3-arrow">→</span>
+      <span class="cl4-new52-arrow">Explore territory <b>→</b></span>
     </button>
   </section>`;
 }
 
+function runsHtml() {
+  return `<section class="cl4-section">
+    <div class="cl4-section-head"><div><div class="cl4-kicker">CREATIVE RUNS</div><h3>Stories shaped by creators</h3></div><span>From the current Comics graph</span></div>
+    <div class="cl4-run-grid" id="cl4RunGrid"><div class="cl4-loading-line">Loading featured runs…</div></div>
+  </section>`;
+}
+
 function seriesHtml() {
-  return `<section class="cl3-section">
-    <div class="cl3-section-head"><div><div class="cl3-kicker">COMICS CATALOGUE</div><h3>Explore series</h3></div><button class="cl3-text-btn" data-action="series">Browse all series →</button></div>
-    <div class="cl3-series-rail" id="cl3SeriesRail"><div class="cl3-loading-line">Loading current series…</div></div>
+  return `<section class="cl4-section">
+    <div class="cl4-section-head"><div><div class="cl4-kicker">COMICS CATALOGUE</div><h3>Explore series</h3></div><button class="cl4-text-btn" data-action="series">Browse all series →</button></div>
+    <div class="cl4-series-rail" id="cl4SeriesRail"><div class="cl4-loading-line">Loading current series…</div></div>
   </section>`;
 }
 
 function catalogueHtml() {
-  return `<section class="cl3-catalogue">
-    <div><div class="cl3-kicker">FULL CATALOGUE</div><h3>Browse All Comics</h3><p>Use the existing catalogue when you want direct title search, filters and the full legacy list.</p></div>
-    <button class="btn btn-ghost" id="comicsBrowseAllBtn">Browse all comics →</button>
+  return `<section class="cl4-catalogue">
+    <div><div class="cl4-kicker">FULL CATALOGUE</div><h3>Browse All Comics</h3><p>Use the existing catalogue when you want direct title search, filters and the full legacy list.</p></div>
+    <button class="cl4-catalogue-btn" id="comicsBrowseAllBtn">Browse all comics <b>→</b></button>
   </section>`;
+}
+
+function renderEraTrack(container, continuities) {
+  if (!container) return;
+  const sorted = [...(continuities || [])].sort((a, b) => firstYear(a.startDate) - firstYear(b.startDate));
+  if (!sorted.length) { container.innerHTML = `<div class="cl4-empty">No continuity history is mapped yet.</div>`; return; }
+  container.innerHTML = sorted.map((c, i) => `
+    <button class="cl4-era-card ${i === sorted.length - 1 ? "is-current" : ""}" data-continuity-id="${esc(c.id)}">
+      <span class="cl4-era-line"></span><small>${esc(String(c.startDate || "").slice(0, 4) || "ERA")}</small>
+      <strong>${esc(continuityLabel(c))}</strong><span>Explore →</span>
+    </button>`).join("");
+  container.querySelectorAll("[data-continuity-id]").forEach(btn => btn.addEventListener("click", () => {
+    const c = sorted.find(x => x.id === btn.dataset.continuityId);
+    if (c) openExplorerAt("continuity", continuityLabel(c), { continuity: c });
+  }));
+}
+
+function renderRuns(container, runs) {
+  if (!container) return;
+  const sorted = [...(runs || [])].slice(0, 4);
+  if (!sorted.length) { container.innerHTML = `<div class="cl4-empty">No creative runs have been mapped yet.</div>`; return; }
+  container.innerHTML = sorted.map((r, i) => `
+    <button class="cl4-run-card" data-run-id="${esc(r.id)}">
+      <span class="cl4-run-index">0${i + 1}</span>
+      <div><small>CREATIVE RUN</small><strong>${esc(r.title || "Untitled run")}</strong><span>${esc(r.description || "Explore this mapped creative run.").slice(0, 150)}</span></div>
+      <b>→</b>
+    </button>`).join("");
+  // Runs are intentionally visual-only in this pass. The dedicated run
+  // detail route will be wired later once that route is part of the Comics
+  // interaction model; this avoids inventing a new navigation path here.
 }
 
 function renderSeriesRail(container, series) {
   if (!container) return;
   const sorted = [...(series || [])].sort((a, b) => firstYear(a.startDate) - firstYear(b.startDate));
-  if (!sorted.length) {
-    container.innerHTML = `<div class="cl3-empty">No series have been mapped yet.</div>`;
-    return;
-  }
+  if (!sorted.length) { container.innerHTML = `<div class="cl4-empty">No series have been mapped yet.</div>`; return; }
   const featured = sorted.slice(0, 8);
   container.innerHTML = featured.map(s => `
-    <button class="cl3-series-card" data-series-id="${esc(s.id)}">
-      <span class="cl3-series-year">${esc(String(s.startDate || "").slice(0, 4) || "—")}</span>
+    <button class="cl4-series-card" data-series-id="${esc(s.id)}">
+      <span class="cl4-series-year">${esc(String(s.startDate || "").slice(0, 4) || "—")}</span>
       <strong>${esc(s.title || "Untitled series")}</strong>
       <span>${s.issueCount ? `${esc(s.issueCount)} issues` : "Issue count pending"}</span>
+      <i>Open series →</i>
     </button>`).join("");
-  container.querySelectorAll("[data-series-id]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const s = sorted.find(x => x.id === btn.dataset.seriesId);
-      if (s) openExplorerAt("series", s.title, { series: s });
-    });
-  });
+  container.querySelectorAll("[data-series-id]").forEach(btn => btn.addEventListener("click", () => {
+    const s = sorted.find(x => x.id === btn.dataset.seriesId);
+    if (s) openExplorerAt("series", s.title, { series: s });
+  }));
 }
 
 function openExplorerAt(level, label, params = {}) {
@@ -185,51 +243,52 @@ function openExplorerAt(level, label, params = {}) {
   if (ex && ex.openAt) ex.openAt([{ level, label, params }]);
 }
 
-function wireAction(container, action) {
-  if (action === "series") openExplorerAt("seriesList", "Series", {});
-  else if (action === "storymap") {
-    const sm = window.__comicsStoryMap;
-    const uniId = container.querySelector("#cl3UniverseName")?.dataset?.universeId;
-    if (sm && uniId) sm.open("universe", uniId);
-  }
+function openStoryMap(container) {
+  const sm = window.__comicsStoryMap;
+  const uniId = container.querySelector("#cl4UniverseName")?.dataset?.universeId;
+  if (sm && uniId) sm.open("universe", uniId);
+}
+
+function wireExplore(container, key) {
+  if (key === "character") openExplorerAt("characterList", "Characters", {});
+  else if (key === "era") openExplorerAt("continuityList", "Continuities", {});
+  else if (key === "paths") openExplorerAt("readingPathList", "Reading Paths", {});
+  else if (key === "storymap") openStoryMap(container);
 }
 
 function renderLoadedState(container, d) {
   const universe = d.universes[0] || null;
   const new52 = findNew52(d.continuities);
-  const statSeries = container.querySelector("#cl3StatSeries");
-  const statIssues = container.querySelector("#cl3StatIssues");
-  const statCharacters = container.querySelector("#cl3StatCharacters");
-  const statContinuities = container.querySelector("#cl3StatContinuities");
-  if (statSeries) statSeries.textContent = d.series.length.toLocaleString();
-  if (statIssues) statIssues.textContent = countIssues(d.series).toLocaleString();
-  if (statCharacters) statCharacters.textContent = d.characters.length.toLocaleString();
-  if (statContinuities) statContinuities.textContent = d.continuities.length.toLocaleString();
+  const sortedContinuities = [...d.continuities].sort((a, b) => firstYear(a.startDate) - firstYear(b.startDate));
 
-  const meta = container.querySelector("#cl3UniverseMeta");
-  if (meta) meta.textContent = universe ? `${d.continuities.length} continuity${d.continuities.length === 1 ? "" : "ies"} · ${d.series.length} series mapped` : "No universe record loaded";
-  const uniName = container.querySelector("#cl3UniverseName");
+  const set = (id, value) => { const el = container.querySelector(`#${id}`); if (el) el.textContent = value; };
+  set("cl4StatSeries", d.series.length.toLocaleString());
+  set("cl4StatIssues", countIssues(d.series).toLocaleString());
+  set("cl4StatCharacters", d.characters.length.toLocaleString());
+  set("cl4StatContinuities", d.continuities.length.toLocaleString());
+  set("cl4HeroMeta", universe ? `${d.continuities.length} continuities · ${d.series.length} series mapped` : "Current Comics graph");
+
+  const uniName = container.querySelector("#cl4UniverseName");
   if (uniName && universe) { uniName.textContent = universe.name || "DC Universe"; uniName.dataset.universeId = universe.id; }
-  const contPreview = container.querySelector("#cl3ContinuityPreview");
-  if (contPreview) contPreview.textContent = d.continuities.length ? d.continuities.slice(0, 3).map(c => c.shortName || c.name).join(" · ") : "No continuities mapped";
-  const charPreview = container.querySelector("#cl3CharacterPreview");
-  if (charPreview) charPreview.textContent = d.characters.length ? `${d.characters.length} characters in the current graph` : "No characters mapped";
-  const pathPreview = container.querySelector("#cl3PathPreview");
-  if (pathPreview) pathPreview.textContent = d.readingPaths.length ? `${d.readingPaths.length} curated path${d.readingPaths.length === 1 ? "" : "s"}` : "No paths mapped yet";
+  set("cl4ContinuityPreview", d.continuities.length ? d.continuities.slice(0, 3).map(continuityLabel).join(" · ") : "No continuities mapped");
+  set("cl4CharacterPreview", d.characters.length ? `${d.characters.length} characters in the current graph` : "No characters mapped");
+  set("cl4PathPreview", d.readingPaths.length ? `${d.readingPaths.length} curated path${d.readingPaths.length === 1 ? "" : "s"}` : "No paths mapped yet");
+  set("cl4AtlasEra", sortedContinuities.length ? continuityLabel(sortedContinuities[sortedContinuities.length - 1]) : "—");
+  set("cl4AtlasCharacters", d.characters.length.toLocaleString());
+  set("cl4AtlasSeries", d.series.length.toLocaleString());
 
-  const n52Btn = container.querySelector("#cl3New52Btn");
-  const n52Sub = container.querySelector("#cl3New52Sub");
+  const n52Btn = container.querySelector("#cl4New52Btn");
   if (n52Btn && new52) {
     n52Btn.disabled = false;
     n52Btn.dataset.continuityId = new52.id;
     n52Btn.dataset.continuityName = new52.name;
     const n52Series = d.series.filter(s => Array.isArray(s.continuityIds) && s.continuityIds.includes(new52.id));
-    const n52Issues = countIssues(n52Series);
-    if (n52Sub) n52Sub.textContent = `${n52Series.length} mapped series · ${n52Issues.toLocaleString()} mapped issues`;
-  } else if (n52Sub) {
-    n52Sub.textContent = "New 52 continuity is not mapped in the current dataset yet.";
-  }
-  renderSeriesRail(container.querySelector("#cl3SeriesRail"), d.series);
+    set("cl4New52Sub", `${n52Series.length} mapped series · ${countIssues(n52Series).toLocaleString()} mapped issues`);
+  } else set("cl4New52Sub", "New 52 continuity is not mapped in the current dataset yet.");
+
+  renderEraTrack(container.querySelector("#cl4EraTrack"), d.continuities);
+  renderRuns(container.querySelector("#cl4RunGrid"), d.runs);
+  renderSeriesRail(container.querySelector("#cl4SeriesRail"), d.series);
 }
 
 let renderSeq = 0;
@@ -238,15 +297,17 @@ function renderComicsLanding(container, hooks = {}) {
   const my = ++renderSeq;
   const main = container.closest("main");
   if (main) main.classList.add("comics-home-main");
-  container.innerHTML = `<div class="cl3-wrap">
+  container.innerHTML = `<div class="cl4-wrap">
     ${heroHtml()}
     ${statStripHtml()}
     ${exploreHtml()}
     ${universeHtml()}
+    ${timelineHtml()}
     ${new52Html()}
+    ${runsHtml()}
     ${seriesHtml()}
     ${catalogueHtml()}
-    <div class="cl3-continue" id="clContinue" hidden></div>
+    <div class="cl4-continue" id="clContinue" hidden></div>
   </div>`;
 
   const continueSlot = container.querySelector("#clContinue");
@@ -256,33 +317,20 @@ function renderComicsLanding(container, hooks = {}) {
     if (start) { continueSlot.hidden = true; continueSlot.innerHTML = ""; }
   }).catch(e => console.warn("[Comics landing] continue card", e));
 
-  container.querySelectorAll("[data-explore]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const key = btn.dataset.explore;
-      if (key === "character") openExplorerAt("characterList", "Characters", {});
-      else if (key === "era") openExplorerAt("continuityList", "Continuities", {});
-      else if (key === "paths") openExplorerAt("readingPathList", "Reading Paths", {});
-      else if (key === "storymap") {
-        const sm = window.__comicsStoryMap;
-        const uniId = container.querySelector("#cl3UniverseName")?.dataset?.universeId;
-        if (sm && uniId) sm.open("universe", uniId);
-      }
-    });
-  });
+  container.querySelectorAll("[data-explore]").forEach(btn => btn.addEventListener("click", () => wireExplore(container, btn.dataset.explore)));
+  container.querySelectorAll("[data-action]").forEach(btn => btn.addEventListener("click", () => {
+    const action = btn.dataset.action;
+    if (action === "storymap") openStoryMap(container);
+    else if (action === "series") openExplorerAt("seriesList", "Series", {});
+  }));
 
-  container.querySelectorAll("[data-action]").forEach(btn => {
-    btn.addEventListener("click", () => wireAction(container, btn.dataset.action));
-  });
-
-  container.querySelector("#cl3New52Btn")?.addEventListener("click", e => {
+  container.querySelector("#cl4New52Btn")?.addEventListener("click", e => {
     const id = e.currentTarget.dataset.continuityId;
     const name = e.currentTarget.dataset.continuityName || "The New 52";
-    if (id) {
-      loadHomeData().then(d => {
-        const continuity = d.continuities.find(c => c.id === id);
-        if (continuity) openExplorerAt("continuity", name, { continuity });
-      });
-    }
+    if (id) loadHomeData().then(d => {
+      const continuity = d.continuities.find(c => c.id === id);
+      if (continuity) openExplorerAt("continuity", name, { continuity });
+    });
   });
 
   container.querySelector("#comicsBrowseAllBtn")?.addEventListener("click", () => {
@@ -305,9 +353,7 @@ function renderSafe(container, hooks = {}) {
 
 document.addEventListener("readerprogress:change", () => {
   const slot = document.getElementById("clContinue");
-  if (slot?.isConnected) {
-    renderContinueCard(slot).catch(() => {});
-  }
+  if (slot?.isConnected) renderContinueCard(slot).catch(() => {});
 });
 
 window.__comicsV2Landing = { render: renderSafe, preload: loadHomeData };
