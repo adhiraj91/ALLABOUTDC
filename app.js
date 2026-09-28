@@ -107,7 +107,8 @@ const META_COLLECTIONS = ["beginnerRecommendations"];
 let DATA = { movies:[], series:[], games:[], comics:[], beginnerRecommendations:[] };
 let state = {
   cat:"home",
-  comicsView:"landing", // Pointer 4: Comics tab opens its landing; "browse" = the old flat catalogue
+  comicsView:"atlas", // Comics opens the DC Universe Atlas; "browse" = the optional flat catalogue
+  atlasReturnCat:"home",
   search:"",
   f1:"all", f2:"all", f3:"all", chip:"all", // games/comics filters (f3: comics reading level)
   typeFilter:"Live Action",                // movies/series: Live Action | Animated
@@ -291,6 +292,7 @@ async function loadAll(){
   }
   history.replaceState({cat:state.cat}, "", location.href);
   render();
+  if(state.cat === "comics") openComicsAtlas("universe");
 }
 loadAll().catch(err=>{
   gridEl.innerHTML = `<div class="empty">Couldn't reach the database.<br>Check firebase-config.js has your real project config, and that Firestore is enabled.<br><span style="font-family:var(--font-mono);font-size:11px;">${err.message}</span></div>`;
@@ -882,7 +884,7 @@ function sortHeroNames(heroMap){
 
 /* ============================= RENDER: TABS ============================= */
 function resetFiltersForTabSwitch(){
-  state.comicsView="landing";
+  state.comicsView="atlas";
   state.f1="all"; state.f2="all"; state.f3="all"; state.chip="all"; state.search="";
   state.sortMode="newest";
   state.gameMode="all"; state.gamePlatform="all";
@@ -890,9 +892,34 @@ function resetFiltersForTabSwitch(){
   searchInput.value="";
   globalSearchResults.innerHTML = ""; globalSearchResults.dataset.open = "false";
 }
+function openComicsAtlas(mode="universe"){
+  const sm = window.__comicsStoryMap;
+  if(sm && typeof sm.open === "function"){
+    sm.open(mode);
+    return;
+  }
+  const once = ()=>{ document.removeEventListener("comicsv2:storymap-ready", once); window.__comicsStoryMap?.open?.(mode); };
+  document.addEventListener("comicsv2:storymap-ready", once, {once:true});
+}
+function closeComicsAtlasToApp(){
+  const target = state.atlasReturnCat || "home";
+  state.cat = target;
+  state.comicsView = "atlas";
+  render();
+  window.scrollTo(0,0);
+}
+window.__comicsAtlasReturn = closeComicsAtlasToApp;
+window.__comicsAtlasBrowse = ()=>{
+  state.cat = "comics";
+  state.comicsView = "browse";
+  render();
+  window.scrollTo(0,0);
+};
 function goToCategory(cat, opts){
+  const previous = state.cat;
   state.cat = cat;
   resetFiltersForTabSwitch();
+  if(cat === "comics") state.atlasReturnCat = previous === "comics" ? "home" : previous;
   if(opts){
     if(opts.sortMode) state.sortMode = opts.sortMode;
     if(opts.typeFilter) state.typeFilter = opts.typeFilter;
@@ -910,9 +937,17 @@ function buildTabs(){
   }).join("") + journeyBtn;
   tabsEl.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>{
-      state.cat = btn.dataset.cat;
+      const next = btn.dataset.cat;
+      const previous = state.cat;
+      state.cat = next;
       resetFiltersForTabSwitch();
-      render();
+      if(next === "comics"){
+        state.atlasReturnCat = previous === "comics" ? "home" : previous;
+        render();
+        openComicsAtlas("universe");
+      } else {
+        render();
+      }
     });
   });
 }
@@ -1416,7 +1451,7 @@ function renderGenericCards(){
     // (comics-v2/explorer.js — an independent module; it delegates clicks on this button's id
     // rather than app.js calling into it directly, since this grid re-renders on every filter change).
     // This is purely additive — the flat catalogue below is completely untouched.
-    html += `<button class="cl-back-landing" id="comicsBackToLandingBtn">← Comics home · Story Map</button>`;
+    html += `<button class="cl-back-landing" id="comicsBackToLandingBtn">← Open Comics Atlas</button>`;
     html += `<button class="cp-entry-card" id="comicsExplorerEntryBtn"><span>🧭 Explore the DC Comics Continuity</span><span class="cp-entry-sub">Characters → continuities → series → runs → stories → issues →</span></button>`;
     html += `<button class="cp-entry-card" id="comicsTabPathBtn"><span>📖 Not sure where to start? Build a reading path</span><span class="cp-entry-sub">Hero → continuity → read in order, with progress tracking →</span></button>`;
   }
@@ -1437,7 +1472,7 @@ function renderGenericCards(){
   const comicsTabPathBtn = $("#comicsTabPathBtn");
   if(comicsTabPathBtn) comicsTabPathBtn.addEventListener("click", ()=> openComicsPath(null));
   const backToLanding = $("#comicsBackToLandingBtn");
-  if(backToLanding) backToLanding.addEventListener("click", ()=> goToCategory("comics"));
+  if(backToLanding) backToLanding.addEventListener("click", ()=> openComicsAtlas("universe"));
   attachCardHandlers(cat);
 }
 
@@ -1446,7 +1481,11 @@ function renderCards(){
   if(state.cat==="home") renderHome();
   else if(state.cat==="journey") renderJourney();
   else if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
-  else if(isComicsLanding()) renderComicsLanding();
+  else if(state.cat==="comics" && state.comicsView!=="browse"){
+    gridEl.innerHTML = `<div class="comics-atlas-backdrop-copy"><div class="sheet-label">DC UNIVERSE ATLAS</div><h2>Comics lives here now.</h2><p>The Atlas is the Comics home — eras, Earths, characters, events, runs, issues and collected editions are different views of the same universe.</p><button class="btn btn-primary" id="openComicsAtlasFallback">Open Atlas ↗</button><button class="btn btn-ghost" id="browseComicsFallback">Browse catalogue</button></div>`;
+    gridEl.querySelector("#openComicsAtlasFallback")?.addEventListener("click",()=>openComicsAtlas("universe"));
+    gridEl.querySelector("#browseComicsFallback")?.addEventListener("click",()=>{state.comicsView="browse";render();});
+  }
   else renderGenericCards();
 }
 
@@ -1456,8 +1495,9 @@ function renderCards(){
    and is still what any era/canon/line filter shows. If the module hasn't loaded, fall back to the
    catalogue so Comics can never break. */
 function isComicsLanding(){
-  return state.cat==="comics" && state.comicsView!=="browse" &&
-    state.f1==="all" && state.f2==="all" && state.f3==="all" && state.chip==="all"; // search uses the global dropdown
+  // Retained only for backwards-compatible history/UI helpers. The old intermediate Comics landing
+  // is no longer a user-facing destination; Comics now opens the DC Universe Atlas directly.
+  return false;
 }
 function renderComicsLanding(){
   const landing = window.__comicsV2Landing;
@@ -3150,6 +3190,58 @@ $("#readerGoProgress").addEventListener("click", ()=>{
 const adminToolsBackdrop = $("#adminToolsBackdrop"), adminToolsSheet = $("#adminToolsSheet");
 adminToolsBackdrop.addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 $("#adminToolsClose").addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
+
+/* Comics-v2 (beta): one-tap import button for the New 52 Batman dataset built in comics-v2/seed-batman-new52.js.
+   Fully independent of the rest of Admin Tools — talks only to window.__comicsV2 (comics-v2/index.js). */
+$("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
+  // Single combined button: runs the base Batman New 52 dataset import, then the
+  // collections (Zero Year/Endgame/Superheavy/Bloom) import. Both are upsert-based,
+  // so re-running this is always safe — nothing is duplicated or overwritten wrong.
+  const btn = $("#importBatmanNew52Btn"), msg = $("#importBatmanNew52Msg");
+  if(!window.__comicsV2 || !window.__comicsV2.batmanNew52){
+    msg.textContent = "Comics v2 module not loaded — check that comics-v2/index.js is uploaded.";
+    msg.className = "form-msg err";
+    return;
+  }
+  btn.disabled = true;
+  msg.textContent = "Importing…";
+  msg.className = "form-msg";
+  try{
+    const base = await window.__comicsV2.batmanNew52.import();
+    if(base?.validation && !base.validation.valid){
+      msg.textContent = "Base dataset failed validation — nothing was written: " + JSON.stringify(base.validation.errors || base.validation);
+      msg.className = "form-msg err";
+      return;
+    }
+    let collResult = null, collSkipped = false;
+    if(window.__comicsV2.batmanNew52Collections){
+      collResult = await window.__comicsV2.batmanNew52Collections.import();
+      if(collResult?.validation && !collResult.validation.valid){
+        msg.textContent = "Collections data failed validation — nothing was written: " + JSON.stringify(collResult.validation.errors || collResult.validation);
+        msg.className = "form-msg err";
+        return;
+      }
+    } else collSkipped = true;
+
+    const baseTotal = Object.values(base?.written || {}).reduce((a,b)=>a+b, 0);
+    // collResult.written is a plain number (not an object like base.written) — sum only if it's an object.
+    const collTotal = typeof collResult?.written === "number" ? collResult.written : Object.values(collResult?.written || {}).reduce((a,b)=>a+b, 0);
+    const allErrors = [...(base?.errors||[]), ...(collResult?.errors||[])];
+    if(allErrors.length){
+      msg.textContent = `Wrote ${baseTotal + collTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
+      msg.className = "form-msg err";
+    }else{
+      msg.textContent = `Done — ${baseTotal} base records` + (collSkipped ? " (collections file not found — skipped)." : ` + ${collTotal} collection records (Zero Year, Endgame, Superheavy, Bloom).`);
+      msg.className = "form-msg ok";
+    }
+  }catch(err){
+    console.error(err);
+    msg.textContent = "Import failed: " + (err?.message || err);
+    msg.className = "form-msg err";
+  }finally{
+    btn.disabled = false;
+  }
+});
 
 $("#readerGoAdminTools").addEventListener("click", ()=>{
   closeSheetEl(readerBackdrop, readerSheet);
