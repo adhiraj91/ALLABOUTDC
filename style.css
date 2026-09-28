@@ -1919,3 +1919,39 @@ main.comics-home-main > .grid{
   .cl4-home-ia .cl4-series-rail{display:flex;overflow-x:auto}
   .cl4-home-ia .cl4-series-card{flex:0 0 190px}
 }
+
+/* ============================================================================
+   STEP 4B-2 — Character Index foundation
+   Character Explorer only. No routing/data-model changes.
+============================================================================ */
+.cx-character-tools{display:flex;flex-direction:column;gap:10px;margin:16px 0 12px}
+.cx-character-search{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:0 12px;color:var(--ink-faint)}
+.cx-character-search:focus-within{border-color:color-mix(in srgb,var(--comics) 60%,var(--line));box-shadow:0 0 0 3px color-mix(in srgb,var(--comics) 10%,transparent)}
+.cx-character-search input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font:500 13px var(--font-body);padding:12px 0}
+.cx-character-search input::placeholder{color:var(--ink-faint)}
+.cx-character-filters{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
+.cx-character-filters::-webkit-scrollbar{display:none}
+.cx-character-filter{border:1px solid var(--line);background:var(--panel);color:var(--ink-dim);border-radius:999px;padding:7px 10px;font:800 9px var(--font-mono);letter-spacing:.06em;white-space:nowrap;cursor:pointer}
+.cx-character-filter b{color:var(--ink-faint);margin-left:3px}
+.cx-character-filter.is-active{border-color:color-mix(in srgb,var(--comics) 60%,var(--line));background:color-mix(in srgb,var(--comics) 10%,var(--panel));color:var(--ink)}
+.cx-character-filter.is-active b{color:var(--comics)}
+.cx-character-list{display:flex;flex-direction:column;gap:7px}
+.cx-character-card{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:11px;padding:11px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--ink);cursor:pointer;transition:border-color .14s ease,transform .14s ease,background .14s ease}
+.cx-character-card:hover{border-color:color-mix(in srgb,var(--comics) 48%,var(--line));background:color-mix(in srgb,var(--comics) 4%,var(--panel));transform:translateY(-1px)}
+.cx-character-card[hidden]{display:none}
+.cx-character-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--comics) 45%,var(--line));background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--comics) 18%,var(--panel)),var(--panel-2));color:var(--comics);font:800 11px var(--font-mono)}
+.cx-character-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.cx-character-name{font-weight:800;font-size:14px;line-height:1.2}
+.cx-character-alias{font-size:10px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cx-character-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--ink-faint);font-size:9px}
+.cx-character-meta span+span{padding-left:8px;border-left:1px solid var(--line)}
+.cx-character-empty{padding:22px 8px;color:var(--ink-faint);font-size:11px;text-align:center}
+.cx-character-footprint{display:flex;align-items:baseline;gap:9px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.cx-character-footprint strong{font-size:17px;color:var(--ink)}
+.cx-character-footprint span{font-size:10px;color:var(--ink-faint)}
+@media (max-width:620px){
+  .cx-character-card{grid-template-columns:38px 1fr auto;padding:10px}
+  .cx-character-avatar{width:38px;height:38px}
+  .cx-character-name{font-size:13px}
+  .cx-character-meta{font-size:8px}
+}
