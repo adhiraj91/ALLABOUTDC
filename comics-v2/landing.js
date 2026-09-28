@@ -4,7 +4,12 @@ import * as data from "./data.js?v=dc1";
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 let cache=null;
 async function load(){if(cache)return cache;cache=Promise.all([data.getAllUniverses(10),data.getAllContinuities(30),data.getAllCharacters(200),data.getAllSeries(500),data.getAllCollections(500)]).then(([universes,continuities,characters,series,collections])=>({universes,continuities,characters,series:series.filter(s=>s.scope==="batman-new52"),collections})).catch(e=>{cache=null;throw e;});return cache;}
-function openExplorer(level,label,params={}){window.__comicsExplorer?.openAt?.([{level,label,params}]);}
+function openExplorer(level,label,params={}){
+  const go=()=>window.__comicsExplorer?.openAt?.([{level,label,params}]);
+  if(window.__comicsExplorer?.openAt) return go();
+  const once=()=>{window.removeEventListener("comicsv2:explorer-ready",once);go();};
+  window.addEventListener("comicsv2:explorer-ready",once,{once:true});
+}
 function openAtlas(d){window.__comicsStoryMap?.open?.("universe",d.universes[0]?.id);}
 function render(container){
  container.innerHTML=`<div class="dcx-wrap">

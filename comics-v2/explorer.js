@@ -188,6 +188,7 @@ function close(){document.getElementById("comicsExplorerBackdrop")?.setAttribute
 export function openComicsExplorer(){stack=[{level:"root",label:"Comics",params:{}}];open();render();}
 export function openComicsExplorerAt(t){openAt(t);}
 window.__comicsExplorer={open:openComicsExplorer,openAt:openComicsExplorerAt};
+window.dispatchEvent(new CustomEvent("comicsv2:explorer-ready"));
 document.addEventListener("click",e=>{if(e.target.closest("#comicsExplorerEntryBtn"))openComicsExplorer();});
 document.getElementById("comicsExplorerBackdrop")?.addEventListener("click",close);
 document.getElementById("comicsExplorerClose")?.addEventListener("click",close);
