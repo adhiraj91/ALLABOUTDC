@@ -363,24 +363,76 @@ async function levelRoot() {
  * they just don't clutter this primary entry point.
  */
 async function levelCharacterList() {
-  const [chars, series] = await Promise.all([data.getAllCharacters(), data.getAllSeries()]);
-  const curated = data.curateCharacters(chars, series).sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
-  if (!curated.length) return { html: emptyHtml("No characters with their own comic catalogue have been added yet.") };
-  const rows = curated.map(c => {
+  const [chars, series] = await Promise.all([data.getAllCharacters(200), data.getAllSeries(200)]);
+  const seriesByCharacter = new Map();
+  for (const s of series) {
+    for (const id of (s.characterIds || [])) {
+      if (!seriesByCharacter.has(id)) seriesByCharacter.set(id, []);
+      seriesByCharacter.get(id).push(s);
+    }
+  }
+  const items = chars.map(c => {
+    const ownSeries = seriesByCharacter.get(c.id) || [];
+    const leadSeries = data.leadSeriesFor(c.id, series);
+    const issueCount = ownSeries.reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
+    return { c, ownSeries, leadSeries, issueCount, lead: leadSeries.length > 0 };
+  }).filter(x => x.ownSeries.length > 0);
+  items.sort((a, b) => (b.lead - a.lead) || (b.ownSeries.length - a.ownSeries.length) || (b.issueCount - a.issueCount) || String(a.c.displayName || a.c.name || "").localeCompare(String(b.c.displayName || b.c.name || "")));
+  if (!items.length) return { html: emptyHtml("No characters are currently represented in the Comics graph.") };
+
+  const rowHtml = (item, index) => {
+    const c = item.c;
     const label = esc(c.displayName || c.name || "Unnamed");
-    const sub = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
-    return `<div class="cx-row" data-id="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${label}</div>${sub ? `<div class="cx-row-sub">${sub}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`;
-  }).join("");
-  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Choose a character</h2><p class="cx-subtitle">Characters with a meaningful standalone comics catalogue.</p><div class="cx-list">${rows}</div>`;
+    const alias = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
+    const role = item.lead ? "Lead character" : "Supporting / connected";
+    const meta = `${item.ownSeries.length} series${item.issueCount ? ` · ${item.issueCount} issues` : ""}`;
+    return `<div class="cx-character-card" data-character-id="${esc(c.id)}" data-character-role="${item.lead ? "lead" : "supporting"}" data-search="${esc([c.displayName, c.name, ...(c.aliases || [])].filter(Boolean).join(" ").toLowerCase())}">
+      <div class="cx-character-avatar" aria-hidden="true">${esc(initialsOf(c.displayName || c.name))}</div>
+      <div class="cx-character-body"><div class="cx-character-name">${label}</div>${alias ? `<div class="cx-character-alias">${alias}</div>` : ""}<div class="cx-character-meta"><span>${esc(role)}</span><span>${esc(meta)}</span></div></div>
+      <div class="cx-row-chevron">›</div>
+    </div>`;
+  };
+
+  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Character index</h2><p class="cx-subtitle">Every character currently represented in the normalized Comics graph — leads and connected characters included.</p>
+    <div class="cx-character-tools">
+      <label class="cx-character-search"><span aria-hidden="true">⌕</span><input id="cxCharacterSearch" type="search" placeholder="Search Batman, Superman, Green Lantern…" autocomplete="off" /></label>
+      <div class="cx-character-filters" role="tablist" aria-label="Character type">
+        <button class="cx-character-filter is-active" type="button" data-character-filter="all">All <b>${items.length}</b></button>
+        <button class="cx-character-filter" type="button" data-character-filter="lead">Leads <b>${items.filter(x => x.lead).length}</b></button>
+        <button class="cx-character-filter" type="button" data-character-filter="supporting">Connected <b>${items.filter(x => !x.lead).length}</b></button>
+      </div>
+    </div>
+    <div class="cx-character-list" id="cxCharacterList">${items.map(rowHtml).join("")}</div>
+    <div class="cx-character-empty" id="cxCharacterEmpty" hidden>No matching characters in the current Comics graph.</div>`;
+
   return {
     html,
     wire(container) {
-      container.querySelectorAll(".cx-row[data-id]").forEach(row => {
-        row.addEventListener("click", () => {
-          const c = curated.find(x => x.id === row.dataset.id);
-          pushLevel("character", c.displayName || c.name, { character: c });
+      const cards = [...container.querySelectorAll("[data-character-id]")];
+      let filter = "all";
+      const apply = () => {
+        const q = String(container.querySelector("#cxCharacterSearch")?.value || "").trim().toLowerCase();
+        let visible = 0;
+        cards.forEach(card => {
+          const roleOk = filter === "all" || card.dataset.characterRole === filter;
+          const textOk = !q || card.dataset.search.includes(q);
+          const show = roleOk && textOk;
+          card.hidden = !show;
+          if (show) visible++;
         });
-      });
+        const empty = container.querySelector("#cxCharacterEmpty");
+        if (empty) empty.hidden = visible !== 0;
+      };
+      container.querySelector("#cxCharacterSearch")?.addEventListener("input", apply);
+      container.querySelectorAll("[data-character-filter]").forEach(btn => btn.addEventListener("click", () => {
+        filter = btn.dataset.characterFilter;
+        container.querySelectorAll("[data-character-filter]").forEach(b => b.classList.toggle("is-active", b === btn));
+        apply();
+      }));
+      cards.forEach(card => card.addEventListener("click", () => {
+        const item = items.find(x => x.c.id === card.dataset.characterId);
+        if (item) pushLevel("character", item.c.displayName || item.c.name, { character: item.c });
+      }));
     },
   };
 }
@@ -429,8 +481,10 @@ async function levelCharacter(params) {
     html += `</div></div>`;
   }
   if (series.length) {
+    const issueTotal = series.reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
+    html += `<div class="sheet-section"><div class="sheet-label">COMICS FOOTPRINT</div><div class="cx-character-footprint"><strong>${series.length} series</strong><span>${issueTotal ? `${issueTotal} mapped issues` : "Issue coverage is being built"}</span></div></div>`;
     html += `<div class="sheet-section"><div class="sheet-label">SERIES FEATURING ${esc((c.displayName || c.name || "").toUpperCase())}</div><div class="cx-list">`;
-    html += series.map(s => `<div class="cx-row" data-series="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+    html += series.map(s => `<div class="cx-row" data-series="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ""}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
     html += `</div></div>`;
   }
   return {
