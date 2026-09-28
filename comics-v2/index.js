@@ -6,7 +6,7 @@ import * as slug from "./slug.js";
 import * as data from "./data.js";
 import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js";
+import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc3";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 

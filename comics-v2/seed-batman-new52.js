@@ -63,7 +63,7 @@ addColl("Batman by Scott Snyder & Greg Capullo Omnibus Vol. 1","Omnibus","Batman
 addColl("Batman by Scott Snyder & Greg Capullo Omnibus Vol. 2","Omnibus","Batman",["34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "Annual 3", "Annual 4"],"Batman #34\u201352 and Annuals #3\u20134. Other cross-series contents are intentionally not duplicated in this series record.");
 addColl("Batman: The Court of Owls Saga","Other","Batman",["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],"DC Essential Edition: Batman #1\u201311.");
 addColl("Batman: Zero Year","Hardcover","Batman",["0", "21", "22", "23", "24", "25", "26", "27", "29", "30", "31", "32", "33"],"Expanded Zero Year edition.");
-addColl("Batman: The Court of Owls Saga — DC Compact Comics Edition","TPB","Batman",["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],"Later compact reissue of Batman #1\u201311.");
+addColl("Batman: The Court of Owls Saga — DC Compact Comics Edition","Compact","Batman",["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],"Later compact reissue of Batman #1\u201311.");
 addColl("Batman: Detective Comics Vol. 1: Faces of Death","TPB","Detective Comics",["1", "2", "3", "4", "5", "6", "7"],"Researched New 52 Detective Comics collection mapping.");
 addColl("Batman: Detective Comics Vol. 2: Scare Tactics","TPB","Detective Comics",["0", "8", "9", "10", "11", "12", "Annual 1"],"Researched New 52 Detective Comics collection mapping.");
 addColl("Batman: Detective Comics Vol. 3: Emperor Penguin","TPB","Detective Comics",["13", "14", "15", "16", "17", "18"],"Researched New 52 Detective Comics collection mapping.");
