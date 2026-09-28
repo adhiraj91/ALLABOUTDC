@@ -306,5 +306,106 @@ function wireDetail(){
   detail.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>navigate(b.dataset.mode));
 }
 
-window.__comicsStoryMap={open,close,navigate,isOpen:()=>!!(root&&root.dataset.open==='true'),audit:()=>auditNew52()};
+
+let comicsHomeSelection={type:'character',id:'batman'};
+const homeCharacterList=()=>Array.isArray(new52CharacterHubs)?new52CharacterHubs:[];
+function homeCharacter(id){return homeCharacterList().find(x=>x.id===id)||homeCharacterList().find(x=>x.type==='hero')||null;}
+function homeSeries(id){return seriesById(id);}
+function homeLane(id){return laneFor(id);}
+function homeEvent(id){return transitionEvents.find(x=>x.id===id)||crossoverSpine.find(x=>x.id===id)||null;}
+function homeEra(id){return eras.find(x=>x.id===id)||null;}
+function homeSelectionLabel(){
+  const s=comicsHomeSelection;
+  if(s.type==='character'){const c=homeCharacter(s.id);return c?.title||'Batman';}
+  if(s.type==='lane'){return homeLane(s.id)?.title||'New 52 Territory';}
+  if(s.type==='event'){return homeEvent(s.id)?.title||'Featured Event';}
+  if(s.type==='era'){return homeEra(s.id)?.title||'DC Era';}
+  if(s.type==='series'){return homeSeries(s.id)?.title||'Comic Run';}
+  return 'DC Universe';
+}
+function homeRightPanel(){
+  const s=comicsHomeSelection;
+  if(s.type==='character'){
+    const c=homeCharacter(s.id)||homeCharacter('batman');
+    const pubs=(c?.seriesIds||[]).map(seriesById).filter(Boolean);
+    const flagship=c?.type==='hero';
+    return `<div class="atlas-profile-art art-${esc(c?.id||'batman')}"><span>${flagship?'CHARACTER':'CHARACTER REGION'}</span><b>${esc(c?.title||'Batman')}</b><small>${esc(c?.sub||'Gotham and the Bat-family')}</small></div>
+      <div class="atlas-profile-body"><div class="atlas-profile-kicker">NEW 52 · ${flagship?'CHARACTER':'REGION'}</div><h2>${esc(c?.title||'Batman')}</h2><p>${esc(c?.sub||'Follow the character through their New 52 publication line.')}</p>
+      <div class="atlas-facts"><span><b>${pubs.length}</b><small>RUNS</small></span><span><b>${pubs.reduce((n,x)=>n+issueCount(x),0)}</b><small>ISSUES</small></span><span><b>${pubs.reduce((n,x)=>n+(x.collections||[]).length,0)}</b><small>EDITIONS</small></span></div>
+      <div class="atlas-profile-tabs"><button class="is-active">OVERVIEW</button><button>RUNS</button><button>EVENTS</button><button>RELATIONS</button></div>
+      <div class="atlas-profile-copy">${pubs.length?`<b>KEY RUNS</b><div class="atlas-run-list">${pubs.slice(0,7).map(x=>`<button data-home-series="${esc(x.id)}"><span class="atlas-mini-cover cover-${Math.abs(hashCode(x.id))%8}"></span><span><strong>${esc(x.title)}</strong><small>${esc(x.runYears||'New 52')} · ${issueCount(x)} issues</small></span><i>→</i></button>`).join('')}</div>`:'<b>No mapped runs yet.</b>'}</div>
+      <button class="atlas-primary" data-home-open-character="${esc(c?.id||'batman')}">Open Character Atlas ↗</button></div>`;
+  }
+  if(s.type==='lane'){
+    const l=homeLane(s.id), pubs=allPubs().filter(x=>x.lane===s.id);
+    return `<div class="atlas-profile-art art-lane-${esc(s.id)}"><span>NEW 52 TERRITORY</span><b>${esc(l?.title||'Territory')}</b><small>${esc(l?.sub||'Publication territory')}</small></div><div class="atlas-profile-body"><div class="atlas-profile-kicker">NEW 52 · TERRITORY</div><h2>${esc(l?.title||'Territory')}</h2><p>${esc(l?.sub||'Explore the runs that belong to this publication territory.')}</p><div class="atlas-facts"><span><b>${pubs.length}</b><small>RUNS</small></span><span><b>${pubs.reduce((n,x)=>n+issueCount(x),0)}</b><small>ISSUES</small></span><span><b>${pubs.reduce((n,x)=>n+(x.collections||[]).length,0)}</b><small>EDITIONS</small></span></div><div class="atlas-profile-copy"><b>PUBLICATIONS</b><div class="atlas-run-list">${pubs.slice(0,10).map(x=>`<button data-home-series="${esc(x.id)}"><span class="atlas-mini-cover cover-${Math.abs(hashCode(x.id))%8}"></span><span><strong>${esc(x.title)}</strong><small>${esc(x.runYears||'New 52')} · ${issueCount(x)} issues</small></span><i>→</i></button>`).join('')}</div></div><button class="atlas-primary" data-home-open-lane="${esc(s.id)}">Explore Territory ↗</button></div>`;
+  }
+  if(s.type==='event'){
+    const e=homeEvent(s.id)||{};
+    return `<div class="atlas-profile-art art-event-${Math.abs(hashCode(e.id||'event'))%8}"><span>EVENT</span><b>${esc(e.title||'Featured Event')}</b><small>${esc(e.kicker||'DC continuity event')}</small></div><div class="atlas-profile-body"><div class="atlas-profile-kicker">CONTINUITY EVENT</div><h2>${esc(e.title||'Featured Event')}</h2><p>${esc(e.summary||e.notes||'A major story point connecting publication territories.')}</p><div class="atlas-facts"><span><b>${(e.issues||[]).length}</b><small>CORE COMICS</small></span><span><b>${(e.editions||[]).length}</b><small>FORMATS</small></span><span><b>${(e.lanes||[]).length}</b><small>LANES</small></span></div><div class="atlas-profile-copy"><b>CORE COMICS</b><div class="atlas-issue-chips">${(e.issues||[]).map(x=>`<span>${esc(x)}</span>`).join('')}</div></div><button class="atlas-primary" data-home-open-event="${esc(e.id)}">Open Event Details ↗</button></div>`;
+  }
+  if(s.type==='era'){
+    const e=homeEra(s.id); const tr=transitionEvents.filter(x=>x.from===e?.id||x.to===e?.id);
+    return `<div class="atlas-profile-art art-era-${Math.abs(hashCode(e?.id||'era'))%8}"><span>DC ERA</span><b>${esc(e?.title||'Era')}</b><small>${esc(e?.years||'')}</small></div><div class="atlas-profile-body"><div class="atlas-profile-kicker">CONTINUITY ERA</div><h2>${esc(e?.title||'Era')}</h2><p>${esc(e?.id==='new52'?new52Era.description:'A continuity layer in the DC Universe atlas.')}</p><div class="atlas-facts"><span><b>${e?.id==='new52'?new52Series.length:'—'}</b><small>RUNS</small></span><span><b>${e?.id==='new52'?new52Limited.length:'—'}</b><small>LIMITED</small></span><span><b>${tr.length}</b><small>TRANSITIONS</small></span></div><div class="atlas-profile-copy"><b>CONNECTED EVENTS</b><div class="atlas-event-list">${tr.map(x=>`<button data-home-event="${esc(x.id)}"><strong>${esc(x.title)}</strong><small>${esc(x.kicker||'Continuity transition')}</small><i>→</i></button>`).join('')||'<span class="atlas-muted">This era is currently a navigation anchor.</span>'}</div></div>${e?.id==='new52'?'<button class="atlas-primary" data-home-open-mode="new52">Enter The New 52 ↗</button>':''}</div>`;
+  }
+  const x=homeSeries(s.id); const fs=formats(x); return `<div class="atlas-profile-art art-series-${Math.abs(hashCode(x?.id||'series'))%8}"><span>NEW 52 RUN</span><b>${esc(x?.title||'Comic Run')}</b><small>${esc(x?.runYears||'2011–2016')}</small></div><div class="atlas-profile-body"><div class="atlas-profile-kicker">PUBLICATION RUN</div><h2>${esc(x?.title||'Comic Run')}</h2><p>${esc(x?.runNotes||x?.notes||'Publication run')}</p><div class="atlas-facts"><span><b>${issueCount(x)}</b><small>ISSUES</small></span><span><b>${fs.length}</b><small>FORMATS</small></span><span><b>${(x?.collections||[]).length}</b><small>EDITIONS</small></span></div><div class="atlas-profile-copy"><b>ISSUE COVERAGE</b><div class="atlas-issue-chips">${(x?.issues||[]).slice(0,40).map(i=>`<span>#${esc(i)}</span>`).join('')}${(x?.issues||[]).length>40?`<span>+${x.issues.length-40} more</span>`:''}</div></div><button class="atlas-primary" data-home-open-series="${esc(x?.id||'')}">Open Full Run ↗</button></div>`;
+}
+function hashCode(str){let h=0;for(let i=0;i<String(str).length;i++)h=((h<<5)-h)+String(str).charCodeAt(i)|0;return h;}
+function homeCenter(){
+  const featured=transitionEvents.slice().reverse().slice(0,6);
+  const topEras=eras.slice().reverse();
+  const flagship=homeCharacterList().filter(x=>x.type==='hero').slice(0,8);
+  const groups=homeCharacterList().filter(x=>x.type==='group').slice(0,8);
+  const lanes=[...new52Era.mainLanes,...new52Era.alternateLanes].slice(0,9);
+  return `<div class="atlas-home-top"><div><span class="atlas-eyebrow">DC UNIVERSE · COMICS</span><h1>THE DC UNIVERSE</h1><p>Explore continuities, characters, worlds, events, runs, issues and collected editions from one connected publication atlas.</p></div><div class="atlas-legend"><span><i class="lg-main"></i>Main Continuity</span><span><i class="lg-alt"></i>Alternate Earth</span><span><i class="lg-event"></i>Event</span><span><i class="lg-team"></i>Team / Family</span></div></div>
+  <section class="atlas-era-strip"><div class="atlas-section-head"><span>CONTINUITY TIMELINE</span><b>Every era is a doorway</b></div><div class="atlas-era-row">${topEras.map(e=>`<button class="atlas-era-card ${e.id==='new52'?'is-new52':''}" data-home-era="${esc(e.id)}"><span>${esc(e.years||'')}</span><b>${esc(e.title)}</b><i>↗</i></button>`).join('')}</div></section>
+  <section class="atlas-world-stage"><div class="atlas-stage-bg"><span class="stage-glow g1"></span><span class="stage-glow g2"></span><span class="stage-city"></span></div><div class="atlas-stage-title"><span>CONTINUITY ATLAS</span><b>One universe. Many worlds.</b><small>Click a territory, event or world to change the information panel.</small></div><div class="atlas-landmark earth0" data-home-era="new52"><span>52</span><b>EARTH-0</b><small>NEW 52 · MAIN CONTINUITY</small></div><button class="atlas-landmark crisis" data-home-event="transition-new52"><span>✦</span><b>FLASHPOINT</b><small>2011 · NEW 52 BEGINS</small></button><button class="atlas-landmark crisis2" data-home-event="transition-rebirth"><span>✦</span><b>CONVERGENCE</b><small>2015 · REBIRTH BRIDGE</small></button><button class="atlas-region gotham" data-home-character="batman"><b>GOTHAM</b><small>BATMAN · BAT-FAMILY</small></button><button class="atlas-region metropolis" data-home-character="superman"><b>METROPOLIS</b><small>SUPERMAN FAMILY</small></button><button class="atlas-region central" data-home-character="flash"><b>CENTRAL CITY</b><small>THE FLASH</small></button><button class="atlas-region coast" data-home-character="green-lantern"><b>COAST CITY / THE GREEN</b><small>LANTERN CORPS</small></button><button class="atlas-region dark" data-home-lane="dark"><b>THE DARK / MAGIC</b><small>JLD · SWAMP THING · CONSTANTINE</small></button><button class="atlas-region cosmic" data-home-lane="lantern"><b>COSMIC / LANTERN</b><small>EMOTIONAL SPECTRUM</small></button><div class="atlas-route route1"></div><div class="atlas-route route2"></div><div class="atlas-route route3"></div><div class="atlas-orbit orbit1"></div><div class="atlas-orbit orbit2"></div></section>
+  <section class="atlas-world-deck"><article class="atlas-panel"><div class="atlas-panel-head"><span>EARTHS / MULTIVERSE</span><b>Other worlds</b><button data-home-mode="universe">View all ↗</button></div><div class="atlas-world-cards"><button data-home-world="earth-2"><span class="world-art earth2"></span><b>EARTH-2</b><small>New 52 alternate Earth</small></button><button data-home-world="earth-3"><span class="world-art earth3"></span><b>EARTH-3</b><small>Crime Syndicate</small></button><button data-home-world="dark-multiverse"><span class="world-art darkmulti"></span><b>DARK MULTIVERSE</b><small>Nightmare realities</small></button><button data-home-world="elseworlds"><span class="world-art elseworlds"></span><b>ELSEWORLDS</b><small>Alternate stories</small></button></div></article><article class="atlas-panel"><div class="atlas-panel-head"><span>NEW 52 TERRITORIES</span><b>Where the runs live</b><button data-home-mode="new52">Explore ↗</button></div><div class="atlas-territory-mini">${lanes.map(l=>`<button data-home-lane="${esc(l.id)}"><span></span><b>${esc(l.title)}</b><small>${esc(l.sub)}</small><i>→</i></button>`).join('')}</div></article></section>
+  <section class="atlas-events"><div class="atlas-panel-head"><span>FEATURED EVENTS</span><b>Moments that reshape the universe</b><button data-home-mode="events">View all ↗</button></div><div class="atlas-event-row">${featured.map((e,i)=>`<button data-home-event="${esc(e.id)}"><span class="event-art-large event-${i%8}"><em>${i+1}</em></span><b>${esc(e.title)}</b><small>${esc(e.issues?.[0]||'Major event')}</small></button>`).join('')}</div></section>
+  <section class="atlas-people"><div class="atlas-panel-head"><span>CHARACTERS</span><b>Choose who you want to follow</b><button data-home-mode="characters">View all ↗</button></div><div class="atlas-character-row">${flagship.map(c=>`<button data-home-character="${esc(c.id)}"><span class="char-art art-${Math.abs(hashCode(c.id))%8}"></span><b>${esc(c.title)}</b><small>${c.type==='hero'?'Standalone line':'Character'}</small></button>`).join('')}</div><div class="atlas-family-row">${groups.map(c=>`<button data-home-character="${esc(c.id)}"><b>${esc(c.title)}</b><small>${esc(c.sub||'Family / team region')}</small></button>`).join('')}</div></section>`;
+}
+function renderComicsHomePage(container){
+  if(!container)return;
+  container.innerHTML=`<div class="comics-atlas-scroll"><div class="comics-atlas-home"><header class="atlas-inner-nav"><div class="atlas-brand"><span class="atlas-brand-mark">DC</span><div><b>ALL ABOUT DC</b><small>UNIVERSE · COMICS ATLAS</small></div></div><nav><button class="is-active" data-home-mode="universe">MAP</button><button data-home-mode="continuity">TIMELINE</button><button data-home-mode="characters">CHARACTERS</button><button data-home-mode="new52">COMICS</button><button data-home-mode="events">EVENTS</button><button data-home-mode="multiverse">EARTHS</button><button data-home-mode="paths">READING ORDERS</button></nav><button class="atlas-home-search" data-home-mode="browse">⌕ Search comics, characters, events…</button></header><div class="atlas-layout"><aside class="atlas-left-panel"><div class="atlas-side-title">VIEW</div><button class="atlas-side-btn is-active" data-home-mode="universe">◈ <b>Continuity Atlas</b></button><button class="atlas-side-btn" data-home-mode="characters">✦ <b>Character Atlas</b></button><button class="atlas-side-btn" data-home-mode="multiverse">◎ <b>Multiverse View</b></button><button class="atlas-side-btn" data-home-mode="continuity">⌁ <b>Timeline View</b></button><button class="atlas-side-btn" data-home-mode="paths">↯ <b>Reading Paths</b></button><div class="atlas-divider"></div><div class="atlas-side-title">FILTERS</div><button class="atlas-side-filter" data-home-era="new52">ERA <span>⌄</span><small>The New 52 · 2011–2016</small></button><button class="atlas-side-filter" data-home-lane="batman">CHARACTER LINE <span>⌄</span><small>Batman / Gotham</small></button><button class="atlas-side-filter" data-home-world="earth-0">CONTINUITY <span>⌄</span><small>Earth-0 · Main</small></button><button class="atlas-side-filter" data-home-mode="events">EVENT TYPE <span>⌄</span><small>Crisis · Crossover</small></button><div class="atlas-divider"></div><div class="atlas-side-title">QUICK LINKS</div><button class="atlas-side-link" data-home-mode="new52">● New 52</button><button class="atlas-side-link" data-home-mode="multiverse">● All Earths</button><button class="atlas-side-link" data-home-mode="events">● Major Events</button><button class="atlas-side-link" data-home-mode="characters">● Characters & Families</button><button class="atlas-side-link" data-home-mode="paths">● Reading Orders</button></aside><main class="atlas-main-panel">${homeCenter()}</main><aside class="atlas-right-panel"><div class="atlas-right-label">SELECTED</div><div id="atlasHomeDetail">${homeRightPanel()}</div></aside></div></div></div>`;
+  const bind=()=>{
+    container.querySelectorAll('[data-home-era]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'era',id:b.dataset.homeEra};refreshHomeDetail(container);});
+    container.querySelectorAll('[data-home-event]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'event',id:b.dataset.homeEvent};refreshHomeDetail(container);});
+    container.querySelectorAll('[data-home-character]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'character',id:b.dataset.homeCharacter};refreshHomeDetail(container);});
+    container.querySelectorAll('[data-home-lane]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'lane',id:b.dataset.homeLane};refreshHomeDetail(container);});
+    container.querySelectorAll('[data-home-series]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'series',id:b.dataset.homeSeries};refreshHomeDetail(container);});
+    container.querySelectorAll('[data-home-world]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'era',id:'new52'};refreshHomeDetail(container);});
+    container.querySelectorAll('[data-home-mode]').forEach(b=>b.onclick=()=>homeModeAction(b.dataset.homeMode));
+    container.querySelectorAll('[data-home-open-series]').forEach(b=>b.onclick=()=>{const x=seriesById(b.dataset.homeOpenSeries);if(x)open('new52'),requestAnimationFrame(()=>showDetail('series',x));});
+    container.querySelectorAll('[data-home-open-character]').forEach(b=>b.onclick=()=>{open('characters');requestAnimationFrame(()=>{const c=homeCharacter(b.dataset.homeOpenCharacter);if(c)showDetail('character',c);});});
+    container.querySelectorAll('[data-home-open-lane]').forEach(b=>b.onclick=()=>{open('new52');requestAnimationFrame(()=>{const l=homeLane(b.dataset.homeOpenLane);if(l)showDetail('lane',{...l,publications:allPubs().filter(x=>x.lane===l.id)});});});
+    container.querySelectorAll('[data-home-open-event]').forEach(b=>b.onclick=()=>{const x=homeEvent(b.dataset.homeOpenEvent);if(x)open('universe'),requestAnimationFrame(()=>showDetail('event',x));});
+  };
+  bind();
+}
+function refreshHomeDetail(container){
+  const d=container.querySelector('#atlasHomeDetail'); if(d)d.innerHTML=homeRightPanel();
+  container.querySelectorAll('[data-home-series],[data-home-open-series],[data-home-open-character],[data-home-open-lane],[data-home-open-event]').forEach(b=>b.onclick=null);
+  // Rebind only the dynamic right panel actions; the left/centre remains stable.
+  container.querySelectorAll('[data-home-series]').forEach(b=>b.onclick=()=>{comicsHomeSelection={type:'series',id:b.dataset.homeSeries};refreshHomeDetail(container);});
+  container.querySelectorAll('[data-home-open-series]').forEach(b=>b.onclick=()=>{const x=seriesById(b.dataset.homeOpenSeries);if(x){open('new52');requestAnimationFrame(()=>showDetail('series',x));}});
+  container.querySelectorAll('[data-home-open-character]').forEach(b=>b.onclick=()=>{const c=homeCharacter(b.dataset.homeOpenCharacter);if(c){open('characters');requestAnimationFrame(()=>showDetail('character',c));}});
+  container.querySelectorAll('[data-home-open-lane]').forEach(b=>b.onclick=()=>{const l=homeLane(b.dataset.homeOpenLane);if(l){open('new52');requestAnimationFrame(()=>showDetail('lane',{...l,publications:allPubs().filter(x=>x.lane===l.id)}));}});
+  container.querySelectorAll('[data-home-open-event]').forEach(b=>b.onclick=()=>{const x=homeEvent(b.dataset.homeOpenEvent);if(x){open('universe');requestAnimationFrame(()=>showDetail('event',x));}});
+}
+function homeModeAction(mode){
+  if(mode==='browse' && typeof window.__comicsAtlasBrowse==='function'){window.__comicsAtlasBrowse();return;}
+  if(mode==='events'){
+    open('universe');
+    requestAnimationFrame(()=>root?.querySelector('.sm-panel-events')?.scrollIntoView({block:'center',inline:'nearest'}));
+    return;
+  }
+  if(mode==='multiverse'){
+    open('universe');
+    requestAnimationFrame(()=>root?.querySelector('.sm-panel-worlds')?.scrollIntoView({block:'center',inline:'nearest'}));
+    return;
+  }
+  open(mode||'universe');
+}
+
+window.__comicsStoryMap={open,close,navigate,isOpen:()=>!!(root&&root.dataset.open==='true'),audit:()=>auditNew52(),renderHomePage:renderComicsHomePage};
 document.dispatchEvent(new CustomEvent('comicsv2:storymap-ready'));
