@@ -24,6 +24,7 @@
 import * as data from "./data.js?v=p65";
 // Pointer 6: "Continue Reading" (or a data-driven "Start reading" point) at the top of Comics Home.
 import { renderContinueCard } from "./reading-progress.js?v=p6";
+import { new52Era, new52Series, new52Limited, new52CharacterIndex, new52ReadingPaths } from "./new52-map-data.js";
 
 const esc = (s) => s == null ? "" : String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -55,10 +56,10 @@ function heroHtml() {
 // directly at the relevant level, or (Story Map) the Story Map itself — every
 // button below is the ONLY way this page links to that destination.
 const EXPLORE_ENTRIES = [
-  { key: "character", label: "By Character", sub: "Major characters with meaningful standalone comic catalogues." },
-  { key: "era", label: "By Continuity / Era", sub: "Explore by publishing era and continuity." },
+  { key: "character", label: "By Character", sub: `${new52CharacterIndex.length} New 52 character lines · same series/issues as the Story Map.` },
+  { key: "era", label: "By Continuity / Era", sub: `The DC era spine, with the researched ${new52Era.title} layer linked directly to its lanes.` },
   { key: "storymap", label: "Story Map", sub: "Explore DC eras, transitions, continuities and reading lanes." },
-  { key: "paths", label: "Reading Paths", sub: "Follow curated reading journeys." },
+  { key: "paths", label: "Reading Paths", sub: `${new52ReadingPaths.length} New 52 paths built from the same lanes and crossover spine.` },
 ];
 function exploreGridHtml() {
   const tiles = EXPLORE_ENTRIES.map(e => `
@@ -75,8 +76,8 @@ function catalogueCard(hooks) {
   // de-emphasized destination, not the default Comics experience) — id unchanged from Pointer 4
   // (#comicsBrowseAllBtn) since it's still the same single destination.
   return `<section class="cl-catalogue">
-      <div><div class="cl-cat-t">Browse all comics</div><div class="cl-cat-s">${n ? `${n} titles · ` : ""}the complete catalogue, filterable by era and canon status</div></div>
-      <button class="btn btn-ghost" id="comicsBrowseAllBtn">Browse all comics</button>
+      <div><div class="cl-cat-t">Browse database comics</div><div class="cl-cat-s">${n ? `${n} database records · ` : ""}the broader Firestore catalogue. The researched New 52 map is the source for the four entry points above.</div></div>
+      <button class="btn btn-ghost" id="comicsBrowseAllBtn">Browse database</button>
     </section>`;
 }
 
@@ -135,9 +136,9 @@ function onLandingClick(e) {
     }
     const ex = window.__comicsExplorer;
     if (!ex || !ex.openAt) return;
-    if (key === "character") ex.openAt([{ level: "characterList", label: "Characters", params: {} }]);
-    else if (key === "era") ex.openAt([{ level: "continuityList", label: "Continuities", params: {} }]);
-    else if (key === "paths") ex.openAt([{ level: "readingPathList", label: "Reading Paths", params: {} }]);
+    if (key === "character") ex.openAt([{ level: "new52CharacterList", label: "New 52 · Characters", params: {} }]);
+    else if (key === "era") ex.openAt([{ level: "new52ContinuityList", label: "Continuity / Era", params: {} }]);
+    else if (key === "paths") ex.openAt([{ level: "new52ReadingPathList", label: "New 52 · Reading Paths", params: {} }]);
     return;
   }
   if (e.target.closest("#comicsBrowseAllBtn, [data-browse-all]")) { if (hooks.onBrowseAll) hooks.onBrowseAll(); return; }

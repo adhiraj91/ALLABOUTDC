@@ -35,6 +35,7 @@
 // the query string busts GitHub Pages' ~10min cache the same way Pointer 4 did for storymap.js.
 import * as data from "./data.js?v=p65";
 import { COLLECTIONS } from "./schema.js";
+import { eras, new52Era, new52Series, new52Limited, crossoverSpine, new52CharacterIndex, new52ReadingPaths, getNew52SeriesByIds } from "./new52-map-data.js";
 // Pointer 6 — personal reading progress (derived from the site's one progress store via
 // window.__readerProgress) + the contextual Story Graph. Same "?v=p6" specifier everywhere so
 // every comics-v2 module shares one instance of each.
@@ -362,7 +363,126 @@ async function levelRoot() {
  * characters stay fully reachable through Stories/Issues/Story Graph/Search —
  * they just don't clutter this primary entry point.
  */
-async function levelCharacterList() {
+
+/* -------------------------------------------------------------------------
+ * NEW 52 EXPLORE SCREENS
+ * -------------------------------------------------------------------------
+ * The four Comics-home entry points now use the same researched New 52 source
+ * as Story Map. Firestore remains the broader normalized catalogue behind
+ * "Browse all comics" and the generic Explorer; these screens never fabricate
+ * a second New 52 catalogue.
+ */
+function new52SeriesForIds(ids) {
+  return getNew52SeriesByIds(ids).sort((a,b) => String(a.title).localeCompare(String(b.title)));
+}
+function new52IssueRange(s) {
+  if (s.issueSpec?.from != null && s.issueSpec?.to != null) {
+    return `${s.issueSpec.from === 0 ? '#0' : `#${s.issueSpec.from}`}–#${s.issueSpec.to}`;
+  }
+  return `${s.issues?.length || 0} mapped issues`;
+}
+function new52FormatSummary(s) {
+  const formats = [...new Set((s.collections || []).map(c => {
+    const f=String(c.format||'').toLowerCase();
+    if (f.includes('trade') || f.includes('paperback')) return 'TPB';
+    if (f.includes('hardcover')) return 'HC';
+    if (f.includes('omnibus')) return 'Omnibus';
+    if (f.includes('deluxe') || f.includes('absolute')) return 'Deluxe / Absolute';
+    return null;
+  }).filter(Boolean))];
+  return formats;
+}
+function new52SeriesRow(s, attr='data-series') {
+  const formats = new52FormatSummary(s);
+  const kind = s.kind ? ` · ${s.kind}` : '';
+  return `<div class="cx-row cx-new52-series-row" ${attr}="${esc(s.id)}">
+    <div class="cx-row-body">
+      <div class="cx-row-title">${esc(s.title)}</div>
+      <div class="cx-row-sub">${esc(new52IssueRange(s))}${kind}</div>
+      ${formats.length ? `<div class="cx-row-sub cx-edition-mini">${formats.map(f=>`<span class="cx-edition-chip">${esc(f)}</span>`).join('')}</div>` : `<div class="cx-row-sub cx-edition-mini cx-no-editions">No verified collected-edition record yet</div>`}
+    </div><div class="cx-row-chevron">›</div>
+  </div>`;
+}
+
+async function levelNew52CharacterList() {
+  const rows = new52CharacterIndex.map(c => {
+    const count = new52SeriesForIds(c.seriesIds).length;
+    return `<div class="cx-row" data-n52-char="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.title)}</div><div class="cx-row-sub">${esc(c.sub)} · ${count} mapped series</div></div><div class="cx-row-chevron">›</div></div>`;
+  }).join('');
+  return {
+    html:`<div class="cx-kicker">NEW 52 · CHARACTERS</div><h2 class="cx-title">Choose a character line</h2><p class="cx-subtitle">Character hubs are derived from the same New 52 series and issue catalogue used by the Story Map.</p><div class="cx-list">${rows}</div>`,
+    wire(container){
+      container.querySelectorAll('[data-n52-char]').forEach(row=>row.addEventListener('click',()=>{
+        const c=new52CharacterIndex.find(x=>x.id===row.dataset.n52Char); if(c) pushLevel('new52Character',c.title,{character:c});
+      }));
+    }
+  };
+}
+async function levelNew52Character(params) {
+  const c=params.character;
+  const series=new52SeriesForIds(c.seriesIds);
+  return {
+    html:`<div class="cx-kicker">NEW 52 · CHARACTER LINE</div><h2 class="cx-title">${esc(c.title)}</h2><p class="cx-subtitle">${esc(c.sub)}</p><div class="cx-fact-list"><div class="cx-fact"><span>Mapped series</span><span>${series.length}</span></div><div class="cx-fact"><span>Issues mapped</span><span>${series.reduce((n,s)=>n+(s.issues?.length||0),0)}</span></div></div><div class="sheet-section"><div class="sheet-label">SERIES</div><div class="cx-list">${series.map(s=>new52SeriesRow(s)).join('')}</div></div>`,
+    wire(container){container.querySelectorAll('[data-series]').forEach(row=>row.addEventListener('click',()=>{const s=[...new52Series,...new52Limited].find(x=>x.id===row.dataset.series);if(s)pushLevel('new52Series',s.title,{series:s});}));}
+  };
+}
+async function levelNew52ContinuityList() {
+  const rows=eras.map((e,i)=>{
+    const mapped=e.id==='new52';
+    return `<div class="cx-row ${mapped?'cx-era-mapped':''}" data-n52-era="${esc(e.id)}"><div class="cx-row-body"><div class="cx-row-title">${String(i+1).padStart(2,'0')} · ${esc(e.title)}</div><div class="cx-row-sub">${esc(e.years||'')}${mapped?' · researched map layer':' · map layer not yet built'}</div></div><div class="cx-row-chevron">${mapped?'›':'—'}</div></div>`;
+  }).join('');
+  return {
+    html:`<div class="cx-kicker">CONTINUITY / ERA</div><h2 class="cx-title">DC publishing eras</h2><p class="cx-subtitle">The same chronological era spine used by Story Map. New 52 is the currently researched layer; the other eras are intentionally marked as future build rather than showing placeholder catalogue data.</p><div class="cx-list">${rows}</div>`,
+    wire(container){container.querySelectorAll('[data-n52-era="new52"]').forEach(row=>row.addEventListener('click',()=>pushLevel('new52Continuity','The New 52',{})));}
+  };
+}
+async function levelNew52Continuity() {
+  const lanes=new52Era.mainLanes;
+  return {
+    html:`<div class="cx-kicker">NEW 52 · 2011–2016</div><h2 class="cx-title">The New 52</h2><p class="cx-subtitle">${esc(new52Era.description)}</p><div class="cx-fact-list"><div class="cx-fact"><span>Main-continuity lanes</span><span>${lanes.length}</span></div><div class="cx-fact"><span>Series / publications</span><span>${new52Series.length+new52Limited.length}</span></div><div class="cx-fact"><span>Mapped issues</span><span>${new52Series.reduce((n,s)=>n+(s.issues?.length||0),0)+new52Limited.reduce((n,s)=>n+(s.issues?.length||0),0)}</span></div></div><div class="sheet-section"><div class="sheet-label">MAIN CONTINUITY LANES</div><div class="cx-list">${lanes.map(l=>`<div class="cx-row" data-n52-lane="${esc(l.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(l.title)}</div><div class="cx-row-sub">${esc(l.sub)} · ${new52Series.filter(s=>s.lane===l.id).length+new52Limited.filter(s=>s.lane===l.id).length} publications</div></div><div class="cx-row-chevron">›</div></div>`).join('')}</div></div><div class="sheet-section"><div class="sheet-label">PARALLEL / FUTURE</div><div class="cx-list">${new52Era.alternateLanes.map(l=>`<div class="cx-row" data-n52-lane="${esc(l.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(l.title)}</div><div class="cx-row-sub">${esc(l.sub)}</div></div><div class="cx-row-chevron">›</div></div>`).join('')}</div></div>`,
+    wire(container){container.querySelectorAll('[data-n52-lane]').forEach(row=>row.addEventListener('click',()=>{const l=[...new52Era.mainLanes,...new52Era.alternateLanes].find(x=>x.id===row.dataset.n52Lane);if(l)pushLevel('new52Lane',l.title,{lane:l});}));}
+  };
+}
+async function levelNew52Lane(params) {
+  const l=params.lane;
+  const series=[...new52Series.filter(s=>s.lane===l.id),...new52Limited.filter(s=>s.lane===l.id)];
+  return {
+    html:`<div class="cx-kicker">NEW 52 · LANE</div><h2 class="cx-title">${esc(l.title)}</h2><p class="cx-subtitle">${esc(l.sub)}</p><div class="cx-fact-list"><div class="cx-fact"><span>Publications</span><span>${series.length}</span></div><div class="cx-fact"><span>Mapped issues</span><span>${series.reduce((n,s)=>n+(s.issues?.length||0),0)}</span></div></div><div class="sheet-section"><div class="sheet-label">PUBLICATION RUNS</div><div class="cx-list">${series.map(s=>new52SeriesRow(s)).join('')}</div></div>`,
+    wire(container){container.querySelectorAll('[data-series]').forEach(row=>row.addEventListener('click',()=>{const s=series.find(x=>x.id===row.dataset.series);if(s)pushLevel('new52Series',s.title,{series:s});}));}
+  };
+}
+async function levelNew52ReadingPathList() {
+  const rows=new52ReadingPaths.map((p,idx)=>`<div class="cx-row" data-n52-path="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(p.title)}</div><div class="cx-row-sub">${esc(p.sub)} · ${p.eventIds.length} crossover/event stops</div></div><div class="cx-row-chevron">›</div></div>`).join('');
+  return {html:`<div class="cx-kicker">NEW 52 · READING PATHS</div><h2 class="cx-title">Read the New 52 your way</h2><p class="cx-subtitle">These paths are generated from the same lanes, series and crossover spine used by Story Map. They never create a second issue catalogue.</p><div class="cx-list">${rows}</div>`,wire(container){container.querySelectorAll('[data-n52-path]').forEach(row=>row.addEventListener('click',()=>{const p=new52ReadingPaths[+row.dataset.n52Path];pushLevel('new52ReadingPath',p.title,{path:p});}));}};
+}
+async function levelNew52ReadingPath(params) {
+  const p=params.path;
+  const series=p.laneIds.flatMap(id=>new52Series.filter(s=>s.lane===id));
+  const events=p.eventIds.map(id=>crossoverSpine.find(e=>e.id===id)).filter(Boolean);
+  return {html:`<div class="cx-kicker">NEW 52 · READING PATH</div><h2 class="cx-title">${esc(p.title)}</h2><p class="cx-subtitle">${esc(p.sub)}</p><div class="sheet-section"><div class="sheet-label">PUBLICATION LANES</div>${series.length?`<div class="cx-list">${series.map(s=>new52SeriesRow(s)).join('')}</div>`:emptyHtml('This path is event-only; follow the crossover spine below.')}</div><div class="sheet-section"><div class="sheet-label">CROSSOVER SPINE</div><div class="cx-list">${events.map((e,i)=>`<div class="cx-row" data-n52-event="${esc(e.id)}"><div class="cx-row-body"><div class="cx-row-title">${i+1}. ${esc(e.title)}</div><div class="cx-row-sub">${esc(e.issues)}</div></div><div class="cx-row-chevron">›</div></div>`).join('')}</div></div>`,wire(container){container.querySelectorAll('[data-series]').forEach(row=>row.addEventListener('click',()=>{const s=[...new52Series,...new52Limited].find(x=>x.id===row.dataset.series);if(s)pushLevel('new52Series',s.title,{series:s});}));container.querySelectorAll('[data-n52-event]').forEach(row=>row.addEventListener('click',()=>{const e=crossoverSpine.find(x=>x.id===row.dataset.n52Event);if(e)pushLevel('new52Event',e.title,{event:e});}));}};
+}
+async function levelNew52Event(params) {
+  const e=params.event;
+  return {html:`<div class="cx-kicker">NEW 52 · CROSSOVER</div><h2 class="cx-title">${esc(e.title)}</h2><p class="cx-subtitle">${esc(e.issues)}</p><div class="cx-fact-list"><div class="cx-fact"><span>Connected lanes</span><span>${(e.lanes||[]).join(' · ')}</span></div></div><div class="sheet-section"><div class="sheet-label">MAP CONNECTION</div><div class="sheet-body">This event remains a bridge between the individual publication runs. The series themselves stay separate in the New 52 map.</div></div>`};
+}
+async function levelNew52Series(params) {
+  const d=params.series;
+  const cols=d.collections||[];
+  const formatOrder=['Trade Paperback','Hardcover','Omnibus','Deluxe / Absolute'];
+  const formatKey=raw=>{const f=String(raw||'').toLowerCase();if(/trade|paperback|softcover/.test(f))return 'Trade Paperback';if(/hardcover/.test(f))return 'Hardcover';if(/omnibus/.test(f))return 'Omnibus';if(/deluxe|absolute/.test(f))return 'Deluxe / Absolute';return null;};
+  const formats=[...new Set(cols.map(c=>formatKey(c.format)).filter(Boolean))].sort((a,b)=>formatOrder.indexOf(a)-formatOrder.indexOf(b));
+  const editionRows=f=>cols.filter(c=>formatKey(c.format)===f);
+  const formatNav=formats.length>1?`<div class="cx-tabs cx-n52-format-tabs">${formats.map((f,i)=>`<button class="cx-tab" data-n52-format="${esc(f)}" aria-selected="${i===0}">${esc(f)}</button>`).join('')}</div>`:'';
+  const issueRows=(d.issues||[]).map(x=>`<span class="cx-chip">#${esc(x)}</span>`).join('');
+  const html=`<div class="cx-kicker">NEW 52 · SERIES</div><h2 class="cx-title">${esc(d.title)}</h2><p class="cx-subtitle">${esc(d.notes||d.kind||'Publication run')} · ${esc(new52IssueRange(d))}</p><div class="cx-fact-list"><div class="cx-fact"><span>Lane</span><span>${esc((new52Era.mainLanes.find(l=>l.id===d.lane)||new52Era.alternateLanes.find(l=>l.id===d.lane)||{}).title||d.lane)}</span></div><div class="cx-fact"><span>Issues mapped</span><span>${d.issues?.length||0}</span></div><div class="cx-fact"><span>Collected formats</span><span>${formats.length?formats.join(' · '):'No verified edition record yet'}</span></div></div><div class="sheet-section"><div class="sheet-label">ISSUE RUN</div><div class="cx-chip-row cx-n52-issue-grid">${issueRows}</div></div><div class="sheet-section"><div class="sheet-label">COLLECTED EDITIONS</div>${formats.length?`${formatNav}<div id="cxN52FormatPanel" class="cx-compare-list"></div>`:`<div class="cx-empty">No verified collected-edition record is entered for this publication yet. The issue run remains fully visible above; no format is invented.</div>`}</div>`;
+  return {html,wire(container){
+    const paint=f=>{const panel=container.querySelector('#cxN52FormatPanel');if(!panel)return;panel.innerHTML=editionRows(f).map(c=>`<article class="cx-compare-card"><div class="cx-compare-format">${esc(c.format)}</div><div class="cx-row-title">${esc(c.title)}</div><div class="cx-row-sub">${esc(c.coverage)}</div>${c.notes?`<div class="cx-hint">${esc(c.notes)}</div>`:''}</article>`).join('')||`<div class="cx-empty">No verified ${esc(f)} edition is entered for this series.</div>`;container.querySelectorAll('[data-n52-format]').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.n52Format===f)));};
+    if(formats.length) paint(formats[0]);
+    container.querySelectorAll('[data-n52-format]').forEach(t=>t.addEventListener('click',()=>paint(t.dataset.n52Format)));
+  }};
+}
+
+async function levelCharacterList_UNUSED() {
   const [chars, series] = await Promise.all([data.getAllCharacters(), data.getAllSeries()]);
   const curated = data.curateCharacters(chars, series).sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
   if (!curated.length) return { html: emptyHtml("No characters with their own comic catalogue have been added yet.") };
@@ -391,7 +511,7 @@ async function levelCharacterList() {
  * everywhere else paths are listed). Selecting one opens the existing
  * levelReadingPath detail — no separate reading-path UI.
  */
-async function levelReadingPathList() {
+async function levelReadingPathList_UNUSED() {
   const paths = sortPathsByType(await data.getAllReadingPaths(30));
   if (!paths.length) return { html: emptyHtml("No reading paths have been added yet.") };
   const rows = paths.map((p, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(p.title)}</div><div class="cx-row-sub">${esc(pathTypeLabel(p.pathType))} · ${pathEntryCount(p)} step${pathEntryCount(p) === 1 ? "" : "s"}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
@@ -452,7 +572,7 @@ async function levelCharacter(params) {
   };
 }
 
-async function levelContinuityList() {
+async function levelContinuityList_UNUSED() {
   const conts = await data.getAllContinuities();
   conts.sort((a, b) => String(a.startDate || "").localeCompare(String(b.startDate || "")));
   if (!conts.length) return { html: emptyHtml("No continuities have been added yet.") };
@@ -1372,11 +1492,20 @@ function displayLabelSafe(row) {
 
 const LEVELS = {
   root: levelRoot,
-  characterList: levelCharacterList,
+  characterList: levelNew52CharacterList,
   character: levelCharacter,
-  continuityList: levelContinuityList,
-  continuity: levelContinuity,
+  continuityList: levelNew52ContinuityList,
+  continuity: levelNew52Continuity,
   seriesList: levelSeriesList,
+  new52CharacterList: levelNew52CharacterList,
+  new52Character: levelNew52Character,
+  new52ContinuityList: levelNew52ContinuityList,
+  new52Continuity: levelNew52Continuity,
+  new52Lane: levelNew52Lane,
+  new52Series: levelNew52Series,
+  new52ReadingPathList: levelNew52ReadingPathList,
+  new52ReadingPath: levelNew52ReadingPath,
+  new52Event: levelNew52Event,
   series: levelSeries,
   run: levelRun,
   story: levelStory,

@@ -216,7 +216,10 @@ function renderSeriesDetail(d){
       ? rows.map(c=>`<article class="sm-publication-card"><div class="sm-publication-title">${esc(c.title)}</div><span class="sm-publication-format">${esc(c.format)}</span><div class="sm-publication-coverage">${esc(c.coverage)}</div>${c.notes?`<div class="sm-publication-note">${esc(c.notes)}</div>`:''}</article>`).join('')
       : `<div class="sm-format-empty">No verified ${esc(f)} edition is entered for this series.</div>`;
   };
-  if(available.length) paint(available[0]);
+  if(available.length){
+    paint(available[0]);
+    detail.querySelectorAll('[data-sf]').forEach(tab=>tab.onclick=()=>paint(tab.dataset.sf));
+  }
 }
 function renderEventDetail(d){
   const editions=d.editions||[];

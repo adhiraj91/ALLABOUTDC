@@ -341,6 +341,48 @@ export const eras = [
 
 export function getSeriesForLane(laneId) { return new52Series.filter(s => s.lane === laneId); }
 export function getLane(laneId) { return lanes.find(l => l.id === laneId) || null; }
+
+
+/* -------------------------------------------------------------------------
+ * NEW 52 EXPLORE INDEX
+ * -------------------------------------------------------------------------
+ * The Comics landing, Character browser, Continuity/Era browser and Reading
+ * Paths use this same research dataset as the Story Map.  These are curated
+ * navigation indexes, not a second copy of issue/edition data: every series
+ * entry resolves back to new52Series/new52Limited above.
+ */
+export const new52CharacterIndex = [
+  {id:'batman', title:'Batman', sub:'Batman, Gotham and the Bat-family', seriesIds:['batman','detective-comics','batman-and-robin','batman-dark-knight','batman-incorporated','batman-eternal','nightwing','grayson','batgirl','batwoman','catwoman','red-hood-outlaws','birds-of-prey','batwing','talon','gotham-academy','arkham-manor','harley-quinn']},
+  {id:'superman', title:'Superman', sub:'Superman Family and the Kryptonian line', seriesIds:['action-comics','superman','supergirl','superboy','batman-superman','superman-wonder-woman','superman-unchained']},
+  {id:'justice-league', title:'Justice League', sub:'Core DC team books and universe spine', seriesIds:['justice-league','justice-league-of-america','justice-league-international','justice-league-united','justice-league-of-americas-vibe','aquaman','aquaman-and-the-others','the-flash','green-arrow','wonder-woman','captain-atom','mister-terrific','savage-hawkman','dc-universe-presents']},
+  {id:'green-lantern', title:'Green Lantern', sub:'Lantern Corps and emotional-spectrum books', seriesIds:['green-lantern','green-lantern-corps','green-lantern-new-guardians','red-lanterns','larfleeze','sinestro']},
+  {id:'flash', title:'The Flash', sub:'Barry Allen and Flash-connected events', seriesIds:['the-flash']},
+  {id:'aquaman', title:'Aquaman', sub:'Aquaman and the Others', seriesIds:['aquaman','aquaman-and-the-others']},
+  {id:'wonder-woman', title:'Wonder Woman', sub:'Diana and the Wonder Woman line', seriesIds:['wonder-woman']},
+  {id:'green-arrow', title:'Green Arrow', sub:'Oliver Queen and the Justice League orbit', seriesIds:['green-arrow']},
+  {id:'teen-titans', title:'Teen Titans', sub:'Titans, young heroes and connected teams', seriesIds:['teen-titans-v4','teen-titans-v5','blue-beetle','hawk-dove','ravagers']},
+  {id:'legion', title:'Legion of Super-Heroes', sub:'Legion and far-future branches', seriesIds:['legion-lost','legion-of-super-heroes','justice-league-3000']},
+  {id:'swamp-thing', title:'Swamp Thing', sub:'The Green, Rotworld and the supernatural line', seriesIds:['swamp-thing','animal-man','justice-league-dark','gotham-by-midnight']},
+  {id:'suicide-squad', title:'Suicide Squad', sub:'Task Force X and government/black-ops books', seriesIds:['suicide-squad','new-suicide-squad','team-7','stormwatch']},
+  {id:'harley-quinn', title:'Harley Quinn', sub:'Harley’s New 52 launch and Gotham orbit', seriesIds:['harley-quinn']},
+  {id:'deathstroke', title:'Deathstroke', sub:'Slade Wilson and the Edge line', seriesIds:['deathstroke-v2','deathstroke-v3']},
+  {id:'supernatural', title:'Dark / Supernatural', sub:'Occult and horror books across the New 52', seriesIds:['justice-league-dark','animal-man','demon-knights','dial-h','constantine','frankenstein-agent-shade','i-vampire','klarion','resurrection-man','swamp-thing','sword-of-sorcery','trinity-of-sin','trinity-of-sin-pandora','trinity-of-sin-phantom-stranger']},
+];
+
+export const new52ReadingPaths = [
+  {id:'new52-core',title:'New 52 Core Universe',type:'essential',sub:'The central Earth-0 books and major connective events.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
+  {id:'new52-batman',title:'Batman / Gotham',type:'main_series',sub:'Batman and the parallel Gotham-family series kept as separate publications.',laneIds:['batman'],eventIds:['court-owls','death-family','robin-rises','endgame']},
+  {id:'new52-superman',title:'Superman Family',type:'main_series',sub:'The Superman-family line plus its major crossover spine.',laneIds:['superman'],eventIds:['hel-earth','krypton-returns','doomed']},
+  {id:'new52-lantern',title:'Green Lantern / Corps',type:'main_series',sub:'The Lantern books and the major Corps-wide events.',laneIds:['lantern'],eventIds:['rise-third-army','wrath-first-lantern','lights-out','red-daughter','uprising','godhead']},
+  {id:'new52-dark',title:'Dark / Supernatural',type:'main_series',sub:'The supernatural line and its crossovers.',laneIds:['dark'],eventIds:['rotworld','trinity-war','blight']},
+  {id:'new52-complete',title:'New 52 Crossover Spine',type:'event_crossover',sub:'The major events that connect the individual publication lanes.',laneIds:[],eventIds:['court-owls','death-family','throne-atlantis','rotworld','hel-earth','rise-third-army','wrath-first-lantern','lights-out','trinity-war','forever-evil','blight','krypton-returns','doomed','red-daughter','uprising','futures-end','godhead','robin-rises','endgame','darkseid-war','multiversity','convergence']},
+];
+
+export function getNew52SeriesByIds(ids=[]) {
+  const wanted = new Set(ids);
+  return [...new52Series, ...new52Limited].filter(s => wanted.has(s.id));
+}
+
 export function getSeries(id) { return new52Series.find(s => s.id === id) || null; }
 export function auditNew52() {
   const ids = new Set();
