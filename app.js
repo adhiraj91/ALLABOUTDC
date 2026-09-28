@@ -962,11 +962,9 @@ function buildTabs(){
       resetFiltersForTabSwitch();
       if(next === "comics"){
         state.atlasReturnCat = previous === "comics" ? "home" : previous;
-        render();
-        openComicsAtlas("universe");
-      } else {
-        render();
+        state.comicsView = "atlas";
       }
+      render();
     });
   });
 }
@@ -1504,6 +1502,8 @@ function renderGenericCards(){
 
 function setComicsAtlasChrome(active){
   document.body.classList.toggle("comics-atlas-active", !!active);
+  const siteHeader = document.querySelector("body > header");
+  if(siteHeader) siteHeader.style.display = active ? "none" : "";
   if(filterRow) filterRow.style.display = active ? "none" : "";
   if(chipRow) chipRow.style.display = active ? "none" : "";
   if(countEl) countEl.style.display = active ? "none" : "";
@@ -1518,12 +1518,15 @@ function setComicsAtlasChrome(active){
 function renderComicsAtlasHome(){
   setComicsAtlasChrome(true);
   countEl.textContent = "";
+  // The Comics home is a real page inside the app. The Story Map is a secondary
+  // exploration mode, not the Comics landing screen.
+  if(window.__comicsStoryMap?.isOpen?.()) window.__comicsStoryMap.close();
   const sm = window.__comicsStoryMap;
   if(sm && typeof sm.renderHomePage === "function"){
     sm.renderHomePage(gridEl);
     return;
   }
-  gridEl.innerHTML = `<div class="comics-atlas-loading-page"><div class="atlas-spinner"></div><b>DC UNIVERSE ATLAS</b><span>Loading the universe…</span></div>`;
+  gridEl.innerHTML = `<div class="comics-atlas-loading-page"><div class="atlas-spinner"></div><b>DC UNIVERSE</b><span>Loading the Comics Universe…</span></div>`;
 }
 
 function renderCards(){
@@ -1556,6 +1559,11 @@ function renderComicsLanding(){
   });
 }
 document.addEventListener("comicsv2:landing-ready", ()=>{ if(loaded && isComicsLanding()){ buildFilters(); renderCards(); } });
+// The Comics atlas module loads independently; if a deep link opens #comics before
+// storymap.js has finished, render the real Comics home as soon as the module arrives.
+document.addEventListener("comicsv2:storymap-ready", ()=>{
+  if(loaded && state.cat==="comics" && state.comicsView!=="browse") renderComicsAtlasHome();
+});
 
 /* ============================= RENDER: HOME ============================= */
 function stripCardHtml(cat, d){
@@ -1967,13 +1975,8 @@ function renderJourney(opts){
 
 let lastRenderedView = "";
 function render(){
-  // Comics is the Atlas. Do not render the old search/filter catalogue underneath it.
-  // The flat catalogue remains available only when the user explicitly chooses Browse Catalogue.
-  if(state.cat === "comics" && state.comicsView !== "browse"){
-    openComicsAtlas("universe");
-    lastRenderedView = "comics:atlas";
-    return;
-  }
+  // Comics has its own full-screen information architecture. It is rendered in
+  // the normal app container; the interactive Story Map is only a secondary view.
   buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); syncHistoryForTab();
   const view = state.cat + (isComicsLanding() ? ":landing" : "");
   if(view==="comics:landing") window.scrollTo(0,0);
