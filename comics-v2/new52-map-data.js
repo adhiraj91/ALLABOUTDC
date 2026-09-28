@@ -581,6 +581,43 @@ export const new52CharacterIndex = [
   {id:'supernatural', title:'Dark / Supernatural', sub:'Occult and horror books across the New 52', seriesIds:['justice-league-dark','animal-man','demon-knights','dial-h','constantine','frankenstein-agent-shade','i-vampire','klarion','resurrection-man','swamp-thing','sword-of-sorcery','trinity-of-sin','trinity-of-sin-pandora','trinity-of-sin-phantom-stranger']},
 ];
 
+
+
+/* -------------------------------------------------------------------------
+ * CHARACTER HUBS — presentation index only; series/issues/editions stay in
+ * new52Series/new52Limited above. A hub is a navigation lens, not a second
+ * catalogue. Flagship characters are individual destinations; supporting
+ * characters are grouped into the logical family/team they belong to.
+ * ------------------------------------------------------------------------- */
+const n52Ids = ids => ids.filter(Boolean);
+export const new52CharacterHubs = [
+  {id:'batman',type:'hero',title:'Batman',sub:'The flagship Gotham line and its core Batman publications.',seriesIds:n52Ids(['batman','detective-comics','batman-and-robin','batman-dark-knight','batman-incorporated','batman-eternal'])},
+  {id:'superman',type:'hero',title:'Superman',sub:'The core Superman line, including the major cross-family books.',seriesIds:n52Ids(['action-comics','superman','batman-superman','superman-wonder-woman','superman-unchained','superboy'])},
+  {id:'wonder-woman',type:'hero',title:'Wonder Woman',sub:'Diana’s New 52 solo run.',seriesIds:['wonder-woman']},
+  {id:'flash',type:'hero',title:'The Flash',sub:'Barry Allen’s New 52 run and Flash-connected material.',seriesIds:['the-flash']},
+  {id:'green-lantern',type:'hero',title:'Green Lantern',sub:'The Lantern flagship plus the Corps and emotional-spectrum family.',seriesIds:['green-lantern','green-lantern-corps','green-lantern-new-guardians','red-lanterns','larfleeze','sinestro']},
+  {id:'aquaman',type:'hero',title:'Aquaman',sub:'Arthur Curry and the connected Others line.',seriesIds:['aquaman','aquaman-and-the-others']},
+  {id:'green-arrow',type:'hero',title:'Green Arrow',sub:'Oliver Queen’s New 52 solo run.',seriesIds:['green-arrow']},
+  {id:'supergirl',type:'hero',title:'Supergirl',sub:'Kara Zor-El’s standalone New 52 line — kept separate from Superman.',seriesIds:['supergirl']},
+  {id:'harley-quinn',type:'hero',title:'Harley Quinn',sub:'Harley’s New 52 breakout solo line and specials.',seriesIds:['harley-quinn']},
+  {id:'swamp-thing',type:'hero',title:'Swamp Thing',sub:'Alec Holland, the Green and the Rotworld branch.',seriesIds:['swamp-thing']},
+  {id:'constantine',type:'hero',title:'Constantine',sub:'John Constantine’s New 52 solo line and supernatural crossover orbit.',seriesIds:['constantine']},
+  {id:'deathstroke',type:'hero',title:'Deathstroke',sub:'Slade Wilson’s New 52 runs.',seriesIds:['deathstroke-v2','deathstroke-v3']},
+  {id:'blue-beetle',type:'hero',title:'Blue Beetle',sub:'Jaime Reyes’ New 52 solo run.',seriesIds:['blue-beetle']},
+  {id:'bat-family',type:'group',title:'Bat-Family',sub:'The rest of Gotham’s major standalone publications, kept together without merging their runs.',seriesIds:['nightwing','grayson','batgirl','batwoman','catwoman','red-hood-outlaws','birds-of-prey','batwing','talon','gotham-academy','arkham-manor','gotham-by-midnight','damian-son-of-batman','penguin-pain-prejudice']},
+  {id:'superman-family',type:'group',title:'Superman Family',sub:'Supporting Kryptonian and Superman-adjacent books, excluding Superman and Supergirl themselves.',seriesIds:['superboy','batman-superman','superman-wonder-woman','superman-unchained','action-comics']},
+  {id:'justice-league',type:'group',title:'Justice League & Core Teams',sub:'League books and the central shared-universe team network.',seriesIds:['justice-league','justice-league-of-america','justice-league-international','justice-league-united','justice-league-of-americas-vibe','katana','fury-of-firestorm','mister-terrific','savage-hawkman','dc-universe-presents']},
+  {id:'lantern-corps',type:'group',title:'Lantern Corps & Spectrum',sub:'Corps, emotional-spectrum and Lantern-adjacent publications.',seriesIds:['green-lantern-corps','green-lantern-new-guardians','red-lanterns','larfleeze','sinestro','threshold']},
+  {id:'titans-young-heroes',type:'group',title:'Titans & Young Heroes',sub:'Teen Titans, Legion, Blue Beetle, Hawk & Dove and the younger-hero branch.',seriesIds:['teen-titans-v4','teen-titans-v5','legion-lost','legion-of-super-heroes','blue-beetle','hawk-dove','static-shock','ravagers','legion-secret-origin']},
+  {id:'dark-supernatural',type:'group',title:'Dark & Supernatural',sub:'Justice League Dark, horror, magic, the Green and occult books.',seriesIds:['justice-league-dark','animal-man','demon-knights','dial-h','frankenstein-agent-shade','i-vampire','klarion','resurrection-man','sword-of-sorcery','trinity-of-sin','trinity-of-sin-pandora','trinity-of-sin-phantom-stranger','night-force','my-greatest-adventure','the-shade']},
+  {id:'suicide-squad-government',type:'group',title:'Suicide Squad & Government',sub:'Task Force X, black-ops, government and covert-team books.',seriesIds:['suicide-squad','new-suicide-squad','team-7','stormwatch','the-movement','green-team']},
+  {id:'cosmic-edge',type:'group',title:'Cosmic, Edge & WildStorm',sub:'Fourth World, war, science-fiction and WildStorm-integrated publications.',seriesIds:['all-star-western','blackhawks','deathstroke-v2','deathstroke-v3','gi-combat','grifter','infinity-man-forever-people','lobo','men-of-war','omac','star-spangled-war-stories','voodoo','human-bomb','phantom-lady-doll-man','the-ray']},
+  {id:'multiverse',type:'group',title:'Alternate Earths & Multiverse',sub:'Earth-2, Worlds’ Finest, Multiversity and parallel-world material.',seriesIds:['earth-2','worlds-finest','huntress','the-multiversity','earth2-worlds-end','convergence']},
+  {id:'future-bridge',type:'group',title:'Future & Continuation',sub:'Futures End and the late New 52 / DC You bridge toward Rebirth.',seriesIds:['futures-end','justice-league-3000','batman-robin-eternal','batman-beyond-v5','prez-v2','justice-league-3001']},
+];
+
+export function getNew52CharacterHub(id) { return new52CharacterHubs.find(x => x.id === id) || null; }
+
 export const new52ReadingPaths = [
   {id:'new52-core',title:'New 52 Core Universe',type:'essential',sub:'The central Earth-0 books and major connective events.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
   {id:'new52-batman',title:'Batman / Gotham',type:'main_series',sub:'Batman and the parallel Gotham-family series kept as separate publications.',laneIds:['batman'],eventIds:['court-owls','death-family','robin-rises','endgame']},

@@ -56,14 +56,14 @@ function heroHtml() {
 // directly at the relevant level, or (Story Map) the Story Map itself — every
 // button below is the ONLY way this page links to that destination.
 const EXPLORE_ENTRIES = [
-  { key: "character", label: "By Character", sub: `${new52CharacterIndex.length} New 52 character lines · same series/issues as the Story Map.` },
-  { key: "era", label: "By Continuity / Era", sub: `The DC era spine, with the researched ${new52Era.title} layer linked directly to its lanes.` },
-  { key: "storymap", label: "Story Map", sub: "Explore DC eras, transitions, continuities and reading lanes." },
-  { key: "paths", label: "Reading Paths", sub: `${new52ReadingPaths.length} New 52 paths built from the same lanes and crossover spine.` },
+  { key: "character", label: "By Character", sub: `${new52CharacterIndex.length} character lines · flagship heroes + logical family/team groups.` },
+  { key: "era", label: "By Continuity / Era", sub: `The same chronological spine used by Story Map, with The New 52 as the researched world.` },
+  { key: "storymap", label: "Story Map", sub: "Enter the immersive DC atlas: eras, worlds, lanes, events and runs." },
+  { key: "paths", label: "Reading Paths", sub: `${new52ReadingPaths.length} routes built from the same New 52 lanes and crossover spine.` },
 ];
 function exploreGridHtml() {
   const tiles = EXPLORE_ENTRIES.map(e => `
-    <button class="cl-explore-tile" data-explore="${e.key}" ${e.key === "storymap" ? 'id="clOpenMapBtn" disabled' : ""}>
+    <button class="cl-explore-tile" data-explore="${e.key}">
       <span class="cl-explore-label">${esc(e.label)}</span>
       <span class="cl-explore-sub">${esc(e.sub)}</span>
     </button>`).join("");
@@ -113,12 +113,7 @@ export function renderComicsLanding(container, hooks = {}) {
   showContinueCard(container.querySelector("#clContinue"));
   loadLandingData().then(d => {
     if (my !== renderSeq || !container.isConnected) return;
-    const btn = container.querySelector("#clOpenMapBtn");
-    if (!btn) return;
-    // Story Map is now a static, research-first DC Universe map. It no longer
-    // depends on a Firestore universe record existing before the map can open.
-    btn.disabled = false;
-    btn.dataset.universeId = "dc-universe";
+
   });
 }
 
@@ -134,11 +129,13 @@ function onLandingClick(e) {
       if (sm) sm.open();
       return;
     }
-    const ex = window.__comicsExplorer;
-    if (!ex || !ex.openAt) return;
-    if (key === "character") ex.openAt([{ level: "new52CharacterList", label: "New 52 · Characters", params: {} }]);
-    else if (key === "era") ex.openAt([{ level: "new52ContinuityList", label: "Continuity / Era", params: {} }]);
-    else if (key === "paths") ex.openAt([{ level: "new52ReadingPathList", label: "New 52 · Reading Paths", params: {} }]);
+    const sm = window.__comicsStoryMap;
+    if (sm) {
+      if (key === "character") sm.open("characters");
+      else if (key === "era") sm.open("continuity");
+      else if (key === "paths") sm.open("paths");
+      else if (key === "storymap") sm.open("universe");
+    }
     return;
   }
   if (e.target.closest("#comicsBrowseAllBtn, [data-browse-all]")) { if (hooks.onBrowseAll) hooks.onBrowseAll(); return; }
