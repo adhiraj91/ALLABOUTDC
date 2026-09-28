@@ -216,6 +216,16 @@ export const getCollectionEdition = (id) => getEntity(COLLECTIONS.COLLECTIONS, i
  * exists: Firestore array-contains can't match a field *inside* an array of
  * objects).
  */
+/** Collections/editions whose canonical coverage includes a given series. */
+export async function getAllCollections(max=200) {
+  return docsOf(await getDocs(query(collection(db, COLLECTIONS.COLLECTIONS), fsLimit(max))));
+}
+
+export async function getCollectionsForSeries(seriesId, max=100) {
+  const q = query(collection(db, COLLECTIONS.COLLECTIONS), where("seriesIds", "array-contains", seriesId), fsLimit(max));
+  return docsOf(await getDocs(q));
+}
+
 export async function getCollectionsContainingIssue(issueId) {
   const q = query(collection(db, COLLECTIONS.COLLECTIONS), where("issueIdsCovered", "array-contains", issueId));
   return docsOf(await getDocs(q));

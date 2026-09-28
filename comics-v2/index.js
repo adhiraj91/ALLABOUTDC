@@ -1,113 +1,89 @@
 // ============================================================================
-// comics-v2 / index.js
-// ----------------------------------------------------------------------------
-// Barrel export for the new Comics domain model (Phase 1 — foundation only).
-//
-// This file is loaded by index.html as an independent <script type="module">
-// alongside app.js. It does NOT touch app.js, does NOT render any UI, and
-// does NOT run any Firestore writes on its own. Loading it does exactly one
-// thing automatically: attaches `window.__comicsV2` so a developer/admin can
-// verify the foundation from the browser console, e.g.:
-//
-//   await __comicsV2.selfTest()
-//
-// Nothing here executes on page load beyond that assignment — no reads, no
-// writes, no visible change to the site.
+// comics-v2 / index.js — Batman New 52 clean rebuild
 // ============================================================================
 import * as schema from "./schema.js";
 import * as slug from "./slug.js";
 import * as data from "./data.js";
-import { COLLECTIONS } from "./schema.js";
-import { collectionIsReachable, upsertEntity, upsertCollectionEdition } from "./data.js";
-import { dataset as batmanNew52Dataset, validateDataset as validateBatmanNew52, importDataset as importBatmanNew52Dataset } from "./seed-batman-new52.js";
-import { collectionAdditions as batmanNew52CollectionAdditions, validateCollectionAdditions as validateBatmanNew52CollectionAdditions, importCollectionAdditions as importBatmanNew52CollectionAdditions } from "./seed-batman-new52-collections.js";
+import { db } from "../firebase-config.js";
+import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js";
 
-/* ---------------------------------------------------------------------------
-   Foundation self-test — the "minimal developer utility necessary to verify
-   it works" (Step 20). Three parts, none of which write anything:
-     1. ID builders round-trip against the exact example IDs from the spec.
-     2. Every default-shape factory produces an object its own validator
-        accepts.
-     3. Each new collection is reachable with a 1-doc, read-only probe (they
-        will legitimately come back empty — Phase 1 populates no real data).
---------------------------------------------------------------------------- */
-export async function selfTest() {
-  const results = [];
-  const record = (name, pass, detail) => results.push({ name, pass, detail: detail || "" });
+export const COLLECTIONS = schema.COLLECTIONS;
 
-  // ---- 1. ID builders ----
-  const idChecks = [
-    ["buildSeriesId",       slug.buildSeriesId("Batman", 2011),                          "batman-2011"],
-    ["buildRunId",          slug.buildRunId("batman-2011", "Snyder / Capullo"),           "batman-2011-snyder-capullo"],
-    ["buildStoryId",        slug.buildStoryId("batman-2011", "Court of Owls"),            "batman-2011-court-of-owls"],
-    ["buildIssueId (plain)",slug.buildIssueId("batman-2011", "1"),                        "batman-2011-001"],
-    ["buildIssueId (dec.)", slug.buildIssueId("batman-2011", "23.1"),                     "batman-2011-23-1"],
-    ["buildIssueId (label)",slug.buildIssueId("batman-2011", "Annual"),                   "batman-2011-annual"],
-    ["buildCollectionId",   slug.buildCollectionId("Batman Vol. 1: Court of Owls"),        "batman-vol-1-court-of-owls"],
-  ];
-  idChecks.forEach(([name, got, want]) => record(`id: ${name}`, got === want, `got "${got}", want "${want}"`));
+const V2_COLLECTIONS = [
+  COLLECTIONS.UNIVERSES,
+  COLLECTIONS.CONTINUITIES,
+  COLLECTIONS.CHARACTERS,
+  COLLECTIONS.SERIES,
+  COLLECTIONS.RUNS,
+  COLLECTIONS.STORIES,
+  COLLECTIONS.ISSUES,
+  COLLECTIONS.COLLECTIONS,
+  COLLECTIONS.CREATORS,
+  COLLECTIONS.RELATIONSHIPS,
+  COLLECTIONS.READING_PATHS,
+];
 
-  // ---- 2. Shape factories vs. their own validators ----
-  const shapeChecks = [
-    ["Universe",   schema.makeUniverse({ id: "test-universe", name: "Test Universe" }), schema.validateUniverse],
-    ["Continuity", schema.makeContinuity({ id: "test-cont", name: "Test Continuity" }), schema.validateContinuity],
-    ["Character",  schema.makeCharacter({ id: "test-char", name: "Test Character" }), schema.validateCharacter],
-    ["Series",     schema.makeSeries({ id: "test-series", title: "Test Series" }), schema.validateSeries],
-    ["Run",        schema.makeRun({ id: "test-run", seriesId: "test-series" }), schema.validateRun],
-    ["Story",      schema.makeStory({ id: "test-story", title: "Test Story" }), schema.validateStory],
-    ["Issue",      schema.makeIssue({ id: "test-issue", seriesId: "test-series", issueNumber: "1" }), schema.validateIssue],
-    ["Collection", schema.makeCollection({ id: "test-collection", title: "Test Collection", issueCoverage: [{ issueId: "test-issue", coveragePart: "complete" }] }), schema.validateCollection],
-    ["Creator",    schema.makeCreator({ id: "test-creator", name: "Test Creator" }), schema.validateCreator],
-    ["Relationship", schema.makeRelationship({ id: "test-rel", sourceId: "a", sourceType: "story", relationshipType: "sequel_to", targetId: "b", targetType: "story" }), schema.validateRelationship],
-    ["ReadingPath", schema.makeReadingPath({ id: "test-path", pathType: "essential", title: "Test Path", entries: [{ order: 1, entityType: "issue", entityId: "test-issue" }] }), schema.validateReadingPath],
-  ];
-  shapeChecks.forEach(([name, obj, validate]) => {
-    const { valid, errors } = validate(obj);
-    record(`shape: ${name}`, valid, valid ? "" : errors.join("; "));
-  });
+// The old flat catalogue is deliberately cleared too. The new Batman dataset is
+// the only Comics source of truth after this operation.
+const LEGACY_COMICS_COLLECTION = "comics";
 
-  // ---- 3. Collections reachable (read-only, empty is fine) ----
-  for (const name of Object.values(COLLECTIONS)) {
-    const ok = await collectionIsReachable(name);
-    record(`collection reachable: ${name}`, ok);
+async function deleteAllDocs(collectionName, progress) {
+  const snap = await getDocs(collection(db, collectionName));
+  const docs = snap.docs;
+  let deleted = 0;
+  const chunkSize = 40;
+  for (let i = 0; i < docs.length; i += chunkSize) {
+    const chunk = docs.slice(i, i + chunkSize);
+    await Promise.all(chunk.map(d => deleteDoc(doc(db, collectionName, d.id))));
+    deleted += chunk.length;
+    if (progress) progress(collectionName, deleted, docs.length);
   }
-
-  const passed = results.filter(r => r.pass).length;
-  const failed = results.length - passed;
-  console.table(results.map(r => ({ check: r.name, pass: r.pass, detail: r.detail })));
-  console.log(`[comics-v2] self-test: ${passed} passed, ${failed} failed`);
-  return { passed, failed, results };
+  return deleted;
 }
 
-/* ---------------------------------------------------------------------------
-   PHASE 2 — New 52 Batman dataset (comics-v2/seed-batman-new52.js).
-   Read-only inspection (`batmanNew52.dataset`, `batmanNew52.validate()`) never
-   writes anything. The actual import is an explicit opt-in call
-   (`await __comicsV2.batmanNew52.import()`) so nothing is written just by
-   loading this module on every page load.
---------------------------------------------------------------------------- */
-const batmanNew52 = {
-  dataset: batmanNew52Dataset,
-  validate: validateBatmanNew52,
-  import: () => importBatmanNew52Dataset({ upsertEntity, upsertCollectionEdition, COLLECTIONS }),
-};
+export async function clearAllComicsData(progress) {
+  const written = {};
+  for (const name of [...V2_COLLECTIONS, LEGACY_COMICS_COLLECTION]) {
+    written[name] = await deleteAllDocs(name, progress);
+  }
+  return written;
+}
 
-/* ---------------------------------------------------------------------------
-   POINTER 5 — Batman New 52 collection RESEARCH ADDITIONS
-   (comics-v2/seed-batman-new52-collections.js).
-   Same opt-in shape as batmanNew52 above: read-only inspection
-   (`batmanNew52Collections.additions` / `.validate()`) never writes anything.
-   NOT auto-imported anywhere in this file or in any UI button — importing is
-   a deliberate, explicit console call (`await __comicsV2.batmanNew52Collections.import()`)
-   a human runs only after reviewing the additions (5 new comicCollections
-   records — Zero Year x2, Endgame, Superheavy, Bloom — see the Pointer 5
-   final report for the full added/updated/sources breakdown). It never
-   touches or overwrites the seed-batman-new52.js dataset already imported.
---------------------------------------------------------------------------- */
-const batmanNew52Collections = {
-  additions: batmanNew52CollectionAdditions,
-  validate: validateBatmanNew52CollectionAdditions,
-  import: () => importBatmanNew52CollectionAdditions({ upsertCollectionEdition }),
-};
+export async function resetAndImportBatmanNew52(progress) {
+  const validation = validateDataset();
+  if (!validation.valid) return { validation, cleared: null, imported: null, errors: [] };
+  const cleared = await clearAllComicsData(progress);
+  // The reset has just deleted the target collections, so a direct set is both
+  // faster and deterministic; no read-before-write is needed.
+  const freshUpsert = async (collectionName, id, entity) => {
+    await setDoc(doc(db, collectionName, id), { ...entity, id, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: false });
+  };
+  const freshCollection = async (id, entity) => {
+    const issueCoverage = entity.issueCoverage || [];
+    await freshUpsert(COLLECTIONS.COLLECTIONS, id, { ...entity, issueCoverage, issueIdsCovered: issueCoverage.map(x => x.issueId).filter(Boolean) });
+  };
+  const imported = await importDataset({
+    upsertEntity: freshUpsert,
+    upsertCollectionEdition: freshCollection,
+    COLLECTIONS,
+  });
+  return { validation, cleared, imported, errors: imported.errors || [] };
+}
 
-window.__comicsV2 = { schema, slug, data, COLLECTIONS, selfTest, batmanNew52, batmanNew52Collections };
+// Developer inspection hooks. No writes occur merely by loading this module.
+window.__comicsV2 = {
+  schema,
+  slug,
+  data,
+  COLLECTIONS,
+  dataset,
+  validate: validateDataset,
+  batmanNew52: {
+    dataset,
+    validate: validateDataset,
+    import: resetAndImportBatmanNew52,
+    resetAndImport: resetAndImportBatmanNew52,
+    clearAll: clearAllComicsData,
+  },
+};

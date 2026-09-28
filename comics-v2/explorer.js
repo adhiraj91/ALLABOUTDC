@@ -335,24 +335,21 @@ function wireReadingPathChips(container, paths, anchorEntityId, contextLabel) {
 
 async function levelRoot() {
   const html = `
-    <div class="cx-kicker">COMICS</div>
-    <h2 class="cx-title">Explore the DC Universe</h2>
-    <p class="cx-subtitle">Explore the DC Universe through characters, continuities, series and stories.</p>
+    <div class="cx-kicker">BATMAN · THE NEW 52</div>
+    <h2 class="cx-title">Batman — The New 52</h2>
+    <p class="cx-subtitle">One canonical catalogue: core Batman, Bat-Family, Gotham spin-offs, team-ups, every publication unit and researched collected editions.</p>
     <div class="cx-entry-grid">
-      <button class="cx-entry-btn" data-nav="characterList"><span class="cx-entry-btn-label">Characters</span><span class="cx-entry-btn-sub">Start with a hero</span></button>
-      <button class="cx-entry-btn" data-nav="continuityList"><span class="cx-entry-btn-label">Continuities / Eras</span><span class="cx-entry-btn-sub">Start with an era</span></button>
-      <button class="cx-entry-btn" data-nav="seriesList"><span class="cx-entry-btn-label">Series</span><span class="cx-entry-btn-sub">Browse series directly</span></button>
-      <button class="cx-entry-btn" data-nav="readingPathList"><span class="cx-entry-btn-label">Reading Paths</span><span class="cx-entry-btn-sub">Follow a curated journey</span></button>
+      <button class="cx-entry-btn" data-nav="characterList"><span class="cx-entry-btn-label">Batman</span><span class="cx-entry-btn-sub">Open the Batman line</span></button>
+      <button class="cx-entry-btn" data-nav="seriesList"><span class="cx-entry-btn-label">Series Catalogue</span><span class="cx-entry-btn-sub">Every New 52 Batman-line series</span></button>
+    </div>
+    <div class="sheet-section">
+      <div class="sheet-label">DATA MODEL</div>
+      <div class="sheet-body">Series define the publication lines. Issues are the canonical publication units. Collected editions point back to those same issue records. There are no competing Essential / Complete / Expanded reading-path datasets.</div>
     </div>`;
-  return {
-    html,
-    wire(container) {
-      const labels = { characterList: "Characters", continuityList: "Continuities", seriesList: "Series", readingPathList: "Reading Paths" };
-      container.querySelectorAll("[data-nav]").forEach(btn => {
-        btn.addEventListener("click", () => pushLevel(btn.dataset.nav, labels[btn.dataset.nav], {}));
-      });
-    },
-  };
+  return { html, wire(container) {
+    const labels={characterList:"Batman",seriesList:"Series Catalogue"};
+    container.querySelectorAll("[data-nav]").forEach(btn=>btn.addEventListener("click",()=>pushLevel(btn.dataset.nav,labels[btn.dataset.nav],{})));
+  }};
 }
 
 /**
@@ -363,31 +360,11 @@ async function levelRoot() {
  * they just don't clutter this primary entry point.
  */
 async function levelCharacterList() {
-  const [chars, series] = await Promise.all([data.getAllCharacters(), data.getAllSeries()]);
-  const curated = data.curateCharacters(chars, series).sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
-  if (!curated.length) return { html: emptyHtml("No characters with their own comic catalogue have been added yet.") };
-  const rows = curated.map(c => {
-    const label = esc(c.displayName || c.name || "Unnamed");
-    const sub = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
-    return `<div class="cx-row" data-id="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${label}</div>${sub ? `<div class="cx-row-sub">${sub}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`;
-  }).join("");
-  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Choose a character</h2><p class="cx-subtitle">Characters with a meaningful standalone comics catalogue.</p><div class="cx-list">${rows}</div>`;
-  return {
-    html,
-    wire(container) {
-      container.querySelectorAll(".cx-row[data-id]").forEach(row => {
-        row.addEventListener("click", () => {
-          const c = curated.find(x => x.id === row.dataset.id);
-          // The character list already loaded the complete Series collection above.
-          // Pass the character's own series into the detail screen so it does not
-          // depend on a second filtered Firestore query (which can be denied by
-          // security rules even when the collection read itself is allowed).
-          const characterSeries = series.filter(s => s && Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
-          pushLevel("character", c.displayName || c.name, { character: c, characterSeries });
-        });
-      });
-    },
-  };
+  const chars = await data.getAllCharacters(50);
+  const batman = chars.find(c => String(c.displayName || c.name || "").toLowerCase() === "batman");
+  if (!batman) return { html: emptyHtml("Batman has not been seeded yet.") };
+  const html = `<div class="cx-kicker">CHARACTER</div><h2 class="cx-title">Batman</h2><p class="cx-subtitle">The Batman line is the entry point. Bat-Family books are grouped inside it instead of being mixed into the top-level character list.</p><div class="cx-list"><div class="cx-row" data-id="${esc(batman.id)}"><div class="cx-row-body"><div class="cx-row-title">Batman</div><div class="cx-row-sub">Core line · Bat-Family · Gotham spin-offs · team-ups</div></div><div class="cx-row-chevron">›</div></div></div>`;
+  return { html, wire(container){ container.querySelector("[data-id]")?.addEventListener("click",()=>pushLevel("character","Batman",{character:batman})); } };
 }
 
 /**
@@ -412,96 +389,29 @@ async function levelReadingPathList() {
 }
 
 async function levelCharacter(params) {
-  const c = params && params.character;
-  if (!c || !c.id) return { html: emptyHtml("Character data is incomplete.") };
-
-  // The Character Index already loaded the full Series collection. Reuse that
-  // exact in-memory data here. This makes the detail screen independent of a
-  // second Firestore array-contains query and of continuity documents.
-  let series = Array.isArray(params.characterSeries) ? [...params.characterSeries] : [];
-  if (!series.length) {
-    try {
-      const allSeries = await data.getAllSeries(200);
-      series = Array.isArray(allSeries) ? allSeries : [];
-    } catch (err) {
-      console.warn("[Comics Explorer] character series fallback failed", err);
-      series = [];
-    }
-  }
-
-  // Only show series where this character is the lead character. Be tolerant
-  // of partially shaped records so one bad document cannot blank the screen.
-  series = series.filter(s => s && Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
-  series.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || "").localeCompare(String(b.title || "")));
-
-  const characterName = c.displayName || c.name || "Unnamed Character";
-  let html = `<div class="cx-kicker">CHARACTER</div><h2 class="cx-title">${esc(characterName)}</h2>`;
-  if (Array.isArray(c.aliases) && c.aliases.length) {
-    html += `<div class="cx-tag-row">${c.aliases.slice(0, 6).map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div>`;
-  }
-
-  if (!series.length) {
-    html += emptyHtml(`No standalone books are mapped yet for ${characterName}.`);
-    return { html };
-  }
-
-  // Continuity labels are deliberately derived from the series' stored
-  // continuity IDs. A missing/broken continuity document is presentation-only
-  // and must never make Character -> Series fail.
-  const continuityName = cid => {
-    const id = String(cid || "").toLowerCase();
-    if (id.includes("new-52") || id.includes("new52")) return "The New 52";
-    if (id.includes("rebirth")) return "DC Rebirth";
-    if (id.includes("pre-flashpoint") || id.includes("preflashpoint")) return "Pre-Flashpoint DC Universe";
-    return "Other continuity";
+  const c=params.character;
+  const all=await data.getAllSeries(200);
+  const grouped=new Map();
+  ["Core Batman","Bat-Family","Gotham & Spin-offs","Team-Ups"].forEach(k=>grouped.set(k,[]));
+  all.filter(s=>s.scope==="batman-new52").sort((a,b)=>firstYearOf(a)-firstYearOf(b)||String(a.title).localeCompare(String(b.title))).forEach(s=>{
+    const k=grouped.has(s.lineCategory)?s.lineCategory:"Gotham & Spin-offs"; grouped.get(k).push(s);
+  });
+  let html=`<div class="cx-kicker">BATMAN · NEW 52</div><h2 class="cx-title">Batman</h2><div class="cx-subtitle">2011–2016 · one canonical Batman-line catalogue</div>`;
+  const categoryDescriptions={
+    "Core Batman":"Batman-led ongoing, limited and weekly core books.",
+    "Bat-Family":"Books led by Batman's allies and legacy characters. They stay grouped here rather than appearing beside Batman as unrelated top-level characters.",
+    "Gotham & Spin-offs":"Gotham/Arkham and adjacent Batman-world publications.",
+    "Team-Ups":"Batman co-starring publications kept separate from the core line."
   };
-
-  const displaySeriesTitle = s => {
-    const raw = String(s.title || "Untitled series");
-    return raw.replace(/\s*\((?:19|20)\d{2}(?:\s*[–-]\s*(?:19|20)\d{2})?\)\s*$/, "").trim() || raw;
-  };
-
-  const safeDateRange = s => {
-    try { return seriesDateRange(s); } catch (_) { return ""; }
-  };
-
-  const groups = new Map();
-  for (const s of series) {
-    const ids = Array.isArray(s.continuityIds) ? s.continuityIds.filter(Boolean) : [];
-    const cid = ids[0] || "other";
-    if (!groups.has(cid)) groups.set(cid, []);
-    groups.get(cid).push(s);
+  const indexes=[];
+  for(const [label,list] of grouped){
+    if(!list.length) continue;
+    const base=indexes.length;
+    html+=`<div class="sheet-section"><div class="sheet-label">${esc(label.toUpperCase())}</div><div class="cx-section-note">${esc(categoryDescriptions[label])}</div><div class="cx-list">`;
+    list.forEach((s,i)=>{indexes.push(s);html+=`<div class="cx-row" data-series-index="${base+i}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))} · ${esc(String(s.issueCount||0))} numbered issues${s.annualCount?` · ${s.annualCount} Annual${s.annualCount>1?'s':''}`:""}${s.specialCount||s.zeroIssueCount?` · ${Number(s.zeroIssueCount||0)+Number(s.specialCount||0)} specials`:""}</div></div><div class="cx-row-chevron">›</div></div>`});
+    html+=`</div></div>`;
   }
-
-  const blocks = [];
-  for (const [cid, list] of groups) {
-    list.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || "").localeCompare(String(b.title || "")));
-    const rows = list.map(s => {
-      const dateText = safeDateRange(s);
-      const issueText = Number(s.issueCount) > 0 ? `${Number(s.issueCount)} issues` : "";
-      const sub = [dateText, issueText].filter(Boolean).join(" · ") || "Series catalogue";
-      return `<div class="cx-row cx-character-series-row" data-series="${esc(s.id)}">
-        <div class="cx-row-body">
-          <div class="cx-row-title">${esc(displaySeriesTitle(s))}</div>
-          <div class="cx-row-sub">${esc(sub)}</div>
-        </div><div class="cx-row-chevron">›</div>
-      </div>`;
-    }).join("");
-    blocks.push(`<section class="sheet-section cx-character-continuity"><div class="sheet-label">${esc(continuityName(cid).toUpperCase())}</div><div class="cx-list">${rows}</div></section>`);
-  }
-
-  html += blocks.join("");
-  return {
-    html,
-    wire(container) {
-      container.querySelectorAll("[data-series]").forEach(row => {
-        row.addEventListener("click", () => {
-          const s = series.find(x => x && x.id === row.dataset.series);
-          if (s) pushLevel("series", displaySeriesTitle(s), { series: s });
-        });
-      });
-    },
-  };
+  return {html,wire(container){container.querySelectorAll("[data-series-index]").forEach(row=>row.addEventListener("click",()=>{const s=indexes[+row.dataset.seriesIndex];pushLevel("series",s.title,{series:s});}));}};
 }
 
 async function levelContinuityList() {
@@ -599,77 +509,49 @@ async function levelContinuity(params) {
 }
 
 async function levelSeriesList() {
-  const all = await data.getAllSeries();
-  all.sort((a, b) => firstYearOf(a) - firstYearOf(b));
-  if (!all.length) return { html: emptyHtml("No series have been added yet.") };
-  const rows = all.map(s => `<div class="cx-row" data-id="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
-  const html = `<div class="cx-kicker">SERIES</div><h2 class="cx-title">Browse series</h2><div class="cx-list">${rows}</div>`;
-  return {
-    html,
-    wire(container) {
-      container.querySelectorAll(".cx-row[data-id]").forEach(row => {
-        row.addEventListener("click", () => {
-          const s = all.find(x => x.id === row.dataset.id);
-          pushLevel("series", s.title, { series: s });
-        });
-      });
-    },
-  };
+  const all=(await data.getAllSeries(200)).filter(s=>s.scope==="batman-new52").sort((a,b)=>firstYearOf(a)-firstYearOf(b)||String(a.title).localeCompare(String(b.title)));
+  if(!all.length)return{html:emptyHtml("Batman / New 52 data has not been seeded yet.")};
+  const groups=["Core Batman","Bat-Family","Gotham & Spin-offs","Team-Ups"];
+  let html=`<div class="cx-kicker">BATMAN · NEW 52</div><h2 class="cx-title">Series Catalogue</h2>`;
+  const index=[];
+  for(const g of groups){const list=all.filter(s=>(s.lineCategory||"")==g);if(!list.length)continue;html+=`<div class="sheet-section"><div class="sheet-label">${esc(g.toUpperCase())}</div><div class="cx-list">`;for(const s of list){const i=index.push(s)-1;html+=`<div class="cx-row" data-index="${i}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))} · ${s.issueCount||0} numbered issues</div></div><div class="cx-row-chevron">›</div></div>`}html+=`</div></div>`;}
+  return{html,wire(container){container.querySelectorAll("[data-index]").forEach(r=>r.addEventListener("click",()=>{const s=index[+r.dataset.index];pushLevel("series",s.title,{series:s});}))}};
 }
 
 async function levelSeries(params) {
-  const s = params.series;
-  const [runs, creators, readingPaths] = await Promise.all([
+  const s=params.series;
+  const [runs,creators,issues,collections]=await Promise.all([
     data.getRunsForSeries(s.id),
-    Promise.all((s.creatorIds || []).map(id => cachedGet(COLLECTIONS.CREATORS, id))),
-    data.getReadingPathsFor({ continuityId: (s.continuityIds || [])[0] || null }),
+    Promise.all((s.creatorIds||[]).map(id=>cachedGet(COLLECTIONS.CREATORS,id))),
+    data.getIssuesForSeries(s.id),
+    data.getCollectionsForSeries(s.id).catch(()=>[]),
   ]);
-  const runLabels = await Promise.all(runs.map(r => runLabel(r)));
-
-  let html = coverBlockHtml(s.coverImage, s.title);
-  html += `<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2>`;
-  const sub = [seriesDateRange(s), s.issueCount ? `${s.issueCount} issues` : ""].filter(Boolean).join(" · ");
-  if (sub) html += `<div class="cx-subtitle">${esc(sub)}</div>`;
-  // Pointer 6: series progress from its issue records — exact only when those records cover the series.
-  let seriesIssues = RP.hasAnyComicsActivity() ? await RP.issuesForSeries(s.id).catch(() => []) : null;
-  const seriesProgressBlock = () => {
-    if (!seriesIssues) return "";
-    const sp = RP.seriesProgress(s, seriesIssues, RP.snapshot());
-    if (!sp.read) return "";
-    const text = sp.exact
-      ? (sp.state === "complete" ? `✓ Every issue read (${sp.total})` : `${sp.read} / ${sp.total} issues read`)
-      : `${sp.read} issue${sp.read === 1 ? "" : "s"} read`;
-    return `<span class="cx-progress-text" data-state="${sp.state}">${esc(text)}</span>`;
-  };
-  html += `<div class="cx-progress-line" data-prog-block="series-progress">${seriesProgressBlock()}</div>`;
-  const credNames = creators.filter(Boolean).map(c => c.displayName || c.name);
-  if (credNames.length) html += `<div class="cx-tag-row">${credNames.map(n => `<span class="tag">${esc(n)}</span>`).join("")}</div>`;
-  if (s.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(s.description)}</div></div>`;
-  if (!runs.length) {
-    html += emptyHtml("No creative runs recorded yet for this series.");
-  } else {
-    html += `<div class="sheet-section"><div class="sheet-label">CREATIVE RUNS</div><div class="cx-list">`;
-    html += runs.map((r, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(runLabels[idx])}</div>${runRangeText(r) ? `<div class="cx-row-sub">${esc(runRangeText(r))}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
-    html += `</div></div>`;
+  sortIssuesInPlace(issues);
+  const runLabels=await Promise.all(runs.map(r=>runLabel(r)));
+  const extra=(Number(s.zeroIssueCount)||0)+(Number(s.annualCount)||0)+(Number(s.decimalIssueCount)||0)+(Number(s.specialCount)||0);
+  let html=coverBlockHtml(s.coverImage,s.title);
+  html+=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2>`;
+  html+=`<div class="cx-subtitle">${esc(seriesDateRange(s))} · ${esc(String(s.issueCount||0))} numbered issues${extra?` · ${extra} additional publications`:""}</div>`;
+  if(s.lineCategory)html+=`<div class="cx-tag-row"><span class="tag">${esc(s.lineCategory)}</span></div>`;
+  const creatorsText=creators.filter(Boolean).map(c=>c.displayName||c.name); if(creatorsText.length)html+=`<div class="cx-tag-row">${creatorsText.map(n=>`<span class="tag">${esc(n)}</span>`).join("")}</div>`;
+  if(s.description)html+=`<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(s.description)}</div></div>`;
+  if(runs.length){html+=`<div class="sheet-section"><div class="sheet-label">CREATIVE RUNS</div><div class="cx-list">`;runs.forEach((r,i)=>html+=`<div class="cx-row" data-run-index="${i}"><div class="cx-row-body"><div class="cx-row-title">${esc(runLabels[i])}</div>${runRangeText(r)?`<div class="cx-row-sub">${esc(runRangeText(r))}</div>`:""}</div><div class="cx-row-chevron">›</div></div>`);html+=`</div></div>`;}
+  const renderIssueRows=(list)=>list.map((iss,i)=>`<div class="cx-row" data-issue-index="${issues.indexOf(iss)}"><div class="cx-row-body"><div class="cx-row-title">${esc(iss.issueLabel||"Issue")}${iss.title?` — ${esc(iss.title)}`:""}</div><div class="cx-row-sub">${esc(iss.issueLabelType||"numbered")}${iss.publicationDate?` · ${esc(iss.publicationDate)}`:""}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+  const first=issues.slice(0,12);
+  html+=`<div class="sheet-section"><div class="sheet-label">ISSUE LIST · ${issues.length} PUBLICATIONS</div><div class="cx-list" id="cxSeriesIssues">${renderIssueRows(first)}</div>${issues.length>12?`<button class="cx-text-link" id="cxShowAllIssues">Show all ${issues.length} publications →</button>`:""}</div>`;
+  if(collections.length){
+    html+=`<div class="sheet-section"><div class="sheet-label">COLLECTED EDITIONS · ${collections.length}</div><div class="cx-chip-row" id="cxEditionFilters"><button class="cx-chip" data-format="all">All ${collections.length}</button><button class="cx-chip" data-format="TPB">TPB</button><button class="cx-chip" data-format="Hardcover">Hardcover</button><button class="cx-chip" data-format="Omnibus">Omnibus</button></div><div class="cx-list" id="cxCollectionsList"></div></div>`;
   }
-  html += readingPathsChipsHtml(readingPaths, s.id);
-  if (isNerd()) html += nerdBlock({ id: s.id, universeId: s.universeId, continuityIds: s.continuityIds, characterIds: s.characterIds, verification: s.sourceInfo });
-  return {
-    html,
-    async update(container) {
-      if (!seriesIssues && RP.hasAnyComicsActivity()) seriesIssues = await RP.issuesForSeries(s.id).catch(() => []);
-      updateBlocks(container, { "series-progress": seriesProgressBlock });
-    },
-    wire(container) {
-      container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
-        row.addEventListener("click", () => {
-          const idx = +row.dataset.idx;
-          pushLevel("run", runLabels[idx], { run: runs[idx], series: s });
-        });
-      });
-      wireReadingPathChips(container, readingPaths, s.id, s.title);
-    },
-  };
+  return{html,wire(container){
+    const openIssue=i=>{const iss=issues[i];if(iss)pushLevel("issue",iss.issueLabel||"Issue",{issue:iss,series:s});};
+    container.querySelectorAll("[data-issue-index]").forEach(r=>r.addEventListener("click",()=>openIssue(+r.dataset.issueIndex)));
+    container.querySelectorAll("[data-run-index]").forEach(r=>r.addEventListener("click",()=>{const x=runs[+r.dataset.runIndex];pushLevel("run",runLabels[+r.dataset.runIndex],{run:x,series:s});}));
+    const more=container.querySelector("#cxShowAllIssues"), issueList=container.querySelector("#cxSeriesIssues");
+    if(more&&issueList)more.addEventListener("click",()=>{issueList.innerHTML=renderIssueRows(issues);more.remove();issueList.querySelectorAll("[data-issue-index]").forEach(r=>r.addEventListener("click",()=>openIssue(+r.dataset.issueIndex)));});
+    const collList=container.querySelector("#cxCollectionsList");
+    const drawCollections=(format="all")=>{if(!collList)return;const list=format==="all"?collections:collections.filter(c=>c.format===format);collList.innerHTML=list.map((c,i)=>`<div class="cx-row" data-coll-index="${collections.indexOf(c)}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.title)}</div><div class="cx-row-sub">${esc(c.format||"Edition")} · ${c.issueCoverage?.length||0} issue units</div></div><div class="cx-row-chevron">›</div></div>`).join("");collList.querySelectorAll("[data-coll-index]").forEach(r=>r.addEventListener("click",()=>{const c=collections[+r.dataset.collIndex];pushLevel("collection",c.title,{collectionEntity:c});}));};
+    drawCollections(); container.querySelectorAll("#cxEditionFilters [data-format]").forEach(b=>b.addEventListener("click",()=>drawCollections(b.dataset.format)));
+  }};
 }
 
 function issueNum(iss) { const n = parseFloat(iss && iss.issueNumber); return isNaN(n) ? null : n; }
@@ -684,233 +566,17 @@ function issueNum(iss) { const n = parseFloat(iss && iss.issueNumber); return is
  * tie-in/event material for this run (never forced when the data doesn't).
  */
 async function levelRun(params) {
-  const r = params.run, s = params.series;
-  const label = await runLabel(r);
-  const [stories, allSeriesIssues, readingPaths] = await Promise.all([
-    data.getStoriesForRun(r.id),
-    data.getIssuesForSeries(r.seriesId),
-    data.getReadingPathsFor({ continuityId: (s.continuityIds || [])[0] || null }),
-  ]);
-  sortIssuesInPlace(allSeriesIssues);
-
-  // "This run's issues": every series issue whose number falls inside the run's own
-  // recorded startIssue/endIssue range, plus anything a run story's own issueIds
-  // already claims (e.g. a #0 prologue) — if the run has no recorded range at all,
-  // the whole series' issues stand in for it. Nothing here is guessed beyond what
-  // the run/story records themselves say.
-  const lo = r.startIssue != null ? parseFloat(r.startIssue) : null;
-  const hi = r.endIssue != null ? parseFloat(r.endIssue) : null;
-  const storyIssueIds = new Set(stories.flatMap(st => st.issueIds || []));
-  const runIssues = allSeriesIssues.filter(iss => {
-    if (storyIssueIds.has(iss.id)) return true;
-    if (lo == null || hi == null) return true;
-    const n = issueNum(iss);
-    return n != null && n >= lo && n <= hi;
-  });
-  const runIssueIds = runIssues.map(i => i.id);
-  const byId = new Map(runIssues.map(i => [i.id, i]));
-
-  // Arc groups — one per comicStories record in this run whose issueIds land inside
-  // the run's own issue set, ordered by each arc's own first issue (publication
-  // order — an objective fact of the data, never an invented "reading order").
-  // Anything the run's issues include that no story claims stays visible and
-  // honestly ungrouped, never folded into a fabricated arc.
-  const grouped = new Set();
-  const arcGroups = stories.map(st => {
-    const issues = (st.issueIds || []).filter(id => byId.has(id)).map(id => byId.get(id));
-    sortIssuesInPlace(issues);
-    issues.forEach(i => grouped.add(i.id));
-    return { story: st, issues };
-  }).filter(g => g.issues.length).sort((a, b) => (issueNum(a.issues[0]) ?? 1e6) - (issueNum(b.issues[0]) ?? 1e6));
-  const ungrouped = runIssues.filter(i => !grouped.has(i.id));
-  const orderedRunIssues = [...arcGroups.flatMap(g => g.issues), ...ungrouped];
-
-  const [collections, coreRels] = await Promise.all([
-    data.getCollectionsSharingIssues(runIssueIds),
-    data.getRelationshipsForEntities(stories.map(st => st.id)),
-  ]);
-
-  // Core vs Expanded/Optional (Pointer 6.5): a story connected to one of THIS run's
-  // own stories via part_of_event / tie_in_to / crossover_with, that is not itself
-  // one of the run's own stories, is genuinely "expanded" material per the data —
-  // e.g. Night of the Owls is part_of_event-linked from City of Owls. Only rendered
-  // when a real relationship record says so; never inferred or invented.
-  const coreStoryIds = new Set(stories.map(st => st.id));
-  const EXPANDED_TYPES = new Set(["part_of_event", "tie_in_to", "crossover_with"]);
-  const seenExpanded = new Set();
-  const expandedRefs = [];
-  (coreRels || []).forEach(rel => {
-    if (!EXPANDED_TYPES.has(rel.relationshipType)) return;
-    const fromCore = coreStoryIds.has(rel.sourceId);
-    const otherId = fromCore ? rel.targetId : rel.sourceId;
-    const otherType = fromCore ? rel.targetType : rel.sourceType;
-    const coreId = fromCore ? rel.sourceId : rel.targetId;
-    if (otherType !== "story" || coreStoryIds.has(otherId) || seenExpanded.has(otherId)) return;
-    seenExpanded.add(otherId);
-    expandedRefs.push({ rel, otherId, coreId });
-  });
-  const expandedStories = await Promise.all(expandedRefs.map(x => cachedGet(COLLECTIONS.STORIES, x.otherId)));
-  const expanded = expandedRefs.map((x, i) => ({ ...x, story: expandedStories[i], core: stories.find(st => st.id === x.coreId) })).filter(x => x.story);
-
-  // Collection/edition tabs — TPB | Hardcover | Omnibus are views of these SAME
-  // issues, never a separate dataset. Any format outside that trio (e.g. a DC
-  // "Essential Edition") gets its own honestly-labeled extra tab rather than
-  // being silently dropped.
-  const FIXED_FORMATS = ["TPB", "Hardcover", "Omnibus"];
-  const byFormat = new Map(FIXED_FORMATS.map(f => [f, []]));
-  const extraFormats = [];
-  (collections || []).forEach(c => {
-    const f = c.format || "Other";
-    if (!byFormat.has(f)) { byFormat.set(f, []); extraFormats.push(f); }
-    byFormat.get(f).push(c);
-  });
-  const tabs = [
-    { key: "issues", label: "Issues" },
-    { key: "tpb", label: "TPB", format: "TPB" },
-    { key: "hardcover", label: "Hardcover", format: "Hardcover" },
-    { key: "omnibus", label: "Omnibus", format: "Omnibus" },
-    ...extraFormats.map(f => ({ key: "fmt-" + f.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label: f, format: f })),
-  ];
-
-  const yrOf = (d) => { const m = String(d || "").match(/\d{4}/); return m ? m[0] : ""; };
-  const ya = yrOf(r.startDate || s.startDate), yb = yrOf(r.endDate || s.endDate);
-  const yrs = ya && yb ? (ya === yb ? ya : `${ya}–${yb}`) : (ya || yb || "");
-  const metaLine = [yrs, runIssues.length ? `${runIssues.length} issue${runIssues.length === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ");
-
-  function issueRowHtml(iss, snap) {
-    return `<div class="cx-row cx-issue-row" data-open-issue="${esc(iss.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(RP.issueLabelWith(iss, s))}</div>${iss.title ? `<div class="cx-row-sub">${esc(iss.title)}</div>` : ""}</div>${readToggleHtml(iss.id, RP.issueState(iss.id, snap), RP.issueLabelWith(iss, s))}</div>`;
-  }
-  function arcRowHtml(g, snap) {
-    const p = RP.storyProgress(g.story, snap);
-    return `<div class="cx-row" data-arc="${esc(g.story.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(g.story.title)}</div><div class="cx-row-sub">${esc(s.title)} ${esc(compressCoverageRows(g.issues))}</div></div><span class="cx-progress-text cx-arc-status" data-arc-status="${esc(g.story.id)}" data-state="${p.state}">${esc(RP.storySummaryText(p))}</span><div class="cx-row-chevron">›</div></div>`;
-  }
-  function issuesTabHtml(snap) {
-    let out = "";
-    if (arcGroups.length) out += `<div class="cx-list">${arcGroups.map(g => arcRowHtml(g, snap)).join("")}</div>`;
-    if (ungrouped.length) {
-      out += `<div class="sheet-label" style="margin-top:${arcGroups.length ? "14px" : "0"};">${arcGroups.length ? "OTHER ISSUES IN THIS RUN" : "ISSUES"}</div><div class="cx-list">${ungrouped.map(i => issueRowHtml(i, snap)).join("")}</div>`;
-    }
-    if (!arcGroups.length && !ungrouped.length) out += emptyHtml("No issues recorded yet for this run.");
-    return out;
-  }
-  function collectionRowHtml(c, snap) {
-    const rows = (c.issueCoverage || []).filter(row => runIssueIds.includes(row.issueId));
-    const range = compressCoverageRows(rows.length ? rows : (c.issueCoverage || []));
-    const cp = RP.collectionProgress(c, snap);
-    const sub = [formatEditionMeta(c), range ? `${s.title} ${range}` : ""].filter(Boolean).join(" · ");
-    return `<div class="cx-row" data-open-collection="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.title)}</div><div class="cx-row-sub">${esc(sub)}</div></div>${cp.total ? markHtml(cp) : ""}<div class="cx-row-chevron">›</div></div>`;
-  }
-  function formatTabHtml(format) {
-    const list = byFormat.get(format) || [];
-    const snap = RP.snapshot();
-    if (!list.length) return emptyHtml(`No verified ${format.toLowerCase()} collection found for this run.`);
-    return `<div class="cx-list">${list.map(c => collectionRowHtml(c, snap)).join("")}</div>`;
-  }
-  function tabPanelHtml(tab, snap) {
-    if (tab.key === "issues") return issuesTabHtml(snap);
-    return formatTabHtml(tab.format);
-  }
-
-  // Continue Reading: the first unread issue in the run's own publication order
-  // (arc groups, then any ungrouped issues) — only shown once real progress exists.
-  function continueTarget(snap) {
-    const readCount = orderedRunIssues.filter(i => snap.sets.issue.has(i.id)).length;
-    if (!readCount) return null;
-    const next = orderedRunIssues.find(i => !snap.sets.issue.has(i.id));
-    return { next, readCount, total: orderedRunIssues.length };
-  }
-  function continueBlock() {
-    const snap = RP.snapshot();
-    const c = continueTarget(snap);
-    if (!c) return "";
-    if (!c.next) return `<div class="cx-progress-line"><span class="cx-progress-text" data-state="complete">✓ You've read every issue in this run (${c.total})</span></div>`;
-    return `<button class="cx-continue-row" data-run-act="continue"><span class="cx-continue-k">Continue</span><span class="cx-continue-t">${esc(RP.issueLabelWith(c.next, s))}</span><span class="cx-row-chevron">›</span></button>`;
-  }
-  function expandedHtml(snap) {
-    if (!expanded.length) return "";
-    const rows = expanded.map(x => {
-      const titleOf = (id) => id === x.story.id ? x.story.title : (x.core ? x.core.title : "");
-      const sentence = connectionSentence(x.rel, titleOf(x.rel.sourceId), titleOf(x.rel.targetId));
-      const nSeries = (x.story.seriesIds || []).length;
-      const reason = [sentence, nSeries > 1 ? `Spans ${nSeries} series' tie-in issues.` : ""].filter(Boolean).join(" ");
-      const p = RP.storyProgress(x.story, snap);
-      return `<div class="cx-expanded-card" data-expanded-open="${esc(x.story.id)}">
-          <div class="cx-row-title">${esc(x.story.title)}</div>
-          <div class="cx-row-sub">${esc(reason)}</div>
-          <div class="sm-d-actions"><span class="cx-progress-text" data-state="${p.state}">${esc(RP.storySummaryText(p))}</span><button class="sm-d-action" data-expanded-open="${esc(x.story.id)}">Explore</button></div>
-        </div>`;
-    }).join("");
-    return `<div class="sheet-section"><div class="sheet-label">EXPANDED / OPTIONAL READING</div>${rows}</div>`;
-  }
-
-  let html = `<div class="cx-kicker">${esc(s.title)}</div><h2 class="cx-title">${esc(label)}</h2>`;
-  if (metaLine) html += `<div class="cx-subtitle">${esc(metaLine)}</div>`;
-  html += `<div class="cx-progress-block" data-prog-block="run-continue">${continueBlock()}</div>`;
-  if (r.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(r.description)}</div></div>`;
-  html += `<div class="cx-tabs" role="tablist">${tabs.map((t, i) => `<button class="cx-tab" role="tab" data-tab="${t.key}" aria-selected="${i === 0}">${esc(t.label)}</button>`).join("")}</div>`;
-  const snap0 = RP.snapshot();
-  html += tabs.map((t, i) => `<div class="cx-tab-panel" data-tab-panel="${t.key}" ${i === 0 ? "" : "hidden"}>${tabPanelHtml(t, snap0)}</div>`).join("");
-  html += `<div data-expanded-block>${expandedHtml(snap0)}</div>`;
-  html += readingPathsChipsHtml(readingPaths, r.seriesId);
-  if (isNerd()) html += nerdBlock({ id: r.id, seriesId: r.seriesId, creatorIds: r.creatorIds, verification: r.sourceInfo });
-  return {
-    html,
-    update(container) {
-      const snap = RP.snapshot();
-      updateBlocks(container, { "run-continue": continueBlock });
-      container.querySelectorAll("[data-tab-panel]").forEach(panel => {
-        const tab = tabs.find(t => t.key === panel.dataset.tabPanel);
-        if (tab) panel.innerHTML = tabPanelHtml(tab, snap);
-      });
-      const eb = container.querySelector("[data-expanded-block]");
-      if (eb) eb.innerHTML = expandedHtml(snap);
-      wireRunRows(container);
-    },
-    onAct(el) {
-      if (el.dataset.issueToggle) { toggleIssueRead(el.dataset.issueToggle, { storyId: null, pathId: null }); return; }
-      if (el.dataset.runAct === "continue") {
-        const snap = RP.snapshot();
-        const c = continueTarget(snap);
-        if (c && c.next) {
-          const g = arcGroups.find(gr => gr.issues.some(i => i.id === c.next.id));
-          pushLevel("issue", RP.issueLabelWith(c.next, s), { issue: c.next, story: g ? g.story : null });
-        }
-      }
-    },
-    wire(container) {
-      container.querySelectorAll(".cx-tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-          container.querySelectorAll(".cx-tab").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
-          container.querySelectorAll("[data-tab-panel]").forEach(p => { p.hidden = p.dataset.tabPanel !== btn.dataset.tab; });
-        });
-      });
-      wireRunRows(container);
-      wireReadingPathChips(container, readingPaths, r.seriesId, label);
-    },
-  };
-  function wireRunRows(container) {
-    container.querySelectorAll("[data-arc]").forEach(row => {
-      row.addEventListener("click", () => { const g = arcGroups.find(x => x.story.id === row.dataset.arc); if (g) pushLevel("story", g.story.title, { story: g.story, series: s, run: r }); });
-    });
-    container.querySelectorAll("[data-open-issue]").forEach(row => {
-      row.addEventListener("click", (e) => {
-        if (e.target.closest("[data-issue-toggle]")) return;
-        const iss = byId.get(row.dataset.openIssue);
-        if (iss) pushLevel("issue", RP.issueLabelWith(iss, s), { issue: iss });
-      });
-    });
-    container.querySelectorAll("[data-open-collection]").forEach(row => {
-      row.addEventListener("click", () => { const c = (collections || []).find(x => x.id === row.dataset.openCollection); if (c) pushLevel("collection", c.title, { collectionEntity: c }); });
-    });
-    container.querySelectorAll("[data-expanded-open]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const x = expanded.find(e => e.story.id === btn.dataset.expandedOpen);
-        if (!x) return;
-        const groupId = x.rel.relationshipType === "part_of_event" ? "event" : x.rel.relationshipType === "crossover_with" ? "crossover" : "tie_ins";
-        pushLevel("connected", x.story.title, { story: x.story, from: x.core, rel: x.rel, group: { id: groupId, label: "Expanded / Optional Reading" } });
-      });
-    });
-  }
+  const r=params.run,s=params.series;
+  const [issues,collections]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[])]);
+  sortIssuesInPlace(issues);
+  const lo=r.startIssue!=null?parseFloat(r.startIssue):null, hi=r.endIssue!=null?parseFloat(r.endIssue):null;
+  const runIssues=(lo==null||hi==null)?issues:issues.filter(i=>{const n=issueNum(i);return n!=null&&n>=lo&&n<=hi;});
+  const label=await runLabel(r);
+  let html=`<div class="cx-kicker">CREATIVE RUN</div><h2 class="cx-title">${esc(label)}</h2><div class="cx-subtitle">${esc(runRangeText(r))} · ${runIssues.length} issue${runIssues.length===1?"":"s"}</div>`;
+  if((r.creatorIds||[]).length){const cs=await Promise.all(r.creatorIds.map(id=>cachedGet(COLLECTIONS.CREATORS,id)));html+=`<div class="cx-tag-row">${cs.filter(Boolean).map(c=>`<span class="tag">${esc(c.displayName||c.name)}</span>`).join("")}</div>`;}
+  html+=`<div class="sheet-section"><div class="sheet-label">ISSUES</div><div class="cx-list">${runIssues.map((i,idx)=>`<div class="cx-row" data-i="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(i.issueLabel)}</div><div class="cx-row-sub">${esc(i.issueLabelType||"numbered")}</div></div><div class="cx-row-chevron">›</div></div>`).join("")}</div></div>`;
+  if(collections.length)html+=`<div class="sheet-section"><div class="sheet-label">COLLECTED EDITIONS</div><div class="cx-list">${collections.map((c,i)=>`<div class="cx-row" data-c="${i}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.title)}</div><div class="cx-row-sub">${esc(c.format||"Edition")}</div></div><div class="cx-row-chevron">›</div></div>`).join("")}</div></div>`;
+  return{html,wire(container){container.querySelectorAll("[data-i]").forEach(x=>x.addEventListener("click",()=>{const i=runIssues[+x.dataset.i];pushLevel("issue",i.issueLabel,{issue:i,series:s});}));container.querySelectorAll("[data-c]").forEach(x=>x.addEventListener("click",()=>{const c=collections[+x.dataset.c];pushLevel("collection",c.title,{collectionEntity:c});}));}};
 }
 
 async function levelStory(params) {
@@ -1433,8 +1099,6 @@ const LEVELS = {
   run: levelRun,
   story: levelStory,
   issue: levelIssue,
-  readingPathList: levelReadingPathList,
-  readingPath: levelReadingPath,
   collection: levelCollection,
   connected: levelConnected,
 };

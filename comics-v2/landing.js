@@ -1,276 +1,38 @@
 // ============================================================================
-// comics-v2 / landing.js
-// STEP 4B-1 — Comics Home information-architecture cleanup.
-//
-// This pass deliberately changes ONLY the Comics Home presentation and its
-// existing entry points. No routing, Story Map, Explorer, data or catalogue
-// implementation is changed.
+// ALLABOUTDC — Batman / New 52 Comics Home
+// Single source of truth: comics-v2 Series + Issues + Collections.
+// No legacy catalogue, reading-path dataset or duplicate collection source.
 // ============================================================================
-import * as data from "./data.js?v=p69";
-import { renderContinueCard } from "./reading-progress.js?v=p7";
+import * as data from "./data.js?v=p80";
 
-const esc = (s) => s == null ? "" : String(s)
-  .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const firstYear=v=>{const m=String(v||"").match(/\d{4}/);return m?Number(m[0]):9999;};
+const countIssues=series=>(series||[]).reduce((n,s)=>n+(Number(s.issueCount)||0),0);
+const categories=["Core Batman","Bat-Family","Gotham & Spin-offs","Team-Ups"];
 
-let _dataPromise = null;
-function loadHomeData() {
-  if (_dataPromise) return _dataPromise;
-  _dataPromise = Promise.all([
-    data.getAllUniverses(10),
-    data.getAllContinuities(50),
-    data.getAllCharacters(100),
-    data.getAllSeries(200),
-    data.getAllReadingPaths(20),
-  ]).then(([universes, continuities, characters, series, readingPaths]) => ({
-    universes, continuities, characters, series, readingPaths, ok: true,
-  })).catch(e => {
-    console.warn("[Comics landing] data load", e);
-    _dataPromise = null;
-    return { universes: [], continuities: [], characters: [], series: [], readingPaths: [], ok: false };
-  });
-  return _dataPromise;
+let cache=null;
+async function load(){
+  if(cache)return cache;
+  cache=Promise.all([data.getAllUniverses(10),data.getAllContinuities(10),data.getAllCharacters(50),data.getAllSeries(100),data.getAllCollections(200)]).then(([universes,continuities,characters,series,collections])=>({universes,continuities,characters,collections,series:series.filter(s=>s.scope==="batman-new52")} )).catch(e=>{cache=null;throw e;});
+  return cache;
 }
+function openExplorer(level,label,params={}){window.__comicsExplorer?.openAt?.([{level,label,params}]);}
+function openAtlas(d){const u=d.universes[0];if(u)window.__comicsStoryMap?.open?.("universe",u.id);}
 
-function findNew52(continuities) {
-  return (continuities || []).find(c =>
-    String(c.shortName || "").toLowerCase() === "new 52" ||
-    String(c.name || "").toLowerCase() === "the new 52" ||
-    String(c.name || "").toLowerCase() === "new 52"
-  ) || null;
-}
-
-function firstYear(v) {
-  const m = String(v || "").match(/\d{4}/);
-  return m ? Number(m[0]) : 9999;
-}
-
-function countIssues(series) {
-  return (series || []).reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
-}
-
-function continuityLabel(c) {
-  return c?.shortName || c?.name || "Continuity";
-}
-
-function heroHtml() {
-  return `
-    <section class="cl4-hero cl4-hero-compact">
-      <div class="cl4-hero-art" aria-hidden="true">
-        <span class="cl4-glow cl4-glow-a"></span>
-        <span class="cl4-glow cl4-glow-b"></span>
-        <span class="cl4-orbit cl4-orbit-a"></span>
-        <span class="cl4-orbit cl4-orbit-b"></span>
-        <span class="cl4-orbit cl4-orbit-c"></span>
-        <span class="cl4-star cl4-star-a"></span><span class="cl4-star cl4-star-b"></span>
-        <span class="cl4-star cl4-star-c"></span><span class="cl4-star cl4-star-d"></span>
-        <span class="cl4-sigil">DC</span>
-      </div>
-      <div class="cl4-hero-copy">
-        <div class="cl4-eyebrow">ALLABOUTDC · COMICS</div>
-        <h2>DC <span>COMICS</span></h2>
-        <p>Every character. Every world. Every story.</p>
-        <div class="cl4-hero-sub">A connected way to explore DC Comics — from characters and series to eras, stories and issues.</div>
-        <div class="cl4-hero-note">Enter through a character, a series, a reading path, or the Universe Atlas below.</div>
-      </div>
-      <div class="cl4-hero-side">
-        <span>THE COMICS UNIVERSE</span>
-        <strong id="cl4HeroMeta">Loading…</strong>
-        <small>The same underlying Comics graph powers every view.</small>
-      </div>
-    </section>`;
-}
-
-function exploreHtml() {
-  const entries = [
-    { key: "character", icon: "✦", label: "Characters", sub: "Follow a hero, villain or legacy.", tone: "blue" },
-    { key: "series", icon: "▣", label: "Series & Runs", sub: "Find the books and creative runs.", tone: "gold" },
-    { key: "paths", icon: "⌁", label: "Reading Paths", sub: "Follow a curated way in.", tone: "red" },
-  ];
-  return `<section class="cl4-section cl4-explore-section">
-    <div class="cl4-section-head"><div><div class="cl4-kicker">START HERE</div><h3>Choose your starting point</h3></div><span>Three useful lenses</span></div>
-    <div class="cl4-explore-grid cl4-explore-grid-three">
-      ${entries.map((e, i) => `<button class="cl4-explore-card cl4-tone-${e.tone}" data-explore="${e.key}">
-        <span class="cl4-explore-number">0${i + 1}</span>
-        <span class="cl4-explore-icon">${e.icon}</span>
-        <span class="cl4-explore-copy"><strong>${esc(e.label)}</strong><small>${esc(e.sub)}</small></span>
-        <span class="cl4-arrow">→</span>
-      </button>`).join("")}
-    </div>
-  </section>`;
-}
-
-function atlasHtml() {
-  return `<section class="cl4-section cl4-atlas-section cl4-atlas-single">
-    <div class="cl4-section-head"><div><div class="cl4-kicker">THE UNIVERSE</div><h3>One Atlas</h3></div><span>One graph · one destination</span></div>
-    <button class="cl4-atlas-visual cl4-atlas-visual-wide" data-action="storymap" aria-label="Open Universe Atlas">
-      <div class="cl4-atlas-grid"></div>
-      <div class="cl4-atlas-line cl4-line-1"></div><div class="cl4-atlas-line cl4-line-2"></div><div class="cl4-atlas-line cl4-line-3"></div>
-      <div class="cl4-atlas-node cl4-node-core"><span>DC</span><small>UNIVERSE</small></div>
-      <div class="cl4-atlas-node cl4-node-era"><b>ERAS</b><span id="cl4AtlasEra">Loading</span></div>
-      <div class="cl4-atlas-node cl4-node-character"><b>CHARACTERS</b><span id="cl4AtlasCharacters">—</span></div>
-      <div class="cl4-atlas-node cl4-node-series"><b>SERIES</b><span id="cl4AtlasSeries">—</span></div>
-      <div class="cl4-atlas-node cl4-node-new52"><b>NEW 52</b><span>territory</span></div>
-      <div class="cl4-atlas-watermark">ENTER ATLAS →</div>
-    </button>
-    <div class="cl4-atlas-caption">
-      <div><strong>Era → Event → Character → Series → Issue</strong><span>One Atlas. One destination. Every other view should lead into the same underlying universe.</span></div>
-    </div>
-  </section>`;
-}
-
-function territoryHtml() {
-  return `<section class="cl4-section">
-    <div class="cl4-section-head"><div><div class="cl4-kicker">FEATURED TERRITORY</div><h3>The New 52</h3></div><span id="cl4New52Status">Current mapped coverage</span></div>
-    <button class="cl4-new52" id="cl4New52Btn" disabled>
-      <div class="cl4-new52-art"><span>52</span><i></i><i></i><i></i></div>
-      <div class="cl4-new52-copy">
-        <span class="cl4-mini-kicker">2011 · EARTH-0</span>
-        <strong>The New 52</strong>
-        <span id="cl4New52Sub">Loading current coverage…</span>
-        <small>Our most deeply populated territory right now. Explore it as a connected part of the wider Comics graph.</small>
-      </div>
-      <span class="cl4-new52-arrow">Explore territory <b>→</b></span>
-    </button>
-  </section>`;
-}
-
-function seriesHtml() {
-  return `<section class="cl4-section">
-    <div class="cl4-section-head"><div><div class="cl4-kicker">FEATURED BOOKS</div><h3>Start with a series</h3></div><span>Open a book to enter its connected history</span></div>
-    <div class="cl4-series-rail" id="cl4SeriesRail"><div class="cl4-loading-line">Loading current series…</div></div>
-  </section>`;
-}
-
-function renderSeriesRail(container, series) {
-  if (!container) return;
-  const sorted = [...(series || [])].sort((a, b) => firstYear(a.startDate) - firstYear(b.startDate));
-  if (!sorted.length) {
-    container.innerHTML = `<div class="cl4-empty">No series have been mapped yet.</div>`;
-    return;
-  }
-  const featured = sorted.slice(0, 8);
-  container.innerHTML = featured.map(s => `
-    <button class="cl4-series-card" data-series-id="${esc(s.id)}">
-      <span class="cl4-series-year">${esc(String(s.startDate || "").slice(0, 4) || "—")}</span>
-      <strong>${esc(s.title || "Untitled series")}</strong>
-      <span>${s.issueCount ? `${esc(s.issueCount)} issues` : "Issue count pending"}</span>
-      <i>Open series →</i>
-    </button>`).join("");
-  container.querySelectorAll("[data-series-id]").forEach(btn => btn.addEventListener("click", () => {
-    const s = sorted.find(x => x.id === btn.dataset.seriesId);
-    if (s) openExplorerAt("series", s.title, { series: s });
-  }));
-}
-
-function openExplorerAt(level, label, params = {}) {
-  const ex = window.__comicsExplorer;
-  if (ex && ex.openAt) ex.openAt([{ level, label, params }]);
-}
-
-function openStoryMap(container) {
-  const sm = window.__comicsStoryMap;
-  const uniId = container.querySelector("#cl4UniverseName")?.dataset?.universeId;
-  if (sm && uniId) sm.open("universe", uniId);
-  else if (sm) {
-    loadHomeData().then(d => {
-      const universe = d.universes[0];
-      if (universe) sm.open("universe", universe.id);
-    });
-  }
-}
-
-function wireExplore(container, key) {
-  if (key === "character") openExplorerAt("characterList", "Characters", {});
-  else if (key === "series") openExplorerAt("seriesList", "Series", {});
-  else if (key === "paths") openExplorerAt("readingPathList", "Reading Paths", {});
-}
-
-function renderLoadedState(container, d) {
-  const universe = d.universes[0] || null;
-  const new52 = findNew52(d.continuities);
-  const sortedContinuities = [...d.continuities].sort((a, b) => firstYear(a.startDate) - firstYear(b.startDate));
-  const set = (id, value) => { const el = container.querySelector(`#${id}`); if (el) el.textContent = value; };
-
-  set("cl4HeroMeta", universe ? `${d.series.length} series · ${countIssues(d.series).toLocaleString()} issues mapped` : "Current Comics graph");
-  set("cl4AtlasEra", sortedContinuities.length ? continuityLabel(sortedContinuities[sortedContinuities.length - 1]) : "—");
-  set("cl4AtlasCharacters", d.characters.length.toLocaleString());
-  set("cl4AtlasSeries", d.series.length.toLocaleString());
-
-  const n52Btn = container.querySelector("#cl4New52Btn");
-  if (n52Btn && new52) {
-    n52Btn.disabled = false;
-    n52Btn.dataset.continuityId = new52.id;
-    n52Btn.dataset.continuityName = new52.name;
-    const n52Series = d.series.filter(s => Array.isArray(s.continuityIds) && s.continuityIds.includes(new52.id));
-    set("cl4New52Sub", `${n52Series.length} mapped series · ${countIssues(n52Series).toLocaleString()} mapped issues`);
-  } else {
-    set("cl4New52Sub", "New 52 continuity is not mapped in the current dataset yet.");
-  }
-
-  renderSeriesRail(container.querySelector("#cl4SeriesRail"), d.series);
-}
-
-let renderSeq = 0;
-
-function renderComicsLanding(container, hooks = {}) {
-  const my = ++renderSeq;
-  const main = container.closest("main");
-  if (main) main.classList.add("comics-home-main");
-
-  container.innerHTML = `<div class="cl4-wrap cl4-home-ia">
-    ${heroHtml()}
-    ${exploreHtml()}
-    ${atlasHtml()}
-    ${territoryHtml()}
-    ${seriesHtml()}
-    <div class="cl4-continue" id="clContinue" hidden></div>
-  </div>`;
-
-  const continueSlot = container.querySelector("#clContinue");
-  renderContinueCard(continueSlot).then(() => {
-    if (!continueSlot?.isConnected) return;
-    const start = continueSlot.querySelector('[data-state="start"]');
-    if (start) { continueSlot.hidden = true; continueSlot.innerHTML = ""; }
-  }).catch(e => console.warn("[Comics landing] continue card", e));
-
-  container.querySelectorAll("[data-explore]").forEach(btn => btn.addEventListener("click", () => wireExplore(container, btn.dataset.explore)));
-  container.querySelectorAll("[data-action]").forEach(btn => btn.addEventListener("click", () => {
-    const action = btn.dataset.action;
-    if (action === "storymap") openStoryMap(container);
-    else if (action === "series") openExplorerAt("seriesList", "Series", {});
-  }));
-
-  container.querySelector("#cl4New52Btn")?.addEventListener("click", e => {
-    const id = e.currentTarget.dataset.continuityId;
-    const name = e.currentTarget.dataset.continuityName || "The New 52";
-    if (id) loadHomeData().then(d => {
-      const continuity = d.continuities.find(c => c.id === id);
-      if (continuity) openExplorerAt("continuity", name, { continuity });
-    });
-  });
-
-  // The old flat catalogue is intentionally NOT promoted on this Home pass.
-  // It remains reachable through the existing app catalogue flow while the
-  // future Comics Library is designed as a proper Series → Run → Issue →
-  // Collection experience.
-  loadHomeData().then(d => {
-    if (my !== renderSeq || !container.isConnected) return;
-    renderLoadedState(container, d);
-  });
-}
-
-const _wired = new WeakSet();
-function renderSafe(container, hooks = {}) {
-  if (!_wired.has(container)) _wired.add(container);
-  container._clHooks = hooks;
-  renderComicsLanding(container, hooks);
-}
-
-document.addEventListener("readerprogress:change", () => {
-  const slot = document.getElementById("clContinue");
-  if (slot?.isConnected) renderContinueCard(slot).catch(() => {});
-});
-
-window.__comicsV2Landing = { render: renderSafe, preload: loadHomeData };
-document.dispatchEvent(new CustomEvent("comicsv2:landing-ready"));
+function hero(){return `<section class="cl4-hero">
+  <div class="cl4-hero-art" aria-hidden="true"><span class="cl4-glow cl4-glow-a"></span><span class="cl4-glow cl4-glow-b"></span><span class="cl4-orbit cl4-orbit-a"></span><span class="cl4-orbit cl4-orbit-b"></span><span class="cl4-orbit cl4-orbit-c"></span><span class="cl4-star cl4-star-a"></span><span class="cl4-star cl4-star-b"></span><span class="cl4-star cl4-star-c"></span><span class="cl4-sigil">52</span></div>
+  <div class="cl4-hero-copy"><div class="cl4-eyebrow">ALLABOUTDC · COMICS</div><h2>BATMAN <span>NEW 52</span></h2><p>One Batman line. One source of truth.</p><div class="cl4-hero-sub">Every core Batman title, Bat-Family book, Gotham spin-off and Batman team-up in one normalized catalogue — down to individual publication units and collected editions.</div><div class="cl4-hero-actions"><button class="cl4-primary" data-action="atlas">Open Batman Atlas <b>→</b></button><button class="cl4-secondary" data-action="batman">Explore Batman</button></div></div>
+  <div class="cl4-hero-side"><span>CANONICAL DATASET</span><strong id="cl4HeroMeta">Loading…</strong><small>Series → Issue → Collection. No competing reading-path datasets.</small></div>
+</section>`;}
+function stats(){return `<section class="cl4-stats"><div class="cl4-stat"><b id="nSeries">—</b><span>Series</span></div><div class="cl4-stat"><b id="nIssues">—</b><span>Numbered issues</span></div><div class="cl4-stat"><b id="nChars">—</b><span>Characters</span></div><div class="cl4-stat"><b id="nCollections">—</b><span>Collected editions</span></div></section>`;}
+function explore(){return `<section class="cl4-section"><div class="cl4-section-head"><div><div class="cl4-kicker">START HERE</div><h3>Explore the Batman line</h3></div><span>Four clean entry points</span></div><div class="cl4-explore-grid">
+<button class="cl4-explore-card cl4-tone-gold" data-action="batman"><span class="cl4-explore-number">01</span><span class="cl4-explore-icon">◆</span><span class="cl4-explore-copy"><strong>Batman</strong><small>Core line + Bat-Family hierarchy</small></span><span class="cl4-arrow">→</span></button>
+<button class="cl4-explore-card cl4-tone-blue" data-action="series"><span class="cl4-explore-number">02</span><span class="cl4-explore-icon">▦</span><span class="cl4-explore-copy"><strong>Series</strong><small>Every Batman / New 52 publication line</small></span><span class="cl4-arrow">→</span></button>
+<button class="cl4-explore-card cl4-tone-violet" data-action="atlas"><span class="cl4-explore-number">03</span><span class="cl4-explore-icon">◎</span><span class="cl4-explore-copy"><strong>Batman Atlas</strong><small>Universe → era → character → series → issue</small></span><span class="cl4-arrow">→</span></button>
+<button class="cl4-explore-card cl4-tone-red" data-action="editions"><span class="cl4-explore-number">04</span><span class="cl4-explore-icon">▤</span><span class="cl4-explore-copy"><strong>Collected Editions</strong><small>TPB · Hardcover · Omnibus, tied to exact issues</small></span><span class="cl4-arrow">→</span></button>
+</div></section>`;}
+function atlas(){return `<section class="cl4-section cl4-atlas-section"><div class="cl4-section-head"><div><div class="cl4-kicker">ONE ATLAS</div><h3>One graph. One Batman universe.</h3></div><span>Same records · different lens</span></div><div class="cl4-atlas-shell cl4-atlas-shell-batman"><button class="cl4-atlas-visual" data-action="atlas" aria-label="Open Batman Atlas"><div class="cl4-atlas-grid"></div><div class="cl4-atlas-line cl4-line-1"></div><div class="cl4-atlas-line cl4-line-2"></div><div class="cl4-atlas-line cl4-line-3"></div><div class="cl4-atlas-node cl4-node-core"><span>BAT</span><small>NEW 52</small></div><div class="cl4-atlas-node cl4-node-era"><b>ERA</b><span>NEW 52</span></div><div class="cl4-atlas-node cl4-node-character"><b>CHARACTER</b><span>BATMAN</span></div><div class="cl4-atlas-node cl4-node-series"><b>SERIES</b><span id="atlasSeries">—</span></div><div class="cl4-atlas-node cl4-node-new52"><b>ISSUES</b><span id="atlasIssues">—</span></div><div class="cl4-atlas-watermark">OPEN ATLAS →</div></button><div class="cl4-atlas-info"><div class="cl4-atlas-info-card cl4-atlas-primary"><span>ONE SOURCE</span><h4>Era → Character → Series → Issue</h4><p>The Atlas and the drill-down explorer read the same canonical Series and Issue records. Collections point back to those same issues.</p><button data-action="atlas">Open Batman Atlas →</button></div><button class="cl4-atlas-info-card" data-action="batman"><span>BATMAN</span><strong>Core + Bat-Family</strong><small>Open character hierarchy →</small></button><button class="cl4-atlas-info-card" data-action="series"><span>SERIES</span><strong id="atlasSeries2">—</strong><small>Browse every line →</small></button><button class="cl4-atlas-info-card" data-action="editions"><span>EDITIONS</span><strong>Issue-linked</strong><small>Browse collections →</small></button></div></div></section>`;}
+function territory(){return `<section class="cl4-section"><div class="cl4-section-head"><div><div class="cl4-kicker">THE NEW 52</div><h3>Batman territory</h3></div><span>2011–2016</span></div><div class="cl4-new52"><div class="cl4-new52-art"><span>52</span><i></i><i></i><i></i></div><div class="cl4-new52-copy"><span class="cl4-mini-kicker">SCOPED DATASET</span><strong>Batman / Bat-Family</strong><span id="territoryMeta">Loading…</span><small>Core Batman titles, Bat-Family books, Gotham spin-offs and team-ups. Unrelated DC titles are intentionally excluded.</small></div><span class="cl4-new52-arrow">Explore <b>→</b></span></div></section>`;}
+function seriesRail(series){const sorted=[...series].sort((a,b)=>firstYear(a.startDate)-firstYear(b.startDate)||a.title.localeCompare(b.title));return `<section class="cl4-section"><div class="cl4-section-head"><div><div class="cl4-kicker">SERIES</div><h3>Every Batman-line publication</h3></div><button class="cl4-text-btn" data-action="series">View all →</button></div><div class="cl4-series-rail">${sorted.slice(0,14).map(s=>`<button class="cl4-series-card" data-series="${esc(s.id)}"><span class="cl4-series-year">${esc(String(s.startDate||"").slice(0,4))}</span><strong>${esc(s.title)}</strong><span>${esc(String(s.issueCount||0))} numbered issues</span><i>${esc(s.lineCategory||"")} →</i></button>`).join("")}</div></section>`;}
+function render(container){container.innerHTML=`<div class="cl4-wrap">${hero()}${stats()}${explore()}${atlas()}${territory()}<div id="cl4SeriesMount"></div></div>`;container.querySelectorAll("[data-action]").forEach(b=>b.addEventListener("click",async()=>{const a=b.dataset.action;const d=await load();if(a==="atlas")openAtlas(d);else if(a==="batman")openExplorer("characterList","Batman",{});else if(a==="series")openExplorer("seriesList","Series Catalogue",{});else if(a==="editions")openExplorer("seriesList","Series Catalogue",{});}));load().then(d=>{const series=d.series;container.querySelector("#nSeries").textContent=series.length;container.querySelector("#nIssues").textContent=countIssues(series).toLocaleString();container.querySelector("#nChars").textContent=d.characters.length;container.querySelector("#nCollections").textContent=String(d.collections.filter(c=>(c.seriesIds||[]).some(id=>series.some(s=>s.id===id))).length);container.querySelector("#cl4HeroMeta").textContent=`${series.length} series · ${countIssues(series).toLocaleString()} numbered issues`;container.querySelector("#atlasSeries").textContent=series.length;container.querySelector("#atlasSeries2").textContent=`${series.length} series`;container.querySelector("#atlasIssues").textContent=countIssues(series).toLocaleString();container.querySelector("#territoryMeta").textContent=`${series.length} series · ${countIssues(series).toLocaleString()} numbered issues`;container.querySelector("#cl4SeriesMount").outerHTML=seriesRail(series);container.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=series.find(x=>x.id===b.dataset.series);if(s)openExplorer("series",s.title,{series:s});}));}).catch(e=>{console.warn("[Comics landing]",e);container.querySelector("#cl4HeroMeta").textContent="Dataset unavailable";});}
+window.__comicsV2Landing={render:render,preload:load}; document.dispatchEvent(new CustomEvent("comicsv2:landing-ready"));
