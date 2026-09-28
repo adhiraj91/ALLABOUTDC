@@ -56,7 +56,7 @@ export const CREATOR_ROLES = [
 
 export const COLLECTION_FORMATS = [
   "TPB", "Hardcover", "Omnibus", "Absolute", "Deluxe Edition",
-  "Compendium", "Essential Edition", "Box Set", "Digital Collection", "Other",
+  "Compendium", "Box Set", "Digital Collection", "Other",
 ];
 
 export const ISSUE_LABEL_TYPES = ["numbered", "annual", "special", "one_shot", "other"];
@@ -153,11 +153,11 @@ export function validateContinuity(c) {
 --------------------------------------------------------------------------- */
 export function makeCharacter({
   id, name, displayName = "", aliases = [],
-  universeIds = [], continuityIds = [], sourceInfo,
+  universeIds = [], continuityIds = [], browseRoot = false, parentCharacterId = null, sourceInfo,
 } = {}) {
   return {
     id, name, displayName: displayName || name, aliases,
-    universeIds, continuityIds,
+    universeIds, continuityIds, browseRoot: !!browseRoot, parentCharacterId: parentCharacterId || null,
     sourceInfo: sourceInfo || makeSourceInfo(),
     createdAt: nowIso(), updatedAt: nowIso(),
   };
