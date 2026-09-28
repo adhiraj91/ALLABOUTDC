@@ -1888,94 +1888,81 @@ main.comics-home-main > .grid{
 @media (max-width:900px){.cl4-explore-grid{grid-template-columns:repeat(2,1fr)}.cl4-atlas-shell{grid-template-columns:1fr}.cl4-atlas-info{grid-template-columns:repeat(3,1fr);grid-template-rows:1.5fr}.cl4-atlas-primary{grid-column:1/-1}.cl4-series-rail{grid-template-columns:repeat(2,1fr)}.cl4-hero-side{display:none}.cl4-run-grid{grid-template-columns:1fr}}
 @media (max-width:620px){.cl4-hero{min-height:430px;padding:34px 16px 28px;align-items:flex-end}.cl4-hero-art{opacity:.7}.cl4-sigil{right:7%;top:20%;width:105px;height:105px;font-size:40px}.cl4-orbit-a{right:-230px;top:80px}.cl4-orbit-b{right:-120px;top:145px}.cl4-orbit-c{right:-300px;top:20px}.cl4-hero h2{font-size:64px}.cl4-hero p{font-size:18px}.cl4-hero-sub{font-size:12px}.cl4-stats{padding:0 8px}.cl4-stat{padding:14px 3px}.cl4-stat b{font-size:20px}.cl4-stat span{font-size:7px}.cl4-section{padding-top:30px}.cl4-section-head{align-items:flex-start;flex-direction:column;gap:4px}.cl4-section-head h3{font-size:27px}.cl4-explore-grid{grid-template-columns:1fr}.cl4-explore-card{min-height:126px}.cl4-atlas-visual{min-height:330px}.cl4-atlas-info{grid-template-columns:1fr}.cl4-atlas-primary{grid-column:auto}.cl4-atlas-info-card{min-height:92px}.cl4-node-era{left:5%;top:16%}.cl4-node-character{right:4%;top:15%}.cl4-node-series{left:5%;bottom:9%}.cl4-node-new52{right:4%;bottom:8%}.cl4-era-card{flex-basis:170px}.cl4-new52{grid-template-columns:82px 1fr;padding:16px;gap:14px}.cl4-new52-art{width:82px;height:82px}.cl4-new52-art span{font-size:42px}.cl4-new52-arrow{grid-column:2}.cl4-run-grid{grid-template-columns:1fr}.cl4-series-rail{display:flex;overflow-x:auto;padding-bottom:5px}.cl4-series-card{flex:0 0 190px}.cl4-catalogue{align-items:flex-start;flex-direction:column}.cl4-catalogue-btn{width:100%}}
 
-
 /* ============================================================================
-   STEP 4B-1 — Comics Home information-architecture support
-   Presentation only. No routing/data selectors are changed.
+   COMICS EXPLORER FINAL FIX — Character detail readability
+   Scoped to #comicsExplorerSheet so the rest of ALLABOUTDC is untouched.
+   The explorer must use the site's parchment/ink palette rather than inheriting
+   white text from unrelated dark cards/components.
 ============================================================================ */
-.cl4-home-ia{padding-bottom:36px}
-.cl4-hero-compact{min-height:365px}
-.cl4-hero-compact .cl4-hero-sub{max-width:590px}
-.cl4-explore-grid-three{grid-template-columns:repeat(3,1fr)}
-.cl4-atlas-single{padding-bottom:0}
-.cl4-atlas-visual-wide{width:100%;min-height:430px;display:block}
-.cl4-atlas-caption{
-  display:flex;align-items:center;justify-content:space-between;gap:20px;
-  margin-top:10px;padding:16px 2px 0;
-}
-.cl4-atlas-caption>div{display:flex;flex-direction:column;gap:5px}
-.cl4-atlas-caption strong{font-size:13px;color:var(--ink)}
-.cl4-atlas-caption span{font-size:10px;color:var(--ink-faint);line-height:1.5}
-.cl4-home-ia .cl4-series-rail{grid-template-columns:repeat(4,1fr)}
-@media (max-width:900px){
-  .cl4-explore-grid-three{grid-template-columns:1fr}
-  .cl4-atlas-visual-wide{min-height:390px}
-  .cl4-home-ia .cl4-series-rail{grid-template-columns:repeat(2,1fr)}
-}
-@media (max-width:620px){
-  .cl4-hero-compact{min-height:410px}
-  .cl4-atlas-visual-wide{min-height:340px}
-  .cl4-atlas-caption{align-items:flex-start;flex-direction:column;gap:8px}
-  .cl4-home-ia .cl4-series-rail{display:flex;overflow-x:auto}
-  .cl4-home-ia .cl4-series-card{flex:0 0 190px}
+#comicsExplorerSheet,
+#comicsExplorerSheet .cx-topbar,
+#comicsExplorerSheet .cx-breadcrumb,
+#comicsExplorerSheet .cx-title,
+#comicsExplorerSheet .cx-subtitle,
+#comicsExplorerSheet .cx-row,
+#comicsExplorerSheet .cx-row-title,
+#comicsExplorerSheet .cx-character-series-row,
+#comicsExplorerSheet .cx-character-series-row .cx-row-body,
+#comicsExplorerSheet .cx-character-series-row .cx-row-title,
+#comicsExplorerSheet .cx-character-series-row .cx-row-sub,
+#comicsExplorerSheet .cx-character-series-row .cx-row-chevron,
+#comicsExplorerSheet .sheet-section,
+#comicsExplorerSheet .sheet-label {
+  color: var(--ink);
 }
 
-/* ============================================================================
-   STEP 4B-2 — Character Index foundation
-   Character Explorer only. No routing/data-model changes.
-============================================================================ */
-.cx-character-tools{display:flex;flex-direction:column;gap:10px;margin:16px 0 12px}
-.cx-character-search{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:0 12px;color:var(--ink-faint)}
-.cx-character-search:focus-within{border-color:color-mix(in srgb,var(--comics) 60%,var(--line));box-shadow:0 0 0 3px color-mix(in srgb,var(--comics) 10%,transparent)}
-.cx-character-search input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font:500 13px var(--font-body);padding:12px 0}
-.cx-character-search input::placeholder{color:var(--ink-faint)}
-.cx-character-filters{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
-.cx-character-filters::-webkit-scrollbar{display:none}
-.cx-character-filter{border:1px solid var(--line);background:var(--panel);color:var(--ink-dim);border-radius:999px;padding:7px 10px;font:800 9px var(--font-mono);letter-spacing:.06em;white-space:nowrap;cursor:pointer}
-.cx-character-filter b{color:var(--ink-faint);margin-left:3px}
-.cx-character-filter.is-active{border-color:color-mix(in srgb,var(--comics) 60%,var(--line));background:color-mix(in srgb,var(--comics) 10%,var(--panel));color:var(--ink)}
-.cx-character-filter.is-active b{color:var(--comics)}
-.cx-character-list{display:flex;flex-direction:column;gap:7px}
-.cx-character-card{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:11px;padding:11px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--ink);cursor:pointer;transition:border-color .14s ease,transform .14s ease,background .14s ease}
-.cx-character-card:hover{border-color:color-mix(in srgb,var(--comics) 48%,var(--line));background:color-mix(in srgb,var(--comics) 4%,var(--panel));transform:translateY(-1px)}
-.cx-character-card[hidden]{display:none}
-.cx-character-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--comics) 45%,var(--line));background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--comics) 18%,var(--panel)),var(--panel-2));color:var(--comics);font:800 11px var(--font-mono)}
-.cx-character-body{min-width:0;display:flex;flex-direction:column;gap:3px}
-.cx-character-name{font-weight:800;font-size:14px;line-height:1.2}
-.cx-character-alias{font-size:10px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cx-character-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--ink-faint);font-size:9px}
-.cx-character-meta span+span{padding-left:8px;border-left:1px solid var(--line)}
-.cx-character-empty{padding:22px 8px;color:var(--ink-faint);font-size:11px;text-align:center}
-.cx-character-footprint{display:flex;align-items:baseline;gap:9px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
-.cx-character-footprint strong{font-size:17px;color:var(--ink)}
-.cx-character-footprint span{font-size:10px;color:var(--ink-faint)}
-@media (max-width:620px){
-  .cx-character-card{grid-template-columns:38px 1fr auto;padding:10px}
-  .cx-character-avatar{width:38px;height:38px}
-  .cx-character-name{font-size:13px}
-  .cx-character-meta{font-size:8px}
+#comicsExplorerSheet .cx-subtitle,
+#comicsExplorerSheet .cx-row-sub,
+#comicsExplorerSheet .cx-row-chevron,
+#comicsExplorerSheet .cx-breadcrumb,
+#comicsExplorerSheet .cx-crumb,
+#comicsExplorerSheet .cx-character-meta,
+#comicsExplorerSheet .cx-character-alias {
+  color: var(--ink-faint);
 }
 
-/* STEP 4B-2A — reader-oriented character IA */
-.cl4-hero-note{margin-top:20px;max-width:610px;color:var(--ink-faint);font-size:10px;line-height:1.55;border-left:2px solid color-mix(in srgb,var(--comics) 55%,transparent);padding-left:10px}
-.cl4-atlas-caption{padding-top:12px}
-.cl4-atlas-caption button{display:none}
-.cx-character-search{display:flex;align-items:center;gap:8px;margin:16px 0 22px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink-dim)}
-.cx-character-search span{color:var(--comics);font-size:17px}
-.cx-character-search input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:12px}
-.cx-character-search input::placeholder{color:var(--ink-faint)}
-.cx-character-groups{display:flex;flex-direction:column;gap:28px}
-.cx-character-group{display:flex;flex-direction:column;gap:10px}
-.cx-character-group[hidden]{display:none}
-.cx-character-group-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}
-.cx-character-group-head h3{margin:4px 0 3px;font:400 26px var(--font-display);color:var(--ink)}
-.cx-character-group-head p{margin:0;max-width:620px;color:var(--ink-faint);font-size:10px;line-height:1.5}
-.cx-character-group-head>span{font:400 25px var(--font-display);color:var(--comics)}
-.cx-character-list{display:flex;flex-direction:column;gap:7px}
-@media (max-width:620px){
-  .cl4-hero-note{font-size:9px;max-width:330px}
-  .cx-character-groups{gap:24px}
-  .cx-character-group-head h3{font-size:23px}
-  .cx-character-group-head p{font-size:9px}
-  .cx-character-group-head>span{font-size:21px}
+#comicsExplorerSheet .cx-kicker,
+#comicsExplorerSheet .cx-crumb[data-current="true"],
+#comicsExplorerSheet .sheet-label {
+  color: var(--comics);
+}
+
+#comicsExplorerSheet .cx-row {
+  background: transparent;
+  text-shadow: none;
+}
+
+#comicsExplorerSheet .cx-row-title,
+#comicsExplorerSheet .cx-character-name {
+  color: var(--ink);
+  text-shadow: none;
+}
+
+#comicsExplorerSheet .cx-character-series-row {
+  border-bottom-color: var(--line);
+}
+
+#comicsExplorerSheet .cx-character-continuity {
+  margin-top: 18px;
+}
+
+#comicsExplorerSheet .cx-character-continuity:first-of-type {
+  margin-top: 10px;
+}
+
+#comicsExplorerSheet .cx-character-series-row:hover,
+#comicsExplorerSheet .cx-row:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--comics) 4%, transparent);
+}
+
+#comicsExplorerSheet .tag {
+  color: var(--ink-dim);
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+
+#comicsExplorerSheet .cx-error,
+#comicsExplorerSheet .cx-empty {
+  color: var(--ink-faint);
 }
