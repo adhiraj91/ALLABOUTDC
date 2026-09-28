@@ -1837,3 +1837,15 @@ button.journey-comics-row:active{ background:var(--bg-2); }
   .sm-root .sm-lane-grid,.sm-root .sm-world-card-grid{grid-template-columns:1fr;}
   .sm-root .sm-world-card{min-height:98px;}
 }
+
+/* ================================================================
+   NEW 52 EXPLORE — shared-source presentation
+   ================================================================ */
+.cx-new52-series-row .cx-row-body{min-width:0}
+.cx-edition-mini{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.cx-edition-chip{display:inline-flex;align-items:center;padding:2px 5px;border:1px solid color-mix(in srgb,var(--comics) 35%,var(--line));border-radius:5px;background:color-mix(in srgb,var(--comics) 7%,var(--panel-2));color:var(--comics);font:700 8.5px/1 var(--font-mono);letter-spacing:.04em}
+.cx-no-editions{font-style:italic}
+.cx-era-mapped{background:color-mix(in srgb,var(--comics) 5%,transparent);border-radius:8px}
+.cx-n52-format-tabs{margin:0 0 10px}
+.cx-n52-issue-grid{max-height:180px;overflow:auto;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--bg-2)}
+.cx-n52-issue-grid .cx-chip{font-family:var(--font-mono);font-size:9.5px}
