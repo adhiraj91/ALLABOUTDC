@@ -177,16 +177,46 @@ function renderDetail(item){
 }
 function renderSeriesDetail(d){
   detail.dataset.open='true';root.dataset.detail='true';
-  const issues=d.issues||[];const cols=d.collections||[];
-  const formatRows=(format)=>cols.filter(c=>c.format===format || (format==='Hardcover'&&/Hardcover/.test(c.format)) || (format==='Omnibus'&&/Omnibus/.test(c.format)) || (format==='Deluxe / Absolute'&&/Deluxe|Absolute/.test(c.format)));
+  const issues=d.issues||[];
+  const cols=d.collections||[];
+  const formatOrder=['Trade Paperback','Hardcover','Omnibus','Deluxe / Absolute'];
+  const formatKey=(raw)=>{
+    const f=String(raw||'').toLowerCase();
+    if(/trade|softcover|paperback/.test(f)) return 'Trade Paperback';
+    if(/deluxe|absolute/.test(f)) return 'Deluxe / Absolute';
+    if(/omnibus/.test(f)) return 'Omnibus';
+    if(/hardcover/.test(f)) return 'Hardcover';
+    return null;
+  };
+  const available=[...new Set(cols.map(c=>formatKey(c.format)).filter(Boolean))]
+    .sort((a,b)=>formatOrder.indexOf(a)-formatOrder.indexOf(b));
+  const formatRows=(format)=>cols.filter(c=>formatKey(c.format)===format);
+  const issueCoverage=d.issueSpec?.from!=null&&d.issueSpec?.to!=null
+    ? `${d.issueSpec.from===0?'#0':`#${d.issueSpec.from}`}–#${d.issueSpec.to}`
+    : `${issues.length} mapped issues`;
+  const formatNav=available.length>1
+    ? `<div class="sm-format-tabs" role="tablist">${available.map((f,i)=>`<button class="sm-format-tab" data-sf="${esc(f)}" aria-selected="${i===0}" role="tab">${esc(f)}</button>`).join('')}</div>`
+    : available.length===1
+      ? `<div class="sm-format-single">${esc(available[0])}</div>`
+      : '';
+  const publicationSection=cols.length
+    ? `<div class="sm-d-section"><div class="sm-d-section-title">COLLECTED EDITIONS · ${cols.length}</div>${formatNav}<div class="sm-format-panel" id="smSideFormatPanel"></div></div>`
+    : `<div class="sm-d-section"><div class="sm-d-section-title">COLLECTED EDITIONS</div><div class="sm-no-editions">No verified collected-edition record is entered for this series yet. The map keeps the issue run visible and does not invent formats.</div></div>`;
   detail.querySelector('#smDetailBody').innerHTML=`
-    <div class="sm-d-kicker">SERIES</div><h2 class="sm-d-title">${esc(d.title)}</h2>
+    <div class="sm-d-kicker">SERIES · NEW 52</div>
+    <h2 class="sm-d-title">${esc(d.title)}</h2>
     <p class="sm-d-desc">${esc(d.notes||'New 52 publication run')}</p>
-    <div class="sm-d-facts"><div><b>Issue coverage:</b> ${d.issueSpec?.from===0?'#0–':''}${d.issueSpec?.from!=null&&d.issueSpec?.to!=null?`#${d.issueSpec.from}–#${d.issueSpec.to}`:''}</div><div><b>Issues mapped:</b> ${issues.length}</div></div>
-    <div class="sm-d-section"><div class="sm-d-section-title">ISSUES</div><div class="sm-issue-list sm-issue-list-large">${issues.map(x=>`<span class="sm-issue-pill">#${esc(x)}</span>`).join('')}</div></div>
-    <div class="sm-d-section"><div class="sm-d-section-title">PUBLICATIONS · COLLECTED FORMATS</div><div class="sm-format-tabs">${['Trade Paperback','Hardcover','Omnibus','Deluxe / Absolute'].map((f,i)=>`<button class="sm-format-tab" data-sf="${esc(f)}" aria-selected="${i===0}">${esc(f)}</button>`).join('')}</div><div class="sm-format-panel" id="smSideFormatPanel"></div></div>`;
-  const paint=f=>{detail.querySelectorAll('[data-sf]').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.sf===f)));const rows=formatRows(f);detail.querySelector('#smSideFormatPanel').innerHTML=rows.length?rows.map(c=>`<article class="sm-publication-card"><div class="sm-publication-title">${esc(c.title)}</div><span class="sm-publication-format">${esc(c.format)}</span><div class="sm-publication-coverage">${esc(c.coverage)}</div>${c.notes?`<div class="sm-publication-note">${esc(c.notes)}</div>`:''}</article>`).join(''):`<div class="sm-format-empty">No verified ${esc(f)} edition record is entered yet. Nothing is guessed.</div>`;};
-  detail.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>paint(b.dataset.sf));paint('Trade Paperback');
+    <div class="sm-d-facts"><div><b>Run:</b> ${esc(issueCoverage)}</div><div><b>Mapped:</b> ${issues.length} issues</div></div>
+    <div class="sm-d-section"><div class="sm-d-section-title">ISSUE RUN</div><div class="sm-issue-list sm-issue-list-large">${issues.map(x=>`<span class="sm-issue-pill">#${esc(x)}</span>`).join('')}</div></div>
+    ${publicationSection}`;
+  const paint=f=>{
+    detail.querySelectorAll('[data-sf]').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.sf===f)));
+    const rows=formatRows(f);
+    detail.querySelector('#smSideFormatPanel').innerHTML=rows.length
+      ? rows.map(c=>`<article class="sm-publication-card"><div class="sm-publication-title">${esc(c.title)}</div><span class="sm-publication-format">${esc(c.format)}</span><div class="sm-publication-coverage">${esc(c.coverage)}</div>${c.notes?`<div class="sm-publication-note">${esc(c.notes)}</div>`:''}</article>`).join('')
+      : `<div class="sm-format-empty">No verified ${esc(f)} edition is entered for this series.</div>`;
+  };
+  if(available.length) paint(available[0]);
 }
 function renderEventDetail(d){
   const editions=d.editions||[];
