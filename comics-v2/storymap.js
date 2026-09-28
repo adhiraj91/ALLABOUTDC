@@ -26,7 +26,7 @@ const formats=s=>[...new Set((s?.collections||[]).map(x=>formatKey(x.format)).fi
 const formatOrder=['Trade Paperback','Hardcover','Omnibus','Deluxe / Absolute'];
 
 function session(mode='universe'){
-  state={mode,selected:null,detailType:null,character:null,path:null,view:{k:1,x:0,y:0},drag:null,pointers:new Map()};
+  state={mode,selected:null,detailType:null,character:null,path:null,view:{k:1,x:0,y:0},drag:null,pointers:new Map(),gesture:{type:null,moved:false,suppressClick:false,startX:0,startY:0,startViewX:0,startViewY:0,startDistance:0,startScale:1,startMidX:0,startMidY:0}};
 }
 function shell(){
   if(root)return;
@@ -84,8 +84,12 @@ function shell(){
   };
   root.querySelector('.sm-atlas-tools').onclick=e=>{const b=e.target.closest('[data-tool]');if(!b)return; if(b.dataset.tool==='in')zoom(1.18,stage.clientWidth/2,stage.clientHeight/2);if(b.dataset.tool==='out')zoom(.85,stage.clientWidth/2,stage.clientHeight/2);if(b.dataset.tool==='fit')fit();if(b.dataset.tool==='reset')reset();};
   stage.addEventListener('click',onWorldClick);
-  stage.addEventListener('pointerdown',pointerDown); stage.addEventListener('pointermove',pointerMove); stage.addEventListener('pointerup',pointerEnd); stage.addEventListener('pointercancel',pointerEnd);
+  stage.addEventListener('pointerdown',pointerDown,{passive:false});
+  stage.addEventListener('pointermove',pointerMove,{passive:false});
+  stage.addEventListener('pointerup',pointerEnd,{passive:false});
+  stage.addEventListener('pointercancel',pointerEnd,{passive:false});
   stage.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?1.08:.92,e.clientX-stage.getBoundingClientRect().left,e.clientY-stage.getBoundingClientRect().top);},{passive:false});
+  stage.addEventListener('dblclick',e=>{if(e.target.closest('button,.sm-detail'))return;const r=stage.getBoundingClientRect();zoom(1.22,e.clientX-r.left,e.clientY-r.top);},{passive:false});
   window.addEventListener('resize',()=>{if(root.dataset.open==='true'){render();requestAnimationFrame(fit);}});
 }
 function handleFilter(kind){
@@ -98,16 +102,87 @@ function handleFilter(kind){
   }
 }
 function handleWorld(kind){
-  if(kind==='multiverse'){state.mode='new52';render();requestAnimationFrame(()=>root.querySelector('.sm-multiverse-zone')?.scrollIntoView({block:'center'}));}
-  else if(kind==='events'){state.mode='universe';render();requestAnimationFrame(()=>root.querySelector('.sm-event-constellation')?.scrollIntoView({block:'center'}));}
+  if(kind==='multiverse'){state.mode='universe';render();requestAnimationFrame(()=>root.querySelector('.sm-panel-worlds')?.scrollIntoView({block:'center',inline:'nearest'}));}
+  else if(kind==='events'){state.mode='universe';render();requestAnimationFrame(()=>root.querySelector('.sm-panel-events')?.scrollIntoView({block:'center',inline:'nearest'}));}
   else if(kind==='earth'){showDetail('era',{id:'earth-0',title:'Earth-0 · Main Continuity',years:'New 52 / Main Universe',notes:'Earth-0 is the primary continuity lens. Enter The New 52 to explore its publication territories, characters, crossovers and collected editions.'});}
 }
-function pointerDown(e){if(e.target.closest('button,.sm-detail'))return;state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(state.pointers.size===1){state.drag={x:e.clientX,y:e.clientY,ox:state.view.x,oy:state.view.y};stage.setPointerCapture?.(e.pointerId);stage.classList.add('sm-dragging');}}
-function pointerMove(e){if(!state.pointers.has(e.pointerId)||state.pointers.size!==1||!state.drag)return;state.view.x=state.drag.ox+e.clientX-state.drag.x;state.view.y=state.drag.oy+e.clientY-state.drag.y;applyView(false);}
-function pointerEnd(e){state.pointers.delete(e.pointerId);if(!state.pointers.size){state.drag=null;stage.classList.remove('sm-dragging');}}
+function pointerPos(){
+  return [...state.pointers.values()];
+}
+function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+function midpoint(a,b){return {x:(a.x+b.x)/2,y:(a.y+b.y)/2};}
+function pointerDown(e){
+  if(!state||!stage)return;
+  if(e.pointerType==='touch')e.preventDefault();
+  state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const pts=pointerPos();
+  if(pts.length===1){
+    state.gesture={type:'pan',moved:false,startX:e.clientX,startY:e.clientY,startViewX:state.view.x,startViewY:state.view.y,startDistance:0,startScale:state.view.k,startMidX:0,startMidY:0};
+    state.drag={x:e.clientX,y:e.clientY,ox:state.view.x,oy:state.view.y};
+    stage.classList.remove('sm-dragging');
+  }else if(pts.length===2){
+    const [a,b]=pts,mid=midpoint(a,b);
+    state.gesture={type:'pinch',moved:true,startX:0,startY:0,startViewX:state.view.x,startViewY:state.view.y,startDistance:Math.max(1,distance(a,b)),startScale:state.view.k,startMidX:mid.x,startMidY:mid.y};
+    state.drag=null;
+    stage.classList.add('sm-dragging');
+    for(const id of state.pointers.keys())stage.setPointerCapture?.(id);
+  }
+}
+function pointerMove(e){
+  if(!state||!state.pointers.has(e.pointerId))return;
+  if(e.pointerType==='touch')e.preventDefault();
+  state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const pts=pointerPos();
+  if(pts.length===1&&state.gesture.type==='pan'){
+    const dx=e.clientX-state.gesture.startX,dy=e.clientY-state.gesture.startY;
+    if(Math.hypot(dx,dy)>6){
+      state.gesture.moved=true;state.gesture.suppressClick=true;
+      try{stage.setPointerCapture?.(e.pointerId);}catch{}
+      stage.classList.add('sm-dragging');
+    }
+    if(!state.gesture.moved)return;
+    state.view.x=state.gesture.startViewX+dx;
+    state.view.y=state.gesture.startViewY+dy;
+    applyView(false);
+    return;
+  }
+  if(pts.length>=2&&state.gesture.type==='pinch'){
+    const [a,b]=pts;
+    const mid=midpoint(a,b),scale=Math.max(.72,Math.min(1.65,state.gesture.startScale*(distance(a,b)/state.gesture.startDistance)));
+    const ratio=scale/state.gesture.startScale;
+    state.view.k=scale;
+    state.view.x=mid.x-(state.gesture.startMidX-state.gesture.startViewX)*ratio;
+    state.view.y=mid.y-(state.gesture.startMidY-state.gesture.startViewY)*ratio;
+    applyView(false);
+  }
+}
+function pointerEnd(e){
+  if(!state)return;
+  state.pointers.delete(e.pointerId);
+  try{stage.releasePointerCapture?.(e.pointerId);}catch{}
+  if(state.pointers.size===0){
+    const suppress=state.gesture.suppressClick;
+    state.drag=null;state.gesture.type=null;stage.classList.remove('sm-dragging');
+    if(suppress){state.suppressClick=true;setTimeout(()=>{if(state)state.suppressClick=false;},80);}
+  }else if(state.pointers.size===1){
+    const [p]=pointerPos();
+    state.gesture={type:'pan',moved:true,startX:p.x,startY:p.y,startViewX:state.view.x,startViewY:state.view.y,startDistance:0,startScale:state.view.k,startMidX:0,startMidY:0};
+  }
+}
 function zoom(f,cx,cy){const old=state.view.k,next=Math.max(.72,Math.min(1.65,old*f)),r=next/old;state.view.x=cx-(cx-state.view.x)*r;state.view.y=cy-(cy-state.view.y)*r;state.view.k=next;applyView(true);}
 function applyView(anim=true){const w=root.querySelector('#smWorld');if(!w)return;w.classList.toggle('sm-animate',anim);w.style.transform=`translate3d(${state.view.x}px,${state.view.y}px,0) scale(${state.view.k})`;if(anim)setTimeout(()=>w.classList.remove('sm-animate'),260);}
-function fit(){if(!state||!root)return;state.view={k:1,x:0,y:0};const w=root.querySelector('#smWorld');if(!w)return;const sr=stage.getBoundingClientRect(),ww=Math.max(w.scrollWidth,w.offsetWidth),hh=Math.max(w.scrollHeight,w.offsetHeight);const k=Math.min((sr.width-24)/ww,(sr.height-24)/hh,1);state.view.k=Math.max(.72,Math.min(1,k));state.view.x=(sr.width-ww*state.view.k)/2;state.view.y=Math.max(8,(sr.height-hh*state.view.k)/2);applyView(true);}
+function fit(){
+  if(!state||!root||!stage)return;
+  const w=root.querySelector('#smWorld');if(!w)return;
+  const sr=stage.getBoundingClientRect();
+  const ww=Math.max(w.scrollWidth,w.offsetWidth,w.getBoundingClientRect().width);
+  const hh=Math.max(w.scrollHeight,w.offsetHeight,w.getBoundingClientRect().height);
+  const k=Math.max(.55,Math.min(1,(sr.width-24)/Math.max(1,ww),(sr.height-24)/Math.max(1,hh)));
+  state.view.k=k;
+  state.view.x=Math.max(8,(sr.width-ww*k)/2);
+  state.view.y=Math.max(8,(sr.height-hh*k)/2);
+  applyView(true);
+}
 function reset(){state.view={k:1,x:0,y:0};applyView(true);}
 function open(mode='universe'){shell();session(mode);root.dataset.open='true';document.documentElement.classList.add('sm-lock');render();requestAnimationFrame(fit);}
 function close(){
@@ -190,7 +265,7 @@ function renderPaths(){
 }
 
 function onWorldClick(e){
-  if(!state)return;
+  if(!state||state.suppressClick)return;
   const mode=e.target.closest('[data-mode]'); if(mode){navigate(mode.dataset.mode);return;}
   const enter=e.target.closest('[data-open-new52]'); if(enter){navigate('new52');return;}
   const world=e.target.closest('[data-world]'); if(world){handleWorld(world.dataset.world);return;}
