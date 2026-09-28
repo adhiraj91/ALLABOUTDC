@@ -1468,6 +1468,38 @@ function renderComicsLanding(){
     onBrowseAll: ()=>{ state.comicsView = "browse"; buildFilters(); renderCards(); window.scrollTo(0,0); },
     onReadingPath: ()=> openComicsPath(null),
   });
+
+  // Comics landing owns its visual cards, but navigation is wired here as well.
+  // This keeps the landing independent of module-load order and prevents a stale
+  // landing module from leaving visible cards without a click action.
+  gridEl.querySelectorAll("[data-go]").forEach(el=>{
+    if(el.dataset.appComicsBound === "true") return;
+    el.dataset.appComicsBound = "true";
+    el.addEventListener("click", async e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      const action = el.dataset.go;
+      if(action === "atlas"){
+        const [u] = await Promise.resolve(window.__comicsV2?.data?.getAllUniverses?.(1) || []);
+        if(window.__comicsStoryMap?.open) return window.__comicsStoryMap.open("universe", u?.id);
+        return;
+      }
+      if(action === "series"){
+        if(window.__comicsExplorer?.openAt){
+          return window.__comicsExplorer.openAt([{level:"seriesList", label:"Series", params:{}}]);
+        }
+        // Last-resort fallback: show the existing catalogue rather than a dead button.
+        state.comicsView = "browse"; buildFilters(); renderCards(); window.scrollTo(0,0);
+        return;
+      }
+      if(action === "characters" && window.__comicsExplorer?.openAt){
+        return window.__comicsExplorer.openAt([{level:"characterList", label:"Characters", params:{}}]);
+      }
+      if(action === "continuity" && window.__comicsExplorer?.openAt){
+        return window.__comicsExplorer.openAt([{level:"continuityList", label:"Continuity / Era", params:{}}]);
+      }
+    }, true);
+  });
 }
 document.addEventListener("comicsv2:landing-ready", ()=>{ if(loaded && isComicsLanding()){ buildFilters(); renderCards(); } });
 

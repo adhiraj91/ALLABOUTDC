@@ -488,8 +488,7 @@ main{ padding:12px 16px 100px 16px; max-width:720px; margin:0 auto; }
   padding:10px 18px calc(28px + env(safe-area-inset-bottom,0px)) 18px;
   transform:translateY(100%); transition:transform .22s cubic-bezier(.32,.72,0,1);
 }
-.sheet[data-open="true"]{ transform:translateY(0); pointer-events:auto; }
-.sheet:not([data-open="true"]){ pointer-events:none; }
+.sheet[data-open="true"]{ transform:translateY(0); }
 .sheet-handle{ width:36px; height:4px; border-radius:3px; background:var(--line); margin:6px auto 14px auto; }
 .sheet-eyebrow{ font-family:var(--font-mono); font-weight:600; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:4px; }
 .sheet h2{ font-family:var(--font-display); font-weight:400; font-size:24px; margin:0 0 10px 0; line-height:1.05; }
