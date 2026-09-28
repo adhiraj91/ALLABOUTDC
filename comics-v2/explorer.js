@@ -33,7 +33,7 @@
 // ============================================================================
 // "?v=p5" — data.js gained new Pointer 5 helpers (reading paths / collection overlap);
 // the query string busts GitHub Pages' ~10min cache the same way Pointer 4 did for storymap.js.
-import * as data from "./data.js?v=p70";
+import * as data from "./data.js?v=p65";
 import { COLLECTIONS } from "./schema.js";
 // Pointer 6 — personal reading progress (derived from the site's one progress store via
 // window.__readerProgress) + the contextual Story Graph. Same "?v=p6" specifier everywhere so
@@ -362,78 +362,32 @@ async function levelRoot() {
  * characters stay fully reachable through Stories/Issues/Story Graph/Search —
  * they just don't clutter this primary entry point.
  */
-const MAJOR_HEADLINERS = new Set([
-  "batman", "superman", "wonder woman", "supergirl", "the flash", "flash",
-  "green lantern", "green arrow", "aquaman", "shazam", "cyborg", "harley quinn",
-]);
-const MAJOR_VILLAINS = new Set(["joker", "lex luthor", "darkseid", "deathstroke", "harley quinn"]);
-const CHARACTER_FAMILY_GROUPS = [
-  { key: "bat-family", title: "Bat-Family", names: new Set(["nightwing","batgirl","red hood","robin","batwoman","spoiler","huntress","azrael","tim drake","damian wayne","cassandra cain"]) },
-  { key: "super-family", title: "Super-Family", names: new Set(["supergirl","superboy","krypto","conner kent","jon kent","power girl"]) },
-  { key: "lanterns", title: "Green Lanterns", names: new Set(["hal jordan","john stewart","guy gardner","kyle rayner","jessica cruz","simon baz"]) },
-  { key: "titans", title: "Titans & Legacy", names: new Set(["nightwing","starfire","raven","cyborg","beast boy","robin"]) },
-];
-function normCharacterName(c) { return String(c?.displayName || c?.name || "").trim().toLowerCase(); }
-function familyGroupFor(c) {
-  const n = normCharacterName(c);
-  return CHARACTER_FAMILY_GROUPS.find(g => g.names.has(n)) || null;
-}
-function isMajorCharacter(c) { return MAJOR_HEADLINERS.has(normCharacterName(c)); }
-function isMajorVillain(c) { return MAJOR_VILLAINS.has(normCharacterName(c)); }
-
-/** Reader-facing Character Index: major characters first, then grouped ecosystems. */
 async function levelCharacterList() {
-  const [chars, series] = await Promise.all([data.getAllCharacters(200), data.getAllSeries(200)]);
-  const seriesByCharacter = new Map();
-  for (const s of series) for (const id of (s.characterIds || [])) {
-    if (!seriesByCharacter.has(id)) seriesByCharacter.set(id, []);
-    seriesByCharacter.get(id).push(s);
-  }
-  const items = chars.map(c => {
-    const ownSeries = (seriesByCharacter.get(c.id) || []).filter(s => Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
-    const leadSeries = data.leadSeriesFor(c.id, series);
-    return { c, ownSeries, leadSeries, issueCount: ownSeries.reduce((n,s)=>n+(Number(s.issueCount)||0),0) };
-  }).filter(x => x.leadSeries.length || isMajorCharacter(x.c) || isMajorVillain(x.c));
-
-  const major = items.filter(x => isMajorCharacter(x.c));
-  const villainItems = items.filter(x => isMajorVillain(x.c) && !isMajorCharacter(x.c));
-  const familyGroups = CHARACTER_FAMILY_GROUPS.map(g => ({ ...g, members: items.filter(x => g.names.has(normCharacterName(x.c)) && !isMajorCharacter(x.c)) })).filter(g => g.members.length);
-  const groupedIds = new Set(familyGroups.flatMap(g => g.members.map(x => x.c.id)));
-  const other = items.filter(x => !isMajorCharacter(x.c) && !isMajorVillain(x.c) && !groupedIds.has(x.c.id));
-
-  const rowHtml = item => `<div class="cx-character-card" data-character-id="${esc(item.c.id)}" data-search="${esc([item.c.displayName,item.c.name,...(item.c.aliases||[])].filter(Boolean).join(" ").toLowerCase())}">
-    <div class="cx-character-avatar" aria-hidden="true">${esc(initialsOf(item.c.displayName||item.c.name))}</div>
-    <div class="cx-character-body"><div class="cx-character-name">${esc(item.c.displayName||item.c.name)}</div><div class="cx-character-meta">${item.ownSeries.length ? `${item.ownSeries.length} series · ${item.issueCount} issues` : "Comics catalogue"}</div></div><div class="cx-row-chevron">›</div></div>`;
-  const groupCard = g => `<button class="cx-character-family" data-family="${esc(g.key)}" data-search="${esc(g.title.toLowerCase())}"><div><div class="cx-character-family-title">${esc(g.title)}</div><div class="cx-character-family-sub">${g.members.map(x=>esc(x.c.displayName||x.c.name)).join(" · ")}</div></div><div class="cx-row-chevron">›</div></button>`;
-  const section = (title, key, listHtml) => listHtml ? `<section class="cx-character-group" data-character-group="${key}"><div class="cx-character-group-head"><div><div class="cx-kicker">${esc(title.toUpperCase())}</div></div></div>${listHtml}</section>` : "";
-
-  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Explore characters</h2><p class="cx-subtitle">Start with a major character, then move into their books, runs and stories.</p>
-    <label class="cx-character-search"><span aria-hidden="true">⌕</span><input id="cxCharacterSearch" type="search" placeholder="Search Batman, Superman, Green Lantern…" autocomplete="off" /></label>
-    <div class="cx-character-groups" id="cxCharacterGroups">
-      ${section("Major Characters","major",`<div class="cx-character-list">${major.sort((a,b)=>a.c.displayName.localeCompare(b.c.displayName)).map(rowHtml).join("")}</div>`)}
-      ${section("Character Families","families",`<div class="cx-character-family-list">${familyGroups.map(groupCard).join("")}</div>`)}
-      ${section("Villains","villains",`<div class="cx-character-list">${villainItems.sort((a,b)=>a.c.displayName.localeCompare(b.c.displayName)).map(rowHtml).join("")}</div>`)}
-      ${section("Other Character Catalogues","other",`<div class="cx-character-list">${other.sort((a,b)=>a.c.displayName.localeCompare(b.c.displayName)).map(rowHtml).join("")}</div>`)}
-    </div><div class="cx-character-empty" id="cxCharacterEmpty" hidden>No matching characters.</div>`;
-  return { html, wire(container) {
-    const cards=[...container.querySelectorAll('[data-character-id]')], groups=[...container.querySelectorAll('[data-character-group]')];
-    const apply=()=>{const q=String(container.querySelector('#cxCharacterSearch')?.value||'').trim().toLowerCase(); let n=0;
-      cards.forEach(c=>{const show=!q||c.dataset.search.includes(q);c.hidden=!show;if(show)n++;});
-      container.querySelectorAll('.cx-character-family').forEach(c=>{c.hidden=!!q&&!c.dataset.search.includes(q);});
-      groups.forEach(g=>{g.hidden=!g.querySelector('[data-character-id]:not([hidden]), .cx-character-family:not([hidden])');});
-      const e=container.querySelector('#cxCharacterEmpty'); if(e)e.hidden=n!==0||container.querySelectorAll('.cx-character-family:not([hidden])').length>0;
-    };
-    container.querySelector('#cxCharacterSearch')?.addEventListener('input',apply);
-    cards.forEach(card=>card.addEventListener('click',()=>{const item=items.find(x=>x.c.id===card.dataset.characterId);if(item)pushLevel('character',item.c.displayName||item.c.name,{character:item.c,characterSeries:item.ownSeries});}));
-    container.querySelectorAll('.cx-character-family').forEach(card=>card.addEventListener('click',()=>{const g=familyGroups.find(x=>x.key===card.dataset.family);if(g)pushLevel('characterGroup',g.title,{members:g.members.map(x=>x.c)});}));
-  }};
-}
-
-async function levelCharacterGroup(params) {
-  const members = params.members || [];
-  const rows = members.map(c=>`<div class="cx-character-card" data-member-id="${esc(c.id)}"><div class="cx-character-avatar">${esc(initialsOf(c.displayName||c.name))}</div><div class="cx-character-body"><div class="cx-character-name">${esc(c.displayName||c.name)}</div><div class="cx-character-meta">Open character catalogue</div></div><div class="cx-row-chevron">›</div></div>`).join('');
-  const html=`<div class="cx-kicker">CHARACTER GROUP</div><h2 class="cx-title">${esc(params.title||'Character Group')}</h2><p class="cx-subtitle">Explore each character's own books and runs.</p><div class="cx-character-list">${rows}</div>`;
-  return {html,wire(container){container.querySelectorAll('[data-member-id]').forEach(row=>row.addEventListener('click',()=>{const c=members.find(x=>x.id===row.dataset.memberId);if(c)pushLevel('character',c.displayName||c.name,{character:c});}));}};
+  const [chars, series] = await Promise.all([data.getAllCharacters(), data.getAllSeries()]);
+  const curated = data.curateCharacters(chars, series).sort((a, b) => (a.displayName || a.name || "").localeCompare(b.displayName || b.name || ""));
+  if (!curated.length) return { html: emptyHtml("No characters with their own comic catalogue have been added yet.") };
+  const rows = curated.map(c => {
+    const label = esc(c.displayName || c.name || "Unnamed");
+    const sub = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
+    return `<div class="cx-row" data-id="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${label}</div>${sub ? `<div class="cx-row-sub">${sub}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`;
+  }).join("");
+  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Choose a character</h2><p class="cx-subtitle">Characters with a meaningful standalone comics catalogue.</p><div class="cx-list">${rows}</div>`;
+  return {
+    html,
+    wire(container) {
+      container.querySelectorAll(".cx-row[data-id]").forEach(row => {
+        row.addEventListener("click", () => {
+          const c = curated.find(x => x.id === row.dataset.id);
+          // The character list already loaded the complete Series collection above.
+          // Pass the character's own series into the detail screen so it does not
+          // depend on a second filtered Firestore query (which can be denied by
+          // security rules even when the collection read itself is allowed).
+          const characterSeries = series.filter(s => s && Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
+          pushLevel("character", c.displayName || c.name, { character: c, characterSeries });
+        });
+      });
+    },
+  };
 }
 
 /**
@@ -458,74 +412,92 @@ async function levelReadingPathList() {
 }
 
 async function levelCharacter(params) {
-  const c = params.character;
+  const c = params && params.character;
   if (!c || !c.id) return { html: emptyHtml("Character data is incomplete.") };
 
+  // The Character Index already loaded the full Series collection. Reuse that
+  // exact in-memory data here. This makes the detail screen independent of a
+  // second Firestore array-contains query and of continuity documents.
   let series = Array.isArray(params.characterSeries) ? [...params.characterSeries] : [];
   if (!series.length) {
-    try { series = await data.getSeriesForCharacter(c.id); } catch (e) { series = []; }
+    try {
+      const allSeries = await data.getAllSeries(200);
+      series = Array.isArray(allSeries) ? allSeries : [];
+    } catch (err) {
+      console.warn("[Comics Explorer] character series fallback failed", err);
+      series = [];
+    }
   }
 
-  // Only show this character's own publishing line. Supporting appearances
-  // remain reachable from the individual series/issues/stories.
+  // Only show series where this character is the lead character. Be tolerant
+  // of partially shaped records so one bad document cannot blank the screen.
   series = series.filter(s => s && Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
-  series.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || '').localeCompare(String(b.title || '')));
+  series.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || "").localeCompare(String(b.title || "")));
 
-  let html = `<div class="cx-kicker">CHARACTER</div><h2 class="cx-title">${esc(c.displayName || c.name)}</h2>`;
+  const characterName = c.displayName || c.name || "Unnamed Character";
+  let html = `<div class="cx-kicker">CHARACTER</div><h2 class="cx-title">${esc(characterName)}</h2>`;
   if (Array.isArray(c.aliases) && c.aliases.length) {
-    html += `<div class="cx-tag-row">${c.aliases.slice(0,5).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div>`;
+    html += `<div class="cx-tag-row">${c.aliases.slice(0, 6).map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div>`;
   }
+
   if (!series.length) {
-    html += emptyHtml(`No standalone books are mapped yet for ${c.displayName || c.name}.`);
+    html += emptyHtml(`No standalone books are mapped yet for ${characterName}.`);
     return { html };
   }
 
-  // Continuity lookup is supplementary UI. Never allow one missing/malformed
-  // continuity document to break the whole character page.
-  const contIds = [...new Set(series.flatMap(s => Array.isArray(s.continuityIds) ? s.continuityIds.filter(Boolean) : []))];
-  const continuityDocs = await Promise.all(contIds.map(async id => {
-    try { return await cachedGet(COLLECTIONS.CONTINUITIES, id); } catch (_) { return null; }
-  }));
-  const contMap = new Map(continuityDocs.filter(Boolean).map(x => [x.id, x]));
+  // Continuity labels are deliberately derived from the series' stored
+  // continuity IDs. A missing/broken continuity document is presentation-only
+  // and must never make Character -> Series fail.
+  const continuityName = cid => {
+    const id = String(cid || "").toLowerCase();
+    if (id.includes("new-52") || id.includes("new52")) return "The New 52";
+    if (id.includes("rebirth")) return "DC Rebirth";
+    if (id.includes("pre-flashpoint") || id.includes("preflashpoint")) return "Pre-Flashpoint DC Universe";
+    return "Other continuity";
+  };
 
-  const displaySeriesTitle = s => String(s.title || '').replace(/\s*\((?:19|20)\d{2}(?:\s*[–-]\s*(?:19|20)\d{2})?\)\s*$/, '').trim() || s.title || 'Untitled series';
-  const continuityLabel = cid => {
-    const ct = contMap.get(cid);
-    if (ct) return ct.shortName || ct.name || 'Continuity';
-    const id = String(cid || '').toLowerCase();
-    if (id.includes('new-52') || id.includes('new52')) return 'The New 52';
-    if (id.includes('rebirth')) return 'DC Rebirth';
-    if (id.includes('pre-flashpoint')) return 'Pre-Flashpoint DC Universe';
-    return 'Other continuity';
+  const displaySeriesTitle = s => {
+    const raw = String(s.title || "Untitled series");
+    return raw.replace(/\s*\((?:19|20)\d{2}(?:\s*[–-]\s*(?:19|20)\d{2})?\)\s*$/, "").trim() || raw;
+  };
+
+  const safeDateRange = s => {
+    try { return seriesDateRange(s); } catch (_) { return ""; }
   };
 
   const groups = new Map();
   for (const s of series) {
-    const cid = Array.isArray(s.continuityIds) && s.continuityIds.length ? s.continuityIds[0] : 'other';
+    const ids = Array.isArray(s.continuityIds) ? s.continuityIds.filter(Boolean) : [];
+    const cid = ids[0] || "other";
     if (!groups.has(cid)) groups.set(cid, []);
     groups.get(cid).push(s);
   }
 
   const blocks = [];
   for (const [cid, list] of groups) {
-    list.sort((a,b) => firstYearOf(a) - firstYearOf(b) || String(a.title || '').localeCompare(String(b.title || '')));
-    const rows = list.map(s => `<div class="cx-row cx-character-series-row" data-series="${esc(s.id)}">
-      <div class="cx-row-body">
-        <div class="cx-row-title">${esc(displaySeriesTitle(s))}</div>
-        <div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ''}</div>
-      </div><div class="cx-row-chevron">›</div>
-    </div>`).join('');
-    blocks.push(`<section class="sheet-section cx-character-continuity"><div class="sheet-label">${esc(continuityLabel(cid).toUpperCase())}</div>${rows}</section>`);
+    list.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || "").localeCompare(String(b.title || "")));
+    const rows = list.map(s => {
+      const dateText = safeDateRange(s);
+      const issueText = Number(s.issueCount) > 0 ? `${Number(s.issueCount)} issues` : "";
+      const sub = [dateText, issueText].filter(Boolean).join(" · ") || "Series catalogue";
+      return `<div class="cx-row cx-character-series-row" data-series="${esc(s.id)}">
+        <div class="cx-row-body">
+          <div class="cx-row-title">${esc(displaySeriesTitle(s))}</div>
+          <div class="cx-row-sub">${esc(sub)}</div>
+        </div><div class="cx-row-chevron">›</div>
+      </div>`;
+    }).join("");
+    blocks.push(`<section class="sheet-section cx-character-continuity"><div class="sheet-label">${esc(continuityName(cid).toUpperCase())}</div><div class="cx-list">${rows}</div></section>`);
   }
 
-  html += blocks.join('');
+  html += blocks.join("");
   return {
     html,
     wire(container) {
-      container.querySelectorAll('[data-series]').forEach(row => {
-        row.addEventListener('click', () => {
-          const s = series.find(x => x.id === row.dataset.series);
-          if (s) pushLevel('series', displaySeriesTitle(s), { series: s });
+      container.querySelectorAll("[data-series]").forEach(row => {
+        row.addEventListener("click", () => {
+          const s = series.find(x => x && x.id === row.dataset.series);
+          if (s) pushLevel("series", displaySeriesTitle(s), { series: s });
         });
       });
     },
@@ -627,28 +599,39 @@ async function levelContinuity(params) {
 }
 
 async function levelSeriesList() {
-  const [all, continuities] = await Promise.all([data.getAllSeries(200), data.getAllContinuities()]);
-  const cMap=new Map(continuities.map(c=>[c.id,c]));
-  all.sort((a,b)=>firstYearOf(a)-firstYearOf(b)||String(a.title).localeCompare(String(b.title)));
-  if(!all.length)return {html:emptyHtml('No series have been added yet.')};
-  const card=s=>{const ct=(s.continuityIds||[]).map(id=>cMap.get(id)).find(Boolean);return `<div class="cx-series-library-card" data-series-id="${esc(s.id)}" data-search="${esc(String(s.title||'').toLowerCase())}"><div class="cx-series-library-year">${esc(String(firstYearOf(s)||''))}</div><div class="cx-series-library-body"><div class="cx-series-library-title">${esc(s.title)}</div><div class="cx-series-library-meta">${esc(ct?.shortName||ct?.name||'Continuity not mapped')}${s.issueCount?` · ${s.issueCount} issues`:''}</div></div><div class="cx-row-chevron">›</div></div>`};
-  const html=`<div class="cx-kicker">COMICS LIBRARY</div><h2 class="cx-title">Series</h2><p class="cx-subtitle">Browse publication lines. Open a series to see its creative runs, then drill into issues and editions.</p><label class="cx-series-search"><span>⌕</span><input id="cxSeriesSearch" type="search" placeholder="Search series…" autocomplete="off"></label><div class="cx-series-library-list" id="cxSeriesLibraryList">${all.map(card).join('')}</div><div class="cx-character-empty" id="cxSeriesEmpty" hidden>No matching series.</div>`;
-  return {html,wire(container){const cards=[...container.querySelectorAll('[data-series-id]')];const apply=()=>{const q=String(container.querySelector('#cxSeriesSearch')?.value||'').trim().toLowerCase();let n=0;cards.forEach(x=>{const show=!q||x.dataset.search.includes(q);x.hidden=!show;if(show)n++;});const e=container.querySelector('#cxSeriesEmpty');if(e)e.hidden=n!==0;};container.querySelector('#cxSeriesSearch')?.addEventListener('input',apply);cards.forEach(row=>row.addEventListener('click',()=>{const s=all.find(x=>x.id===row.dataset.seriesId);if(s)pushLevel('series',s.title,{series:s});}));}};
+  const all = await data.getAllSeries();
+  all.sort((a, b) => firstYearOf(a) - firstYearOf(b));
+  if (!all.length) return { html: emptyHtml("No series have been added yet.") };
+  const rows = all.map(s => `<div class="cx-row" data-id="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
+  const html = `<div class="cx-kicker">SERIES</div><h2 class="cx-title">Browse series</h2><div class="cx-list">${rows}</div>`;
+  return {
+    html,
+    wire(container) {
+      container.querySelectorAll(".cx-row[data-id]").forEach(row => {
+        row.addEventListener("click", () => {
+          const s = all.find(x => x.id === row.dataset.id);
+          pushLevel("series", s.title, { series: s });
+        });
+      });
+    },
+  };
 }
 
 async function levelSeries(params) {
   const s = params.series;
-  const [runs, creators, readingPaths, issues, collections] = await Promise.all([
+  const [runs, creators, readingPaths] = await Promise.all([
     data.getRunsForSeries(s.id),
     Promise.all((s.creatorIds || []).map(id => cachedGet(COLLECTIONS.CREATORS, id))),
     data.getReadingPathsFor({ continuityId: (s.continuityIds || [])[0] || null }),
-    data.getIssuesForSeries(s.id),
-    data.getCollectionsForSeries(s.id),
   ]);
-  sortIssuesInPlace(issues);
   const runLabels = await Promise.all(runs.map(r => runLabel(r)));
 
-  let seriesIssues = RP.hasAnyComicsActivity() ? issues : null;
+  let html = coverBlockHtml(s.coverImage, s.title);
+  html += `<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2>`;
+  const sub = [seriesDateRange(s), s.issueCount ? `${s.issueCount} issues` : ""].filter(Boolean).join(" · ");
+  if (sub) html += `<div class="cx-subtitle">${esc(sub)}</div>`;
+  // Pointer 6: series progress from its issue records — exact only when those records cover the series.
+  let seriesIssues = RP.hasAnyComicsActivity() ? await RP.issuesForSeries(s.id).catch(() => []) : null;
   const seriesProgressBlock = () => {
     if (!seriesIssues) return "";
     const sp = RP.seriesProgress(s, seriesIssues, RP.snapshot());
@@ -658,81 +641,37 @@ async function levelSeries(params) {
       : `${sp.read} issue${sp.read === 1 ? "" : "s"} read`;
     return `<span class="cx-progress-text" data-state="${sp.state}">${esc(text)}</span>`;
   };
-
-  const credNames = creators.filter(Boolean).map(c => c.displayName || c.name);
-  const issueRow = (iss, snap) => `<div class="cx-row cx-issue-row" data-series-issue="${esc(iss.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(RP.issueLabelWith(iss, s))}</div>${iss.title ? `<div class="cx-row-sub">${esc(iss.title)}${iss.publicationDate ? ` · ${esc(iss.publicationDate)}` : ""}</div>` : ""}</div>${readToggleHtml(iss.id, RP.issueState(iss.id, snap), RP.issueLabelWith(iss, s))}</div>`;
-  const editionRow = (c) => {
-    const coverage = compressCoverageRows(c.issueCoverage || []);
-    const meta = [formatEditionMeta(c), coverage].filter(Boolean).join(" · ");
-    return `<div class="cx-row" data-series-edition="${esc(c.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(c.title || "Untitled edition")}</div><div class="cx-row-sub">${esc(meta || "Verified collected edition")}</div></div><div class="cx-row-chevron">›</div></div>`;
-  };
-
-  let html = coverBlockHtml(s.coverImage, s.title);
-  html += `<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2>`;
-  const sub = [seriesDateRange(s), s.issueCount ? `${s.issueCount} issues` : ""].filter(Boolean).join(" · ");
-  if (sub) html += `<div class="cx-subtitle">${esc(sub)}</div>`;
   html += `<div class="cx-progress-line" data-prog-block="series-progress">${seriesProgressBlock()}</div>`;
-
+  const credNames = creators.filter(Boolean).map(c => c.displayName || c.name);
   if (credNames.length) html += `<div class="cx-tag-row">${credNames.map(n => `<span class="tag">${esc(n)}</span>`).join("")}</div>`;
   if (s.description) html += `<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="sheet-body">${esc(s.description)}</div></div>`;
-
-  html += `<div class="cx-series-facts"><div><b>${runs.length}</b><span>creative run${runs.length === 1 ? "" : "s"}</span></div><div><b>${issues.length || s.issueCount || 0}</b><span>mapped issues</span></div><div><b>${collections.length}</b><span>verified editions</span></div></div>`;
-
-  const tabs = [
-    { key: "runs", label: "Runs" },
-    { key: "issues", label: `Issues${issues.length ? ` · ${issues.length}` : ""}` },
-    { key: "editions", label: `Editions${collections.length ? ` · ${collections.length}` : ""}` },
-  ];
-  const snap = RP.snapshot();
-  const runsHtml = runs.length
-    ? `<div class="cx-list">${runs.map((r, idx) => `<div class="cx-row" data-run-index="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(runLabels[idx])}</div>${runRangeText(r) ? `<div class="cx-row-sub">${esc(runRangeText(r))}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("")}</div>`
-    : emptyHtml("No creative runs recorded yet for this series.");
-  const issuesHtml = issues.length
-    ? `<div class="cx-list">${issues.map(i => issueRow(i, snap)).join("")}</div>`
-    : emptyHtml("No issue records are mapped to this series yet.");
-  const editionsHtml = collections.length
-    ? `<div class="cx-list">${collections.map(editionRow).join("")}</div>`
-    : emptyHtml("No verified collected-edition records are linked to this series yet.");
-
-  html += `<div class="cx-tabs cx-series-tabs" role="tablist">${tabs.map((t, i) => `<button class="cx-tab" role="tab" data-series-tab="${t.key}" aria-selected="${i === 0}">${esc(t.label)}</button>`).join("")}</div>`;
-  html += `<div class="cx-series-tab-panel" data-series-panel="runs">${runsHtml}</div>`;
-  html += `<div class="cx-series-tab-panel" data-series-panel="issues" hidden>${issuesHtml}</div>`;
-  html += `<div class="cx-series-tab-panel" data-series-panel="editions" hidden>${editionsHtml}</div>`;
+  if (!runs.length) {
+    html += emptyHtml("No creative runs recorded yet for this series.");
+  } else {
+    html += `<div class="sheet-section"><div class="sheet-label">CREATIVE RUNS</div><div class="cx-list">`;
+    html += runs.map((r, idx) => `<div class="cx-row" data-idx="${idx}"><div class="cx-row-body"><div class="cx-row-title">${esc(runLabels[idx])}</div>${runRangeText(r) ? `<div class="cx-row-sub">${esc(runRangeText(r))}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
+    html += `</div></div>`;
+  }
   html += readingPathsChipsHtml(readingPaths, s.id);
   if (isNerd()) html += nerdBlock({ id: s.id, universeId: s.universeId, continuityIds: s.continuityIds, characterIds: s.characterIds, verification: s.sourceInfo });
-
   return {
     html,
-    update(container) {
-      if (!seriesIssues && RP.hasAnyComicsActivity()) seriesIssues = issues;
+    async update(container) {
+      if (!seriesIssues && RP.hasAnyComicsActivity()) seriesIssues = await RP.issuesForSeries(s.id).catch(() => []);
       updateBlocks(container, { "series-progress": seriesProgressBlock });
-      patchIssueToggles(container, RP.snapshot());
-    },
-    onAct(el) {
-      if (el.dataset.issueToggle) { toggleIssueRead(el.dataset.issueToggle, { storyId: null, pathId: null }); return; }
     },
     wire(container) {
-      container.querySelectorAll("[data-series-tab]").forEach(btn => btn.addEventListener("click", () => {
-        container.querySelectorAll("[data-series-tab]").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
-        container.querySelectorAll("[data-series-panel]").forEach(p => { p.hidden = p.dataset.seriesPanel !== btn.dataset.seriesTab; });
-      }));
-      container.querySelectorAll("[data-run-index]").forEach(row => row.addEventListener("click", () => {
-        const idx = +row.dataset.runIndex;
-        pushLevel("run", runLabels[idx], { run: runs[idx], series: s });
-      }));
-      container.querySelectorAll("[data-series-issue]").forEach(row => row.addEventListener("click", (e) => {
-        if (e.target.closest("[data-issue-toggle]")) return;
-        const iss = issues.find(x => x.id === row.dataset.seriesIssue);
-        if (iss) pushLevel("issue", RP.issueLabelWith(iss, s), { issue: iss });
-      }));
-      container.querySelectorAll("[data-series-edition]").forEach(row => row.addEventListener("click", () => {
-        const c = collections.find(x => x.id === row.dataset.seriesEdition);
-        if (c) pushLevel("collection", c.title, { collectionEntity: c });
-      }));
+      container.querySelectorAll(".cx-row[data-idx]").forEach(row => {
+        row.addEventListener("click", () => {
+          const idx = +row.dataset.idx;
+          pushLevel("run", runLabels[idx], { run: runs[idx], series: s });
+        });
+      });
       wireReadingPathChips(container, readingPaths, s.id, s.title);
     },
   };
 }
+
 function issueNum(iss) { const n = parseFloat(iss && iss.issueNumber); return isNaN(n) ? null : n; }
 
 /**
@@ -813,32 +752,24 @@ async function levelRun(params) {
   const expandedStories = await Promise.all(expandedRefs.map(x => cachedGet(COLLECTIONS.STORIES, x.otherId)));
   const expanded = expandedRefs.map((x, i) => ({ ...x, story: expandedStories[i], core: stories.find(st => st.id === x.coreId) })).filter(x => x.story);
 
-  // Publication tabs are derived ONLY from verified collection records actually
-  // connected to this run. Empty formats never become empty tabs.
-  // The Issues tab is always present; publication tabs appear only when at least
-  // one collection of that format covers an issue in this run.
-  const byFormat = new Map();
+  // Collection/edition tabs — TPB | Hardcover | Omnibus are views of these SAME
+  // issues, never a separate dataset. Any format outside that trio (e.g. a DC
+  // "Essential Edition") gets its own honestly-labeled extra tab rather than
+  // being silently dropped.
+  const FIXED_FORMATS = ["TPB", "Hardcover", "Omnibus"];
+  const byFormat = new Map(FIXED_FORMATS.map(f => [f, []]));
+  const extraFormats = [];
   (collections || []).forEach(c => {
-    const f = String(c.format || "Other").trim() || "Other";
-    const rows = (c.issueCoverage || []).filter(row => runIssueIds.includes(row.issueId));
-    // A collection with no structured coverage for this run should not create a
-    // misleading publication tab. It can still be reached from other contexts.
-    if (!rows.length) return;
-    if (!byFormat.has(f)) byFormat.set(f, []);
+    const f = c.format || "Other";
+    if (!byFormat.has(f)) { byFormat.set(f, []); extraFormats.push(f); }
     byFormat.get(f).push(c);
   });
-  const formatOrder = [
-    "TPB", "Hardcover", "Omnibus", "Absolute", "Deluxe Edition",
-    "Compendium", "Essential Edition", "Box Set", "Digital Collection", "Other"
-  ];
-  const formats = [
-    ...formatOrder.filter(f => byFormat.has(f)),
-    ...[...byFormat.keys()].filter(f => !formatOrder.includes(f)).sort((a, b) => a.localeCompare(b))
-  ];
-  const formatKey = f => "fmt-" + f.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const tabs = [
     { key: "issues", label: "Issues" },
-    ...formats.map(f => ({ key: formatKey(f), label: f, format: f })),
+    { key: "tpb", label: "TPB", format: "TPB" },
+    { key: "hardcover", label: "Hardcover", format: "Hardcover" },
+    { key: "omnibus", label: "Omnibus", format: "Omnibus" },
+    ...extraFormats.map(f => ({ key: "fmt-" + f.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label: f, format: f })),
   ];
 
   const yrOf = (d) => { const m = String(d || "").match(/\d{4}/); return m ? m[0] : ""; };
@@ -1495,7 +1426,6 @@ const LEVELS = {
   root: levelRoot,
   characterList: levelCharacterList,
   character: levelCharacter,
-  characterGroup: levelCharacterGroup,
   continuityList: levelContinuityList,
   continuity: levelContinuity,
   seriesList: levelSeriesList,
