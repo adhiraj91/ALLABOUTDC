@@ -11,7 +11,7 @@
 import {
   eras, new52Era, transitionEvents, crossoverSpine, new52Series, new52Limited,
   new52CharacterHubs, new52ReadingPaths, auditNew52
-} from './new52-map-data.js?v=20260928-map4';
+} from './new52-map-data.js?v=20260928-atlas5';
 
 const esc=s=>s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 let root=null,stage=null,detail=null,state=null;
@@ -35,22 +35,72 @@ function shell(){
     <header class="sm-topbar">
       <button class="sm-icon-btn" id="smBack" aria-label="Back">←</button>
       <div class="sm-heading"><div class="sm-kicker">DC UNIVERSE ATLAS</div><div class="sm-crumbs" id="smCrumbs">Universe</div></div>
-      <div class="sm-mode-nav" id="smModeNav">
+      <nav class="sm-mode-nav" id="smModeNav">
         <button data-mode="universe">Universe</button><button data-mode="new52">New 52</button><button data-mode="characters">Characters</button><button data-mode="continuity">Eras</button><button data-mode="paths">Paths</button>
-      </div>
+      </nav>
       <button class="sm-icon-btn" id="smClose" aria-label="Close story map">✕</button>
     </header>
+    <aside class="sm-left-rail" id="smLeftRail">
+      <div class="sm-rail-title"><span>MAP MODES</span><b>Explore</b></div>
+      <button class="sm-rail-mode is-active" data-mode="universe"><span>◉</span><b>Universe Atlas</b><i>↗</i></button>
+      <button class="sm-rail-mode" data-mode="continuity"><span>◌</span><b>Era Timeline</b><i>↗</i></button>
+      <button class="sm-rail-mode" data-mode="characters"><span>✦</span><b>Character Atlas</b><i>↗</i></button>
+      <button class="sm-rail-mode" data-mode="paths"><span>⌁</span><b>Reading Paths</b><i>↗</i></button>
+      <div class="sm-rail-divider"></div>
+      <div class="sm-rail-title"><span>FILTERS</span><b>Shape the atlas</b></div>
+      <button class="sm-filter" data-filter="eras"><span>◫</span><b>Era</b><i>⌄</i></button><div class="sm-filter-options" data-filter-options="eras">${eras.map(e=>`<button data-era="${esc(e.id)}"><b>${esc(e.title)}</b><small>${esc(e.years||'')}</small></button>`).join('')}</div>
+      <button class="sm-filter" data-filter="continuity"><span>◈</span><b>Continuity</b><i>⌄</i></button><div class="sm-filter-options" data-filter-options="continuity"><button data-mode="new52"><b>Main continuity</b><small>Earth-0 · New 52</small></button><button data-world="multiverse"><b>Alternate worlds</b><small>Earth-2 · Earth-3 · Multiverse</small></button></div>
+      <button class="sm-filter" data-filter="characters"><span>♙</span><b>Character</b><i>⌄</i></button><div class="sm-filter-options" data-filter-options="characters"><button data-mode="characters"><b>Character Atlas</b><small>Heroes + family groups</small></button></div>
+      <button class="sm-filter" data-filter="events"><span>✦</span><b>Events</b><i>⌄</i></button><div class="sm-filter-options" data-filter-options="events"><button data-world="events"><b>Major events</b><small>Crisis · Flashpoint · Metal</small></button></div>
+      <button class="sm-filter" data-filter="earths"><span>◎</span><b>Earth / World</b><i>⌄</i></button><div class="sm-filter-options" data-filter-options="earths"><button data-world="multiverse"><b>Multiverse</b><small>Parallel Earths & realms</small></button><button data-world="earth"><b>Earth-0</b><small>Main continuity</small></button></div>
+      <button class="sm-filter" data-filter="formats"><span>▣</span><b>Publication Format</b><i>⌄</i></button><div class="sm-filter-options" data-filter-options="formats"><button data-mode="new52"><b>Collected editions</b><small>TPB · HC · Omnibus · Deluxe</small></button></div>
+      <div class="sm-rail-divider"></div>
+      <div class="sm-rail-title"><span>QUICK WORLDS</span><b>Jump in</b></div>
+      <button class="sm-quick" data-mode="new52"><span class="quick-dot dot-red"></span>New 52</button>
+      <button class="sm-quick" data-world="multiverse"><span class="quick-dot dot-purple"></span>Multiverse</button>
+      <button class="sm-quick" data-world="events"><span class="quick-dot dot-gold"></span>Major Events</button>
+      <div class="sm-rail-divider"></div>
+      <div class="sm-rail-title"><span>COMICS</span><b>Publication layer</b></div>
+      <button class="sm-quick" data-mode="new52"><span class="quick-dot dot-red"></span>Runs &amp; Issues</button>
+      <button class="sm-quick" data-browse-catalogue="true"><span class="quick-dot dot-blue"></span>Browse Catalogue</button>
+      <div class="sm-rail-note">Everything here is a lens over the same researched publication data.</div>
+    </aside>
     <main class="sm-stage" id="smStage" tabindex="0" aria-label="Interactive DC Universe atlas"><div class="sm-world" id="smWorld"></div></main>
     <div class="sm-atlas-tools"><button data-tool="out">−</button><button data-tool="in">+</button><button data-tool="fit">Fit</button><button data-tool="reset">Reset</button></div>
     <aside class="sm-detail" id="smDetail" data-open="false"><div class="sm-detail-handle"></div><button class="sm-icon-btn sm-detail-close" id="smDetailClose">✕</button><div id="smDetailBody"></div></aside>`;
   document.body.appendChild(root); stage=root.querySelector('#smStage'); detail=root.querySelector('#smDetail');
   root.querySelector('#smClose').onclick=close; root.querySelector('#smBack').onclick=back; root.querySelector('#smDetailClose').onclick=()=>closeDetail();
   root.querySelector('#smModeNav').onclick=e=>{const b=e.target.closest('[data-mode]');if(b)navigate(b.dataset.mode);};
+  root.querySelector('#smLeftRail').onclick=e=>{
+    const mode=e.target.closest('[data-mode]'); if(mode){navigate(mode.dataset.mode);return;}
+    const filter=e.target.closest('[data-filter]'); if(filter){handleFilter(filter.dataset.filter);return;}
+    const world=e.target.closest('[data-world]'); if(world){handleWorld(world.dataset.world);return;}
+    const browse=e.target.closest('[data-browse-catalogue]'); if(browse){
+      const fn=window.__comicsAtlasBrowse;
+      if(typeof fn==='function') fn();
+      else close();
+      return;
+    }
+  };
   root.querySelector('.sm-atlas-tools').onclick=e=>{const b=e.target.closest('[data-tool]');if(!b)return; if(b.dataset.tool==='in')zoom(1.18,stage.clientWidth/2,stage.clientHeight/2);if(b.dataset.tool==='out')zoom(.85,stage.clientWidth/2,stage.clientHeight/2);if(b.dataset.tool==='fit')fit();if(b.dataset.tool==='reset')reset();};
   stage.addEventListener('click',onWorldClick);
   stage.addEventListener('pointerdown',pointerDown); stage.addEventListener('pointermove',pointerMove); stage.addEventListener('pointerup',pointerEnd); stage.addEventListener('pointercancel',pointerEnd);
   stage.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?1.08:.92,e.clientX-stage.getBoundingClientRect().left,e.clientY-stage.getBoundingClientRect().top);},{passive:false});
   window.addEventListener('resize',()=>{if(root.dataset.open==='true'){render();requestAnimationFrame(fit);}});
+}
+function handleFilter(kind){
+  const panel=root?.querySelector(`[data-filter-options="${kind}"]`);
+  if(panel){
+    const open=panel.classList.contains('is-open');
+    root.querySelectorAll('.sm-filter-options').forEach(x=>x.classList.remove('is-open'));
+    root.querySelectorAll('.sm-filter').forEach(x=>x.classList.remove('is-open'));
+    if(!open){panel.classList.add('is-open');root.querySelector(`.sm-filter[data-filter="${kind}"]`)?.classList.add('is-open');}
+  }
+}
+function handleWorld(kind){
+  if(kind==='multiverse'){state.mode='new52';render();requestAnimationFrame(()=>root.querySelector('.sm-multiverse-zone')?.scrollIntoView({block:'center'}));}
+  else if(kind==='events'){state.mode='universe';render();requestAnimationFrame(()=>root.querySelector('.sm-event-constellation')?.scrollIntoView({block:'center'}));}
+  else if(kind==='earth'){showDetail('era',{id:'earth-0',title:'Earth-0 · Main Continuity',years:'New 52 / Main Universe',notes:'Earth-0 is the primary continuity lens. Enter The New 52 to explore its publication territories, characters, crossovers and collected editions.'});}
 }
 function pointerDown(e){if(e.target.closest('button,.sm-detail'))return;state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(state.pointers.size===1){state.drag={x:e.clientX,y:e.clientY,ox:state.view.x,oy:state.view.y};stage.setPointerCapture?.(e.pointerId);stage.classList.add('sm-dragging');}}
 function pointerMove(e){if(!state.pointers.has(e.pointerId)||state.pointers.size!==1||!state.drag)return;state.view.x=state.drag.ox+e.clientX-state.drag.x;state.view.y=state.drag.oy+e.clientY-state.drag.y;applyView(false);}
@@ -60,7 +110,14 @@ function applyView(anim=true){const w=root.querySelector('#smWorld');if(!w)retur
 function fit(){if(!state||!root)return;state.view={k:1,x:0,y:0};const w=root.querySelector('#smWorld');if(!w)return;const sr=stage.getBoundingClientRect(),ww=Math.max(w.scrollWidth,w.offsetWidth),hh=Math.max(w.scrollHeight,w.offsetHeight);const k=Math.min((sr.width-24)/ww,(sr.height-24)/hh,1);state.view.k=Math.max(.72,Math.min(1,k));state.view.x=(sr.width-ww*state.view.k)/2;state.view.y=Math.max(8,(sr.height-hh*state.view.k)/2);applyView(true);}
 function reset(){state.view={k:1,x:0,y:0};applyView(true);}
 function open(mode='universe'){shell();session(mode);root.dataset.open='true';document.documentElement.classList.add('sm-lock');render();requestAnimationFrame(fit);}
-function close(){if(!root)return;root.dataset.open='false';document.documentElement.classList.remove('sm-lock');state=null;}
+function close(){
+  if(!root)return;
+  root.dataset.open='false';
+  document.documentElement.classList.remove('sm-lock');
+  state=null;
+  const backToApp=window.__comicsAtlasReturn;
+  if(typeof backToApp==='function') backToApp();
+}
 function closeDetail(){if(!state)return;state.selected=null;state.detailType=null;detail.dataset.open='false';root.dataset.detail='false';}
 function back(){if(state?.selected){closeDetail();return;}if(state?.mode!=='universe'){navigate('universe');return;}close();}
 function navigate(mode){if(!state)return;closeDetail();state.mode=mode;state.character=null;state.path=null;render();requestAnimationFrame(fit);}
@@ -68,7 +125,7 @@ function navigate(mode){if(!state)return;closeDetail();state.mode=mode;state.cha
 function render(){
   if(!state)return;
   root.dataset.mode=state.mode;
-  root.querySelectorAll('#smModeNav [data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode===state.mode));
+  root.querySelectorAll('#smModeNav [data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode===state.mode)); root.querySelectorAll('#smLeftRail [data-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.mode===state.mode));
   let html='';
   if(state.mode==='universe')html=renderUniverse();
   if(state.mode==='new52')html=renderNew52();
@@ -84,32 +141,41 @@ function eraRibbon(){
 }
 function renderUniverse(){
   const events=transitionEvents.slice().reverse();
-  return `<div class="sm-atlas sm-universe-atlas">
-    ${eraRibbon()}
-    <section class="sm-universe-hero"><div class="sm-hero-copy"><span class="sm-eyebrow">DC CONTINUITY ATLAS</span><h1>Enter the DC Universe.</h1><p>Chronology is the spine. Worlds, characters and stories are the places you explore.</p><div class="sm-hero-actions"><button class="sm-primary" data-open-new52>Enter The New 52</button><button class="sm-secondary" data-mode="characters">Explore characters</button></div></div><div class="sm-orbit"><div class="sm-orbit-ring ring-a"></div><div class="sm-orbit-ring ring-b"></div><div class="sm-orbit-core"><span>DC</span><b>UNIVERSE</b><small>EARTH-0 + MULTIVERSE</small></div><i class="orbit-dot d1"></i><i class="orbit-dot d2"></i><i class="orbit-dot d3"></i><i class="orbit-dot d4"></i></div></section>
-    <section class="sm-continuity-gates"><div class="sm-section-title"><span>THE CONTINUITY SPINE</span><b>Follow the gates</b></div><div class="sm-gate-grid">${eras.map((e,i)=>{const next=eras[i+1],tr=next?transitionFor(next.id,e.id):null;return `<article class="sm-gate"><button class="sm-era-portal" data-era="${esc(e.id)}"><span class="sm-era-no">${String(i+1).padStart(2,'0')}</span><span><small>${esc(e.years||'')}</small><strong>${esc(e.title)}</strong></span><em>${e.id==='new52'?'EXPLORE':'ENTER'}</em></button>${next?`<button class="sm-transition-gate" data-transition="${esc(tr?.id||'')}"><span class="gate-line"></span><span class="gate-node">${tr?'✦':'·'}</span><span class="gate-copy">${tr?`<small>${esc(tr.kicker||'TRANSITION')}</small><b>${esc(tr.title)}</b>`:'CONTINUITY CONTINUES'}</span><span class="gate-arrow">↓</span></button>`:''}</article>`;}).join('')}</div></section>
-    <section class="sm-event-constellation"><div class="sm-section-title"><span>MAJOR GATES</span><b>Events that changed the shape of DC</b></div><div class="sm-event-row">${events.map(e=>`<button class="sm-event-chip" data-transition="${esc(e.id)}"><span class="event-orb"></span><span><b>${esc(e.title)}</b><small>${esc(e.issues?.[0]||'')}</small></span></button>`).join('')}</div></section>
+  const erasTop=eras.slice().reverse();
+  return `<div class="sm-atlas sm-universe-atlas sm-immersive">
+    <div class="sm-cosmic-backdrop"><span class="nebula n1"></span><span class="nebula n2"></span><span class="nebula n3"></span><span class="city-haze"></span><span class="starfield"></span></div>
+    <section class="sm-map-hero">
+      <div class="sm-map-copy"><span class="sm-eyebrow">DC CONTINUITY MAP</span><h1>The DC Universe is a world to explore.</h1><p>Travel the eras, step through the crises, discover the Earths and follow the characters who connect them.</p><div class="sm-legend"><span><i class="lg blue"></i>Main Continuity</span><span><i class="lg red"></i>Alternate Earth</span><span><i class="lg gold"></i>Event</span><span><i class="lg purple"></i>Multiverse</span></div></div>
+      <div class="sm-universe-canvas">
+        <div class="sm-constellation-label label-multiverse">THE MULTIVERSE</div><div class="sm-constellation-label label-events">EVENTS</div><div class="sm-constellation-label label-heroes">HEROES & TEAMS</div>
+        <button class="sm-world-orb orb-earth" data-world="earth"><span class="orb-ring"></span><b>EARTH-0</b><small>MAIN CONTINUITY</small></button>
+        <button class="sm-world-orb orb-crisis" data-transition="transition-new52"><span class="orb-ring"></span><b>FLASHPOINT</b><small>2011</small></button>
+        <button class="sm-world-orb orb-metal" data-transition="transition-infinite"><span class="orb-ring"></span><b>DARK NIGHTS: METAL</b><small>2017</small></button>
+        <button class="sm-world-orb orb-earth2" data-world="multiverse"><span class="orb-ring"></span><b>EARTH-2</b><small>ALTERNATE EARTH</small></button>
+        <button class="sm-world-orb orb-magic" data-world="multiverse"><span class="orb-ring"></span><b>MAGIC / DARK</b><small>JUSTICE LEAGUE DARK</small></button>
+        <button class="sm-world-orb orb-cosmic" data-world="multiverse"><span class="orb-ring"></span><b>COSMIC</b><small>LANTERN CORPS</small></button>
+        <span class="sm-map-trail trail-a"></span><span class="sm-map-trail trail-b"></span><span class="sm-map-trail trail-c"></span><span class="sm-map-trail trail-d"></span>
+        <div class="sm-map-landmark lm-bat"><b>BATMAN</b><small>GOTHAM</small></div><div class="sm-map-landmark lm-sup"><b>SUPERMAN</b><small>METROPOLIS</small></div><div class="sm-map-landmark lm-jl"><b>JUSTICE LEAGUE</b><small>CORE</small></div><div class="sm-map-landmark lm-gl"><b>GREEN LANTERN</b><small>COSMIC</small></div>
+      </div>
+      <button class="sm-enter-new52" data-open-new52><span>ENTER THE NEW 52</span><b>2011–2016</b><i>↗</i></button>
+    </section>
+    <section class="sm-timeline-deck"><div class="sm-deck-head"><span>DC UNIVERSE TIMELINE</span><b>Follow the continuity spine</b><small>Every era is a portal. Every transition is an event.</small></div><div class="sm-era-ribbon sm-era-ribbon-large">${erasTop.map((e,i)=>`<button class="sm-era-pill ${e.id==='new52'?'is-hot':''}" data-era="${esc(e.id)}"><span>${String(eras.length-i).padStart(2,'0')}</span><b>${esc(e.title)}</b><small>${esc(e.years||'')}</small></button>`).join('')}</div></section>
+    <section class="sm-map-exploration-grid">
+      <article class="sm-map-panel sm-panel-events"><div class="sm-panel-head"><span>FEATURED EVENTS</span><b>Moments that reshaped reality</b><button data-world="events">View all ↗</button></div><div class="sm-event-cards">${events.slice(0,6).map((e,i)=>`<button class="sm-event-art-card" data-transition="${esc(e.id)}"><span class="event-art event-art-${i%6}"><i>${i+1}</i></span><b>${esc(e.title)}</b><small>${esc(e.issues?.[0]||'Major continuity event')}</small></button>`).join('')}</div></article>
+      <article class="sm-map-panel sm-panel-worlds"><div class="sm-panel-head"><span>WORLDS & EARTHS</span><b>There is more than one DC</b><button data-world="multiverse">Explore ↗</button></div><div class="sm-earth-cards"><button data-world="multiverse"><span class="earth-art ea2"></span><b>Earth-2</b><small>Alternate continuity</small></button><button data-world="multiverse"><span class="earth-art ea3"></span><b>Earth-3</b><small>Crime Syndicate</small></button><button data-world="multiverse"><span class="earth-art emu"></span><b>Multiverse</b><small>Elseworlds & parallel worlds</small></button></div></article>
+    </section>
+    <section class="sm-map-fan-deck"><button data-mode="characters"><span>CHARACTERS</span><b>Walk into Gotham, Metropolis, Central City and beyond.</b><i>Explore ↗</i></button><button data-mode="paths"><span>READING PATHS</span><b>Follow a character, a family, a team or a crossover.</b><i>Explore ↗</i></button><button data-mode="new52"><span>THE NEW 52</span><b>Enter the fully researched publication world.</b><i>Explore ↗</i></button></section>
   </div>`;
 }
-
-const laneTheme={justice:'justice',batman:'gotham',superman:'metropolis',lantern:'cosmic',young:'titans',dark:'magic',edge:'edge',alternate:'rift',future:'future'};
 function renderNew52(){
-  const lanes=new52Era.mainLanes;
-  const stats={series:new52Series.length,limited:new52Limited.length,issues:new52Series.reduce((n,s)=>n+issueCount(s),0)+new52Limited.reduce((n,s)=>n+issueCount(s),0),editions:new52Series.reduce((n,s)=>n+(s.collections?.length||0),0)+new52Limited.reduce((n,s)=>n+(s.collections?.length||0),0)};
-  return `<div class="sm-atlas sm-new52-atlas">
-    ${eraRibbon()}
-    <section class="sm-world-hero"><div class="sm-hero-copy"><span class="sm-eyebrow">2011 — 2016 · EARTH-0</span><h1>The New 52</h1><p>${esc(new52Era.description)}</p><div class="sm-stat-strip"><span><b>${stats.series}</b><small>ONGOING RUNS</small></span><span><b>${stats.limited}</b><small>LIMITED / EVENTS</small></span><span><b>${stats.issues}</b><small>ISSUE RECORDS</small></span><span><b>${stats.editions}</b><small>EDITION RECORDS</small></span></div></div><div class="sm-earth-core"><div class="sm-earth-glow"></div><div class="sm-earth-label"><small>PRIMARY WORLD</small><b>EARTH-0</b><span>NEW 52</span></div></div></section>
-    <section class="sm-world-map"><div class="sm-section-title"><span>THE WORLD</span><b>Choose where you want to go</b></div><div class="sm-territory-grid">${lanes.map((l,i)=>territory(l,i)).join('')}</div><div class="sm-rift-row"><button class="sm-rift-card" data-lane="alternate"><span class="sm-rift-icon">◈</span><span><small>PARALLEL EARTHS</small><b>Alternate Worlds</b><em>Earth-2 · Worlds’ Finest · Multiversity · Convergence</em></span><strong>↗</strong></button><button class="sm-rift-card" data-lane="future"><span class="sm-rift-icon">◌</span><span><small>TIME / CONTINUATION</small><b>Future & DC You</b><em>Futures End · Batman Beyond · Justice League 3001</em></span><strong>↗</strong></button></div></section>
-    <section class="sm-crossroads"><div class="sm-section-title"><span>CROSSOVER CONSTELLATION</span><b>The events that make the lanes touch</b></div><div class="sm-crossroad-line">${crossoverSpine.map((e,i)=>`<button class="sm-crossroad" data-cross="${esc(e.id)}"><i></i><span>${String(i+1).padStart(2,'0')}</span><b>${esc(e.title)}</b><small>${esc(e.issues)}</small></button>`).join('')}</div></section>
-    <section class="sm-explore-decks"><button data-mode="characters"><span>♟</span><b>Character Atlas</b><small>Flagship heroes + logical character groups</small></button><button data-mode="paths"><span>↝</span><b>Reading Paths</b><small>Follow a route through lanes and crossovers</small></button><button data-mode="continuity"><span>◉</span><b>Continuity</b><small>Return to the chronological spine</small></button></section>
+  const lanes=[...new52Era.mainLanes,...new52Era.alternateLanes];
+  return `<div class="sm-atlas sm-new52-atlas sm-immersive">
+    <div class="sm-cosmic-backdrop new52-backdrop"><span class="nebula n1"></span><span class="nebula n2"></span><span class="city-haze"></span><span class="starfield"></span></div>
+    <section class="sm-new52-hero"><div class="sm-new52-copy"><span class="sm-eyebrow">THE NEW 52 · 2011–2016</span><h1>One universe. Dozens of worlds within it.</h1><p>Start in Earth-0, choose a territory, then descend into the actual runs, issues and collected editions.</p><div class="sm-new52-stats"><span><b>${new52Series.length}</b><small>RUNS</small></span><span><b>${new52Limited.length}</b><small>LIMITED / SPECIAL</small></span><span><b>${crossoverSpine.length}</b><small>CROSSOVERS</small></span></div></div><div class="sm-new52-sigil"><div class="sigil-ring r1"></div><div class="sigil-ring r2"></div><div class="sigil-core"><b>52</b><small>EARTH-0</small></div><i></i><i></i><i></i></div></section>
+    <section class="sm-territory-atlas"><div class="sm-deck-head"><span>THE NEW 52 WORLD</span><b>Choose your territory</b><small>Every card is connected to the same publication dataset.</small></div><div class="sm-territory-map">${lanes.map((l,i)=>territory(l,i)).join('')}<button class="sm-territory territory-void sm-multiverse-zone" data-lane="alternate"><span class="territory-index">∞</span><span class="territory-aura"></span><span class="territory-copy"><small>PARALLEL WORLDS</small><b>Alternate Earths</b><em>Earth-2 · Worlds’ Finest · Multiversity · Convergence</em><span class="territory-books">${new52Series.filter(s=>s.lane==='alternate').slice(0,4).map(s=>esc(s.title)).join(' · ')}</span></span><strong>ENTER</strong></button><button class="sm-territory territory-future" data-lane="future"><span class="territory-index">∞</span><span class="territory-aura"></span><span class="territory-copy"><small>TIME / CONTINUATION</small><b>Future & DC You</b><em>Futures End · Batman Beyond · Justice League 3001</em></span><strong>ENTER</strong></button></div></section>
+    <section class="sm-crossroads sm-map-panel"><div class="sm-panel-head"><span>CROSSOVER CONSTELLATION</span><b>Where the territories touch</b><button data-mode="paths">Use in a reading path ↗</button></div><div class="sm-crossroad-line">${crossoverSpine.map((e,i)=>`<button class="sm-crossroad" data-cross="${esc(e.id)}"><i></i><span>${String(i+1).padStart(2,'0')}</span><b>${esc(e.title)}</b><small>${esc(e.issues)}</small></button>`).join('')}</div></section>
   </div>`;
 }
-function territory(l,i){
-  const pubs=new52Series.filter(s=>s.lane===l.id), lim=new52Limited.filter(s=>s.lane===l.id); const theme=laneTheme[l.id]||'justice';
-  const featured=pubs.slice(0,4);
-  return `<button class="sm-territory territory-${theme}" data-lane="${esc(l.id)}"><span class="territory-index">${String(i+1).padStart(2,'0')}</span><span class="territory-aura"></span><span class="territory-copy"><small>${esc(l.title.split(' / ')[0])}</small><b>${esc(l.title)}</b><em>${pubs.length+lim.length} publications · ${pubs.reduce((n,s)=>n+issueCount(s),0)+lim.reduce((n,s)=>n+issueCount(s),0)} mapped issues</em><span class="territory-books">${featured.map(s=>esc(s.title)).join(' · ')}</span></span><strong>ENTER</strong></button>`;
-}
-
 function renderCharacters(){
   const heroes=new52CharacterHubs.filter(x=>x.type==='hero'), groups=new52CharacterHubs.filter(x=>x.type==='group');
   return `<div class="sm-atlas sm-character-atlas">${eraRibbon()}<section class="sm-atlas-heading"><span class="sm-eyebrow">NEW 52 · CHARACTER ATLAS</span><h1>Who do you want to follow?</h1><p>Start with a flagship character, or enter a family / team region. Every destination resolves to the same New 52 runs, issues and collected editions as the map.</p></section><section><div class="sm-section-title"><span>FLAGSHIP CHARACTERS</span><b>Standalone lines</b></div><div class="sm-hero-grid">${heroes.map(h=>characterCard(h)).join('')}</div></section><section><div class="sm-section-title"><span>CHARACTER REGIONS</span><b>Grouped supporting runs</b></div><div class="sm-group-grid">${groups.map(h=>characterCard(h)).join('')}</div></section></div>`;
@@ -127,6 +193,7 @@ function onWorldClick(e){
   if(!state)return;
   const mode=e.target.closest('[data-mode]'); if(mode){navigate(mode.dataset.mode);return;}
   const enter=e.target.closest('[data-open-new52]'); if(enter){navigate('new52');return;}
+  const world=e.target.closest('[data-world]'); if(world){handleWorld(world.dataset.world);return;}
   const era=e.target.closest('[data-era]'); if(era){openEra(era.dataset.era);return;}
   const tr=e.target.closest('[data-transition]'); if(tr&&tr.dataset.transition){const x=transitionEvents.find(v=>v.id===tr.dataset.transition);if(x)showDetail('event',x);return;}
   const lane=e.target.closest('[data-lane]'); if(lane){openLane(lane.dataset.lane);return;}
