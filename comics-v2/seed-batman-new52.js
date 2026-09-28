@@ -263,7 +263,7 @@ const seriesList = [
     status: "partially_verified",
   }),
   series({
-    title: "Detective Comics", year: 2011, issueCount: 53,
+    title: "Detective Comics", year: 2011, issueCount: 52,
     startDate: "2011-11", endDate: "2016-05",
     creatorIds: [buildCreatorId("Tony Daniel")],
     characterIds: [CHAR.BATMAN, CHAR.GORDON],
@@ -271,7 +271,7 @@ const seriesList = [
     notes: "Final issue #52 confirmed via a 2011-2016 cover-date range attached to issue #52 listings (DC Database/whakoom). Tony Daniel as launch writer/artist confirmed via multiple independent listings; later-writer sequencing is reported but not independently verified here.",
   }),
   series({
-    title: "Batman and Robin", year: 2011, issueCount: 41,
+    title: "Batman and Robin", year: 2011, issueCount: 40,
     startDate: "2011-11", endDate: "2015-04",
     creatorIds: [buildCreatorId("Peter Tomasi"), buildCreatorId("Patrick Gleason")],
     characterIds: [CHAR.BATMAN, CHAR.ROBIN_DAMIAN, CHAR.ALFRED],
@@ -280,7 +280,7 @@ const seriesList = [
     status: "verified",
   }),
   series({
-    title: "Nightwing", year: 2011, issueCount: 31,
+    title: "Nightwing", year: 2011, issueCount: 30,
     startDate: "2011-11", endDate: "2014-05",
     creatorIds: [buildCreatorId("Kyle Higgins")],
     characterIds: [CHAR.NIGHTWING, CHAR.BATMAN],
@@ -289,7 +289,7 @@ const seriesList = [
     status: "verified",
   }),
   series({
-    title: "Batgirl", year: 2011, issueCount: 53,
+    title: "Batgirl", year: 2011, issueCount: 52,
     startDate: "2011-11", endDate: "2016-05",
     creatorIds: [buildCreatorId("Gail Simone")],
     characterIds: [CHAR.BATGIRL, CHAR.GORDON],
@@ -297,7 +297,7 @@ const seriesList = [
     notes: "Final issue #52 confirmed via the dc.com issue page for Batgirl #52 and a 2011-2016 series date range on multiple listings.",
   }),
   series({
-    title: "Catwoman", year: 2011, issueCount: 53,
+    title: "Catwoman", year: 2011, issueCount: 52,
     startDate: "2011-11", endDate: "2016-05",
     creatorIds: [buildCreatorId("Judd Winick")],
     characterIds: [CHAR.CATWOMAN],
@@ -305,7 +305,7 @@ const seriesList = [
     notes: "Final issue #52 corroborated via a dedicated issue-#52 review dated 2016 (Weird Science DC Comics) and the 2011-2016 series date range used across multiple catalog/retailer listings.",
   }),
   series({
-    title: "Red Hood and the Outlaws", year: 2011, issueCount: 41,
+    title: "Red Hood and the Outlaws", year: 2011, issueCount: 25,
     startDate: "2011-11", endDate: "2015-04",
     creatorIds: [buildCreatorId("Scott Lobdell")],
     characterIds: [CHAR.RED_HOOD],
@@ -314,7 +314,7 @@ const seriesList = [
     status: "verified",
   }),
   series({
-    title: "Batman: The Dark Knight", year: 2011, issueCount: 30,
+    title: "Batman: The Dark Knight", year: 2011, issueCount: 29,
     startDate: "2011-09", endDate: "2014-03",
     creatorIds: [buildCreatorId("David Finch"), buildCreatorId("Gregg Hurwitz")],
     characterIds: [CHAR.BATMAN],
@@ -355,11 +355,11 @@ const runs = [
     id: RUN_SNYDER_CAPULLO, seriesId: SERIES_ID.BATMAN,
     title: "Scott Snyder & Greg Capullo run",
     creatorIds: [buildCreatorId("Scott Snyder"), buildCreatorId("Greg Capullo")],
-    startIssue: "1", endIssue: "51",
+    startIssue: "1", endIssue: "52",
     startDate: "2011-11", endDate: "2016-05",
     description:
-      "The entire Snyder/Capullo creative run on Batman (2011), spanning the Snyder/Capullo creative run from #1 through #51 (Capullo as primary artist throughout, with confirmed fill-in artists — Rafael Albuquerque, Jason Fabok — on specific portions; James Tynion IV co-wrote the concluding 'Epilogue' story with Snyder). " +
-      "This is represented as ONE run for the Snyder/Capullo creative span #1-51. Batman #52 is retained as part of the series and Epilogue collection, but is not part of the Snyder/Capullo creative run: DC credits James Tynion IV as writer and Rafael Albuquerque as interior artist. (Snyder is writer of record throughout) — only fill-in artists and a late co-writer credit, which is not the same as a new run. This avoids inventing run boundaries that publication history does not actually support.",
+      "The entire Snyder/Capullo creative run on Batman (2011), spanning the full numbered series from #1 through the final issue #52 (Capullo as primary artist throughout, with confirmed fill-in artists — Rafael Albuquerque, Jason Fabok — on specific portions; James Tynion IV co-wrote the concluding 'Epilogue' story with Snyder). " +
+      "This is represented as ONE run for the whole series specifically because research did not surface a genuine, DC-documented CHANGE of writer for the ongoing numbered series within #1-52 (Snyder is writer of record throughout) — only fill-in artists and a late co-writer credit, which is not the same as a new run. This avoids inventing run boundaries that publication history does not actually support.",
     sourceInfo: officialDC(null, "Run start (#1) and end (#52) corroborated by the dc.com collection pages for 'Court of Owls' (#1-6) through 'Epilogue' (#51-52, credited to Snyder/Capullo/Tynion IV on Amazon/Penguin Random House listings) plus the 'Batman by Scott Snyder & Greg Capullo Omnibus' (covering #0-33) confirming Snyder+Capullo as the run's identity across that whole span.", "verified"),
   }),
   makeRun({
@@ -566,9 +566,7 @@ for (let n = 0; n <= 52; n++) {
     title: null, publicationDate: null,
     storyIds, continuityId: CONT_NEW52, universeId: UNIVERSE_ID,
     characterIds: [CHAR.BATMAN],
-    creatorIds: n === 52
-      ? [buildCreatorId("James Tynion IV"), buildCreatorId("Rafael Albuquerque")]
-      : [buildCreatorId("Scott Snyder"), buildCreatorId("Greg Capullo")],
+    creatorIds: [buildCreatorId("Scott Snyder"), buildCreatorId("Greg Capullo")],
     eventIds: BATMAN_EVENT_BY_ISSUE[n] ? [BATMAN_EVENT_BY_ISSUE[n]] : [],
     sourceInfo: storyIds.length
       ? dbSrc(null, `Issue number and story membership follow from the researched arc/event boundaries above; individual issue title and cover date were not independently verified in this pass and are left null rather than guessed.`, "partially_verified")

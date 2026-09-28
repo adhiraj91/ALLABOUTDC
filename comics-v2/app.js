@@ -3335,6 +3335,70 @@ const adminToolsBackdrop = $("#adminToolsBackdrop"), adminToolsSheet = $("#admin
 adminToolsBackdrop.addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 $("#adminToolsClose").addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 
+/* Comics-v2 (beta): one-tap import button for the New 52 Batman dataset built in comics-v2/seed-batman-new52.js.
+   Fully independent of the rest of Admin Tools — talks only to window.__comicsV2 (comics-v2/index.js). */
+$("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
+  // Single combined button: runs the base Batman New 52 dataset import, then every
+  // approved add-on dataset (collections, missing-issue fixes, etc.) in turn. Each is
+  // upsert-based, so re-running this whole button is always safe — nothing is
+  // duplicated or overwritten wrong. New approved add-ons get appended to ADDONS
+  // below rather than a new admin button.
+  const ADDONS = [
+    { key: "batmanNew52Collections", label: "5 collection records (Zero Year, Endgame, Superheavy, Bloom)" },
+    { key: "batmanIncIssues", label: "5 Batman Incorporated issue records (#7, #9-12)" },
+  ];
+  const btn = $("#importBatmanNew52Btn"), msg = $("#importBatmanNew52Msg");
+  if(!window.__comicsV2 || !window.__comicsV2.batmanNew52){
+    msg.textContent = "Comics v2 module not loaded — check that comics-v2/index.js is uploaded.";
+    msg.className = "form-msg err";
+    return;
+  }
+  btn.disabled = true;
+  msg.textContent = "Importing…";
+  msg.className = "form-msg";
+  try{
+    const base = await window.__comicsV2.batmanNew52.import();
+    if(base?.validation && !base.validation.valid){
+      msg.textContent = "Base dataset failed validation — nothing was written: " + JSON.stringify(base.validation.errors || base.validation);
+      msg.className = "form-msg err";
+      return;
+    }
+    let addonTotal = 0;
+    const addonErrors = [];
+    const addonLabelsDone = [];
+    for(const addon of ADDONS){
+      const mod = window.__comicsV2[addon.key];
+      if(!mod) continue; // file not uploaded — skip silently, base import still succeeds
+      const result = await mod.import();
+      if(result?.validation && !result.validation.valid){
+        msg.textContent = `"${addon.label}" failed validation — nothing was written for it: ` + JSON.stringify(result.validation.errors || result.validation);
+        msg.className = "form-msg err";
+        return;
+      }
+      const n = typeof result?.written === "number" ? result.written : Object.values(result?.written || {}).reduce((a,b)=>a+b, 0);
+      addonTotal += n;
+      if(result?.errors?.length) addonErrors.push(...result.errors);
+      else addonLabelsDone.push(addon.label);
+    }
+
+    const baseTotal = Object.values(base?.written || {}).reduce((a,b)=>a+b, 0);
+    const allErrors = [...(base?.errors||[]), ...addonErrors];
+    if(allErrors.length){
+      msg.textContent = `Wrote ${baseTotal + addonTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
+      msg.className = "form-msg err";
+    }else{
+      msg.textContent = `Done — ${baseTotal} base records` + (addonLabelsDone.length ? ` + ${addonTotal} more (${addonLabelsDone.join("; ")}).` : ".");
+      msg.className = "form-msg ok";
+    }
+  }catch(err){
+    console.error(err);
+    msg.textContent = "Import failed: " + (err?.message || err);
+    msg.className = "form-msg err";
+  }finally{
+    btn.disabled = false;
+  }
+});
+
 $("#readerGoAdminTools").addEventListener("click", ()=>{
   closeSheetEl(readerBackdrop, readerSheet);
   renderAdminDataHealth();
