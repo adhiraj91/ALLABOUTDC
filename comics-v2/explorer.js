@@ -86,7 +86,7 @@ async function root(){
       <button class="cx-entry-btn" data-go="atlas"><span class="cx-entry-icon">✦</span><span class="cx-entry-btn-label">Story Map</span><span class="cx-entry-btn-sub">Enter the connected DC universe graph</span><span class="cx-entry-arrow">↗</span></button>
     </div>
 ,
-    wire(c){c.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.go;if(a==="atlas"){window.__comicsStoryMap?.open?.("universe",u?.id);return;}if(a==="continuity")push("continuity",ct?.name||"Continuity",{continuity:ct});else{const labels={characterList:"Characters",continuityList:"Continuity / Era",seriesList:"Series"};push(a,labels[a]||a,{});}}));}};
+    wire(c){c.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.go;if(a==="atlas"){window.__comicsStoryMap?.open?.("universe",u?.id);return;}if(a==="continuityList"){push("continuityList","Continuity / Era",{});return;}else{const labels={characterList:"Characters",continuityList:"Continuity / Era",seriesList:"Series"};push(a,labels[a]||a,{});}}));}};
 }
 
 async function characterList(){
@@ -188,6 +188,59 @@ function close(){document.getElementById("comicsExplorerBackdrop")?.setAttribute
 export function openComicsExplorer(){stack=[{level:"root",label:"Comics",params:{}}];open();render();}
 export function openComicsExplorerAt(t){openAt(t);}
 window.__comicsExplorer={open:openComicsExplorer,openAt:openComicsExplorerAt};
+
+// Fallback interaction layer: keep Explorer navigation alive even if another
+// site-level listener or a render cycle interferes with per-card listeners.
+// This is deliberately scoped to the Explorer content only.
+(function installExplorerDelegation(){
+  const host=document.getElementById("comicsExplorerContent");
+  if(!host || host.dataset.delegated==="true") return;
+  host.dataset.delegated="true";
+  host.addEventListener("click", async e=>{
+    const target=e.target.closest("[data-go],[data-char],[data-root-char],[data-cont],[data-series],[data-coll],[data-pub]");
+    if(!target || !host.contains(target)) return;
+    // Existing per-view handlers are still allowed to run. This delegation is
+    // only a safety net when navigation has not advanced synchronously.
+    const before=stack.length;
+    const go=target.dataset.go;
+    if(go){
+      if(go==="atlas"){
+        const [u]=await data.getAllUniverses(1);
+        window.__comicsStoryMap?.open?.("universe",u?.id);
+      }else if(go==="characterList") push("characterList","Characters",{});
+      else if(go==="continuityList") push("continuityList","Continuity / Era",{});
+      else if(go==="seriesList") push("seriesList","Series",{});
+      return;
+    }
+    if(before!==stack.length) return;
+    if(target.dataset.char || target.dataset.rootChar){
+      const id=target.dataset.char||target.dataset.rootChar;
+      const c=await get(COLLECTIONS.CHARACTERS,id);
+      if(c) push("character",titleOf(c),{character:c});
+      return;
+    }
+    if(target.dataset.cont){
+      const c=await get(COLLECTIONS.CONTINUITIES,target.dataset.cont);
+      if(c) push("continuity",c?.name||"Continuity",{continuity:c});
+      return;
+    }
+    if(target.dataset.series){
+      const s=await get(COLLECTIONS.SERIES,target.dataset.series);
+      if(s) push("series",s.title,{series:s});
+      return;
+    }
+    if(target.dataset.coll){
+      const c=await get(COLLECTIONS.COLLECTIONS,target.dataset.coll);
+      if(c) push("collection",c.title,{collectionEntity:c});
+      return;
+    }
+    if(target.dataset.pub){
+      const i=await get(COLLECTIONS.ISSUES,target.dataset.pub);
+      if(i){const s=await get(COLLECTIONS.SERIES,i.seriesId);push("issue",i.issueLabel,{issue:i,series:s});}
+    }
+  }, true);
+})();
+
 document.addEventListener("click",e=>{if(e.target.closest("#comicsExplorerEntryBtn"))openComicsExplorer();});
 document.getElementById("comicsExplorerBackdrop")?.addEventListener("click",close);
 document.getElementById("comicsExplorerClose")?.addEventListener("click",close);
