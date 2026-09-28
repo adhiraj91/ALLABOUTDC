@@ -33,7 +33,7 @@
 // ============================================================================
 // "?v=p5" — data.js gained new Pointer 5 helpers (reading paths / collection overlap);
 // the query string busts GitHub Pages' ~10min cache the same way Pointer 4 did for storymap.js.
-import * as data from "./data.js?v=p65";
+import * as data from "./data.js?v=p66";
 import { COLLECTIONS } from "./schema.js";
 // Pointer 6 — personal reading progress (derived from the site's one progress store via
 // window.__readerProgress) + the contextual Story Graph. Same "?v=p6" specifier everywhere so
@@ -362,6 +362,35 @@ async function levelRoot() {
  * characters stay fully reachable through Stories/Issues/Story Graph/Search —
  * they just don't clutter this primary entry point.
  */
+const MAJOR_HEADLINERS = new Set([
+  "batman", "superman", "wonder woman", "supergirl", "the flash", "flash",
+  "green lantern", "green arrow", "aquaman", "shazam", "cyborg", "harley quinn",
+]);
+const MAJOR_VILLAINS = new Set(["joker"]);
+const BAT_FAMILY_NAMES = new Set([
+  "nightwing", "batgirl", "red hood", "robin", "catwoman", "batwoman",
+  "spoiler", "huntress", "azrael", "tim drake", "damian wayne", "cassandra cain",
+]);
+function normCharacterName(c) {
+  return String(c?.displayName || c?.name || "").trim().toLowerCase();
+}
+function characterBucket(item) {
+  const n = normCharacterName(item.c);
+  if (MAJOR_HEADLINERS.has(n)) return "headliner";
+  if (MAJOR_VILLAINS.has(n)) return "villain";
+  if (BAT_FAMILY_NAMES.has(n)) return "family";
+  return "solo";
+}
+
+/**
+ * Reader-facing Character Index.
+ * The database may contain many supporting characters, but the primary Comics
+ * entry point deliberately exposes only characters with their own meaningful
+ * series footprint. Major DC headliners get first-class placement; other
+ * character-led books are grouped so supporting cast members do not become
+ * top-level destinations. The grouping is presentation-only and never changes
+ * the underlying graph.
+ */
 async function levelCharacterList() {
   const [chars, series] = await Promise.all([data.getAllCharacters(200), data.getAllSeries(200)]);
   const seriesByCharacter = new Map();
@@ -376,59 +405,62 @@ async function levelCharacterList() {
     const leadSeries = data.leadSeriesFor(c.id, series);
     const issueCount = ownSeries.reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
     return { c, ownSeries, leadSeries, issueCount, lead: leadSeries.length > 0 };
-  }).filter(x => x.ownSeries.length > 0);
-  items.sort((a, b) => (b.lead - a.lead) || (b.ownSeries.length - a.ownSeries.length) || (b.issueCount - a.issueCount) || String(a.c.displayName || a.c.name || "").localeCompare(String(b.c.displayName || b.c.name || "")));
-  if (!items.length) return { html: emptyHtml("No characters are currently represented in the Comics graph.") };
+  }).filter(x => x.lead);
 
-  const rowHtml = (item, index) => {
+  items.sort((a, b) => (b.issueCount - a.issueCount) || String(a.c.displayName || a.c.name || "").localeCompare(String(b.c.displayName || b.c.name || "")));
+  if (!items.length) return { html: emptyHtml("No standalone character catalogues have been mapped yet.") };
+
+  const buckets = {
+    headliner: items.filter(x => characterBucket(x) === "headliner"),
+    villain: items.filter(x => characterBucket(x) === "villain"),
+    family: items.filter(x => characterBucket(x) === "family"),
+    solo: items.filter(x => characterBucket(x) === "solo"),
+  };
+
+  const rowHtml = (item) => {
     const c = item.c;
     const label = esc(c.displayName || c.name || "Unnamed");
     const alias = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
-    const role = item.lead ? "Lead character" : "Supporting / connected";
     const meta = `${item.ownSeries.length} series${item.issueCount ? ` · ${item.issueCount} issues` : ""}`;
-    return `<div class="cx-character-card" data-character-id="${esc(c.id)}" data-character-role="${item.lead ? "lead" : "supporting"}" data-search="${esc([c.displayName, c.name, ...(c.aliases || [])].filter(Boolean).join(" ").toLowerCase())}">
+    return `<div class="cx-character-card" data-character-id="${esc(c.id)}" data-search="${esc([c.displayName, c.name, ...(c.aliases || [])].filter(Boolean).join(" ").toLowerCase())}">
       <div class="cx-character-avatar" aria-hidden="true">${esc(initialsOf(c.displayName || c.name))}</div>
-      <div class="cx-character-body"><div class="cx-character-name">${label}</div>${alias ? `<div class="cx-character-alias">${alias}</div>` : ""}<div class="cx-character-meta"><span>${esc(role)}</span><span>${esc(meta)}</span></div></div>
+      <div class="cx-character-body"><div class="cx-character-name">${label}</div>${alias ? `<div class="cx-character-alias">${alias}</div>` : ""}<div class="cx-character-meta"><span>${esc(meta)}</span></div></div>
       <div class="cx-row-chevron">›</div>
     </div>`;
   };
+  const section = (key, title, sub, list) => list.length ? `<section class="cx-character-group" data-character-group="${key}"><div class="cx-character-group-head"><div><div class="cx-kicker">${esc(key === "headliner" ? "HEADLINERS" : key === "villain" ? "MAJOR VILLAINS" : key === "family" ? "CHARACTER FAMILIES" : "OTHER SOLO CATALOGUES")}</div><h3>${esc(title)}</h3><p>${esc(sub)}</p></div><span>${list.length}</span></div><div class="cx-character-list">${list.map(rowHtml).join("")}</div></section>` : "";
 
-  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Character index</h2><p class="cx-subtitle">Every character currently represented in the normalized Comics graph — leads and connected characters included.</p>
-    <div class="cx-character-tools">
-      <label class="cx-character-search"><span aria-hidden="true">⌕</span><input id="cxCharacterSearch" type="search" placeholder="Search Batman, Superman, Green Lantern…" autocomplete="off" /></label>
-      <div class="cx-character-filters" role="tablist" aria-label="Character type">
-        <button class="cx-character-filter is-active" type="button" data-character-filter="all">All <b>${items.length}</b></button>
-        <button class="cx-character-filter" type="button" data-character-filter="lead">Leads <b>${items.filter(x => x.lead).length}</b></button>
-        <button class="cx-character-filter" type="button" data-character-filter="supporting">Connected <b>${items.filter(x => !x.lead).length}</b></button>
-      </div>
+  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Characters worth following</h2><p class="cx-subtitle">Major characters first. Supporting cast stays inside the books, stories and relationships where it belongs.</p>
+    <label class="cx-character-search"><span aria-hidden="true">⌕</span><input id="cxCharacterSearch" type="search" placeholder="Search Batman, Superman, Green Lantern…" autocomplete="off" /></label>
+    <div class="cx-character-groups" id="cxCharacterGroups">
+      ${section("headliner", "DC headliners", "Characters with a universe-spanning reading history.", buckets.headliner)}
+      ${section("villain", "Major villains", "Villains with meaningful standalone publishing histories.", buckets.villain)}
+      ${section("family", "Character families", "Related character-led books grouped together instead of competing with the headliners.", buckets.family)}
+      ${section("solo", "Other solo catalogues", "Standalone character series that are useful to discover, but are not top-level headliners.", buckets.solo)}
     </div>
-    <div class="cx-character-list" id="cxCharacterList">${items.map(rowHtml).join("")}</div>
-    <div class="cx-character-empty" id="cxCharacterEmpty" hidden>No matching characters in the current Comics graph.</div>`;
+    <div class="cx-character-empty" id="cxCharacterEmpty" hidden>No matching character catalogues in the current Comics graph.</div>`;
 
   return {
     html,
     wire(container) {
       const cards = [...container.querySelectorAll("[data-character-id]")];
-      let filter = "all";
+      const groups = [...container.querySelectorAll("[data-character-group]")];
       const apply = () => {
         const q = String(container.querySelector("#cxCharacterSearch")?.value || "").trim().toLowerCase();
         let visible = 0;
         cards.forEach(card => {
-          const roleOk = filter === "all" || card.dataset.characterRole === filter;
-          const textOk = !q || card.dataset.search.includes(q);
-          const show = roleOk && textOk;
+          const show = !q || card.dataset.search.includes(q);
           card.hidden = !show;
           if (show) visible++;
+        });
+        groups.forEach(group => {
+          const hasVisible = !!group.querySelector("[data-character-id]:not([hidden])");
+          group.hidden = !hasVisible;
         });
         const empty = container.querySelector("#cxCharacterEmpty");
         if (empty) empty.hidden = visible !== 0;
       };
       container.querySelector("#cxCharacterSearch")?.addEventListener("input", apply);
-      container.querySelectorAll("[data-character-filter]").forEach(btn => btn.addEventListener("click", () => {
-        filter = btn.dataset.characterFilter;
-        container.querySelectorAll("[data-character-filter]").forEach(b => b.classList.toggle("is-active", b === btn));
-        apply();
-      }));
       cards.forEach(card => card.addEventListener("click", () => {
         const item = items.find(x => x.c.id === card.dataset.characterId);
         if (item) pushLevel("character", item.c.displayName || item.c.name, { character: item.c });
@@ -436,7 +468,6 @@ async function levelCharacterList() {
     },
   };
 }
-
 /**
  * Pointer 6.5 — a single "Reading Paths" destination: every comicReadingPaths
  * record, grouped/ordered by path type (sortPathsByType, same helper used

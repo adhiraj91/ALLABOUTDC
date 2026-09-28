@@ -6,7 +6,7 @@
 // existing entry points. No routing, Story Map, Explorer, data or catalogue
 // implementation is changed.
 // ============================================================================
-import * as data from "./data.js?v=p68";
+import * as data from "./data.js?v=p69";
 import { renderContinueCard } from "./reading-progress.js?v=p7";
 
 const esc = (s) => s == null ? "" : String(s)
@@ -71,10 +71,7 @@ function heroHtml() {
         <h2>DC <span>COMICS</span></h2>
         <p>Every character. Every world. Every story.</p>
         <div class="cl4-hero-sub">A connected way to explore DC Comics — from characters and series to eras, stories and issues.</div>
-        <div class="cl4-hero-actions">
-          <button class="cl4-primary" data-action="storymap">Enter the Universe Atlas <b>→</b></button>
-          <button class="cl4-secondary" data-explore="paths">Start Reading</button>
-        </div>
+        <div class="cl4-hero-note">Enter through a character, a series, a reading path, or the Universe Atlas below.</div>
       </div>
       <div class="cl4-hero-side">
         <span>THE COMICS UNIVERSE</span>
@@ -117,8 +114,7 @@ function atlasHtml() {
       <div class="cl4-atlas-watermark">ENTER ATLAS →</div>
     </button>
     <div class="cl4-atlas-caption">
-      <div><strong>Era → Event → Character → Series → Issue</strong><span>Explore the relationships from one place instead of opening separate versions of the same map.</span></div>
-      <button class="cl4-text-btn" data-action="storymap">Open Universe Atlas →</button>
+      <div><strong>Era → Event → Character → Series → Issue</strong><span>One Atlas. One destination. Every other view should lead into the same underlying universe.</span></div>
     </div>
   </section>`;
 }
@@ -141,7 +137,7 @@ function territoryHtml() {
 
 function seriesHtml() {
   return `<section class="cl4-section">
-    <div class="cl4-section-head"><div><div class="cl4-kicker">FEATURED BOOKS</div><h3>Start with a series</h3></div><button class="cl4-text-btn" data-action="series">Browse series →</button></div>
+    <div class="cl4-section-head"><div><div class="cl4-kicker">FEATURED BOOKS</div><h3>Start with a series</h3></div><span>Open a book to enter its connected history</span></div>
     <div class="cl4-series-rail" id="cl4SeriesRail"><div class="cl4-loading-line">Loading current series…</div></div>
   </section>`;
 }
