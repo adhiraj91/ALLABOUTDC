@@ -2559,13 +2559,13 @@ function renderComicsPath(){
     window.scrollTo({top:0});
   });
 }
-function openComicsPath(group, parentId){
-  cpState = { step: group ? "continuity" : "hero", group: group||null, continuity:null, order:null, parentId: parentId||null };
-  // Close anything else that might be open so the path sheet is never stacked under another sheet.
+function openComicsPath(){
   closeAllSheets();
-  renderComicsPath();
-  openSheetEl(comicsPathBackdrop, comicsPathSheet);
+  if(window.__comicsExplorer?.openAt){
+    window.__comicsExplorer.openAt([{level:"root",label:"Batman — New 52",params:{}}]);
+  }
 }
+
 comicsPathBackdrop.addEventListener("click", ()=> closeSheetEl(comicsPathBackdrop, comicsPathSheet));
 $("#comicsPathClose").addEventListener("click", ()=> closeSheetEl(comicsPathBackdrop, comicsPathSheet));
 
@@ -3151,56 +3151,42 @@ const adminToolsBackdrop = $("#adminToolsBackdrop"), adminToolsSheet = $("#admin
 adminToolsBackdrop.addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 $("#adminToolsClose").addEventListener("click", ()=> closeSheetEl(adminToolsBackdrop, adminToolsSheet));
 
-/* Comics-v2 (beta): one-tap import button for the New 52 Batman dataset built in comics-v2/seed-batman-new52.js.
-   Fully independent of the rest of Admin Tools — talks only to window.__comicsV2 (comics-v2/index.js). */
+/* Comics-v2 — destructive clean rebuild: erase every Comics collection, then import ONLY the
+   canonical Batman / New 52 dataset. This is the one Comics data operation exposed to admins. */
 $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
-  // Single combined button: runs the base Batman New 52 dataset import, then the
-  // collections (Zero Year/Endgame/Superheavy/Bloom) import. Both are upsert-based,
-  // so re-running this is always safe — nothing is duplicated or overwritten wrong.
-  const btn = $("#importBatmanNew52Btn"), msg = $("#importBatmanNew52Msg");
-  if(!window.__comicsV2 || !window.__comicsV2.batmanNew52){
-    msg.textContent = "Comics v2 module not loaded — check that comics-v2/index.js is uploaded.";
-    msg.className = "form-msg err";
+  const btn=$("#importBatmanNew52Btn"), msg=$("#importBatmanNew52Msg");
+  if(!window.__comicsV2?.batmanNew52?.resetAndImport){
+    msg.textContent="Comics v2 clean rebuild module is not loaded.";
+    msg.className="form-msg err";
     return;
   }
-  btn.disabled = true;
-  msg.textContent = "Importing…";
-  msg.className = "form-msg";
+  if(!confirm("This will DELETE the existing Comics v2 data and the old Comics catalogue, then create ONLY the Batman / New 52 dataset. Continue?")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating clean Batman / New 52 dataset…";
   try{
-    const base = await window.__comicsV2.batmanNew52.import();
-    if(base?.validation && !base.validation.valid){
-      msg.textContent = "Base dataset failed validation — nothing was written: " + JSON.stringify(base.validation.errors || base.validation);
-      msg.className = "form-msg err";
-      return;
+    const result=await window.__comicsV2.batmanNew52.resetAndImport((collectionName,done,total)=>{
+      msg.textContent=`Clearing ${collectionName}: ${done}/${total}…`;
+    });
+    if(!result?.validation?.valid){
+      msg.textContent="Validation failed — nothing was imported: "+(result?.validation?.errors||[]).slice(0,5).join(" | ");
+      msg.className="form-msg err"; return;
     }
-    let collResult = null, collSkipped = false;
-    if(window.__comicsV2.batmanNew52Collections){
-      collResult = await window.__comicsV2.batmanNew52Collections.import();
-      if(collResult?.validation && !collResult.validation.valid){
-        msg.textContent = "Collections data failed validation — nothing was written: " + JSON.stringify(collResult.validation.errors || collResult.validation);
-        msg.className = "form-msg err";
-        return;
-      }
-    } else collSkipped = true;
-
-    const baseTotal = Object.values(base?.written || {}).reduce((a,b)=>a+b, 0);
-    // collResult.written is a plain number (not an object like base.written) — sum only if it's an object.
-    const collTotal = typeof collResult?.written === "number" ? collResult.written : Object.values(collResult?.written || {}).reduce((a,b)=>a+b, 0);
-    const allErrors = [...(base?.errors||[]), ...(collResult?.errors||[])];
-    if(allErrors.length){
-      msg.textContent = `Wrote ${baseTotal + collTotal} records, but ${allErrors.length} failed: ${allErrors.slice(0,3).join(" | ")}`;
-      msg.className = "form-msg err";
+    const imported=result.imported?.written||{};
+    const total=Object.values(imported).reduce((a,b)=>a+(Number(b)||0),0);
+    const errors=result.errors||[];
+    if(errors.length){
+      msg.textContent=`Cleaned Comics, imported ${total} records, but ${errors.length} writes failed: ${errors.slice(0,3).join(" | ")}`;
+      msg.className="form-msg err";
     }else{
-      msg.textContent = `Done — ${baseTotal} base records` + (collSkipped ? " (collections file not found — skipped)." : ` + ${collTotal} collection records (Zero Year, Endgame, Superheavy, Bloom).`);
-      msg.className = "form-msg ok";
+      DATA.comics=[];
+      msg.textContent=`Done — Comics reset to Batman / New 52 only (${total} records).`;
+      msg.className="form-msg ok";
+      buildTabs(); renderCards(); renderComicsLanding();
     }
   }catch(err){
-    console.error(err);
-    msg.textContent = "Import failed: " + (err?.message || err);
-    msg.className = "form-msg err";
-  }finally{
-    btn.disabled = false;
-  }
+    console.error("[Comics v2] clean rebuild failed",err);
+    msg.textContent="Clean rebuild failed: "+(err?.message||err);
+    msg.className="form-msg err";
+  }finally{ btn.disabled=false; }
 });
 
 $("#readerGoAdminTools").addEventListener("click", ()=>{

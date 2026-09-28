@@ -1888,81 +1888,33 @@ main.comics-home-main > .grid{
 @media (max-width:900px){.cl4-explore-grid{grid-template-columns:repeat(2,1fr)}.cl4-atlas-shell{grid-template-columns:1fr}.cl4-atlas-info{grid-template-columns:repeat(3,1fr);grid-template-rows:1.5fr}.cl4-atlas-primary{grid-column:1/-1}.cl4-series-rail{grid-template-columns:repeat(2,1fr)}.cl4-hero-side{display:none}.cl4-run-grid{grid-template-columns:1fr}}
 @media (max-width:620px){.cl4-hero{min-height:430px;padding:34px 16px 28px;align-items:flex-end}.cl4-hero-art{opacity:.7}.cl4-sigil{right:7%;top:20%;width:105px;height:105px;font-size:40px}.cl4-orbit-a{right:-230px;top:80px}.cl4-orbit-b{right:-120px;top:145px}.cl4-orbit-c{right:-300px;top:20px}.cl4-hero h2{font-size:64px}.cl4-hero p{font-size:18px}.cl4-hero-sub{font-size:12px}.cl4-stats{padding:0 8px}.cl4-stat{padding:14px 3px}.cl4-stat b{font-size:20px}.cl4-stat span{font-size:7px}.cl4-section{padding-top:30px}.cl4-section-head{align-items:flex-start;flex-direction:column;gap:4px}.cl4-section-head h3{font-size:27px}.cl4-explore-grid{grid-template-columns:1fr}.cl4-explore-card{min-height:126px}.cl4-atlas-visual{min-height:330px}.cl4-atlas-info{grid-template-columns:1fr}.cl4-atlas-primary{grid-column:auto}.cl4-atlas-info-card{min-height:92px}.cl4-node-era{left:5%;top:16%}.cl4-node-character{right:4%;top:15%}.cl4-node-series{left:5%;bottom:9%}.cl4-node-new52{right:4%;bottom:8%}.cl4-era-card{flex-basis:170px}.cl4-new52{grid-template-columns:82px 1fr;padding:16px;gap:14px}.cl4-new52-art{width:82px;height:82px}.cl4-new52-art span{font-size:42px}.cl4-new52-arrow{grid-column:2}.cl4-run-grid{grid-template-columns:1fr}.cl4-series-rail{display:flex;overflow-x:auto;padding-bottom:5px}.cl4-series-card{flex:0 0 190px}.cl4-catalogue{align-items:flex-start;flex-direction:column}.cl4-catalogue-btn{width:100%}}
 
-/* ============================================================================
-   COMICS EXPLORER FINAL FIX — Character detail readability
-   Scoped to #comicsExplorerSheet so the rest of ALLABOUTDC is untouched.
-   The explorer must use the site's parchment/ink palette rather than inheriting
-   white text from unrelated dark cards/components.
-============================================================================ */
-#comicsExplorerSheet,
-#comicsExplorerSheet .cx-topbar,
-#comicsExplorerSheet .cx-breadcrumb,
-#comicsExplorerSheet .cx-title,
-#comicsExplorerSheet .cx-subtitle,
-#comicsExplorerSheet .cx-row,
-#comicsExplorerSheet .cx-row-title,
-#comicsExplorerSheet .cx-character-series-row,
-#comicsExplorerSheet .cx-character-series-row .cx-row-body,
-#comicsExplorerSheet .cx-character-series-row .cx-row-title,
-#comicsExplorerSheet .cx-character-series-row .cx-row-sub,
-#comicsExplorerSheet .cx-character-series-row .cx-row-chevron,
-#comicsExplorerSheet .sheet-section,
-#comicsExplorerSheet .sheet-label {
-  color: var(--ink);
-}
+/* ============ BATMAN NEW 52 CLEAN REBUILD — final layout guardrails ============ */
+.cl4-atlas-shell{min-width:0;width:100%;}
+.cl4-atlas-visual{display:block;width:100%;min-width:0;min-height:370px;box-sizing:border-box;overflow:hidden;}
+.cl4-atlas-info{min-width:0;}
+.cl4-atlas-info-card{min-width:0;width:100%;box-sizing:border-box;}
+.cl4-atlas-primary{min-width:0;}
+.cl4-series-rail{min-width:0;}
+.cl4-series-card{min-width:0;}
+@media(max-width:620px){.cl4-atlas-shell{width:100%;}.cl4-atlas-visual{width:100%;min-height:330px;}.cl4-atlas-info-card{width:100%;}}
 
-#comicsExplorerSheet .cx-subtitle,
-#comicsExplorerSheet .cx-row-sub,
-#comicsExplorerSheet .cx-row-chevron,
-#comicsExplorerSheet .cx-breadcrumb,
-#comicsExplorerSheet .cx-crumb,
-#comicsExplorerSheet .cx-character-meta,
-#comicsExplorerSheet .cx-character-alias {
-  color: var(--ink-faint);
-}
-
-#comicsExplorerSheet .cx-kicker,
-#comicsExplorerSheet .cx-crumb[data-current="true"],
-#comicsExplorerSheet .sheet-label {
-  color: var(--comics);
-}
-
-#comicsExplorerSheet .cx-row {
-  background: transparent;
-  text-shadow: none;
-}
-
-#comicsExplorerSheet .cx-row-title,
-#comicsExplorerSheet .cx-character-name {
-  color: var(--ink);
-  text-shadow: none;
-}
-
-#comicsExplorerSheet .cx-character-series-row {
-  border-bottom-color: var(--line);
-}
-
-#comicsExplorerSheet .cx-character-continuity {
-  margin-top: 18px;
-}
-
-#comicsExplorerSheet .cx-character-continuity:first-of-type {
-  margin-top: 10px;
-}
-
-#comicsExplorerSheet .cx-character-series-row:hover,
-#comicsExplorerSheet .cx-row:hover {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--comics) 4%, transparent);
-}
-
-#comicsExplorerSheet .tag {
-  color: var(--ink-dim);
-  background: var(--panel-2);
-  border-color: var(--line);
-}
-
-#comicsExplorerSheet .cx-error,
-#comicsExplorerSheet .cx-empty {
-  color: var(--ink-faint);
-}
+/* Explorer typography: no inherited white-on-white / dark-card leakage. */
+#comicsExplorerContent .cx-title,
+#comicsExplorerContent .cx-row-title,
+#comicsExplorerContent .cx-section-note,
+#comicsExplorerContent .sheet-body,
+#comicsExplorerContent .cx-fact,
+#comicsExplorerContent .cx-chip,
+#comicsExplorerContent .cx-entry-btn,
+#comicsExplorerContent .cx-text-link{color:var(--ink);}
+#comicsExplorerContent .cx-subtitle,
+#comicsExplorerContent .cx-row-sub,
+#comicsExplorerContent .cx-kicker,
+#comicsExplorerContent .cx-section-note{color:var(--ink-dim);}
+#comicsExplorerContent .cx-kicker,#comicsExplorerContent .sheet-label{color:var(--comics);}
+#comicsExplorerContent .cx-row{background:var(--panel);color:var(--ink);}
+#comicsExplorerContent .cx-row:hover{background:var(--panel-2);}
+#comicsExplorerContent .cx-entry-btn{background:var(--panel);border-color:var(--line);}
+#comicsExplorerContent .cx-chip{background:var(--panel-2);border-color:var(--line);}
+#comicsExplorerContent .cx-chip:hover{border-color:var(--comics);}
+#comicsExplorerContent button{font-family:var(--font-body);}
