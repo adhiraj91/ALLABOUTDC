@@ -1465,7 +1465,7 @@ function renderComicsLanding(){
   countEl.textContent = "";
   landing.render(gridEl, {
     catalogueCount: (DATA.comics||[]).length,
-    onBrowseAll: ()=>{ state.comicsView = "browse"; buildFilters(); renderCards(); window.scrollTo(0,0); },
+    onBrowseAll: ()=>{ if(window.__comicsExplorer?.openAt) return window.__comicsExplorer.openAt([{level:"seriesList", label:"Series", params:{}}]); },
     onReadingPath: ()=> openComicsPath(null),
   });
 
