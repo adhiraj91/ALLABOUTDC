@@ -49,14 +49,16 @@ export const transitionEvents = [
   {
     id: 'transition-rebirth',
     from: 'new52', to: 'rebirth',
-    title: 'DC Universe: Rebirth',
+    title: 'Convergence → DC Universe: Rebirth',
     kicker: 'Transition · New 52 → Rebirth',
-    summary: 'The 2016 Rebirth initiative follows the New 52/Convergence period. The principal transition comic is DC Universe: Rebirth Special #1; Convergence is the immediate publishing-line junction before it.',
-    issues: ['DC Universe: Rebirth Special #1'],
+    summary: 'Convergence is the publishing-line junction immediately before Rebirth. DC then launched the Rebirth initiative with DC Universe: Rebirth Special #1 in May 2016. Keep both visible so readers can see the actual bridge rather than a mysterious gap between eras.',
+    issues: ['Convergence #0–8', 'Convergence tie-ins (40 two-part miniseries)', 'DC Universe: Rebirth Special #1'],
     editions: [
-      coll('DC Universe: Rebirth', 'Single Issue', 'DC Universe: Rebirth Special #1'),
-      coll('DC Universe: Rebirth', 'Hardcover', 'DC Universe: Rebirth Special #1', 'Collected as part of Rebirth-era hardcover/collection programs.'),
-      coll('DC Universe: Rebirth', 'Trade Paperback', 'DC Universe: Rebirth Special #1', 'Collected in Rebirth reference/collection editions.'),
+      coll('Convergence', 'Single Issues', 'Convergence #0–8', 'Core weekly event spine.'),
+      coll('Convergence', 'Graphic Novel', 'Convergence #0–8', 'DC collected edition of the core event.'),
+      coll('DC Universe: Rebirth', 'Single Issue', 'DC Universe: Rebirth Special #1', 'The launch special for the Rebirth initiative.'),
+      coll('DC Universe: Rebirth', 'Hardcover', 'DC Universe: Rebirth Special #1', 'Collected in Rebirth-era hardcover programs.'),
+      coll('DC Universe: Rebirth', 'Trade Paperback', 'DC Universe: Rebirth Special #1', 'Collected in Rebirth-era trade/reference editions.'),
     ],
   },
   {
