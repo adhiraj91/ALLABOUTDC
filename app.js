@@ -107,8 +107,7 @@ const META_COLLECTIONS = ["beginnerRecommendations"];
 let DATA = { movies:[], series:[], games:[], comics:[], beginnerRecommendations:[] };
 let state = {
   cat:"home",
-  comicsView:"atlas", // Comics opens the DC Universe Atlas; "browse" = the optional flat catalogue
-  atlasReturnCat:"home",
+  comicsView:"landing", // Pointer 4: Comics tab opens its landing; "browse" = the old flat catalogue
   search:"",
   f1:"all", f2:"all", f3:"all", chip:"all", // games/comics filters (f3: comics reading level)
   typeFilter:"Live Action",                // movies/series: Live Action | Animated
@@ -883,7 +882,7 @@ function sortHeroNames(heroMap){
 
 /* ============================= RENDER: TABS ============================= */
 function resetFiltersForTabSwitch(){
-  state.comicsView="atlas";
+  state.comicsView="landing";
   state.f1="all"; state.f2="all"; state.f3="all"; state.chip="all"; state.search="";
   state.sortMode="newest";
   state.gameMode="all"; state.gamePlatform="all";
@@ -891,54 +890,9 @@ function resetFiltersForTabSwitch(){
   searchInput.value="";
   globalSearchResults.innerHTML = ""; globalSearchResults.dataset.open = "false";
 }
-function openComicsAtlas(mode="universe"){
-  const sm = window.__comicsStoryMap;
-  if(sm && typeof sm.open === "function"){
-    sm.open(mode);
-    return;
-  }
-  // Keep the Comics tab out of the old catalogue while the Atlas module is loading.
-  // This also gives a useful failure state instead of silently leaving the user on filters.
-  let loading=document.getElementById("comicsAtlasLoading");
-  if(!loading){
-    loading=document.createElement("div");
-    loading.id="comicsAtlasLoading";
-    loading.innerHTML=`<div><span>DC UNIVERSE ATLAS</span><b>Opening the map…</b><small>Loading the interactive universe.</small></div>`;
-    document.body.appendChild(loading);
-  }
-  loading.dataset.open="true";
-  const once=()=>{
-    document.removeEventListener("comicsv2:storymap-ready", once);
-    loading?.remove();
-    window.__comicsStoryMap?.open?.(mode);
-  };
-  document.addEventListener("comicsv2:storymap-ready", once, {once:true});
-  window.setTimeout(()=>{
-    if(document.body.contains(loading) && !window.__comicsStoryMap){
-      loading.querySelector("b").textContent="Atlas could not load";
-      loading.querySelector("small").textContent="Refresh the page or check the Comics module deployment.";
-    }
-  },5000);
-}
-function closeComicsAtlasToApp(){
-  const target = state.atlasReturnCat || "home";
-  state.cat = target;
-  state.comicsView = "atlas";
-  render();
-  window.scrollTo(0,0);
-}
-window.__comicsAtlasReturn = closeComicsAtlasToApp;
-window.__comicsAtlasBrowse = ()=>{
-  state.cat = "comics";
-  state.comicsView = "browse";
-  render();
-  window.scrollTo(0,0);
-};
 function goToCategory(cat, opts){
-  const previous = state.cat;
   state.cat = cat;
   resetFiltersForTabSwitch();
-  if(cat === "comics") state.atlasReturnCat = previous === "comics" ? "home" : previous;
   if(opts){
     if(opts.sortMode) state.sortMode = opts.sortMode;
     if(opts.typeFilter) state.typeFilter = opts.typeFilter;
@@ -956,14 +910,8 @@ function buildTabs(){
   }).join("") + journeyBtn;
   tabsEl.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>{
-      const next = btn.dataset.cat;
-      const previous = state.cat;
-      state.cat = next;
+      state.cat = btn.dataset.cat;
       resetFiltersForTabSwitch();
-      if(next === "comics"){
-        state.atlasReturnCat = previous === "comics" ? "home" : previous;
-        state.comicsView = "atlas";
-      }
       render();
     });
   });
@@ -1017,13 +965,6 @@ function buildFilters(){
   }
 
   if(cat==="comics"){
-    if(state.comicsView !== "browse"){
-      filterRow.innerHTML = "";
-      chipRow.innerHTML = "";
-      filterRow.style.display = "none";
-      chipRow.style.display = "none";
-      return;
-    }
     const eras = uniq(data.map(d=>d.era));
     const canons = uniq(data.map(d=>d.canon));
     const lines = uniq(data.map(d=>d.line));
@@ -1475,7 +1416,7 @@ function renderGenericCards(){
     // (comics-v2/explorer.js — an independent module; it delegates clicks on this button's id
     // rather than app.js calling into it directly, since this grid re-renders on every filter change).
     // This is purely additive — the flat catalogue below is completely untouched.
-    html += `<button class="cl-back-landing" id="comicsBackToLandingBtn">← Open Comics Atlas</button>`;
+    html += `<button class="cl-back-landing" id="comicsBackToLandingBtn">← Comics home · Story Map</button>`;
     html += `<button class="cp-entry-card" id="comicsExplorerEntryBtn"><span>🧭 Explore the DC Comics Continuity</span><span class="cp-entry-sub">Characters → continuities → series → runs → stories → issues →</span></button>`;
     html += `<button class="cp-entry-card" id="comicsTabPathBtn"><span>📖 Not sure where to start? Build a reading path</span><span class="cp-entry-sub">Hero → continuity → read in order, with progress tracking →</span></button>`;
   }
@@ -1496,46 +1437,17 @@ function renderGenericCards(){
   const comicsTabPathBtn = $("#comicsTabPathBtn");
   if(comicsTabPathBtn) comicsTabPathBtn.addEventListener("click", ()=> openComicsPath(null));
   const backToLanding = $("#comicsBackToLandingBtn");
-  if(backToLanding) backToLanding.addEventListener("click", ()=> openComicsAtlas("universe"));
+  if(backToLanding) backToLanding.addEventListener("click", ()=> goToCategory("comics"));
   attachCardHandlers(cat);
-}
-
-function setComicsAtlasChrome(active){
-  document.body.classList.toggle("comics-atlas-active", !!active);
-  const siteHeader = document.querySelector("body > header");
-  if(siteHeader) siteHeader.style.display = active ? "none" : "";
-  if(filterRow) filterRow.style.display = active ? "none" : "";
-  if(chipRow) chipRow.style.display = active ? "none" : "";
-  if(countEl) countEl.style.display = active ? "none" : "";
-  if(introEl) introEl.style.display = active ? "none" : "";
-  const controls = document.querySelector(".controls");
-  if(controls) controls.style.display = active ? "none" : "";
-  const tabs = document.querySelector("#tabs");
-  if(tabs) tabs.style.display = active ? "none" : "";
-  const mobileNav = document.querySelector("#mobileNav");
-  if(mobileNav) mobileNav.style.display = active ? "none" : "";
-}
-function renderComicsAtlasHome(){
-  setComicsAtlasChrome(true);
-  countEl.textContent = "";
-  // The Comics home is a real page inside the app. The Story Map is a secondary
-  // exploration mode, not the Comics landing screen.
-  if(window.__comicsStoryMap?.isOpen?.()) window.__comicsStoryMap.close();
-  const sm = window.__comicsStoryMap;
-  if(sm && typeof sm.renderHomePage === "function"){
-    sm.renderHomePage(gridEl);
-    return;
-  }
-  gridEl.innerHTML = `<div class="comics-atlas-loading-page"><div class="atlas-spinner"></div><b>DC UNIVERSE</b><span>Loading the Comics Universe…</span></div>`;
 }
 
 function renderCards(){
   if(!loaded) return;
-  if(state.cat==="home") { setComicsAtlasChrome(false); renderHome(); }
-  else if(state.cat==="journey") { setComicsAtlasChrome(false); renderJourney(); }
-  else if(state.cat==="movies" || state.cat==="series") { setComicsAtlasChrome(false); renderMovieSeriesCards(); }
-  else if(state.cat==="comics" && state.comicsView!=="browse") renderComicsAtlasHome();
-  else { setComicsAtlasChrome(false); renderGenericCards(); }
+  if(state.cat==="home") renderHome();
+  else if(state.cat==="journey") renderJourney();
+  else if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
+  else if(isComicsLanding()) renderComicsLanding();
+  else renderGenericCards();
 }
 
 /* ============================= RENDER: COMICS LANDING (Pointer 4) =============================
@@ -1544,9 +1456,8 @@ function renderCards(){
    and is still what any era/canon/line filter shows. If the module hasn't loaded, fall back to the
    catalogue so Comics can never break. */
 function isComicsLanding(){
-  // Retained only for backwards-compatible history/UI helpers. The old intermediate Comics landing
-  // is no longer a user-facing destination; Comics now opens the DC Universe Atlas directly.
-  return false;
+  return state.cat==="comics" && state.comicsView!=="browse" &&
+    state.f1==="all" && state.f2==="all" && state.f3==="all" && state.chip==="all"; // search uses the global dropdown
 }
 function renderComicsLanding(){
   const landing = window.__comicsV2Landing;
@@ -1559,11 +1470,6 @@ function renderComicsLanding(){
   });
 }
 document.addEventListener("comicsv2:landing-ready", ()=>{ if(loaded && isComicsLanding()){ buildFilters(); renderCards(); } });
-// The Comics atlas module loads independently; if a deep link opens #comics before
-// storymap.js has finished, render the real Comics home as soon as the module arrives.
-document.addEventListener("comicsv2:storymap-ready", ()=>{
-  if(loaded && state.cat==="comics" && state.comicsView!=="browse") renderComicsAtlasHome();
-});
 
 /* ============================= RENDER: HOME ============================= */
 function stripCardHtml(cat, d){
@@ -1975,9 +1881,8 @@ function renderJourney(opts){
 
 let lastRenderedView = "";
 function render(){
-  // Comics has its own full-screen information architecture. It is rendered in
-  // the normal app container; the interactive Story Map is only a secondary view.
   buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); syncHistoryForTab();
+  // Pointer 4: entering the Comics landing always starts at the top (never a stale catalogue scroll position).
   const view = state.cat + (isComicsLanding() ? ":landing" : "");
   if(view==="comics:landing") window.scrollTo(0,0);
   lastRenderedView = view;
