@@ -8,7 +8,7 @@
  * - Opening an era turns it into a focused explorer made of tabs + cards.
  * - Issues and collected editions are detail content, never hundreds of map nodes.
  */
-import { eras, new52Era, transitionEvents, crossoverSpine, getSeriesForLane, auditNew52 } from './new52-map-data.js';
+import { eras, new52Era, transitionEvents, crossoverSpine, getSeriesForLane, auditNew52 } from './new52-map-data.js?v=20260928-fullresearch';
 
 const esc = s => s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 let root=null, viewport=null, world=null, detail=null, controls=null;
