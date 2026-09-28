@@ -1955,3 +1955,27 @@ main.comics-home-main > .grid{
   .cx-character-name{font-size:13px}
   .cx-character-meta{font-size:8px}
 }
+
+/* STEP 4B-2A — reader-oriented character IA */
+.cl4-hero-note{margin-top:20px;max-width:610px;color:var(--ink-faint);font-size:10px;line-height:1.55;border-left:2px solid color-mix(in srgb,var(--comics) 55%,transparent);padding-left:10px}
+.cl4-atlas-caption{padding-top:12px}
+.cl4-atlas-caption button{display:none}
+.cx-character-search{display:flex;align-items:center;gap:8px;margin:16px 0 22px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink-dim)}
+.cx-character-search span{color:var(--comics);font-size:17px}
+.cx-character-search input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:12px}
+.cx-character-search input::placeholder{color:var(--ink-faint)}
+.cx-character-groups{display:flex;flex-direction:column;gap:28px}
+.cx-character-group{display:flex;flex-direction:column;gap:10px}
+.cx-character-group[hidden]{display:none}
+.cx-character-group-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}
+.cx-character-group-head h3{margin:4px 0 3px;font:400 26px var(--font-display);color:var(--ink)}
+.cx-character-group-head p{margin:0;max-width:620px;color:var(--ink-faint);font-size:10px;line-height:1.5}
+.cx-character-group-head>span{font:400 25px var(--font-display);color:var(--comics)}
+.cx-character-list{display:flex;flex-direction:column;gap:7px}
+@media (max-width:620px){
+  .cl4-hero-note{font-size:9px;max-width:330px}
+  .cx-character-groups{gap:24px}
+  .cx-character-group-head h3{font-size:23px}
+  .cx-character-group-head p{font-size:9px}
+  .cx-character-group-head>span{font-size:21px}
+}
