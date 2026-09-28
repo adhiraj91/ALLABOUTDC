@@ -459,41 +459,55 @@ async function levelReadingPathList() {
 
 async function levelCharacter(params) {
   const c = params.character;
+  if (!c || !c.id) return { html: emptyHtml("Character data is incomplete.") };
+
   let series = Array.isArray(params.characterSeries) ? [...params.characterSeries] : [];
   if (!series.length) {
     try { series = await data.getSeriesForCharacter(c.id); } catch (e) { series = []; }
   }
 
-  // Character pages show the character's own publishing line only. Supporting
-  // appearances remain reachable from the individual books/issues.
-  series = series.filter(s => Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
+  // Only show this character's own publishing line. Supporting appearances
+  // remain reachable from the individual series/issues/stories.
+  series = series.filter(s => s && Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
   series.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || '').localeCompare(String(b.title || '')));
 
   let html = `<div class="cx-kicker">CHARACTER</div><h2 class="cx-title">${esc(c.displayName || c.name)}</h2>`;
-  if (c.aliases?.length) html += `<div class="cx-tag-row">${c.aliases.slice(0,5).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div>`;
+  if (Array.isArray(c.aliases) && c.aliases.length) {
+    html += `<div class="cx-tag-row">${c.aliases.slice(0,5).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div>`;
+  }
   if (!series.length) {
     html += emptyHtml(`No standalone books are mapped yet for ${c.displayName || c.name}.`);
     return { html };
   }
 
-  // Group the publishing line by continuity. The reader therefore sees the
-  // intended path: New 52 → Batman → open the series → its runs.
-  const contIds = [...new Set(series.flatMap(s => s.continuityIds || []))];
-  const continuityDocs = await Promise.all(contIds.map(id => cachedGet(COLLECTIONS.CONTINUITIES, id)));
+  // Continuity lookup is supplementary UI. Never allow one missing/malformed
+  // continuity document to break the whole character page.
+  const contIds = [...new Set(series.flatMap(s => Array.isArray(s.continuityIds) ? s.continuityIds.filter(Boolean) : []))];
+  const continuityDocs = await Promise.all(contIds.map(async id => {
+    try { return await cachedGet(COLLECTIONS.CONTINUITIES, id); } catch (_) { return null; }
+  }));
   const contMap = new Map(continuityDocs.filter(Boolean).map(x => [x.id, x]));
+
+  const displaySeriesTitle = s => String(s.title || '').replace(/\s*\((?:19|20)\d{2}(?:\s*[–-]\s*(?:19|20)\d{2})?\)\s*$/, '').trim() || s.title || 'Untitled series';
+  const continuityLabel = cid => {
+    const ct = contMap.get(cid);
+    if (ct) return ct.shortName || ct.name || 'Continuity';
+    const id = String(cid || '').toLowerCase();
+    if (id.includes('new-52') || id.includes('new52')) return 'The New 52';
+    if (id.includes('rebirth')) return 'DC Rebirth';
+    if (id.includes('pre-flashpoint')) return 'Pre-Flashpoint DC Universe';
+    return 'Other continuity';
+  };
+
   const groups = new Map();
   for (const s of series) {
-    const ids = Array.isArray(s.continuityIds) && s.continuityIds.length ? s.continuityIds : ['other'];
-    const cid = ids[0];
+    const cid = Array.isArray(s.continuityIds) && s.continuityIds.length ? s.continuityIds[0] : 'other';
     if (!groups.has(cid)) groups.set(cid, []);
     groups.get(cid).push(s);
   }
 
-  const displaySeriesTitle = s => String(s.title || '').replace(/\s*\((?:19|20)\d{2}(?:\s*[–-]\s*(?:19|20)\d{2})?\)\s*$/, '').trim() || s.title || 'Untitled series';
   const blocks = [];
   for (const [cid, list] of groups) {
-    const ct = contMap.get(cid);
-    const title = ct?.shortName || ct?.name || 'Other continuity';
     list.sort((a,b) => firstYearOf(a) - firstYearOf(b) || String(a.title || '').localeCompare(String(b.title || '')));
     const rows = list.map(s => `<div class="cx-row cx-character-series-row" data-series="${esc(s.id)}">
       <div class="cx-row-body">
@@ -501,7 +515,7 @@ async function levelCharacter(params) {
         <div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ''}</div>
       </div><div class="cx-row-chevron">›</div>
     </div>`).join('');
-    blocks.push(`<section class="sheet-section cx-character-continuity"><div class="sheet-label">${esc(title.toUpperCase())}</div>${rows}</section>`);
+    blocks.push(`<section class="sheet-section cx-character-continuity"><div class="sheet-label">${esc(continuityLabel(cid).toUpperCase())}</div>${rows}</section>`);
   }
 
   html += blocks.join('');
