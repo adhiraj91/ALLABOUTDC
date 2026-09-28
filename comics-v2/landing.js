@@ -17,7 +17,15 @@ function render(container){
   </div></section>
   <button class="dcx-browse" data-go="series"><span>▱</span><div><strong>Browse All Comics</strong><small>Search and explore the complete DC comics catalogue</small></div><b>→</b></button>
  </div>`;
- container.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",async()=>{const d=await load();const a=b.dataset.go;if(a==="atlas")return openAtlas(d);if(a==="characters")return openExplorer("characterList","Characters");if(a==="continuity")return openExplorer("continuityList","Continuity / Era");if(a==="series")return openExplorer("seriesList","Series");if(a==="batman"){const c=d.characters.find(x=>x.browseRoot===true);if(c)return openExplorer("character",c.displayName||c.name,{character:c});}}));
+ container.querySelectorAll("[data-go]").forEach(b=>{ b.onclick=()=>window.__comicsLandingNavigate?.(b.dataset.go); });
 
 }
+window.__comicsLandingNavigate=async action=>{
+  const d=await load();
+  if(action==="atlas") return openAtlas(d);
+  if(action==="characters") return openExplorer("characterList","Characters");
+  if(action==="continuity") return openExplorer("continuityList","Continuity / Era");
+  if(action==="series") return openExplorer("seriesList","Series");
+  if(action==="batman"){ const c=d.characters.find(x=>x.browseRoot===true); if(c) return openExplorer("character",c.displayName||c.name,{character:c}); }
+};
 window.__comicsV2Landing={render,preload:load};document.dispatchEvent(new CustomEvent("comicsv2:landing-ready"));
