@@ -366,108 +366,76 @@ const MAJOR_HEADLINERS = new Set([
   "batman", "superman", "wonder woman", "supergirl", "the flash", "flash",
   "green lantern", "green arrow", "aquaman", "shazam", "cyborg", "harley quinn",
 ]);
-const MAJOR_VILLAINS = new Set(["joker"]);
-const BAT_FAMILY_NAMES = new Set([
-  "nightwing", "batgirl", "red hood", "robin", "catwoman", "batwoman",
-  "spoiler", "huntress", "azrael", "tim drake", "damian wayne", "cassandra cain",
-]);
-function normCharacterName(c) {
-  return String(c?.displayName || c?.name || "").trim().toLowerCase();
+const MAJOR_VILLAINS = new Set(["joker", "lex luthor", "darkseid", "deathstroke", "harley quinn"]);
+const CHARACTER_FAMILY_GROUPS = [
+  { key: "bat-family", title: "Bat-Family", names: new Set(["nightwing","batgirl","red hood","robin","batwoman","spoiler","huntress","azrael","tim drake","damian wayne","cassandra cain"]) },
+  { key: "super-family", title: "Super-Family", names: new Set(["supergirl","superboy","krypto","conner kent","jon kent","power girl"]) },
+  { key: "lanterns", title: "Green Lanterns", names: new Set(["hal jordan","john stewart","guy gardner","kyle rayner","jessica cruz","simon baz"]) },
+  { key: "titans", title: "Titans & Legacy", names: new Set(["nightwing","starfire","raven","cyborg","beast boy","robin"]) },
+];
+function normCharacterName(c) { return String(c?.displayName || c?.name || "").trim().toLowerCase(); }
+function familyGroupFor(c) {
+  const n = normCharacterName(c);
+  return CHARACTER_FAMILY_GROUPS.find(g => g.names.has(n)) || null;
 }
-function characterBucket(item) {
-  const n = normCharacterName(item.c);
-  if (MAJOR_HEADLINERS.has(n)) return "headliner";
-  if (MAJOR_VILLAINS.has(n)) return "villain";
-  if (BAT_FAMILY_NAMES.has(n)) return "family";
-  return "solo";
-}
+function isMajorCharacter(c) { return MAJOR_HEADLINERS.has(normCharacterName(c)); }
+function isMajorVillain(c) { return MAJOR_VILLAINS.has(normCharacterName(c)); }
 
-/**
- * Reader-facing Character Index.
- * The database may contain many supporting characters, but the primary Comics
- * entry point deliberately exposes only characters with their own meaningful
- * series footprint. Major DC headliners get first-class placement; other
- * character-led books are grouped so supporting cast members do not become
- * top-level destinations. The grouping is presentation-only and never changes
- * the underlying graph.
- */
+/** Reader-facing Character Index: major characters first, then grouped ecosystems. */
 async function levelCharacterList() {
   const [chars, series] = await Promise.all([data.getAllCharacters(200), data.getAllSeries(200)]);
   const seriesByCharacter = new Map();
-  for (const s of series) {
-    for (const id of (s.characterIds || [])) {
-      if (!seriesByCharacter.has(id)) seriesByCharacter.set(id, []);
-      seriesByCharacter.get(id).push(s);
-    }
+  for (const s of series) for (const id of (s.characterIds || [])) {
+    if (!seriesByCharacter.has(id)) seriesByCharacter.set(id, []);
+    seriesByCharacter.get(id).push(s);
   }
   const items = chars.map(c => {
-    const ownSeries = seriesByCharacter.get(c.id) || [];
+    const ownSeries = (seriesByCharacter.get(c.id) || []).filter(s => Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
     const leadSeries = data.leadSeriesFor(c.id, series);
-    const issueCount = ownSeries.reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
-    return { c, ownSeries, leadSeries, issueCount, lead: leadSeries.length > 0 };
-  }).filter(x => x.lead);
+    return { c, ownSeries, leadSeries, issueCount: ownSeries.reduce((n,s)=>n+(Number(s.issueCount)||0),0) };
+  }).filter(x => x.leadSeries.length || isMajorCharacter(x.c) || isMajorVillain(x.c));
 
-  items.sort((a, b) => (b.issueCount - a.issueCount) || String(a.c.displayName || a.c.name || "").localeCompare(String(b.c.displayName || b.c.name || "")));
-  if (!items.length) return { html: emptyHtml("No standalone character catalogues have been mapped yet.") };
+  const major = items.filter(x => isMajorCharacter(x.c));
+  const villainItems = items.filter(x => isMajorVillain(x.c) && !isMajorCharacter(x.c));
+  const familyGroups = CHARACTER_FAMILY_GROUPS.map(g => ({ ...g, members: items.filter(x => g.names.has(normCharacterName(x.c)) && !isMajorCharacter(x.c)) })).filter(g => g.members.length);
+  const groupedIds = new Set(familyGroups.flatMap(g => g.members.map(x => x.c.id)));
+  const other = items.filter(x => !isMajorCharacter(x.c) && !isMajorVillain(x.c) && !groupedIds.has(x.c.id));
 
-  const buckets = {
-    headliner: items.filter(x => characterBucket(x) === "headliner"),
-    villain: items.filter(x => characterBucket(x) === "villain"),
-    family: items.filter(x => characterBucket(x) === "family"),
-    solo: items.filter(x => characterBucket(x) === "solo"),
-  };
+  const rowHtml = item => `<div class="cx-character-card" data-character-id="${esc(item.c.id)}" data-search="${esc([item.c.displayName,item.c.name,...(item.c.aliases||[])].filter(Boolean).join(" ").toLowerCase())}">
+    <div class="cx-character-avatar" aria-hidden="true">${esc(initialsOf(item.c.displayName||item.c.name))}</div>
+    <div class="cx-character-body"><div class="cx-character-name">${esc(item.c.displayName||item.c.name)}</div><div class="cx-character-meta">${item.ownSeries.length ? `${item.ownSeries.length} series · ${item.issueCount} issues` : "Comics catalogue"}</div></div><div class="cx-row-chevron">›</div></div>`;
+  const groupCard = g => `<button class="cx-character-family" data-family="${esc(g.key)}" data-search="${esc(g.title.toLowerCase())}"><div><div class="cx-character-family-title">${esc(g.title)}</div><div class="cx-character-family-sub">${g.members.map(x=>esc(x.c.displayName||x.c.name)).join(" · ")}</div></div><div class="cx-row-chevron">›</div></button>`;
+  const section = (title, key, listHtml) => listHtml ? `<section class="cx-character-group" data-character-group="${key}"><div class="cx-character-group-head"><div><div class="cx-kicker">${esc(title.toUpperCase())}</div></div></div>${listHtml}</section>` : "";
 
-  const rowHtml = (item) => {
-    const c = item.c;
-    const label = esc(c.displayName || c.name || "Unnamed");
-    const alias = (c.aliases && c.aliases.length) ? esc(c.aliases.slice(0, 2).join(" · ")) : "";
-    const meta = `${item.ownSeries.length} series${item.issueCount ? ` · ${item.issueCount} issues` : ""}`;
-    return `<div class="cx-character-card" data-character-id="${esc(c.id)}" data-search="${esc([c.displayName, c.name, ...(c.aliases || [])].filter(Boolean).join(" ").toLowerCase())}">
-      <div class="cx-character-avatar" aria-hidden="true">${esc(initialsOf(c.displayName || c.name))}</div>
-      <div class="cx-character-body"><div class="cx-character-name">${label}</div>${alias ? `<div class="cx-character-alias">${alias}</div>` : ""}<div class="cx-character-meta"><span>${esc(meta)}</span></div></div>
-      <div class="cx-row-chevron">›</div>
-    </div>`;
-  };
-  const section = (key, title, sub, list) => list.length ? `<section class="cx-character-group" data-character-group="${key}"><div class="cx-character-group-head"><div><div class="cx-kicker">${esc(key === "headliner" ? "HEADLINERS" : key === "villain" ? "MAJOR VILLAINS" : key === "family" ? "CHARACTER FAMILIES" : "OTHER SOLO CATALOGUES")}</div><h3>${esc(title)}</h3><p>${esc(sub)}</p></div><span>${list.length}</span></div><div class="cx-character-list">${list.map(rowHtml).join("")}</div></section>` : "";
-
-  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Characters worth following</h2><p class="cx-subtitle">Major characters first. Supporting cast stays inside the books, stories and relationships where it belongs.</p>
+  const html = `<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Explore characters</h2><p class="cx-subtitle">Start with a major character, then move into their books, runs and stories.</p>
     <label class="cx-character-search"><span aria-hidden="true">⌕</span><input id="cxCharacterSearch" type="search" placeholder="Search Batman, Superman, Green Lantern…" autocomplete="off" /></label>
     <div class="cx-character-groups" id="cxCharacterGroups">
-      ${section("headliner", "DC headliners", "Characters with a universe-spanning reading history.", buckets.headliner)}
-      ${section("villain", "Major villains", "Villains with meaningful standalone publishing histories.", buckets.villain)}
-      ${section("family", "Character families", "Related character-led books grouped together instead of competing with the headliners.", buckets.family)}
-      ${section("solo", "Other solo catalogues", "Standalone character series that are useful to discover, but are not top-level headliners.", buckets.solo)}
-    </div>
-    <div class="cx-character-empty" id="cxCharacterEmpty" hidden>No matching character catalogues in the current Comics graph.</div>`;
-
-  return {
-    html,
-    wire(container) {
-      const cards = [...container.querySelectorAll("[data-character-id]")];
-      const groups = [...container.querySelectorAll("[data-character-group]")];
-      const apply = () => {
-        const q = String(container.querySelector("#cxCharacterSearch")?.value || "").trim().toLowerCase();
-        let visible = 0;
-        cards.forEach(card => {
-          const show = !q || card.dataset.search.includes(q);
-          card.hidden = !show;
-          if (show) visible++;
-        });
-        groups.forEach(group => {
-          const hasVisible = !!group.querySelector("[data-character-id]:not([hidden])");
-          group.hidden = !hasVisible;
-        });
-        const empty = container.querySelector("#cxCharacterEmpty");
-        if (empty) empty.hidden = visible !== 0;
-      };
-      container.querySelector("#cxCharacterSearch")?.addEventListener("input", apply);
-      cards.forEach(card => card.addEventListener("click", () => {
-        const item = items.find(x => x.c.id === card.dataset.characterId);
-        if (item) pushLevel("character", item.c.displayName || item.c.name, { character: item.c });
-      }));
-    },
-  };
+      ${section("Major Characters","major",`<div class="cx-character-list">${major.sort((a,b)=>a.c.displayName.localeCompare(b.c.displayName)).map(rowHtml).join("")}</div>`)}
+      ${section("Character Families","families",`<div class="cx-character-family-list">${familyGroups.map(groupCard).join("")}</div>`)}
+      ${section("Villains","villains",`<div class="cx-character-list">${villainItems.sort((a,b)=>a.c.displayName.localeCompare(b.c.displayName)).map(rowHtml).join("")}</div>`)}
+      ${section("Other Character Catalogues","other",`<div class="cx-character-list">${other.sort((a,b)=>a.c.displayName.localeCompare(b.c.displayName)).map(rowHtml).join("")}</div>`)}
+    </div><div class="cx-character-empty" id="cxCharacterEmpty" hidden>No matching characters.</div>`;
+  return { html, wire(container) {
+    const cards=[...container.querySelectorAll('[data-character-id]')], groups=[...container.querySelectorAll('[data-character-group]')];
+    const apply=()=>{const q=String(container.querySelector('#cxCharacterSearch')?.value||'').trim().toLowerCase(); let n=0;
+      cards.forEach(c=>{const show=!q||c.dataset.search.includes(q);c.hidden=!show;if(show)n++;});
+      container.querySelectorAll('.cx-character-family').forEach(c=>{c.hidden=!!q&&!c.dataset.search.includes(q);});
+      groups.forEach(g=>{g.hidden=!g.querySelector('[data-character-id]:not([hidden]), .cx-character-family:not([hidden])');});
+      const e=container.querySelector('#cxCharacterEmpty'); if(e)e.hidden=n!==0||container.querySelectorAll('.cx-character-family:not([hidden])').length>0;
+    };
+    container.querySelector('#cxCharacterSearch')?.addEventListener('input',apply);
+    cards.forEach(card=>card.addEventListener('click',()=>{const item=items.find(x=>x.c.id===card.dataset.characterId);if(item)pushLevel('character',item.c.displayName||item.c.name,{character:item.c,characterSeries:item.ownSeries});}));
+    container.querySelectorAll('.cx-character-family').forEach(card=>card.addEventListener('click',()=>{const g=familyGroups.find(x=>x.key===card.dataset.family);if(g)pushLevel('characterGroup',g.title,{members:g.members.map(x=>x.c)});}));
+  }};
 }
+
+async function levelCharacterGroup(params) {
+  const members = params.members || [];
+  const rows = members.map(c=>`<div class="cx-character-card" data-member-id="${esc(c.id)}"><div class="cx-character-avatar">${esc(initialsOf(c.displayName||c.name))}</div><div class="cx-character-body"><div class="cx-character-name">${esc(c.displayName||c.name)}</div><div class="cx-character-meta">Open character catalogue</div></div><div class="cx-row-chevron">›</div></div>`).join('');
+  const html=`<div class="cx-kicker">CHARACTER GROUP</div><h2 class="cx-title">${esc(params.title||'Character Group')}</h2><p class="cx-subtitle">Explore each character's own books and runs.</p><div class="cx-character-list">${rows}</div>`;
+  return {html,wire(container){container.querySelectorAll('[data-member-id]').forEach(row=>row.addEventListener('click',()=>{const c=members.find(x=>x.id===row.dataset.memberId);if(c)pushLevel('character',c.displayName||c.name,{character:c});}));}};
+}
+
 /**
  * Pointer 6.5 — a single "Reading Paths" destination: every comicReadingPaths
  * record, grouped/ordered by path type (sortPathsByType, same helper used
@@ -491,46 +459,59 @@ async function levelReadingPathList() {
 
 async function levelCharacter(params) {
   const c = params.character;
-  const [continuities, series] = await Promise.all([
-    Promise.all((c.continuityIds || []).map(id => cachedGet(COLLECTIONS.CONTINUITIES, id))),
-    data.getSeriesForCharacter(c.id),
-  ]);
-  const contList = continuities.filter(Boolean);
-  series.sort((a, b) => firstYearOf(a) - firstYearOf(b));
+  let series = Array.isArray(params.characterSeries) ? [...params.characterSeries] : [];
+  if (!series.length) {
+    try { series = await data.getSeriesForCharacter(c.id); } catch (e) { series = []; }
+  }
+
+  // Character pages show the character's own publishing line only. Supporting
+  // appearances remain reachable from the individual books/issues.
+  series = series.filter(s => Array.isArray(s.characterIds) && s.characterIds[0] === c.id);
+  series.sort((a, b) => firstYearOf(a) - firstYearOf(b) || String(a.title || '').localeCompare(String(b.title || '')));
 
   let html = `<div class="cx-kicker">CHARACTER</div><h2 class="cx-title">${esc(c.displayName || c.name)}</h2>`;
-  if (c.aliases && c.aliases.length) {
-    html += `<div class="cx-tag-row">${c.aliases.slice(0, 6).map(a => `<span class="tag">${esc(a)}</span>`).join("")}</div>`;
-  }
-  if (!contList.length && !series.length) {
-    html += emptyHtml(`No comics data yet for ${c.displayName || c.name}.`);
+  if (c.aliases?.length) html += `<div class="cx-tag-row">${c.aliases.slice(0,5).map(a => `<span class="tag">${esc(a)}</span>`).join('')}</div>`;
+  if (!series.length) {
+    html += emptyHtml(`No standalone books are mapped yet for ${c.displayName || c.name}.`);
     return { html };
   }
-  if (contList.length) {
-    html += `<div class="sheet-section"><div class="sheet-label">CONTINUITIES</div><div class="cx-list">`;
-    html += contList.map(ct => `<div class="cx-row" data-cont="${esc(ct.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(ct.name)}</div>${ct.shortName ? `<div class="cx-row-sub">${esc(ct.shortName)}</div>` : ""}</div><div class="cx-row-chevron">›</div></div>`).join("");
-    html += `</div></div>`;
+
+  // Group the publishing line by continuity. The reader therefore sees the
+  // intended path: New 52 → Batman → open the series → its runs.
+  const contIds = [...new Set(series.flatMap(s => s.continuityIds || []))];
+  const continuityDocs = await Promise.all(contIds.map(id => cachedGet(COLLECTIONS.CONTINUITIES, id)));
+  const contMap = new Map(continuityDocs.filter(Boolean).map(x => [x.id, x]));
+  const groups = new Map();
+  for (const s of series) {
+    const ids = Array.isArray(s.continuityIds) && s.continuityIds.length ? s.continuityIds : ['other'];
+    const cid = ids[0];
+    if (!groups.has(cid)) groups.set(cid, []);
+    groups.get(cid).push(s);
   }
-  if (series.length) {
-    const issueTotal = series.reduce((n, s) => n + (Number(s.issueCount) || 0), 0);
-    html += `<div class="sheet-section"><div class="sheet-label">COMICS FOOTPRINT</div><div class="cx-character-footprint"><strong>${series.length} series</strong><span>${issueTotal ? `${issueTotal} mapped issues` : "Issue coverage is being built"}</span></div></div>`;
-    html += `<div class="sheet-section"><div class="sheet-label">SERIES FEATURING ${esc((c.displayName || c.name || "").toUpperCase())}</div><div class="cx-list">`;
-    html += series.map(s => `<div class="cx-row" data-series="${esc(s.id)}"><div class="cx-row-body"><div class="cx-row-title">${esc(s.title)}</div><div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ""}</div></div><div class="cx-row-chevron">›</div></div>`).join("");
-    html += `</div></div>`;
+
+  const displaySeriesTitle = s => String(s.title || '').replace(/\s*\((?:19|20)\d{2}(?:\s*[–-]\s*(?:19|20)\d{2})?\)\s*$/, '').trim() || s.title || 'Untitled series';
+  const blocks = [];
+  for (const [cid, list] of groups) {
+    const ct = contMap.get(cid);
+    const title = ct?.shortName || ct?.name || 'Other continuity';
+    list.sort((a,b) => firstYearOf(a) - firstYearOf(b) || String(a.title || '').localeCompare(String(b.title || '')));
+    const rows = list.map(s => `<div class="cx-row cx-character-series-row" data-series="${esc(s.id)}">
+      <div class="cx-row-body">
+        <div class="cx-row-title">${esc(displaySeriesTitle(s))}</div>
+        <div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${s.issueCount} issues` : ''}</div>
+      </div><div class="cx-row-chevron">›</div>
+    </div>`).join('');
+    blocks.push(`<section class="sheet-section cx-character-continuity"><div class="sheet-label">${esc(title.toUpperCase())}</div>${rows}</section>`);
   }
+
+  html += blocks.join('');
   return {
     html,
     wire(container) {
-      container.querySelectorAll("[data-cont]").forEach(row => {
-        row.addEventListener("click", () => {
-          const ct = contList.find(x => x.id === row.dataset.cont);
-          pushLevel("continuity", ct.name, { continuity: ct, character: c });
-        });
-      });
-      container.querySelectorAll("[data-series]").forEach(row => {
-        row.addEventListener("click", () => {
+      container.querySelectorAll('[data-series]').forEach(row => {
+        row.addEventListener('click', () => {
           const s = series.find(x => x.id === row.dataset.series);
-          pushLevel("series", s.title, { series: s });
+          if (s) pushLevel('series', displaySeriesTitle(s), { series: s });
         });
       });
     },
@@ -632,89 +613,15 @@ async function levelContinuity(params) {
 }
 
 async function levelSeriesList() {
-  const [all, continuities] = await Promise.all([
-    data.getAllSeries(),
-    data.getAllContinuities(),
-  ]);
-  if (!all.length) return { html: emptyHtml("No series have been added yet.") };
-
-  const contMap = new Map((continuities || []).map(c => [c.id, c]));
-  const filters = [...(continuities || [])].sort((a, b) => firstYearOf(a) - firstYearOf(b));
-  const state = { query: "", continuityId: "", sort: "az" };
-
-  const labelFor = (s) => {
-    const names = (s.continuityIds || []).map(id => contMap.get(id)?.shortName || contMap.get(id)?.name).filter(Boolean);
-    return names.join(" · ");
-  };
-  const yearLabel = (s) => String(s.startDate || "").slice(0, 4) || "—";
-
-  const rowsHtml = (list) => list.map(s => `
-    <div class="cx-library-row" data-series-id="${esc(s.id)}">
-      <div class="cx-library-year">${esc(yearLabel(s))}</div>
-      <div class="cx-row-body">
-        <div class="cx-row-title">${esc(s.title || "Untitled series")}</div>
-        <div class="cx-row-sub">${esc(seriesDateRange(s))}${s.issueCount ? ` · ${esc(s.issueCount)} issues` : ""}${labelFor(s) ? ` · ${esc(labelFor(s))}` : ""}</div>
-      </div>
-      <div class="cx-row-chevron">›</div>
-    </div>`).join("");
-
-  const render = (container) => {
-    let list = all.filter(s => {
-      const q = state.query.trim().toLowerCase();
-      const matchesQuery = !q || String(s.title || "").toLowerCase().includes(q);
-      const matchesContinuity = !state.continuityId || (s.continuityIds || []).includes(state.continuityId);
-      return matchesQuery && matchesContinuity;
-    });
-    list.sort((a, b) => state.sort === "newest"
-      ? (firstYearOf(b) - firstYearOf(a)) || String(a.title).localeCompare(String(b.title))
-      : String(a.title || "").localeCompare(String(b.title || "")));
-
-    const results = container.querySelector("#cxSeriesResults");
-    const count = container.querySelector("#cxSeriesCount");
-    if (count) count.textContent = `${list.length} ${list.length === 1 ? "series" : "series"}`;
-    if (results) {
-      results.innerHTML = list.length ? rowsHtml(list) : emptyHtml("No series match this search.");
-      results.querySelectorAll("[data-series-id]").forEach(row => row.addEventListener("click", () => {
-        const s = list.find(x => x.id === row.dataset.seriesId);
-        if (s) pushLevel("series", s.title, { series: s });
-      }));
-    }
-  };
-
-  const continuityButtons = filters.map(c => `<button class="cx-filter-chip" data-cont-filter="${esc(c.id)}">${esc(c.shortName || c.name)}</button>`).join("");
-  const html = `<div class="cx-kicker">COMICS LIBRARY</div>
-    <h2 class="cx-title">Explore the books</h2>
-    <div class="cx-subtitle">Series are the publication spine. Open one to move into runs, issues and collected editions.</div>
-    <div class="cx-library-tools">
-      <label class="cx-library-search"><span>⌕</span><input id="cxSeriesSearch" type="search" placeholder="Search series…" autocomplete="off" /></label>
-      <div class="cx-library-sort" role="group" aria-label="Sort series">
-        <button class="cx-sort-btn" data-sort="az" aria-pressed="true">A–Z</button>
-        <button class="cx-sort-btn" data-sort="newest" aria-pressed="false">Newest</button>
-      </div>
-    </div>
-    <div class="cx-filter-row"><button class="cx-filter-chip is-active" data-cont-filter="">All</button>${continuityButtons}</div>
-    <div class="cx-library-count" id="cxSeriesCount">${all.length} series</div>
-    <div class="cx-list cx-library-list" id="cxSeriesResults"></div>`;
-
-  return {
-    html,
-    wire(container) {
-      const input = container.querySelector("#cxSeriesSearch");
-      input?.addEventListener("input", () => { state.query = input.value; render(container); });
-      container.querySelectorAll("[data-cont-filter]").forEach(btn => btn.addEventListener("click", () => {
-        state.continuityId = btn.dataset.contFilter || "";
-        container.querySelectorAll("[data-cont-filter]").forEach(b => b.classList.toggle("is-active", b === btn));
-        render(container);
-      }));
-      container.querySelectorAll("[data-sort]").forEach(btn => btn.addEventListener("click", () => {
-        state.sort = btn.dataset.sort;
-        container.querySelectorAll("[data-sort]").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
-        render(container);
-      }));
-      render(container);
-    },
-  };
+  const [all, continuities] = await Promise.all([data.getAllSeries(200), data.getAllContinuities()]);
+  const cMap=new Map(continuities.map(c=>[c.id,c]));
+  all.sort((a,b)=>firstYearOf(a)-firstYearOf(b)||String(a.title).localeCompare(String(b.title)));
+  if(!all.length)return {html:emptyHtml('No series have been added yet.')};
+  const card=s=>{const ct=(s.continuityIds||[]).map(id=>cMap.get(id)).find(Boolean);return `<div class="cx-series-library-card" data-series-id="${esc(s.id)}" data-search="${esc(String(s.title||'').toLowerCase())}"><div class="cx-series-library-year">${esc(String(firstYearOf(s)||''))}</div><div class="cx-series-library-body"><div class="cx-series-library-title">${esc(s.title)}</div><div class="cx-series-library-meta">${esc(ct?.shortName||ct?.name||'Continuity not mapped')}${s.issueCount?` · ${s.issueCount} issues`:''}</div></div><div class="cx-row-chevron">›</div></div>`};
+  const html=`<div class="cx-kicker">COMICS LIBRARY</div><h2 class="cx-title">Series</h2><p class="cx-subtitle">Browse publication lines. Open a series to see its creative runs, then drill into issues and editions.</p><label class="cx-series-search"><span>⌕</span><input id="cxSeriesSearch" type="search" placeholder="Search series…" autocomplete="off"></label><div class="cx-series-library-list" id="cxSeriesLibraryList">${all.map(card).join('')}</div><div class="cx-character-empty" id="cxSeriesEmpty" hidden>No matching series.</div>`;
+  return {html,wire(container){const cards=[...container.querySelectorAll('[data-series-id]')];const apply=()=>{const q=String(container.querySelector('#cxSeriesSearch')?.value||'').trim().toLowerCase();let n=0;cards.forEach(x=>{const show=!q||x.dataset.search.includes(q);x.hidden=!show;if(show)n++;});const e=container.querySelector('#cxSeriesEmpty');if(e)e.hidden=n!==0;};container.querySelector('#cxSeriesSearch')?.addEventListener('input',apply);cards.forEach(row=>row.addEventListener('click',()=>{const s=all.find(x=>x.id===row.dataset.seriesId);if(s)pushLevel('series',s.title,{series:s});}));}};
 }
+
 async function levelSeries(params) {
   const s = params.series;
   const [runs, creators, readingPaths, issues, collections] = await Promise.all([
@@ -1574,6 +1481,7 @@ const LEVELS = {
   root: levelRoot,
   characterList: levelCharacterList,
   character: levelCharacter,
+  characterGroup: levelCharacterGroup,
   continuityList: levelContinuityList,
   continuity: levelContinuity,
   seriesList: levelSeriesList,
