@@ -292,7 +292,6 @@ async function loadAll(){
   }
   history.replaceState({cat:state.cat}, "", location.href);
   render();
-  if(state.cat === "comics") openComicsAtlas("universe");
 }
 loadAll().catch(err=>{
   gridEl.innerHTML = `<div class="empty">Couldn't reach the database.<br>Check firebase-config.js has your real project config, and that Firestore is enabled.<br><span style="font-family:var(--font-mono);font-size:11px;">${err.message}</span></div>`;
@@ -898,8 +897,28 @@ function openComicsAtlas(mode="universe"){
     sm.open(mode);
     return;
   }
-  const once = ()=>{ document.removeEventListener("comicsv2:storymap-ready", once); window.__comicsStoryMap?.open?.(mode); };
+  // Keep the Comics tab out of the old catalogue while the Atlas module is loading.
+  // This also gives a useful failure state instead of silently leaving the user on filters.
+  let loading=document.getElementById("comicsAtlasLoading");
+  if(!loading){
+    loading=document.createElement("div");
+    loading.id="comicsAtlasLoading";
+    loading.innerHTML=`<div><span>DC UNIVERSE ATLAS</span><b>Opening the map…</b><small>Loading the interactive universe.</small></div>`;
+    document.body.appendChild(loading);
+  }
+  loading.dataset.open="true";
+  const once=()=>{
+    document.removeEventListener("comicsv2:storymap-ready", once);
+    loading?.remove();
+    window.__comicsStoryMap?.open?.(mode);
+  };
   document.addEventListener("comicsv2:storymap-ready", once, {once:true});
+  window.setTimeout(()=>{
+    if(document.body.contains(loading) && !window.__comicsStoryMap){
+      loading.querySelector("b").textContent="Atlas could not load";
+      loading.querySelector("small").textContent="Refresh the page or check the Comics module deployment.";
+    }
+  },5000);
 }
 function closeComicsAtlasToApp(){
   const target = state.atlasReturnCat || "home";
@@ -1921,8 +1940,14 @@ function renderJourney(opts){
 
 let lastRenderedView = "";
 function render(){
+  // Comics is the Atlas. Do not render the old search/filter catalogue underneath it.
+  // The flat catalogue remains available only when the user explicitly chooses Browse Catalogue.
+  if(state.cat === "comics" && state.comicsView !== "browse"){
+    openComicsAtlas("universe");
+    lastRenderedView = "comics:atlas";
+    return;
+  }
   buildTabs(); buildFilters(); renderCards(); updateMobileNavActive(); renderStatsFooter(); syncHistoryForTab();
-  // Pointer 4: entering the Comics landing always starts at the top (never a stale catalogue scroll position).
   const view = state.cat + (isComicsLanding() ? ":landing" : "");
   if(view==="comics:landing") window.scrollTo(0,0);
   lastRenderedView = view;

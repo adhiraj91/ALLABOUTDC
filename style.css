@@ -1932,3 +1932,15 @@ html.sm-lock,html.sm-lock body{overflow:hidden}
 .comics-atlas-backdrop-copy h2{margin:8px 0 10px;color:#f4f7fb;font:700 34px/1.05 var(--font-display)}
 .comics-atlas-backdrop-copy p{max-width:620px;color:#9ba7b8;font:500 14px/1.6 var(--font-body);margin:0 0 20px}
 .comics-atlas-backdrop-copy .btn{margin-right:8px;margin-bottom:8px}
+
+
+/* COMICS ATLAS — direct-entry/loading + touch interaction hardening */
+#comicsAtlasLoading{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 30%,rgba(62,115,205,.16),transparent 35%),rgba(4,7,13,.97);color:#f3f6fb;text-align:center;}
+#comicsAtlasLoading[data-open="true"]{display:flex;}
+#comicsAtlasLoading>div{width:min(420px,90vw);padding:30px;border:1px solid rgba(116,168,235,.2);border-radius:24px;background:linear-gradient(145deg,rgba(17,25,38,.98),rgba(7,10,17,.98));box-shadow:0 30px 90px -45px #000;}
+#comicsAtlasLoading span{display:block;font:800 8px/1 var(--font-mono);letter-spacing:.2em;color:#d5a34d;margin-bottom:10px;}
+#comicsAtlasLoading b{display:block;font:400 32px/1 var(--font-display);}
+#comicsAtlasLoading small{display:block;margin-top:10px;color:#8290a5;font:500 11px/1.4 var(--font-body);}
+.sm-stage{touch-action:none!important;overscroll-behavior:contain;-webkit-user-select:none;user-select:none;}
+.sm-stage .sm-world button{touch-action:none;-webkit-tap-highlight-color:transparent;}
+.sm-stage.sm-dragging{cursor:grabbing;}
