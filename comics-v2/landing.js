@@ -16,12 +16,8 @@ function render(container){
    <button data-go="series"><b>⌘</b><strong>Browse Series</strong><small>Explore every mapped publication line</small><i>→</i></button>
   </div></section>
   <button class="dcx-browse" data-go="series"><span>▱</span><div><strong>Browse All Comics</strong><small>Search and explore the complete DC comics catalogue</small></div><b>→</b></button>
-  <section class="dcx-section"><div class="dcx-head"><div><div class="dcx-kicker">FEATURED TERRITORY</div><h3 id="dcxTerritory">The New 52</h3></div><span id="dcxTerritoryMeta">Current mapped coverage</span></div>
-   <div class="dcx-territory"><div class="dcx-territory-art"><span>52</span></div><div><strong>The New 52</strong><p>First mapped territory: Batman and the wider Bat-Family. Superman, Flash, Justice League and the rest of the New 52 will be added into this same universe graph.</p><button data-go="continuity">Explore The New 52 →</button></div></div>
-  </section>
-  <section class="dcx-section dcx-batman-start"><div class="dcx-head"><div><div class="dcx-kicker">STARTING POINT</div><h3>Batman · The New 52</h3></div><span>First territory being built</span></div><div class="dcx-batman-card"><div><strong>Batman</strong><p>Core Batman titles, Bat-Family books, Gotham spin-offs and Batman team-ups — all using the same Series → Publication → Collection model.</p></div><button data-go="batman">Open Batman →</button></div></section>
  </div>`;
  container.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",async()=>{const d=await load();const a=b.dataset.go;if(a==="atlas")return openAtlas(d);if(a==="characters")return openExplorer("characterList","Characters");if(a==="continuity")return openExplorer("continuityList","Continuity / Era");if(a==="series")return openExplorer("seriesList","Series");if(a==="batman"){const c=d.characters.find(x=>x.browseRoot===true);if(c)return openExplorer("character",c.displayName||c.name,{character:c});}}));
- load().then(d=>{container.querySelector("#dcxTerritoryMeta").textContent=`${d.series.length} mapped series · ${d.series.reduce((n,s)=>n+(Number(s.issueCount)||0),0).toLocaleString()} numbered issues`;}).catch(()=>{});
+
 }
 window.__comicsV2Landing={render,preload:load};document.dispatchEvent(new CustomEvent("comicsv2:landing-ready"));

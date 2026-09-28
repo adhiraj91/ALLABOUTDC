@@ -1,6 +1,6 @@
 // ALLABOUTDC Comics Explorer — generic DC architecture, currently seeded with New 52 Batman territory.
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
-import * as data from "./data.js?v=dc2";
+import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
@@ -26,25 +26,53 @@ function tabs(active,items){return `<div class="cx-tabs" role="tablist">${items.
 function row(title,sub,attrs=""){return `<div class="cx-row" ${attrs}><div class="cx-row-body"><div class="cx-row-title">${esc(title)}</div>${sub?`<div class="cx-row-sub">${esc(sub)}</div>`:""}</div><div class="cx-row-chevron">›</div></div>`;}
 function empty(msg){return `<div class="cx-empty">${esc(msg)}</div>`;}
 function stat(label,value){return `<div class="cx-stat"><strong>${esc(value)}</strong><span>${esc(label)}</span></div>`;}
-function formatKey(c){const f=String(c?.format||"Other").toLowerCase();if(f.includes("compact"))return "Compact";if(f.includes("deluxe"))return "Deluxe";if(f.includes("omnibus"))return "Omnibus";if(f.includes("hardcover")||f==="hc")return "Hardcover";if(f.includes("tpb")||f.includes("trade"))return "TPB";return "Other";}
+function formatKey(c){
+  const title=String(c?.title||"").toLowerCase();
+  const raw=String(c?.format||"Other").toLowerCase();
+  if(title.includes("compact comics edition") || raw.includes("compact"))return "Compact";
+  if(raw.includes("deluxe") || title.includes("deluxe edition"))return "Deluxe";
+  if(raw.includes("omnibus") || title.includes("omnibus"))return "Omnibus";
+  if(raw.includes("hardcover") || raw==="hc")return "Hardcover";
+  if(raw.includes("tpb") || raw.includes("trade"))return "TPB";
+  return "Other";
+}
+const FORMAT_ORDER={TPB:0,Hardcover:1,Omnibus:2,Deluxe:3,Compact:4,Other:9};
+const formatLabel=f=>f==="Other"?"Special Editions":f;
 function collectionStart(c){const first=c?.issueCoverage?.[0]?.issueLabel||"";const n=parseFloat(String(first).replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:9999;}
 function collectionVolume(c){const m=String(c?.title||"").match(/\bVol\.\s*(\d+)/i);return m?Number(m[1]):9999;}
 function collectionSort(a,b){return collectionStart(a)-collectionStart(b)||collectionVolume(a)-collectionVolume(b)||String(a.title||"").localeCompare(String(b.title||""));}
 function displayCollectionTitle(c,collections){
   const title=String(c?.title||"");
-  const m=title.match(/^(.*?\b)Vol\.\s*(\d+)\s*:\s*(.+)$/i);
-  if(!m)return title;
-  const n=m[2];
-  const samePrefix=collections.filter(x=>formatKey(x)===formatKey(c)&&String(x.title||"").match(/^(.*?\b)Vol\.\s*\d+\s*:\s*(.+)$/i)?.[1]===m[1]);
-  const ordered=[...samePrefix].sort(collectionSort);
-  const currentIndex=ordered.indexOf(c);
-  const earlierDuplicate=ordered.slice(0,currentIndex).some(x=>{const vm=String(x.title||"").match(/\bVol\.\s*(\d+)/i);return vm&&vm[1]===n;});
-  // Preserve the official title in the data, but avoid visually presenting a misleading duplicate volume number.
-  return earlierDuplicate ? `${m[1].trim()}: ${m[3]}` : title;
+  // The publisher reused Vol. 1/2/3 numbering after the Batgirl creative reset.
+  // Keep the official title in the data, but make the catalogue sequence unambiguous.
+  if(c?.seriesIds?.some(id=>id.includes("batgirl-2011"))){
+    const m=title.match(/^Batgirl Vol\.\s*(\d+)\s*:\s*(.+)$/i);
+    if(m){
+      const n=Number(m[1]);
+      if(n===1 && /Batgirl of Burnside/i.test(m[2])) return "Batgirl: Batgirl of Burnside";
+      if(n===2 && /Family Business/i.test(m[2])) return "Batgirl: Family Business";
+      if(n===3 && /Mindfields/i.test(m[2])) return "Batgirl: Mindfields";
+    }
+  }
+  if(title.includes("Compact Comics Edition")) return title.replace(/\s+—\s+DC Compact Comics Edition/i, " — Compact Edition");
+  return title;
 }
-function coverage(r){if(r.startIssue!=null&&r.endIssue!=null)return `Covers issues #${r.startIssue}–#${r.endIssue}`;if(r.startIssue!=null)return `Covers issue #${r.startIssue} onward`;return "Issue coverage recorded in run metadata";}
-function publicationRows(xs){if(!xs.length)return empty("No publications of this type are recorded for this series.");return `<div class="cx-publication-grid">${xs.map((i,n)=>`<button class="cx-publication-card" data-pub="${esc(i.id)}"><span class="cx-publication-index">${esc(i.issueLabel||`#${i.issueNumber}`)}</span><strong>${esc(i.title||i.issueLabel||"Publication")}</strong><small>${esc(i.publicationDate||"Publication")}</small><span class="cx-card-arrow">↗</span></button>`).join("")}</div>`;}
-function collectionRows(cs){if(!cs.length)return empty("No collected editions are recorded for this series.");const sorted=[...cs].sort(collectionSort);return `<div class="cx-collection-grid">${sorted.map((c,n)=>`<button class="cx-collection-card" data-coll="${esc(c.id)}"><div class="cx-collection-top"><span class="cx-collection-num">${String(n+1).padStart(2,"0")}</span><span class="cx-format-pill">${esc(formatKey(c))}</span></div><strong>${esc(displayCollectionTitle(c,sorted))}</strong><small>${esc(c.issueCoverage?.length?`${c.issueCoverage.length} issue units`:"Collected edition")}</small><span class="cx-card-arrow">↗</span></button>`).join("")}</div>`;}
+function coverageLabel(c){
+  const labels=(c?.issueCoverage||[]).map(x=>x.issueLabel).filter(Boolean);
+  if(!labels.length)return "Coverage recorded in catalogue";
+  const nums=labels.filter(x=>/^#?\d+(\.\d+)?$/.test(String(x).replace(/^#/,"")));
+  if(nums.length===labels.length){
+    const n=nums.map(x=>parseFloat(String(x).replace(/^#/,""))).sort((a,b)=>a-b);
+    if(n.length===1)return `Issue #${n[0]}`;
+    return `Issues #${n[0]}–#${n[n.length-1]} · ${labels.length} units`;
+  }
+  return `${labels.length} publication units`;
+}
+function collectionRows(cs){
+  if(!cs.length)return empty("No collected editions are recorded for this format.");
+  const sorted=[...cs].sort(collectionSort);
+  return `<div class="cx-collection-grid">${sorted.map((c,n)=>`<button class="cx-collection-card" data-coll="${esc(c.id)}"><div class="cx-collection-top"><span class="cx-collection-num">${String(n+1).padStart(2,"0")}</span><span class="cx-format-pill">${esc(formatLabel(formatKey(c)))}</span></div><strong>${esc(displayCollectionTitle(c,sorted))}</strong><small>${esc(coverageLabel(c))}</small><span class="cx-card-arrow">↗</span></button>`).join("")}</div>`;
+}
 function wirePublications(el,issues,collections,s){el.querySelectorAll("[data-pub]").forEach(r=>r.addEventListener("click",()=>{const i=issues.find(x=>x.id===r.dataset.pub);if(i)push("issue",i.issueLabel,{issue:i,series:s});}));el.querySelectorAll("[data-coll]").forEach(r=>r.addEventListener("click",()=>{const c=collections.find(x=>x.id===r.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));}
 
 async function root(){
@@ -57,23 +85,31 @@ async function root(){
       <button class="cx-entry-btn" data-go="seriesList"><span class="cx-entry-icon">▦</span><span class="cx-entry-btn-label">Browse Series</span><span class="cx-entry-btn-sub">${series.length} currently mapped series</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="atlas"><span class="cx-entry-icon">✦</span><span class="cx-entry-btn-label">Story Map</span><span class="cx-entry-btn-sub">Enter the connected DC universe graph</span><span class="cx-entry-arrow">↗</span></button>
     </div>
-    ${u?`<div class="sheet-section"><div class="sheet-label">CURRENT TERRITORY</div><div class="cx-territory-card" data-go="continuity"><div class="cx-territory-mark">52</div><div><strong>${esc(ct?ct.name:"The New 52")}</strong><span>${series.length} series · ${series.reduce((n,s)=>n+(Number(s.issueCount)||0),0).toLocaleString()} numbered issues</span></div><b>Explore →</b></div></div>`:""}`,
+,
     wire(c){c.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.go;if(a==="atlas"){window.__comicsStoryMap?.open?.("universe",u?.id);return;}if(a==="continuity")push("continuity",ct?.name||"Continuity",{continuity:ct});else{const labels={characterList:"Characters",continuityList:"Continuity / Era",seriesList:"Series"};push(a,labels[a]||a,{});}}));}};
 }
 
 async function characterList(){
-  const all=await data.getAllCharacters(200); const chars=all.filter(isRootCharacter);
+  const all=await data.getAllCharacters(200); const chars=all.filter(c=>c?.browseRoot===true);
   if(!chars.length)return {html:empty("No catalogue-root characters are mapped yet.")};
   const series=await allSeries();
   const cards=chars.sort((a,b)=>titleOf(a).localeCompare(titleOf(b))).map(c=>{const n=series.filter(s=>s.characterIds?.includes(c.id)).length;return `<button class="cx-character-card" data-char="${esc(c.id)}"><div class="cx-character-orb">${esc(titleOf(c).slice(0,1))}</div><div><span>CATALOGUE ROOT</span><strong>${esc(titleOf(c))}</strong><small>${n} mapped series · New 52 starting territory</small></div><b>→</b></button>`;}).join("");
-  return {html:`<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Enter through a character</h2><div class="cx-subtitle">Character roots are the major entry points into the catalogue. Supporting characters and family branches live inside their connected territories.</div><div class="cx-character-grid">${cards}</div>`,wire(c){c.querySelectorAll("[data-char]").forEach(r=>r.addEventListener("click",()=>{const x=chars.find(v=>v.id===r.dataset.char);push("character",titleOf(x),{character:x});}));}};
+  return {html:`<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Enter through a character</h2><div class="cx-subtitle">Batman is the current character entry point. Supporting characters, Bat-Family branches and Gotham-side books live inside Batman’s connected territory.</div><div class="cx-character-grid">${cards}</div>`,wire(c){c.querySelectorAll("[data-char]").forEach(r=>r.addEventListener("click",()=>{const x=chars.find(v=>v.id===r.dataset.char);push("character",titleOf(x),{character:x});}));}};
 }
 
 async function character(p){
   const c=p.character;if(!c)return{html:empty("Character not found.")};
   const series=(await allSeries()).filter(s=>Array.isArray(s.characterIds)&&s.characterIds.includes(c.id));
-  const grouped=new Map();series.forEach(s=>{const k=s.lineCategory||"Other";if(!grouped.has(k))grouped.set(k,[]);grouped.get(k).push(s);});
-  const cats=[...grouped.keys()].sort((a,b)=>groupRank(a)-groupRank(b)||a.localeCompare(b));
+  const grouped=new Map();
+  const classify=(s)=>{
+    if(String(s.title||"").toLowerCase()==="batman") return "Batman";
+    if(s.lineCategory==="Gotham & Spin-offs"||s.lineCategory==="Gotham & Spin-offs") return "Gotham & Spin-offs";
+    if(s.lineCategory==="Team-Ups") return "Team-Ups";
+    if(s.lineCategory==="Bat-Family" || s.lineCategory==="Core Batman") return "Bat-Family";
+    return "Other Batman";
+  };
+  series.forEach(s=>{const k=classify(s);if(!grouped.has(k))grouped.set(k,[]);grouped.get(k).push(s);});
+  const CAT_ORDER={"Batman":0,"Bat-Family":10,"Gotham & Spin-offs":20,"Team-Ups":30,"Other Batman":40}; const cats=[...grouped.keys()].sort((a,b)=>(CAT_ORDER[a]??99)-(CAT_ORDER[b]??99)||a.localeCompare(b));
   const totalIssues=series.reduce((n,s)=>n+(Number(s.issueCount)||0),0);
   let html=`<div class="cx-character-hero"><div class="cx-character-orb large">${esc(titleOf(c).slice(0,1))}</div><div><div class="cx-kicker">CHARACTER TERRITORY</div><h2 class="cx-title">${esc(titleOf(c))}</h2><div class="cx-subtitle">${esc((c.aliases||[]).join(" · "))}${c.aliases?.length?" · ":""}New 52 mapped territory</div></div></div><div class="cx-stat-grid">${stat("Mapped series",series.length)}${stat("Numbered issues",totalIssues)}${stat("Publication lines",cats.length)}</div>`;
   for(const cat of cats){const list=grouped.get(cat).sort((a,b)=>year(a).localeCompare(year(b))||a.title.localeCompare(b.title));html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>${esc(cat.toUpperCase())}</span><h3>${esc(cat)}</h3></div><em>${list.length} series</em></div><div class="cx-series-grid">${list.map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`;}
@@ -86,7 +122,7 @@ async function continuityList(){
   return{html:`<div class="cx-kicker">DC TIMELINE</div><h2 class="cx-title">Explore the timeline</h2><div class="cx-subtitle">Move through DC history by era and continuity. Each territory opens into the characters, series and publications mapped there.</div><div class="cx-era-grid">${cards}</div>` ,wire(c){c.querySelectorAll("[data-cont]").forEach(r=>r.addEventListener("click",()=>{const x=cs.find(v=>v.id===r.dataset.cont);push("continuity",x.name,{continuity:x});}));}};
 }
 
-async function continuity(p){const ct=p.continuity;const [series,chars]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllCharacters(200)]);const roots=chars.filter(c=>isRootCharacter(c)&&c.continuityIds?.includes(ct.id));
+async function continuity(p){const ct=p.continuity;const [series,chars]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllCharacters(200)]);const roots=chars.filter(c=>c?.browseRoot===true&&c.continuityIds?.includes(ct.id));
  let html=`<div class="cx-kicker">CONTINUITY / ERA</div><h2 class="cx-title">${esc(ct.name)}</h2><div class="cx-subtitle">${esc(ct.startDate||"")}${ct.endDate?`–${esc(ct.endDate)}`:""} · ${series.length} mapped series</div>`;
  if(ct.description)html+=`<div class="sheet-section"><div class="sheet-label">ABOUT THIS TERRITORY</div><div class="cx-info-card">${esc(ct.description)}</div></div>`;
  if(roots.length)html+=`<div class="sheet-section"><div class="sheet-label">ENTRY POINTS</div><div class="cx-character-grid">${roots.map(c=>`<button class="cx-character-card" data-root-char="${esc(c.id)}"><div class="cx-character-orb">${esc(titleOf(c).slice(0,1))}</div><div><span>CHARACTER</span><strong>${esc(titleOf(c))}</strong><small>Open character territory</small></div><b>→</b></button>`).join("")}</div></div>`;
@@ -101,20 +137,20 @@ async function series(p){
   const [issues,collections,runs,creators]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[]),data.getRunsForSeries(s.id),Promise.all((s.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)))]);sortIssues(issues);const b=issueBuckets(issues);
   const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length,collections:collections.length};
   const first=b.numbered[0]?.issueNumber,last=b.numbered[b.numbered.length-1]?.issueNumber;
-  const allFormats=["All",...Array.from(new Set(collections.map(formatKey))).sort((a,b)=>({TPB:0,Hardcover:1,Omnibus:2,Deluxe:3,Compact:4,Other:9}[a]??8)-({TPB:0,Hardcover:1,Omnibus:2,Deluxe:3,Compact:4,Other:9}[b]??8))];
+  const availableFormats=Array.from(new Set(collections.map(formatKey))).sort((a,b)=>(FORMAT_ORDER[a]??9)-(FORMAT_ORDER[b]??9));
   let html=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2><div class="cx-subtitle">${esc(range(s))} · ${counts.issues} numbered issues${counts.annuals?` · ${counts.annuals} annuals`:""}${counts.specials?` · ${counts.specials} specials/one-shots`:""}</div>`;
   if(creators.filter(Boolean).length)html+=`<div class="cx-tag-row">${creators.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;
-  if(s.description)html+=`<div class="sheet-section"><div class="sheet-label">ABOUT</div><div class="cx-info-card">${esc(s.description)}</div></div>`;
+  html+=`<div class="sheet-section"><div class="sheet-label">THE STORY</div><div class="cx-info-card">${esc(s.description||"A New 52 publication mapped as part of the connected DC Comics catalogue.")}</div></div>`;
   html+=`<div class="cx-publication-summary"><div>${stat("Issues",counts.issues)}<span class="cx-summary-detail">${counts.issues?`#${first}–#${last}`:"Not recorded"}</span></div><div>${stat("Annuals",counts.annuals)}<span class="cx-summary-detail">${counts.annuals?"Annual publications recorded":"None recorded"}</span></div><div>${stat("Specials",counts.specials)}<span class="cx-summary-detail">${counts.specials?"Special / one-shot units":"None recorded"}</span></div></div>`;
-  if(runs.length){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>CREATIVE HISTORY</span><h3>Creative runs</h3></div><em>${runs.length} runs</em></div><div class="cx-run-grid">${runs.sort((a,b)=>(Number(a.startIssue)||0)-(Number(b.startIssue)||0)).map((r,i)=>`<button class="cx-run-card" data-run="${i}"><strong>${esc(r.title||creators.filter(Boolean).map(c=>titleOf(c)).join(" / ")||"Run")}</strong><span>${esc(coverage(r))}</span><b>View run →</b></button>`).join("")}</div></div>`;}
+  if(runs.length){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>CREATIVE HISTORY</span><h3>Creative runs</h3></div><em>${runs.length} runs</em></div><div class="cx-run-grid">${runs.sort((a,b)=>(Number(a.startIssue)||0)-(Number(b.startIssue)||0)).map((r,i)=>`<div class="cx-run-card"><strong>${esc(r.title||creators.filter(Boolean).map(c=>titleOf(c)).join(" / ")||"Run")}</strong><span>${esc(coverage(r))}</span><b>Creative history</b></div>`).join("")}</div></div>`;}
   html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],["collections","Collected Editions",counts.collections],["annuals","Annuals",counts.annuals],["specials","Specials",counts.specials]])}<div id="cxTabBody"></div></div>`;
   return{html,wire(c){const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
-      if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED RUN</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>${counts.issues} issue${counts.issues===1?"":"s"} in the regular series run. Issue-by-issue browsing is available from the publication records when needed.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.collections}</b><span>Collected editions</span><small>Organised by publication format</small></div></div></div>`;
-      else if(t==="collections")tabBody.innerHTML=`<div class="cx-subtab-wrap">${tabs("all",[["all","All",collections.length],...allFormats.filter(x=>x!=="All").map(f=>[f,f,collections.filter(c=>formatKey(c)===f).length])])}<div id="cxCollectionBody"></div></div>`;
+      if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED RUN</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>This is the complete numbered run represented in the catalogue. The story itself is organised below through its creative history and collected editions.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.collections}</b><span>Collected editions</span><small>Organised by publication format</small></div></div></div>`;
+      else if(t==="collections")tabBody.innerHTML=`<div class="cx-subtab-wrap">${tabs(availableFormats[0]||"",availableFormats.map(f=>[f,formatLabel(f),collections.filter(c=>formatKey(c)===f).length]))}<div id="cxCollectionBody"></div></div>`;
       else if(t==="annuals")tabBody.innerHTML=publicationRows(b.annual);
       else tabBody.innerHTML=publicationRows([...b.special,...b.one_shot]);
-      if(t==="collections"){const body=tabBody.querySelector("#cxCollectionBody");const drawFormat=f=>{body.innerHTML=collectionRows(f==="all"?collections:collections.filter(c=>formatKey(c)===f));wirePublications(body,issues,collections,s);};drawFormat("all");tabBody.querySelectorAll(".cx-tab").forEach(btn=>btn.addEventListener("click",()=>{tabBody.querySelectorAll(".cx-tab").forEach(x=>x.classList.remove("is-active"));btn.classList.add("is-active");drawFormat(btn.dataset.tab);}));}else wirePublications(tabBody,issues,collections,s);
-    };renderTab("overview");c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(t=>t.addEventListener("click",()=>{c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(x=>x.classList.remove("is-active"));t.classList.add("is-active");renderTab(t.dataset.tab);}));c.querySelectorAll("[data-run]").forEach(r=>r.addEventListener("click",()=>{const x=runs[+r.dataset.run];push("run",x.title||"Creative Run",{run:x,series:s});}));}};
+      if(t==="collections"){const body=tabBody.querySelector("#cxCollectionBody");const drawFormat=f=>{body.innerHTML=collectionRows(collections.filter(c=>formatKey(c)===f));wirePublications(body,issues,collections,s);};drawFormat(availableFormats[0]||"");tabBody.querySelectorAll(".cx-tab").forEach(btn=>btn.addEventListener("click",()=>{tabBody.querySelectorAll(".cx-tab").forEach(x=>x.classList.remove("is-active"));btn.classList.add("is-active");drawFormat(btn.dataset.tab);}));}else wirePublications(tabBody,issues,collections,s);
+    };renderTab("overview");c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(t=>t.addEventListener("click",()=>{c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(x=>x.classList.remove("is-active"));t.classList.add("is-active");renderTab(t.dataset.tab);}));}};
 }
 
 async function run(p){
