@@ -1019,6 +1019,13 @@ function buildFilters(){
   }
 
   if(cat==="comics"){
+    if(state.comicsView !== "browse"){
+      filterRow.innerHTML = "";
+      chipRow.innerHTML = "";
+      filterRow.style.display = "none";
+      chipRow.style.display = "none";
+      return;
+    }
     const eras = uniq(data.map(d=>d.era));
     const canons = uniq(data.map(d=>d.canon));
     const lines = uniq(data.map(d=>d.line));
@@ -1495,17 +1502,37 @@ function renderGenericCards(){
   attachCardHandlers(cat);
 }
 
+function setComicsAtlasChrome(active){
+  document.body.classList.toggle("comics-atlas-active", !!active);
+  if(filterRow) filterRow.style.display = active ? "none" : "";
+  if(chipRow) chipRow.style.display = active ? "none" : "";
+  if(countEl) countEl.style.display = active ? "none" : "";
+  if(introEl) introEl.style.display = active ? "none" : "";
+  const controls = document.querySelector(".controls");
+  if(controls) controls.style.display = active ? "none" : "";
+  const tabs = document.querySelector("#tabs");
+  if(tabs) tabs.style.display = active ? "none" : "";
+  const mobileNav = document.querySelector("#mobileNav");
+  if(mobileNav) mobileNav.style.display = active ? "none" : "";
+}
+function renderComicsAtlasHome(){
+  setComicsAtlasChrome(true);
+  countEl.textContent = "";
+  const sm = window.__comicsStoryMap;
+  if(sm && typeof sm.renderHomePage === "function"){
+    sm.renderHomePage(gridEl);
+    return;
+  }
+  gridEl.innerHTML = `<div class="comics-atlas-loading-page"><div class="atlas-spinner"></div><b>DC UNIVERSE ATLAS</b><span>Loading the universe…</span></div>`;
+}
+
 function renderCards(){
   if(!loaded) return;
-  if(state.cat==="home") renderHome();
-  else if(state.cat==="journey") renderJourney();
-  else if(state.cat==="movies" || state.cat==="series") renderMovieSeriesCards();
-  else if(state.cat==="comics" && state.comicsView!=="browse"){
-    gridEl.innerHTML = `<div class="comics-atlas-backdrop-copy"><div class="sheet-label">DC UNIVERSE ATLAS</div><h2>Comics lives here now.</h2><p>The Atlas is the Comics home — eras, Earths, characters, events, runs, issues and collected editions are different views of the same universe.</p><button class="btn btn-primary" id="openComicsAtlasFallback">Open Atlas ↗</button><button class="btn btn-ghost" id="browseComicsFallback">Browse catalogue</button></div>`;
-    gridEl.querySelector("#openComicsAtlasFallback")?.addEventListener("click",()=>openComicsAtlas("universe"));
-    gridEl.querySelector("#browseComicsFallback")?.addEventListener("click",()=>{state.comicsView="browse";render();});
-  }
-  else renderGenericCards();
+  if(state.cat==="home") { setComicsAtlasChrome(false); renderHome(); }
+  else if(state.cat==="journey") { setComicsAtlasChrome(false); renderJourney(); }
+  else if(state.cat==="movies" || state.cat==="series") { setComicsAtlasChrome(false); renderMovieSeriesCards(); }
+  else if(state.cat==="comics" && state.comicsView!=="browse") renderComicsAtlasHome();
+  else { setComicsAtlasChrome(false); renderGenericCards(); }
 }
 
 /* ============================= RENDER: COMICS LANDING (Pointer 4) =============================
