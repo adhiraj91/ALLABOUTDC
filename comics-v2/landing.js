@@ -30,7 +30,7 @@ function render(container){
   </div></section>
   <button class="dcx-browse" data-go="series"><span>▱</span><div><strong>Browse All Comics</strong><small>Search and explore the complete DC comics catalogue</small></div><b>→</b></button>
  </div>`;
- container.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",async()=>{const d=await load();const a=b.dataset.go;if(a==="atlas")return openAtlas(d);if(a==="characters")return openExplorer("characterList","Characters");if(a==="continuity")return openExplorer("continuityList","Continuity / Era");if(a==="series")return openExplorer("seriesList","Series");if(a==="batman"){const c=d.characters.find(x=>x.browseRoot===true);if(c)return openExplorer("character",c.displayName||c.name,{character:c});}}));
+ container.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",async()=>{const a=b.dataset.go;if(a==="characters")return openExplorer("characterList","Characters");if(a==="continuity")return openExplorer("continuityList","Continuity / Era");if(a==="series")return openExplorer("seriesList","Series");if(a==="atlas"){try{const d=await load();return openAtlas(d);}catch(e){console.error("[Comics landing] Story Map data load failed",e);return;}}if(a==="batman"){try{const d=await load();const c=d.characters.find(x=>x.browseRoot===true);if(c)return openExplorer("character",c.displayName||c.name,{character:c});}catch(e){console.error("[Comics landing] Batman data load failed",e);}}}));
 
 }
 window.__comicsV2Landing={render,preload:load};document.dispatchEvent(new CustomEvent("comicsv2:landing-ready"));
