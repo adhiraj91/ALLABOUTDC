@@ -1,24 +1,24 @@
 // ALLABOUTDC — DC Comics landing page.
 // Generic DC architecture. Current mapped coverage starts with New 52 Batman only.
 import * as data from "./data.js?v=dc1";
-import { openComicsExplorerAt } from "./explorer.js?v=dc4";
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 let cache=null;
 async function load(){if(cache)return cache;cache=Promise.all([data.getAllUniverses(10),data.getAllContinuities(30),data.getAllCharacters(200),data.getAllSeries(500),data.getAllCollections(500)]).then(([universes,continuities,characters,series,collections])=>({universes,continuities,characters,series:series.filter(s=>s.scope==="batman-new52"),collections})).catch(e=>{cache=null;throw e;});return cache;}
-async function openExplorer(level,label,params={}){
-  // Do not depend on the explorer-ready event: that event can fire before this
-  // landing module attaches its listener because the two modules load independently.
-  // Importing the explorer on demand makes the click deterministic; if it is already
-  // loaded, the browser returns the cached module immediately.
-  try{
-    const mod=await import("./explorer.js?v=dc8");
-    const openAt=mod.openComicsExplorerAt||window.__comicsExplorer?.openAt;
-    if(typeof openAt!=="function") throw new Error("Comics Explorer entry point is unavailable");
+function openExplorer(level,label,params={}){
+  const go=()=>{
+    const openAt=window.__comicsExplorer?.openAt;
+    if(typeof openAt!=="function") return false;
     openAt([{level,label,params}]);
-  }catch(e){
-    console.error("[Comics landing] Explorer failed to open",e);
-  }
+    return true;
+  };
+  if(go()) return;
+  const once=()=>{
+    window.removeEventListener("comicsv2:explorer-ready",once);
+    go();
+  };
+  window.addEventListener("comicsv2:explorer-ready",once,{once:true});
 }
+
 function openAtlas(d){window.__comicsStoryMap?.open?.("universe",d.universes[0]?.id);}
 function render(container){
  container.innerHTML=`<div class="dcx-wrap">
