@@ -5,18 +5,20 @@ const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").rep
 let cache=null;
 async function load(){if(cache)return cache;cache=Promise.all([data.getAllUniverses(10),data.getAllContinuities(30),data.getAllCharacters(200),data.getAllSeries(500),data.getAllCollections(500)]).then(([universes,continuities,characters,series,collections])=>({universes,continuities,characters,series:series.filter(s=>s.scope==="batman-new52"),collections})).catch(e=>{cache=null;throw e;});return cache;}
 function openExplorer(level,label,params={}){
+  const started=Date.now();
   const go=()=>{
     const openAt=window.__comicsExplorer?.openAt;
-    if(typeof openAt!=="function") return false;
-    openAt([{level,label,params}]);
-    return true;
+    if(typeof openAt==="function"){
+      openAt([{level,label,params}]);
+      return;
+    }
+    if(Date.now()-started<5000){
+      setTimeout(go,50);
+    }else{
+      console.error("[Comics landing] Explorer did not become ready");
+    }
   };
-  if(go()) return;
-  const once=()=>{
-    window.removeEventListener("comicsv2:explorer-ready",once);
-    go();
-  };
-  window.addEventListener("comicsv2:explorer-ready",once,{once:true});
+  go();
 }
 
 function openAtlas(d){window.__comicsStoryMap?.open?.("universe",d.universes[0]?.id);}
