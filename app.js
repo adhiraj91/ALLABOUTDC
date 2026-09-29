@@ -1461,7 +1461,11 @@ function isComicsLanding(){
 }
 function renderComicsLanding(){
   const landing = window.__comicsV2Landing;
-  if(!landing || typeof landing.render!=="function"){ renderGenericCards(); return; }
+  if(!landing || typeof landing.render!=="function"){
+    countEl.textContent = "";
+    gridEl.innerHTML = `<div class="cx-loading">Loading DC Comics explorer…</div>`;
+    return;
+  }
   countEl.textContent = "";
   landing.render(gridEl, {
     catalogueCount: (DATA.comics||[]).length,
