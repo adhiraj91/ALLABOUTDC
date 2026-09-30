@@ -1459,11 +1459,22 @@ function isComicsLanding(){
   return state.cat==="comics" && state.comicsView!=="browse" &&
     state.f1==="all" && state.f2==="all" && state.f3==="all" && state.chip==="all"; // search uses the global dropdown
 }
-function renderComicsLanding(){
-  const landing = window.__comicsV2Landing;
+async function renderComicsLanding(){
+  let landing = window.__comicsV2Landing;
+  if(!landing || typeof landing.render!=="function"){
+    try{
+      const mod = await import("./comics-v2/landing.js?v=dc8");
+      landing = window.__comicsV2Landing || mod;
+    }catch(e){
+      console.error("[Comics landing] Failed to load landing module", e);
+      countEl.textContent = "";
+      gridEl.innerHTML = `<div class="cx-error">Couldn’t load the DC Comics explorer.<br><span style="font-family:var(--font-mono);font-size:11px;">${e.message||e}</span></div>`;
+      return;
+    }
+  }
   if(!landing || typeof landing.render!=="function"){
     countEl.textContent = "";
-    gridEl.innerHTML = `<div class="cx-loading">Loading DC Comics explorer…</div>`;
+    gridEl.innerHTML = `<div class="cx-error">DC Comics explorer failed to initialize.</div>`;
     return;
   }
   countEl.textContent = "";
