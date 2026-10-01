@@ -2,7 +2,7 @@
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
 import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
-import * as bp from "./branch-paths.js?v=bp3";
+import * as bp from "./branch-paths.js?v=bp4";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -11,7 +11,7 @@ const issueType=i=>String(i?.issueLabelType||"numbered");
 const issueNum=i=>{const n=parseFloat(i?.issueNumber);return Number.isFinite(n)?n:Infinity;};
 const sortIssues=a=>a.sort((x,y)=>issueNum(x)-issueNum(y)||String(x.issueLabel||"").localeCompare(String(y.issueLabel||"")));
 const titleOf=c=>c?.displayName||c?.name||"Character";
-const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
+const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core Dark":0,"Dark":10,"Trinity of Sin":20,"Young Heroes":30,"Task Force":40,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
 const groupRank=g=>GROUP_ORDER[g]??50;
 
 const cache=new Map();
@@ -153,7 +153,8 @@ function mountEditions(container,collections,issues,s){
 // Headline numbers for the overview: mainline volumes in the series' main collected format.
 function mainlineSummary(collections,seriesId){
   const {own,events,shared}=splitEditions(collections,seriesId);
-  const by=new Map();own.forEach(c=>{const k=formatKey(c);by.set(k,(by.get(k)||0)+1);});
+  const by=new Map();own.forEach(c=>{const k=formatKey(c);if(!by.has(k))by.set(k,new Set());by.get(k).add(c.volume!=null?"v"+c.volume:c.id);}); /* editions of one numbered volume count once */
+  by.forEach((set,k)=>by.set(k,set.size));
   const pref=["TPB","Volume"].filter(k=>by.has(k)).sort((a,b)=>by.get(b)-by.get(a))[0]||[...by.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
   const evs=eventGroups(events).length;
   return {n:pref?by.get(pref):0,label:pref?(pref==="Volume"?"Collected volumes":`${pref} volumes`):"Collected editions",events:evs,shared:shared.length};

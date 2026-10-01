@@ -2,7 +2,7 @@
 // Self-contained UI: no Firestore dependency. Explorer loads only when a navigation action is tapped.
 const openExplorer = async (level, label, params = {}) => {
   try {
-    const mod = await import(`./explorer.js?v=dc17`);
+    const mod = await import(`./explorer.js?v=dc18`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     openAt([{ level, label, params }]);

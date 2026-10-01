@@ -1,6 +1,6 @@
 // ============================================================================
 // ALLABOUTDC — NEW 52 BATCH 1 (Justice League, Wonder Woman, Aquaman, Aquaman and The Others, Green Arrow)
-// Isolated, additive import built from data-new52-batch1.js (the owner-supplied FINAL CSV). It writes ONLY those records:
+// Isolated, additive import built from data-new52-batch1.js (the owner-supplied CSV). It writes ONLY those records:
 //  - every write goes to a deterministic id, so re-running is idempotent;
 //  - ids that belong to another dataset (Batman / Superman / Flash / Green Lantern) are reserved and refused;
 //  - shared catalogue records (universe, continuity) are created only if absent.
@@ -11,9 +11,10 @@ import {B1_DESCRIPTIONS,B1_CHARACTERS,B1_CREATORS,B1_DEFS,B1_RUNS,B1_STATUS,B1_C
 const {makeUniverse,makeContinuity,makeCharacter,makeSeries,makeRun,makeIssue,makeCollection,makeCreator,makeSourceInfo,validateSeries,validateRun,validateIssue,validateCollection,validateCharacter,validateCreator}=schema;
 
 const UNIVERSE_ID=slug.buildUniverseId("DC Universe"), CONTINUITY_ID=slug.buildContinuityId("The New 52");
-const SRC_NAME="Owner-supplied FINAL New 52 Batch 1 CSV";
+const SRC_NAME="Owner-supplied New 52 Batch 1 CSV (updated with Forever Evil)";
 const src=(notes)=>makeSourceInfo({sourceUrl:null,sourceName:SRC_NAME,sourceType:"other",verificationStatus:"verified",notes});
-const srcType=u=>/dc\.com/.test(u||"")?"official":/crushingkrisis/.test(u||"")?"database":"other";
+const isUrl=u=>/^https?:\/\//.test(u||"");
+const srcType=u=>!isUrl(u)?"other":/dc\.com/.test(u)?"official":/crushingkrisis/.test(u)?"database":"other";
 
 // ---- shared catalogue records (created only if missing) ----
 const universe=makeUniverse({id:UNIVERSE_ID,name:"DC Universe",description:"The canonical DC Universe graph.",continuityIds:[CONTINUITY_ID],characterIds:[],sourceInfo:src("Created only if absent; an existing universe record is never modified by this import.")});
@@ -39,11 +40,11 @@ for(const [stitle,runTitle,names,a,b] of B1_RUNS){const s=seriesByTitle.get(stit
 
 const covRow=(s,label,partial)=>({seriesId:s.id,issueId:slug.buildIssueId(s.id,label),issueLabel:/^Annual/.test(label)||/\./.test(label)||/[A-Za-z]/.test(label)?label:`#${label}`,coveragePart:partial?"partial":"complete"});
 for(const r of B1_COLLECTION_RECORDS){
-  const rows=[],sids=[];
+  const rows=[],sids=[...(r.ss||[]).map(t=>{const x=seriesByTitle.get(t); if(!x)throw new Error(`Collection ${r.id}: unknown series ${t}`); return x.id;})];
   for(const [st,labels,partial=[]] of r.cov){const s=seriesByTitle.get(st); if(!s)throw new Error(`Collection ${r.id}: unknown series ${st}`); if(!sids.includes(s.id))sids.push(s.id); labels.forEach(l=>rows.push(covRow(s,String(l),partial.includes(l))));}
   const ps=r.ps?seriesByTitle.get(r.ps):null;
   const verified=r.cv==="verified";
-  const c=makeCollection({id:r.id,title:r.t,publisher:"DC Comics",format:r.f,publicationDate:null,isbn:r.isbn13||null,pageCount:null,seriesIds:sids,issueCoverage:rows,editionInfo:{editionNumber:null,editionName:null,printing:null},sourceInfo:makeSourceInfo({sourceUrl:r.src[0]||null,sourceName:SRC_NAME,sourceType:r.src[0]?srcType(r.src[0]):"other",verificationStatus:verified?"verified":"partially_verified",notes:r.an||""})});
+  const c=makeCollection({id:r.id,title:r.t,publisher:"DC Comics",format:r.f,publicationDate:null,isbn:r.isbn13||null,pageCount:null,seriesIds:sids,issueCoverage:rows,editionInfo:{editionNumber:null,editionName:null,printing:null},sourceInfo:makeSourceInfo({sourceUrl:isUrl(r.src[0])?r.src[0]:null,sourceName:SRC_NAME+(r.src[0]&&!isUrl(r.src[0])?` — ${r.src[0]}`:""),sourceType:srcType(r.src[0]),verificationStatus:verified?"verified":"partially_verified",notes:r.an||""})});
   Object.assign(c,{primarySeriesId:ps?ps.id:null,sequence:r.seq,volume:r.v,isbn10:null,priceUSD:null,outOfScopeContents:r.oos||null,reprints:[],sources:r.src,reviewStatus:null,auditClass:null,crossover:r.rl==="crossover"||!!r.x,role:r.rl,csvRole:r.csvrole||null,coverageNote:r.cn||null,dataBasis:"owner_csv_verified"});
   collections.push(c);
 }
@@ -74,6 +75,10 @@ export function validateDataset(){
   need(/Savage Hawkman #14/.test(collections.find(c=>c.id==="green-arrow-vol-3-harrow")?.outOfScopeContents||"")&&!cov("green-arrow-vol-3-harrow","Green Arrow","#14")===false,"GA Vol. 3 keeps Savage Hawkman #14 as text and Green Arrow #14 as an issue");
   need(collections.filter(c=>/Villains Omnibus/.test(c.title)).length===4,"four Villains Omnibus slices (JL, WW, Aquaman, GA)");
   need(issues.find(i=>i.id===slug.buildIssueId(sid("Justice League"),"52"))?.collectionStatus==="end of run","JL #52 end-of-run status");
+  const fe=collections.find(c=>c.id==="forever-evil-hc");
+  need(!!fe&&fe.role==="crossover"&&fe.issueCoverage.length===0&&fe.outOfScopeContents==="Forever Evil #1-7"&&fe.seriesIds.includes(sid("Justice League")),"Forever Evil HC is a publication record (Forever Evil #1-7 kept as text, no issue records)");
+  need(JSON.stringify(collections.find(c=>c.id==="justice-league-vol-5-forever-heroes")?.issueCoverage.map(r=>r.issueLabel))===JSON.stringify(["#24","#25","#26","#27","#28","#29"]),"JL Vol. 5 Forever Heroes stays JL #24-29");
+  need(!issues.some(i=>/Forever Evil/i.test(i.seriesId)),"no Forever Evil series/issue records");
   return {valid:errors.length===0,errors};
 }
 
