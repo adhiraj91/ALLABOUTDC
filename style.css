@@ -2048,6 +2048,17 @@ main.comics-home-main > .grid{
   #comicsExplorerContent .cx-run-grid{grid-template-columns:1fr}
   #comicsExplorerContent .cx-collection-card{min-height:122px}
   #comicsExplorerContent .cx-character-hero{padding-top:5px}
+  #comicsExplorerContent .cx-world-hero{padding:18px 16px 20px;border-radius:16px}
+  #comicsExplorerContent .cx-world-title{font-size:27px}
+  #comicsExplorerContent .cx-world-hero-art:before{width:180px;height:180px;right:-70px;top:-90px}
+  #comicsExplorerContent .cx-world-hero-art:after{width:280px;height:280px;right:-130px;top:-150px}
+  #comicsExplorerContent .cx-root-feature{padding:13px;gap:12px}
+  #comicsExplorerContent .cx-root-feature.is-primary{padding:17px}
+  #comicsExplorerContent .cx-root-feature.is-primary .cx-root-orb{flex-basis:62px;width:62px;height:62px;font-size:32px}
+  #comicsExplorerContent .cx-root-feature.is-primary .cx-root-body strong{font-size:25px}
+  #comicsExplorerContent .cx-root-feature>b{font-size:11px}
+  #comicsExplorerContent .cx-shelf-card{flex-basis:134px;min-height:118px;padding:12px}
+  #comicsExplorerContent .cx-shelf[data-size="lg"] .cx-shelf-card{flex-basis:166px;min-height:138px;padding:14px}
 }
 #comicsExplorerContent .cx-overview-grid small{display:block;margin-top:5px;color:var(--ink-faint);font-size:8px;line-height:1.35}
 /* ========================================================================
@@ -2110,4 +2121,58 @@ main.comics-home-main > .grid{
   #comicsExplorerContent .cx-era-grid{grid-template-columns:1fr 1fr}
   #comicsExplorerContent .cx-publication-grid{grid-template-columns:1fr 1fr}
   #comicsExplorerContent .cx-collection-grid{grid-template-columns:1fr 1fr}
+  #comicsExplorerContent .cx-world-hero{padding:32px 36px 34px}
+  #comicsExplorerContent .cx-world-title{font-size:40px}
+  #comicsExplorerContent .cx-world-desc{font-size:14px}
+  #comicsExplorerContent .cx-root-stack{flex-direction:row;flex-wrap:wrap}
+  #comicsExplorerContent .cx-root-feature{flex:1 1 320px}
+  #comicsExplorerContent .cx-root-feature.is-primary{flex-basis:100%}
+  #comicsExplorerContent .cx-shelf-card{flex-basis:200px}
+  #comicsExplorerContent .cx-shelf[data-size="lg"] .cx-shelf-card{flex-basis:250px}
+}
+
+/* ---------- Continuity / Era screen: world hero, featured root, line-category shelves ---------- */
+#comicsExplorerContent .cx-world-hero{position:relative;overflow:hidden;margin:10px 0 18px;padding:22px 20px 24px;border:1px solid var(--line);border-radius:20px;background:radial-gradient(circle at 85% 0%,color-mix(in srgb,var(--comics) 16%,transparent),transparent 48%),linear-gradient(165deg,var(--panel),var(--panel-2))}
+#comicsExplorerContent .cx-world-hero-art{position:absolute;inset:0;pointer-events:none}
+#comicsExplorerContent .cx-world-hero-art:before,#comicsExplorerContent .cx-world-hero-art:after{content:"";position:absolute;border:1px solid color-mix(in srgb,var(--comics) 30%,transparent);border-radius:50%}
+#comicsExplorerContent .cx-world-hero-art:before{width:260px;height:260px;right:-80px;top:-110px}
+#comicsExplorerContent .cx-world-hero-art:after{width:400px;height:400px;right:-170px;top:-200px;opacity:.5}
+#comicsExplorerContent .cx-world-hero .cx-kicker{position:relative;z-index:1;margin-bottom:6px}
+#comicsExplorerContent .cx-world-title{position:relative;z-index:1;font-size:32px;line-height:1.05;margin:0}
+#comicsExplorerContent .cx-world-meta{position:relative;z-index:1;font-size:12px;color:var(--ink-dim);margin-top:6px}
+#comicsExplorerContent .cx-world-desc{position:relative;z-index:1;margin:14px 0 0;max-width:62ch;font-size:13px;line-height:1.62;color:var(--ink-dim)}
+
+#comicsExplorerContent .cx-root-stack{display:flex;flex-direction:column;gap:10px}
+#comicsExplorerContent .cx-root-feature{display:flex;align-items:center;gap:16px;width:100%;padding:18px;text-align:left;border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--ink);cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+#comicsExplorerContent .cx-root-feature:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--comics) 55%,var(--line));box-shadow:0 16px 36px rgba(0,0,0,.16)}
+#comicsExplorerContent .cx-root-feature.is-primary{padding:24px;border-color:color-mix(in srgb,var(--comics) 45%,var(--line));background:radial-gradient(circle at 6% 92%,color-mix(in srgb,var(--comics) 14%,transparent),transparent 45%),linear-gradient(135deg,var(--panel),var(--panel-2))}
+#comicsExplorerContent .cx-root-orb{flex:0 0 56px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--comics) 50%,var(--line));background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--comics) 26%,transparent),transparent 65%),var(--bg-2);color:var(--comics);font:400 30px var(--font-display)}
+#comicsExplorerContent .cx-root-feature.is-primary .cx-root-orb{flex-basis:72px;width:72px;height:72px;font-size:38px;box-shadow:0 0 40px color-mix(in srgb,var(--comics) 14%,transparent)}
+#comicsExplorerContent .cx-root-body{flex:1;min-width:0}
+#comicsExplorerContent .cx-root-body span{display:block;font:700 8px var(--font-mono);letter-spacing:.14em;color:var(--comics)}
+#comicsExplorerContent .cx-root-body strong{display:block;margin-top:4px;font:400 24px var(--font-display);color:var(--ink)}
+#comicsExplorerContent .cx-root-feature.is-primary .cx-root-body strong{font-size:30px}
+#comicsExplorerContent .cx-root-body small{display:block;margin-top:3px;color:var(--ink-faint);font-size:11px}
+#comicsExplorerContent .cx-root-feature>b{flex:0 0 auto;color:var(--comics);font-size:12px;font-weight:700;white-space:nowrap}
+
+#comicsExplorerContent .cx-shelf-stack{display:flex;flex-direction:column;gap:24px}
+#comicsExplorerContent .cx-shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px;padding-left:10px;border-left:3px solid var(--comics)}
+#comicsExplorerContent .cx-shelf-head h3{margin:0;font:400 19px var(--font-display);color:var(--ink)}
+#comicsExplorerContent .cx-shelf-head em{font-style:normal;font-size:10px;color:var(--ink-faint);white-space:nowrap}
+#comicsExplorerContent .cx-shelf-track{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#comicsExplorerContent .cx-shelf-track::-webkit-scrollbar{display:none}
+#comicsExplorerContent .cx-shelf-card{position:relative;flex:0 0 150px;min-height:128px;padding:13px;text-align:left;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,var(--panel),var(--panel-2));color:var(--ink);cursor:pointer;overflow:hidden;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;scroll-snap-align:start}
+#comicsExplorerContent .cx-shelf-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--comics),transparent);opacity:.75}
+#comicsExplorerContent .cx-shelf-card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--comics) 52%,var(--line));box-shadow:0 13px 30px rgba(0,0,0,.14)}
+#comicsExplorerContent .cx-shelf-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+#comicsExplorerContent .cx-shelf-card-top span{font:700 8px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--comics)}
+#comicsExplorerContent .cx-shelf-card-top b{font:400 16px var(--font-display);color:var(--ink-faint)}
+#comicsExplorerContent .cx-shelf-card strong{display:block;font-size:13px;line-height:1.22}
+#comicsExplorerContent .cx-shelf-card small{display:block;margin-top:4px;color:var(--ink-faint);font-size:10px}
+#comicsExplorerContent .cx-shelf-card i{display:block;margin-top:11px;font-style:normal;font-size:9px;font-weight:800;color:var(--ink-dim)}
+#comicsExplorerContent .cx-shelf[data-size="lg"] .cx-shelf-card{flex-basis:190px;min-height:150px;padding:16px}
+#comicsExplorerContent .cx-shelf[data-size="lg"] .cx-shelf-card strong{font-size:15px}
+#comicsExplorerContent .cx-shelf[data-size="lg"] .cx-shelf-card-top b{font-size:19px}
+@media(prefers-reduced-motion:reduce){
+  #comicsExplorerContent .cx-root-feature,#comicsExplorerContent .cx-shelf-card{transition:none}
 }
