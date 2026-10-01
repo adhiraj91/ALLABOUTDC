@@ -2379,3 +2379,6 @@ main.comics-home-main > .grid{
 #comicsExplorerContent .cx-bp-ret b{font-size:13px}
 #comicsExplorerContent .cx-bp-ret span{font-size:12px;color:var(--muted)}
 #comicsExplorerContent .cx-bp-note{font-size:12px;color:var(--muted)}
+#comicsExplorerContent .cx-bp-here-line{color:var(--gold,#d4af37);font-weight:700;letter-spacing:.04em}
+#comicsExplorerContent .cx-bp-opt{display:block;margin-top:8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#comicsExplorerContent .cx-bp-branch.is-text{border-style:dashed}
