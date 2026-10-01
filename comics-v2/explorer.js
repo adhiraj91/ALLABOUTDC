@@ -2,7 +2,7 @@
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
 import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
-import * as bp from "./branch-paths.js?v=bp2";
+import * as bp from "./branch-paths.js?v=bp3";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -11,7 +11,7 @@ const issueType=i=>String(i?.issueLabelType||"numbered");
 const issueNum=i=>{const n=parseFloat(i?.issueNumber);return Number.isFinite(n)?n:Infinity;};
 const sortIssues=a=>a.sort((x,y)=>issueNum(x)-issueNum(y)||String(x.issueLabel||"").localeCompare(String(y.issueLabel||"")));
 const titleOf=c=>c?.displayName||c?.name||"Character";
-const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
+const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
 const groupRank=g=>GROUP_ORDER[g]??50;
 
 const cache=new Map();
@@ -154,7 +154,7 @@ function mountEditions(container,collections,issues,s){
 function mainlineSummary(collections,seriesId){
   const {own,events,shared}=splitEditions(collections,seriesId);
   const by=new Map();own.forEach(c=>{const k=formatKey(c);by.set(k,(by.get(k)||0)+1);});
-  const pref=["TPB","Volume"].find(k=>by.has(k))||[...by.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
+  const pref=["TPB","Volume"].filter(k=>by.has(k)).sort((a,b)=>by.get(b)-by.get(a))[0]||[...by.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
   const evs=eventGroups(events).length;
   return {n:pref?by.get(pref):0,label:pref?(pref==="Volume"?"Collected volumes":`${pref} volumes`):"Collected editions",events:evs,shared:shared.length};
 }
@@ -352,8 +352,10 @@ function bpVolumes(sid,colls,evRows,explicit){
 async function bpLoad(path,sid){
   const ev=(await Promise.all((path.eventCollectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);
   const bySeries=async(bid)=>{const colls=await bpColls(bid);const b=(path.branches||[]).find(x=>x.seriesId===bid);const rows=ev.flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===bid));
-    const explicit=(b?.collectionIds||[]).length?b.collectionIds:null;const v=bpVolumes(bid,colls,rows,explicit);
-    const exRows=explicit?colls.filter(c=>explicit.includes(c.id)).flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===bid)):rows;
+    const explicit=(b?.collectionIds||[]).length?b.collectionIds:null;
+    const only=(b?.labels||[]).length?new Set(b.labels):null;const keep=r=>!only||only.has(String(bpNum(r.issueLabel)));
+    const baseRows=rows.filter(keep);const v=bpVolumes(bid,colls,explicit?colls.filter(c=>explicit.includes(c.id)).flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===bid&&keep(r))):baseRows,explicit);
+    const exRows=explicit?colls.filter(c=>explicit.includes(c.id)).flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===bid&&keep(r))):baseRows;
     return {rows:[...new Map(exRows.map(r=>[r.issueId,r])).values()],...v};};
   return {ev,bySeries};
 }
@@ -361,45 +363,62 @@ function bpVolBtn(c){return `<button class="cx-bp-vol" data-bp-coll="${esc(c.id)
 function bpNode(kind,label,body){return `<div class="cx-bp-node is-${kind}"><span class="cx-bp-tag">${esc(label)}</span>${body}</div>`;}
 const bpArrow=`<div class="cx-bp-arrow" aria-hidden="true">↓</div>`;
 const bpJoin=a=>a.length<2?a.join(""):a.length===2?a.join(" and "):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
-async function bpPathHtml(path,s,mode,paths){
+async function bpPathHtml(path,s,mode,paths,detail){
   const L=await bpLoad(path,s.id);
   const sInfo=await L.bySeries(s.id);
   const evBtns=L.ev.length?`<div class="cx-evt-eds">${L.ev.map(c=>`<button class="cx-evt-ed" data-bp-coll="${esc(c.id)}"><span>${esc(pillLabel(c))}</span>${c.publicationDate?`<em>${esc(String(c.publicationDate).slice(0,4))}</em>`:""}</button>`).join("")}</div>`:"";
   const linked=id=>id?(paths||[]).find(x=>x.id===id)||null:null;
   const next=linked(path.nextPathId),prev=linked(path.followsPathId);
+  const instruction=path.readingInstruction||`Enter ${path.title}, explore the participating series, then return to the main story.`;
+  const count=(path.branches||[]).length;
+  // Compact by default (progressive disclosure, not data removal): the full narrative sits behind an explicit expand action.
+  if(!detail){
+    const titles=sInfo.tie.map(displayCollectionTitle);
+    const moreBtn=`<button class="cx-bp-more" data-bp-more="1">Show details ▾</button>`;
+    if(mode==="main")return `<div class="cx-bp-compact"><span class="cx-bp-sel">Main Path · ${esc(s.title)}</span><strong>${esc(path.title)}</strong>${titles.length?`<small>Entry: ${esc(bpJoin(titles))}</small>`:""}${moreBtn}</div>`;
+    return `<div class="cx-bp-compact"><span class="cx-bp-sel">Crossover</span><strong>${esc(path.title)}</strong><small>${count} participating ${count===1?"series":"series"}</small>${moreBtn}</div>`;
+  }
   const retLine=i=>i.ret?`<span class="cx-bp-return">Return to main story: then ${bpVolBtn(i.ret)}</span>`:`<span class="cx-bp-return">Return to main story: carries on with the series' next issues.</span>`;
   const nextNote=next?`<small class="cx-bp-note">Then continue into ${esc(next.title)}.</small>`:"";
   const prevNote=prev?`<small class="cx-bp-note">Follows ${esc(prev.title)}.</small>`:"";
   // ONE renderer for every event: each participating series resolves to its existing collection(s) + issue range (event-scoped
   // by this path's own event collections), or to the collection's own wording where the series has no record of its own.
   const cards=(await Promise.all((path.branches||[]).map(async b=>{
-    if(!b.seriesId){const cs=(await Promise.all((b.collectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const one=cs.filter(c=>formatKey(c)==="TPB").concat(cs).slice(0,1);
+    if(!b.seriesId){const cs=(await Promise.all((b.collectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const one=cs.filter(c=>formatKey(c)==="TPB"||formatKey(c)==="Volume").concat(cs).slice(0,1);
       return `<div class="cx-bp-branch is-text"><b>${esc(b.label)}</b><small>${esc(b.note||"")}</small>${one.length?`<div class="cx-bp-vols">${one.map(bpVolBtn).join("")}</div>`:""}<span class="cx-bp-opt">Optional branch</span></div>`;}
     const i=await L.bySeries(b.seriesId);const here=b.seriesId===s.id;
     const evOnly=!i.tie.length&&L.ev.length?`<small>Collected in ${esc(L.ev.map(c=>displayCollectionTitle(c)).filter((t,k,a)=>a.indexOf(t)===k).join(" / "))}</small>`:"";
     return `<div class="cx-bp-branch ${here?"is-here":""}"><b>${esc(b.label)}${b.related?` <em>related title</em>`:""}</b><small>${esc(compressLabels(i.rows)||"")}</small>${i.tie.length?`<div class="cx-bp-vols">${i.tie.map(bpVolBtn).join("")}</div>`:evOnly}${retLine(i)}${here?`<span class="cx-bp-here">You are here</span>`:`<button class="cx-bp-open" data-bp-series="${esc(b.seriesId)}">Open series →</button><span class="cx-bp-opt">Optional branch</span>`}</div>`;}))).join("");
   const participants=bpNode("branch","PARTICIPATING SERIES",`<div class="cx-bp-branches">${cards}</div>`);
   const ret=bpNode("ret","RETURN TO MAIN STORY",`<div class="cx-bp-ret"><b>${esc(s.title)}</b>${sInfo.ret?`<span>then ${bpVolBtn(sInfo.ret)}</span>`:`<span class="cx-bp-note">carries on with the series' next issues</span>`}</div>${nextNote}`);
+  const less=`<button class="cx-bp-more" data-bp-more="0">Hide details ▴</button>`;
   if(mode==="main"){
     const titles=sInfo.tie.map(displayCollectionTitle);
-    const intro=titles.length?`Read through ${bpJoin(titles)}, then explore the crossover branches. Return to the main story afterward.`:(path.readingInstruction||"");
+    const intro=titles.length?`Read through ${bpJoin(titles)}, then explore the crossover branches. Return to the main story afterward.`:instruction;
     return bpNode("main","MAIN PATH",`<strong>${esc(s.title)}</strong><small class="cx-bp-here-line">You are here</small><small>${esc(intro)}</small>${sInfo.tie.length?`<div class="cx-bp-vols">${sInfo.tie.map(bpVolBtn).join("")}</div>`:""}`)+bpArrow
-      +bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>Optional, parallel reading.</small>${evBtns}${prevNote}`)+bpArrow+participants+bpArrow+ret;
+      +bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>Optional, parallel reading.</small>${evBtns}${prevNote}`)+bpArrow+participants+bpArrow+ret+less;
   }
-  return bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>${esc(path.readingInstruction||"")}</small>${evBtns}${prevNote}`)+bpArrow+participants+bpArrow+ret;
+  return bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>${esc(instruction)}</small>${evBtns}${prevNote}`)+bpArrow+participants+bpArrow+ret+less;
 }
 async function mountReadingPaths(host,s,range){
   if(!host)return;let paths;try{paths=await bp.getBranchPathsForSeries(s.id);}catch(e){console.warn("[Comics Explorer] reading paths unavailable",e);return;}
   if(!paths.length)return;
-  if(range){const keep=[];for(const p of paths){const ev=(await Promise.all((p.eventCollectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const ex=(p.branches||[]).find(b=>b.seriesId===s.id)?.collectionIds||[];const cs=[...ev,...(await Promise.all(ex.map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean)];const ns=cs.flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===s.id).map(r=>bpNum(r.issueLabel))).filter(n=>n!=null);if(!ns.length||ns.some(n=>n>=range[0]&&n<=range[1]))keep.push(p);}paths=keep;if(!paths.length)return;}
+  if(range){const inRange=async p=>{const ev=(await Promise.all((p.eventCollectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const mine=(p.branches||[]).find(b=>b.seriesId===s.id);const ex=mine?.collectionIds||[];const cs=[...ev,...(await Promise.all(ex.map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean)];const only=new Set(mine?.labels||[]);const ns=cs.flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===s.id).map(r=>bpNum(r.issueLabel))).filter(n=>n!=null&&(!only.size||only.has(String(n))));return !ns.length||ns.some(n=>n>=range[0]&&n<=range[1]);};
+    const ok=await Promise.all(paths.map(inRange));paths=paths.filter((_,i)=>ok[i]);if(!paths.length)return;}
   paths.sort((a,b)=>String(a.pathCode).localeCompare(String(b.pathCode)));
-  const state=new Map(paths.map(p=>[p.id,{mode:"main"}]));
-  host.innerHTML=`<div class="cx-series-section cx-bp-wrap"><div class="cx-section-head"><div><span>READING PATH</span><h3>Crossovers</h3></div><em>${paths.length} ${paths.length===1?"crossover":"crossovers"}</em></div><div class="cx-bp-list">${paths.map(p=>`<div class="cx-bp" data-bp="${esc(p.id)}"><div class="cx-bp-head"><div><small>${esc(String(p.family||"").toUpperCase())} · CROSSOVER</small><strong>${esc(p.title)}</strong></div></div><div class="cx-bp-modes"><button class="cx-bp-mode is-active" data-mode="main">Main Path</button><button class="cx-bp-mode" data-mode="cross">Crossover</button></div><div class="cx-bp-body"><div class="cx-loading">Loading…</div></div></div>`).join("")}</div></div>`;
-  const draw=async(box,p)=>{const st=state.get(p.id);const body=box.querySelector(".cx-bp-body");try{body.innerHTML=await bpPathHtml(p,s,st.mode,paths);}catch(e){console.warn(e);body.innerHTML=empty("This path couldn't be loaded right now.");}
+  const state=new Map(paths.map(p=>[p.id,{open:false,mode:"main",detail:{main:false,cross:false}}]));
+  // Collapsed by default: one compact row per crossover, so Overview / Publications stay near the top of the page.
+  host.innerHTML=`<div class="cx-series-section cx-bp-wrap"><div class="cx-section-head"><div><span>READING PATH</span><h3>Crossovers</h3></div><em>${paths.length}</em></div><div class="cx-bp-list">${paths.map(p=>`<div class="cx-bp" data-bp="${esc(p.id)}" data-open="false"><button class="cx-bp-row" aria-expanded="false"><span>${esc(p.title)}</span><i>›</i></button><div class="cx-bp-panel" hidden><div class="cx-bp-modes"><button class="cx-bp-mode is-active" data-mode="main">Main Path</button><button class="cx-bp-mode" data-mode="cross">Crossover</button></div><div class="cx-bp-body"></div></div></div>`).join("")}</div></div>`;
+  const draw=async(box,p)=>{const st=state.get(p.id);const body=box.querySelector(".cx-bp-body");const t=++st.tok;
+    let html;try{html=await bpPathHtml(p,s,st.mode,paths,st.detail[st.mode]);}catch(e){console.warn(e);html=empty("This crossover couldn't be loaded right now.");}
+    if(t!==st.tok)return;body.innerHTML=html;
     box.querySelectorAll(".cx-bp-mode").forEach(b=>b.classList.toggle("is-active",b.dataset.mode===st.mode));
+    body.querySelectorAll("[data-bp-more]").forEach(b=>b.addEventListener("click",()=>{st.detail[st.mode]=b.dataset.bpMore==="1";draw(box,p);}));
     body.querySelectorAll("[data-bp-coll]").forEach(b=>b.addEventListener("click",async()=>{const c=await get(COLLECTIONS.COLLECTIONS,b.dataset.bpColl);if(c)push("collection",c.title,{collectionEntity:c});}));
     body.querySelectorAll("[data-bp-series]").forEach(b=>b.addEventListener("click",async()=>{const x=await get(COLLECTIONS.SERIES,b.dataset.bpSeries);if(x)push("series",x.title,{series:x});}));};
-  host.querySelectorAll(".cx-bp").forEach(box=>{const p=paths.find(x=>x.id===box.dataset.bp);box.querySelectorAll(".cx-bp-mode").forEach(b=>b.addEventListener("click",()=>{state.get(p.id).mode=b.dataset.mode;draw(box,p);}));draw(box,p);});
+  host.querySelectorAll(".cx-bp").forEach(box=>{const p=paths.find(x=>x.id===box.dataset.bp);const st=state.get(p.id);st.tok=0;
+    box.querySelector(".cx-bp-row").addEventListener("click",()=>{st.open=!st.open;box.dataset.open=String(st.open);box.querySelector(".cx-bp-row").setAttribute("aria-expanded",String(st.open));box.querySelector(".cx-bp-panel").hidden=!st.open;if(st.open)draw(box,p);});
+    box.querySelectorAll(".cx-bp-mode").forEach(b=>b.addEventListener("click",()=>{st.mode=b.dataset.mode;draw(box,p);}));});
 }
 
 async function series(p){
@@ -446,7 +465,7 @@ async function run(p){
     };draw("overview");c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(t=>t.addEventListener("click",()=>{c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(x=>x.classList.remove("is-active"));t.classList.add("is-active");draw(t.dataset.tab);}));}};
 }
 
-async function issue(p){const i=p.issue;if(!i)return{html:empty("Issue not found.")};const s=p.series||await get(COLLECTIONS.SERIES,i.seriesId);const cs=await Promise.all((i.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)));let html=`<div class="cx-kicker">PUBLICATION</div><h2 class="cx-title">${esc(i.issueLabel||"Issue")}${i.title?` — ${esc(i.title)}`:""}</h2><div class="cx-subtitle">${esc(s?.title||"")}${i.publicationDate?` · ${esc(i.publicationDate)}`:""}</div>`;if(i.issueLabelType)html+=`<div class="cx-tag-row"><span class="tag">${esc(i.issueLabelType)}</span></div>`;if(cs.filter(Boolean).length)html+=`<div class="cx-tag-row">${cs.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;return{html};}
+async function issue(p){const i=p.issue;if(!i)return{html:empty("Issue not found.")};const s=p.series||await get(COLLECTIONS.SERIES,i.seriesId);const cs=await Promise.all((i.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)));let html=`<div class="cx-kicker">PUBLICATION</div><h2 class="cx-title">${esc(i.issueLabel||"Issue")}${i.title?` — ${esc(i.title)}`:""}</h2><div class="cx-subtitle">${esc(s?.title||"")}${i.publicationDate?` · ${esc(i.publicationDate)}`:""}</div>`;if(i.issueLabelType)html+=`<div class="cx-tag-row"><span class="tag">${esc(i.issueLabelType)}</span></div>`;if(i.collectionStatusNote)html+=`<div class="sheet-section"><div class="sheet-label">COLLECTION STATUS</div><div class="cx-info-card">${esc(i.collectionStatus==="end of run"?"End of run · not in a standard volume":(i.collectionStatus||""))}. ${esc(i.collectionStatusNote)}</div></div>`;if(cs.filter(Boolean).length)html+=`<div class="cx-tag-row">${cs.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;return{html};}
 async function collection(p){
   const c=p.collectionEntity;if(!c)return{html:empty("Edition not found.")};
   const m=seriesCoverage(c);const sids=[...m.keys()];const ss=await Promise.all(sids.map(id=>get(COLLECTIONS.SERIES,id)));

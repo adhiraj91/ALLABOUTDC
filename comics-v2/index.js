@@ -8,7 +8,8 @@ import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
-import * as branchPaths from "./branch-paths.js?v=bp2";
+import * as branchPaths from "./branch-paths.js?v=bp3";
+import * as batch1 from "./seed-new52-batch1.js?v=b1";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -98,6 +99,26 @@ export async function importNew52FlashAndGreenLantern(progress) {
   });
 }
 
+// Additive import: New 52 Batch 1 (Justice League, Wonder Woman, Aquaman, Aquaman and The Others, Green Arrow).
+// Never clears or resets anything; every write is an upsert at a deterministic id; ids owned by the Batman/Superman/Flash/Green Lantern
+// datasets are reserved (a collision aborts before any write). Its three event reading paths are written at the end (bp-* docs only).
+const BATCH1_PATH_IDS = ["bp-jl-throne-of-atlantis", "bp-jl-trinity-war", "bp-ga-hawkman-wanted"];
+export async function importNew52Batch1(progress) {
+  const sets = (ds) => ({
+    characters: ds.characters.map(x => x.id), creators: ds.creators.map(x => x.id), series: ds.series.map(x => x.id),
+    runs: ds.runs.map(x => x.id), issues: ds.issues.map(x => x.id), collections: ds.collections.map(x => x.id),
+  });
+  const reserved = {};
+  for (const ds of [dataset, flashGl.dataset]) { const s = sets(ds); for (const k of Object.keys(s)) reserved[k] = new Set([...(reserved[k] || []), ...s[k]]); }
+  const result = await batch1.importDataset({
+    upsertEntity: data.upsertEntity, upsertCollectionEdition: data.upsertCollectionEdition, getEntity: data.getEntity, COLLECTIONS, reserved, progress,
+  });
+  if (result.validation?.valid && !result.errors.length) {
+    result.paths = await branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress, only: BATCH1_PATH_IDS });
+  }
+  return result;
+}
+
 // Additive import: New 52 branching reading paths (event -> branches -> return). Writes ONLY bp-* documents in
 // comicReadingPaths, at deterministic ids; reads series/collections to verify they exist; never clears or edits anything else.
 export async function importNew52BranchPaths(progress) {
@@ -116,6 +137,11 @@ window.__comicsV2 = {
     dataset: flashGl.dataset,
     validate: flashGl.validateDataset,
     import: importNew52FlashAndGreenLantern,
+  },
+  new52Batch1: {
+    dataset: batch1.dataset,
+    validate: batch1.validateDataset,
+    import: importNew52Batch1,
   },
   new52BranchPaths: {
     build: branchPaths.buildAll,

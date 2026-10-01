@@ -96,6 +96,32 @@ export const BRANCH_DEFS = [
     key: "gl-godhead", family: "Green Lantern", csv: { path_id: "GODHEAD", trigger: "Godhead", branch_from: "Green Lantern", branch_to: "Green Lantern / Green Lantern Corps / New Guardians / Red Lanterns / Sinestro", branch_type: "crossover", reading_instruction: "Enter Godhead and expose all participating Lantern branches before returning to the main path.", notes: "Use existing event data." },
     anchorSeriesIds: ["green-lantern"], eventCollectionIds: ["green-lantern-new-gods-godhead"], branches: GL4([{ label: "Sinestro", seriesId: "sinestro" }]),
   },
+  {
+    key: "jl-throne-of-atlantis", family: "Justice League", csv: { path_id: "THRONE_OF_ATLANTIS", trigger: "Throne of Atlantis", branch_from: "Justice League", branch_to: "Aquaman", branch_type: "crossover", reading_instruction: "", notes: "Event relationship; do not create duplicate issues." },
+    anchorSeriesIds: ["justice-league-2011", "aquaman-2011"], eventCollectionIds: ["justice-league-vol-3-throne-of-atlantis", "aquaman-vol-3-throne-of-atlantis"],
+    branches: [{ label: "Justice League", seriesId: "justice-league-2011", labels: ["13", "14", "15", "16", "17"] }, { label: "Aquaman", seriesId: "aquaman-2011", labels: ["14", "15", "16"] }],
+  },
+  {
+    key: "jl-trinity-war", family: "Justice League", csv: { path_id: "TRINITY_WAR", trigger: "Trinity War", branch_from: "Justice League", branch_to: "Justice League #22-23; Justice League of America #6-7; Justice League Dark #22-23; Constantine #5; Trinity of Sin: Pandora #1-3; Trinity of Sin: Phantom Stranger #11", branch_type: "crossover", reading_instruction: "", notes: "Full event collection." },
+    anchorSeriesIds: ["justice-league-2011"], eventCollectionIds: ["justice-league-trinity-war"],
+    branches: [
+      { label: "Justice League", seriesId: "justice-league-2011", labels: ["22", "23"] },
+      { label: "Justice League of America", seriesId: null, collectionIds: ["justice-league-trinity-war"], note: "Justice League of America #6-7 — collected in Justice League: Trinity War." },
+      { label: "Justice League Dark", seriesId: null, collectionIds: ["justice-league-trinity-war"], note: "Justice League Dark #22-23 — collected in Justice League: Trinity War." },
+      { label: "Constantine", seriesId: null, collectionIds: ["justice-league-trinity-war"], note: "Constantine #5 — collected in Justice League: Trinity War." },
+      { label: "Trinity of Sin: Pandora", seriesId: null, collectionIds: ["justice-league-trinity-war"], note: "Trinity of Sin: Pandora #1-3 — collected in Justice League: Trinity War." },
+      { label: "Trinity of Sin: Phantom Stranger", seriesId: null, collectionIds: ["justice-league-trinity-war"], note: "Trinity of Sin: Phantom Stranger #11 — collected in Justice League: Trinity War." },
+    ],
+  },
+  {
+    key: "ga-hawkman-wanted", family: "Green Arrow", csv: { path_id: "HAWKMAN_WANTED", trigger: "Hawkman: Wanted", branch_from: "Green Arrow", branch_to: "Green Arrow #14; Deathstroke #14; Savage Hawkman #14", branch_type: "crossover", reading_instruction: "", notes: "Green Arrow #14 is one chapter of the crossover; do not misclassify the other books as Green Arrow series." },
+    anchorSeriesIds: ["green-arrow-2011"], eventCollectionIds: [],
+    branches: [
+      { label: "Green Arrow", seriesId: "green-arrow-2011", collectionIds: ["green-arrow-vol-3-harrow"], labels: ["14"] },
+      { label: "Deathstroke", seriesId: null, note: "Deathstroke #14 — not catalogued as a series here." },
+      { label: "Savage Hawkman", seriesId: null, collectionIds: ["green-arrow-vol-3-harrow"], note: "Savage Hawkman #14 — included in Green Arrow Vol. 3: Harrow." },
+    ],
+  },
 ];
 
 const idFor = (d) => "bp-" + d.key;
@@ -110,7 +136,7 @@ export function buildDoc(d) {
     title: d.csv.trigger,
     description: d.csv.reading_instruction,
     entries: [],
-    branches: d.branches.map((b, i) => ({ id: `${idFor(d)}-b${i + 1}`, label: b.label, fromEntryIndex: null, entries: [], seriesId: b.seriesId || null, collectionIds: b.collectionIds || [], connection: !!b.connection, related: !!b.related, note: b.note || "" })),
+    branches: d.branches.map((b, i) => ({ id: `${idFor(d)}-b${i + 1}`, label: b.label, fromEntryIndex: null, entries: [], seriesId: b.seriesId || null, collectionIds: b.collectionIds || [], connection: !!b.connection, related: !!b.related, note: b.note || "", labels: b.labels || [] })),
     family: d.family, seriesIds,
     anchorSeriesIds: d.anchorSeriesIds || [], mainCollectionIds: d.mainCollectionIds || [],
     eventCollectionIds: d.eventCollectionIds || [],
@@ -137,11 +163,11 @@ export function validate() {
 }
 
 /** Isolated, additive, idempotent. Writes only bp-* ids in comicReadingPaths; reads (never writes) series/collections. */
-export async function importBranchPaths({ upsertEntity, getEntity, progress } = {}) {
+export async function importBranchPaths({ upsertEntity, getEntity, progress, only = null } = {}) {
   const validation = validate();
   const result = { validation, written: 0, skipped: [], errors: [] };
   if (!validation.valid) return result;
-  for (const doc of buildAll()) {
+  for (const doc of buildAll().filter(d => !only || only.includes(d.id))) {
     const need = [
       ...doc.seriesIds.map(id => [COLLECTIONS.SERIES, id]),
       ...[...doc.eventCollectionIds, ...doc.mainCollectionIds, ...doc.branches.flatMap(b => b.collectionIds)].map(id => [COLLECTIONS.COLLECTIONS, id]),
