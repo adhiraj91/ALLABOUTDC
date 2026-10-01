@@ -2345,3 +2345,37 @@ main.comics-home-main > .grid{
 #comicsExplorerContent .cx-char-tree .cx-character-orb{width:44px;height:44px;flex:0 0 44px;font-size:20px}
 #comicsExplorerContent .cx-char-tree .cx-character-card strong{font-size:16px;margin-top:3px}
 #comicsExplorerContent .cx-char-tree .cx-character-card b{font-size:18px}
+
+/* ---- Reading path: main path -> crossover -> branches -> return (comics explorer) ---- */
+#comicsExplorerContent .cx-bp-list{display:flex;flex-direction:column;gap:14px}
+#comicsExplorerContent .cx-bp{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px}
+#comicsExplorerContent .cx-bp-head small{display:block;font-size:10px;letter-spacing:.12em;color:var(--muted)}
+#comicsExplorerContent .cx-bp-head strong{display:block;font-size:17px;margin:2px 0 10px}
+#comicsExplorerContent .cx-bp-modes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+#comicsExplorerContent .cx-bp-mode,#comicsExplorerContent .cx-bp-chip{font:inherit;font-size:12px;font-weight:700;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 11px;cursor:pointer}
+#comicsExplorerContent .cx-bp-mode.is-active,#comicsExplorerContent .cx-bp-chip.is-active{color:var(--gold,#d4af37);border-color:var(--gold,#d4af37)}
+#comicsExplorerContent .cx-bp-chip.is-static{cursor:default;opacity:.7}
+#comicsExplorerContent .cx-bp-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+#comicsExplorerContent .cx-bp-node{border:1px solid var(--line);border-left:3px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+#comicsExplorerContent .cx-bp-node.is-main{border-left-color:var(--gold,#d4af37)}
+#comicsExplorerContent .cx-bp-node.is-cross{border-left-color:#c9743a}
+#comicsExplorerContent .cx-bp-node.is-branch{border-left-color:#5b8def}
+#comicsExplorerContent .cx-bp-node.is-ret{border-left-color:#4caf7d}
+#comicsExplorerContent .cx-bp-tag{display:block;font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--muted);margin-bottom:4px}
+#comicsExplorerContent .cx-bp-node strong{display:block;font-size:15px}
+#comicsExplorerContent .cx-bp-node small{display:block;color:var(--muted);font-size:12px;line-height:1.4;margin-top:2px}
+#comicsExplorerContent .cx-bp-arrow{text-align:center;color:var(--muted);font-size:16px;line-height:1.1;padding:3px 0}
+#comicsExplorerContent .cx-bp-vols{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#comicsExplorerContent .cx-bp-vol,#comicsExplorerContent .cx-bp-open{font:inherit;font-size:12px;color:inherit;background:var(--panel-2,rgba(255,255,255,.04));border:1px solid var(--line);border-radius:10px;padding:6px 9px;cursor:pointer;text-align:left}
+#comicsExplorerContent .cx-bp-open{margin-top:8px;color:var(--gold,#d4af37)}
+#comicsExplorerContent .cx-bp-branches{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin-top:6px}
+#comicsExplorerContent .cx-bp-branch{border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-width:0}
+#comicsExplorerContent .cx-bp-branch.is-here{border-color:var(--gold,#d4af37)}
+#comicsExplorerContent .cx-bp-branch.is-connection{border-style:dashed}
+#comicsExplorerContent .cx-bp-branch b{display:block;font-size:13px}
+#comicsExplorerContent .cx-bp-branch b em{font-style:normal;font-size:10px;color:var(--muted);margin-left:4px}
+#comicsExplorerContent .cx-bp-here{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;color:var(--gold,#d4af37)}
+#comicsExplorerContent .cx-bp-ret{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;padding:4px 0}
+#comicsExplorerContent .cx-bp-ret b{font-size:13px}
+#comicsExplorerContent .cx-bp-ret span{font-size:12px;color:var(--muted)}
+#comicsExplorerContent .cx-bp-note{font-size:12px;color:var(--muted)}

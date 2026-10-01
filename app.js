@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc13");
+      const mod = await import("./comics-v2/landing.js?v=dc14");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -3221,6 +3221,22 @@ $("#importNew52FlashGlBtn")?.addEventListener("click", async ()=>{
     if(errors.length){ msg.textContent=`Wrote ${total} records, but ${errors.length} problem(s): ${errors.slice(0,3).join(" | ")}`; msg.className="form-msg err"; }
     else{ msg.textContent=`Done — ${w.comicSeries||0} series, ${w.comicIssues||0} issues, ${w.comicCollections||0} editions added/updated (${total} records). Existing Batman / Superman data untouched.`; msg.className="form-msg ok"; refreshComicsCount(); }
   }catch(err){ console.error("[Comics v2] Flash + Green Lantern import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
+  finally{ btn.disabled=false; }
+});
+
+/* Additive import — New 52 branching reading paths. Writes only its own bp-* reading-path documents; nothing is cleared or edited. */
+$("#importNew52BranchPathsBtn")?.addEventListener("click", async ()=>{
+  const btn=$("#importNew52BranchPathsBtn"), msg=$("#importNew52BranchPathsMsg");
+  const mod=window.__comicsV2?.new52BranchPaths;
+  if(!mod?.import){ msg.textContent="Comics v2 module is not loaded."; msg.className="form-msg err"; return; }
+  if(!confirm("Add the New 52 branching reading paths? Only the reading-path records are added; no comics data is changed or deleted. Safe to run again.")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Adding reading paths…";
+  try{
+    const r=await mod.import(m=>{ msg.textContent=m; });
+    if(!r?.validation?.valid){ msg.textContent="Validation failed — nothing was written: "+(r?.validation?.errors||[]).slice(0,4).join(" | "); msg.className="form-msg err"; return; }
+    const bits=[`${r.written} reading path${r.written===1?"":"s"} added/updated`]; if(r.skipped?.length) bits.push(`${r.skipped.length} skipped: ${r.skipped.slice(0,2).join(" | ")}`); if(r.errors?.length) bits.push(`${r.errors.length} problem(s): ${r.errors.slice(0,2).join(" | ")}`);
+    msg.textContent=bits.join(" · "); msg.className="form-msg "+((r.errors?.length||r.skipped?.length)?"err":"ok");
+  }catch(err){ console.error("[Comics v2] branch paths import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
   finally{ btn.disabled=false; }
 });
 
