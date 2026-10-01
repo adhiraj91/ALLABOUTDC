@@ -7,6 +7,7 @@ import * as data from "./data.js";
 import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
+import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -71,6 +72,31 @@ export async function resetAndImportBatmanNew52(progress) {
   return { validation, cleared, imported, errors: imported.errors || [] };
 }
 
+// ---------------------------------------------------------------------------
+// Additive import: New 52 Flash + Green Lantern. Independent of the Batman/Superman reset:
+// it never calls clearAllComicsData / resetAndImportBatmanNew52, never truncates a collection and
+// never writes an id that belongs to the Batman/Superman dataset (those ids are reserved).
+// Every write is an upsert at a deterministic id, so running it again changes nothing.
+// ---------------------------------------------------------------------------
+export async function importNew52FlashAndGreenLantern(progress) {
+  const reserved = {
+    characters: new Set(dataset.characters.map(x => x.id)),
+    creators: new Set(dataset.creators.map(x => x.id)),
+    series: new Set(dataset.series.map(x => x.id)),
+    runs: new Set(dataset.runs.map(x => x.id)),
+    issues: new Set(dataset.issues.map(x => x.id)),
+    collections: new Set(dataset.collections.map(x => x.id)),
+  };
+  return flashGl.importDataset({
+    upsertEntity: data.upsertEntity,
+    upsertCollectionEdition: data.upsertCollectionEdition,
+    getEntity: data.getEntity,
+    COLLECTIONS,
+    reserved,
+    progress,
+  });
+}
+
 // Developer inspection hooks. No writes occur merely by loading this module.
 window.__comicsV2 = {
   schema,
@@ -79,6 +105,11 @@ window.__comicsV2 = {
   COLLECTIONS,
   dataset,
   validate: validateDataset,
+  new52FlashGl: {
+    dataset: flashGl.dataset,
+    validate: flashGl.validateDataset,
+    import: importNew52FlashAndGreenLantern,
+  },
   batmanNew52: {
     dataset,
     validate: validateDataset,

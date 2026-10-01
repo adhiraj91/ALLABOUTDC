@@ -10,7 +10,7 @@ const issueType=i=>String(i?.issueLabelType||"numbered");
 const issueNum=i=>{const n=parseFloat(i?.issueNumber);return Number.isFinite(n)?n:Infinity;};
 const sortIssues=a=>a.sort((x,y)=>issueNum(x)-issueNum(y)||String(x.issueLabel||"").localeCompare(String(y.issueLabel||"")));
 const titleOf=c=>c?.displayName||c?.name||"Character";
-const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core":0,"Bat-Family":10,"Superman Family":10,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
+const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
 const groupRank=g=>GROUP_ORDER[g]??50;
 
 const cache=new Map();
@@ -65,7 +65,9 @@ const pillLabel=c=>formatKey(c)==="Volume"?"HC/TPB":formatLabel(formatKey(c));
 // Role separates a series' own numbered volumes from crossover / event collections (which only appear in it).
 const roleOf=c=>c?.role||(c?.crossover?"crossover":"mainline");
 const isEventRole=c=>{const r=roleOf(c);return r==="crossover"||r==="compilation";};
-const isOwnMainline=(c,seriesId)=>!isEventRole(c)&&(!c.primarySeriesId||!seriesId||c.primarySeriesId===seriesId);
+// Global anthologies (e.g. a New 52 Omnibus) belong to no series: they are relationships, never a series' own volume.
+const isAnthology=c=>roleOf(c)==="anthology";
+const isOwnMainline=(c,seriesId)=>!isEventRole(c)&&!isAnthology(c)&&(!c.primarySeriesId||!seriesId||c.primarySeriesId===seriesId);
 const eventKey=t=>String(t||"").replace(/\(.*?\)/g,"").trim().replace(/^[^:]*:\s*/,"").replace(/^the\s+/i,"").replace(/\s+(compendium|saga)$/i,"").trim();
 function collectionStart(c){const first=c?.issueCoverage?.[0]?.issueLabel||"";const n=parseFloat(String(first).replace(/[^0-9.]/g,""));return Number.isFinite(n)?n:9999;}
 function collectionVolume(c){const m=String(c?.title||"").match(/\bVol\.\s*(\d+)/i);return m?Number(m[1]):9999;}
@@ -110,7 +112,7 @@ function collectionCard(c,num,seriesId,seriesTitle){
 // crossover / event collections and other series' volumes that merely include its issues live in their own tab.
 function splitEditions(collections,seriesId){
   const list=(collections||[]).filter(Boolean);
-  return {own:list.filter(c=>isOwnMainline(c,seriesId)),events:list.filter(isEventRole),shared:list.filter(c=>!isEventRole(c)&&!isOwnMainline(c,seriesId))};
+  return {own:list.filter(c=>isOwnMainline(c,seriesId)),events:list.filter(isEventRole),anth:list.filter(isAnthology),shared:list.filter(c=>!isEventRole(c)&&!isAnthology(c)&&!isOwnMainline(c,seriesId))};
 }
 function eventGroups(events){
   const m=new Map();
@@ -129,6 +131,7 @@ function eventsHtml(ctx,seriesId,seriesTitle){
     const mine=[...rows.values()];const others=new Set();g.eds.forEach(c=>(c.seriesIds||[]).forEach(id=>{if(id!==seriesId)others.add(id);}));
     const eds=[...g.eds].sort((a,b)=>String(a.publicationDate||"9999").localeCompare(String(b.publicationDate||"9999"))||(FORMAT_ORDER[formatKey(a)]??9)-(FORMAT_ORDER[formatKey(b)]??9));
     return `<div class="cx-evt"><div class="cx-evt-head"><span class="cx-evt-mark">✦</span><div><strong>${esc(g.name)}</strong><small>${esc([mine.length?`${seriesTitle} ${compressLabels(mine)}`:null,others.size?`+ ${others.size} other series`:null].filter(Boolean).join(" · "))}</small></div></div><div class="cx-evt-eds">${eds.map(c=>`<button class="cx-evt-ed" data-coll="${esc(c.id)}"><span>${esc(pillLabel(c))}</span>${c.publicationDate?`<em>${esc(String(c.publicationDate).slice(0,4))}</em>`:""}</button>`).join("")}</div></div>`;}).join("")}</div>`;
+  if(ctx.anth.length)html+=`<div class="cx-collection-group-label">Global anthologies · not series collections</div><div class="cx-collection-grid">${[...ctx.anth].sort((a,b)=>String(a.publicationDate||"9999").localeCompare(String(b.publicationDate||"9999"))||String(a.title||"").localeCompare(String(b.title||""))).map(c=>collectionCard(c,"◈",seriesId,seriesTitle)).join("")}</div>`;
   if(ctx.shared.length)html+=`<div class="cx-collection-group-label">Also collected in other series' volumes</div><div class="cx-collection-grid">${[...ctx.shared].sort((a,b)=>String(a.publicationDate||"9999").localeCompare(String(b.publicationDate||"9999"))||String(a.title||"").localeCompare(String(b.title||""))).map(c=>collectionCard(c,"↔",seriesId,seriesTitle)).join("")}</div>`;
   return html;
 }
@@ -137,7 +140,7 @@ function eventsHtml(ctx,seriesId,seriesTitle){
 function mountEditions(container,collections,issues,s){
   const sp=splitEditions(collections,s.id);const ctx={...sp,groups:eventGroups(sp.events)};
   const fmts=Array.from(new Set(sp.own.map(formatKey))).sort((a,b)=>(FORMAT_ORDER[a]??9)-(FORMAT_ORDER[b]??9)||a.localeCompare(b));
-  const extra=ctx.groups.length+sp.shared.length;
+  const extra=ctx.groups.length+sp.shared.length+sp.anth.length;
   const items=[...fmts.map(f=>[f,formatLabel(f),sp.own.filter(c=>formatKey(c)===f).length]),...(extra?[["__x","Crossovers & shared",extra]]:[])];
   if(!items.length){container.innerHTML=empty("No collected editions are recorded for this series.");return;}
   container.innerHTML=`<div class="cx-subtab-wrap">${tabs(items[0][0],items)}<div class="cx-edition-body"></div></div>`;
@@ -377,7 +380,7 @@ async function collection(p){
   const vs=c.sourceInfo?.verificationStatus;
   const status=c.reviewStatus==="needs_review"?"Needs review":c.dataBasis==="owner_csv"?"Supplied dataset":vs==="verified"?"Verified":vs==="partially_verified"?"Partially verified":"Unverified";
   const fmt=pillLabel(c);
-  let html=`<div class="cx-kicker">${roleOf(c)==="mainline"?"COLLECTED EDITION":roleOf(c)==="crossover"?"CROSSOVER COLLECTION":"EVENT COLLECTION"} · ${esc(fmt.toUpperCase())}</div><h2 class="cx-title">${esc(c.title)}</h2><div class="cx-subtitle">${esc([c.editionInfo?.editionName,sids.length>1?`Collects ${sids.length} series`:titleFor(sids[0])].filter(Boolean).join(" · "))}</div>`;
+  let html=`<div class="cx-kicker">${roleOf(c)==="mainline"?"COLLECTED EDITION":roleOf(c)==="crossover"?"CROSSOVER COLLECTION":roleOf(c)==="anthology"?"GLOBAL ANTHOLOGY":"EVENT COLLECTION"} · ${esc(fmt.toUpperCase())}</div><h2 class="cx-title">${esc(c.title)}</h2><div class="cx-subtitle">${esc([c.editionInfo?.editionName,sids.length>1?`Collects ${sids.length} series`:titleFor(sids[0])].filter(Boolean).join(" · "))}</div>`;
   const facts=[["On sale",c.publicationDate],["Pages",c.pageCount],["US price",c.priceUSD?`$${c.priceUSD}`:null],["ISBN-13",c.isbn],["ISBN-10",c.isbn10],["Status",status]].filter(x=>x[1]!=null&&x[1]!=="");
   html+=`<div class="cx-edition-facts">${facts.map(([k,v])=>`<div${k==="Status"&&status!=="Verified"?' class="is-flag"':""}><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}</div>`;
   html+=`<div class="sheet-section"><div class="sheet-label">COLLECTS</div><div class="cx-edition-cov">${sids.map(id=>{const rows=m.get(id);const full=rows.filter(r=>r.coveragePart!=="partial");const part=rows.filter(r=>r.coveragePart==="partial");return `<button class="cx-edition-cov-row" data-cov-series="${esc(id)}"><strong>${esc(titleFor(id))}</strong><span>${esc([full.length?compressLabels(full):"",part.length?`material from ${compressLabels(part)}`:""].filter(Boolean).join(" · "))}</span></button>`;}).join("")}${c.coverageNote?`<div class="cx-edition-cov-row is-oos"><strong>Note</strong><span>${esc(c.coverageNote)}</span></div>`:""}${c.outOfScopeContents?`<div class="cx-edition-cov-row is-oos"><strong>Also includes</strong><span>${esc(c.outOfScopeContents)}</span></div>`:""}</div></div>`;
