@@ -2,7 +2,7 @@
 // Self-contained UI: no Firestore dependency. Explorer loads only when a navigation action is tapped.
 const openExplorer = async (level, label, params = {}) => {
   try {
-    const mod = await import(`./explorer.js?v=dc8`);
+    const mod = await import(`./explorer.js?v=dc9`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     openAt([{ level, label, params }]);
@@ -12,7 +12,13 @@ const openExplorer = async (level, label, params = {}) => {
 };
 
 function openAtlas(){
-  window.__comicsStoryMap?.open?.("universe");
+  // openMap(type, id, opts) requires an id to resolve the root entity (storymap.js's
+  // resolveRoot() does `COL_BY_TYPE[type]` then looks up that id — an undefined id
+  // means the lookup fails and the map shows "Couldn't load the story map"). The seed
+  // builds the one DC Universe record's id as slug.buildUniverseId("DC Universe"),
+  // which is "dc-universe" — matching explorer.js's own root-level Story Map tile,
+  // which already passes this id correctly (`window.__comicsStoryMap?.open?.("universe", u?.id)`).
+  window.__comicsStoryMap?.open?.("universe", "dc-universe");
 }
 
 function render(container){
