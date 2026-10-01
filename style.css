@@ -2176,3 +2176,148 @@ main.comics-home-main > .grid{
 @media(prefers-reduced-motion:reduce){
   #comicsExplorerContent .cx-root-feature,#comicsExplorerContent .cx-shelf-card{transition:none}
 }
+
+/* =====================================================================================
+   COMICS — continuity atlas (cxa-*), character trees, edition detail  (2026-10 pass)
+   Mobile-first; same tokens as the rest of the explorer (--comics gold, --panel, Anton).
+   ===================================================================================== */
+#comicsExplorerContent .cxa-id{position:relative;margin:6px 0 4px;padding:4px 0 14px}
+#comicsExplorerContent .cxa-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+#comicsExplorerContent .cxa-tags span{font:700 9px var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--comics);padding:4px 8px;border:1px solid color-mix(in srgb,var(--comics) 40%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--comics) 7%,transparent)}
+#comicsExplorerContent .cxa-name{margin:0;font:400 44px/0.95 var(--font-display);letter-spacing:.01em;text-transform:uppercase;color:var(--ink)}
+#comicsExplorerContent .cxa-years{display:flex;align-items:center;gap:10px;margin-top:10px;max-width:340px}
+#comicsExplorerContent .cxa-years b{font:400 18px var(--font-display);color:var(--ink);letter-spacing:.04em}
+#comicsExplorerContent .cxa-years i{flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--comics),color-mix(in srgb,var(--comics) 25%,var(--line)))}
+#comicsExplorerContent .cxa-counts{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:12px;font-size:11.5px;color:var(--ink-dim)}
+#comicsExplorerContent .cxa-counts b{color:var(--ink);font-weight:700}
+
+#comicsExplorerContent .cxa-jump{position:sticky;top:0;z-index:3;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 6px;padding:10px 16px;background:linear-gradient(var(--panel) 78%,color-mix(in srgb,var(--panel) 0%,transparent));}
+#comicsExplorerContent .cxa-jump::-webkit-scrollbar{display:none}
+#comicsExplorerContent .cxa-jump button{flex:0 0 auto;padding:8px 13px;min-height:36px;border:1px solid var(--line);border-radius:999px;background:var(--panel-2);color:var(--ink);font:600 12px var(--font-body);cursor:pointer}
+#comicsExplorerContent .cxa-jump button:active,#comicsExplorerContent .cxa-jump button:hover{border-color:var(--comics);color:var(--comics)}
+
+#comicsExplorerContent .cxa-sec{margin:18px 0 26px;scroll-margin-top:62px}
+#comicsExplorerContent .cxa-sec-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+#comicsExplorerContent .cxa-sec-head span{font:700 10px var(--font-mono);letter-spacing:.14em;color:var(--comics)}
+#comicsExplorerContent .cxa-sec-head h3{margin:0;font:400 22px var(--font-display);letter-spacing:.02em;text-transform:uppercase;color:var(--ink)}
+
+/* characters: a root with its family in orbit */
+#comicsExplorerContent .cxa-constellation{border:1px solid color-mix(in srgb,var(--comics) 28%,var(--line));border-radius:18px;padding:12px;background:radial-gradient(circle at 12% 18%,color-mix(in srgb,var(--comics) 13%,transparent),transparent 55%),linear-gradient(160deg,var(--panel-2),var(--panel))}
+#comicsExplorerContent .cxa-core{display:flex;align-items:center;gap:14px;width:100%;padding:6px 4px 12px;background:none;border:0;color:var(--ink);text-align:left;cursor:pointer}
+#comicsExplorerContent .cxa-core-orb{flex:0 0 64px;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:400 34px var(--font-display);color:var(--comics);border:1px solid color-mix(in srgb,var(--comics) 55%,var(--line));background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--comics) 30%,transparent),transparent 65%),var(--bg-2);box-shadow:0 0 0 6px color-mix(in srgb,var(--comics) 7%,transparent),0 0 34px color-mix(in srgb,var(--comics) 18%,transparent)}
+#comicsExplorerContent .cxa-core-body{flex:1;min-width:0}
+#comicsExplorerContent .cxa-core-body em{display:block;font:700 8.5px var(--font-mono);font-style:normal;letter-spacing:.16em;text-transform:uppercase;color:var(--comics)}
+#comicsExplorerContent .cxa-core-body strong{display:block;font:400 28px/1.05 var(--font-display);text-transform:uppercase}
+#comicsExplorerContent .cxa-core-body small{display:block;margin-top:3px;font-size:11px;color:var(--ink-dim)}
+#comicsExplorerContent .cxa-core>b{flex:0 0 auto;font-size:12px;color:var(--comics);font-weight:700}
+#comicsExplorerContent .cxa-orbit{position:relative;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:12px 2px 2px;border-top:1px dashed color-mix(in srgb,var(--comics) 30%,var(--line));scroll-snap-type:x proximity}
+#comicsExplorerContent .cxa-orbit::-webkit-scrollbar{display:none}
+#comicsExplorerContent .cxa-sat{flex:0 0 auto;display:grid;justify-items:center;gap:5px;width:84px;padding:4px 2px;background:none;border:0;color:var(--ink);cursor:pointer;scroll-snap-align:start}
+#comicsExplorerContent .cxa-sat i{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:400 20px var(--font-display);font-style:normal;color:var(--ink);border:1px solid var(--line);background:var(--bg-2);transition:border-color .15s ease,color .15s ease}
+#comicsExplorerContent .cxa-sat:hover i,#comicsExplorerContent .cxa-sat:active i{border-color:var(--comics);color:var(--comics)}
+#comicsExplorerContent .cxa-sat span{font-size:11px;font-weight:600;line-height:1.2;text-align:center}
+#comicsExplorerContent .cxa-sat small{font-size:9.5px;color:var(--ink-faint);text-align:center}
+
+/* publishing lines: tabs + lifespan bars on a shared era axis */
+#comicsExplorerContent .cxa-line-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
+#comicsExplorerContent .cxa-line-tabs::-webkit-scrollbar{display:none}
+#comicsExplorerContent .cxa-line-tabs button{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);color:var(--ink-dim);font:600 12px var(--font-body);cursor:pointer}
+#comicsExplorerContent .cxa-line-tabs button b{font:700 10px var(--font-mono);color:var(--ink-faint)}
+#comicsExplorerContent .cxa-line-tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--comics);background:color-mix(in srgb,var(--comics) 10%,var(--panel-2))}
+#comicsExplorerContent .cxa-line-tabs button[aria-selected="true"] b{color:var(--comics)}
+#comicsExplorerContent .cxa-axis{position:relative;height:16px;margin:0 12px 2px;border-bottom:1px solid var(--line)}
+#comicsExplorerContent .cxa-axis span{position:absolute;bottom:3px;transform:translateX(-50%);font:700 9px var(--font-mono);color:var(--ink-faint)}
+#comicsExplorerContent .cxa-axis span:before{content:"'"}
+#comicsExplorerContent .cxa-life{display:block;width:100%;padding:10px 12px;border:0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);background:none;color:var(--ink);text-align:left;cursor:pointer}
+#comicsExplorerContent .cxa-life:hover{background:color-mix(in srgb,var(--comics) 5%,transparent)}
+#comicsExplorerContent .cxa-life-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+#comicsExplorerContent .cxa-life-head strong{font-size:14px;font-weight:700}
+#comicsExplorerContent .cxa-life-head em{font-style:normal;font-size:10.5px;color:var(--ink-faint);white-space:nowrap}
+#comicsExplorerContent .cxa-life-track{position:relative;display:block;height:6px;margin:8px 0 5px;border-radius:6px;background:color-mix(in srgb,var(--line) 60%,transparent)}
+#comicsExplorerContent .cxa-life-track i{position:absolute;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--comics),color-mix(in srgb,var(--comics) 60%,#fff 0%));box-shadow:0 0 10px color-mix(in srgb,var(--comics) 35%,transparent)}
+#comicsExplorerContent .cxa-life small{font-size:10px;color:var(--ink-faint)}
+
+/* crossovers */
+#comicsExplorerContent .cxa-events{display:grid;gap:8px}
+#comicsExplorerContent .cxa-event{border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,var(--panel-2),var(--panel));overflow:hidden}
+#comicsExplorerContent .cxa-event-head{display:flex;align-items:center;gap:12px;width:100%;padding:13px;background:none;border:0;color:var(--ink);text-align:left;cursor:pointer}
+#comicsExplorerContent .cxa-event-mark{flex:0 0 34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--comics);border:1px solid color-mix(in srgb,var(--comics) 45%,var(--line));background:color-mix(in srgb,var(--comics) 9%,transparent)}
+#comicsExplorerContent .cxa-event-body{flex:1;min-width:0}
+#comicsExplorerContent .cxa-event-body strong{display:block;font:400 18px/1.1 var(--font-display);text-transform:uppercase}
+#comicsExplorerContent .cxa-event-body small{display:block;margin-top:3px;font-size:10.5px;color:var(--ink-dim)}
+#comicsExplorerContent .cxa-event-dots{display:flex;gap:3px}
+#comicsExplorerContent .cxa-event-dots i{width:5px;height:5px;border-radius:50%;background:var(--comics);opacity:.75}
+#comicsExplorerContent .cxa-event-head[aria-expanded="true"]{border-bottom:1px solid var(--line)}
+#comicsExplorerContent .cxa-event-more{padding:10px 13px 13px}
+#comicsExplorerContent .cxa-chiprow{display:flex;flex-wrap:wrap;gap:6px}
+#comicsExplorerContent .cxa-chip{padding:6px 10px;min-height:32px;border:1px solid var(--line);border-radius:999px;background:var(--bg-2);color:var(--ink);font:600 11px var(--font-body);cursor:pointer}
+#comicsExplorerContent .cxa-chip:hover{border-color:var(--comics);color:var(--comics)}
+#comicsExplorerContent .cxa-edlist{display:grid;gap:6px;margin-top:10px}
+#comicsExplorerContent .cxa-ed{display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--panel);color:var(--ink);text-align:left;cursor:pointer}
+#comicsExplorerContent .cxa-ed span{grid-row:1/span 2;font:700 8px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--comics);border:1px solid color-mix(in srgb,var(--comics) 40%,var(--line));border-radius:999px;padding:4px 7px}
+#comicsExplorerContent .cxa-ed strong{font-size:12.5px}
+#comicsExplorerContent .cxa-ed small{font-size:10px;color:var(--ink-faint)}
+
+/* timeline */
+#comicsExplorerContent .cxa-years-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(52px,1fr);gap:6px;overflow-x:auto;scrollbar-width:none}
+#comicsExplorerContent .cxa-years-rail::-webkit-scrollbar{display:none}
+#comicsExplorerContent .cxa-years-rail button{display:grid;justify-items:center;gap:4px;padding:8px 4px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2);color:var(--ink-dim);cursor:pointer}
+#comicsExplorerContent .cxa-bar{position:relative;display:block;width:10px;height:46px;border-radius:5px;background:color-mix(in srgb,var(--line) 70%,transparent);overflow:hidden}
+#comicsExplorerContent .cxa-bar i{position:absolute;left:0;right:0;bottom:0;border-radius:5px;background:color-mix(in srgb,var(--comics) 55%,var(--line))}
+#comicsExplorerContent .cxa-years-rail b{font:400 15px var(--font-display);color:var(--ink)}
+#comicsExplorerContent .cxa-years-rail small{font-size:9px;color:var(--ink-faint)}
+#comicsExplorerContent .cxa-years-rail button[aria-selected="true"]{border-color:var(--comics);background:color-mix(in srgb,var(--comics) 9%,var(--panel-2))}
+#comicsExplorerContent .cxa-years-rail button[aria-selected="true"] .cxa-bar i{background:var(--comics)}
+#comicsExplorerContent .cxa-year-panel{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2)}
+#comicsExplorerContent .cxa-year-title{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+#comicsExplorerContent .cxa-year-title strong{font:400 24px var(--font-display);color:var(--comics)}
+#comicsExplorerContent .cxa-year-title span{font-size:11px;color:var(--ink-dim)}
+#comicsExplorerContent .cxa-year-row{margin-top:8px}
+#comicsExplorerContent .cxa-year-row em{display:block;margin-bottom:6px;font:700 9px var(--font-mono);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
+#comicsExplorerContent .cxa-about{margin:6px 0 18px;border-top:1px solid var(--line);padding-top:10px}
+#comicsExplorerContent .cxa-about summary{cursor:pointer;font:700 10px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
+#comicsExplorerContent .cxa-about p{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:var(--ink-dim)}
+
+/* character trees (Characters screen + character territory) */
+#comicsExplorerContent .cx-char-trees{display:grid;gap:12px;margin-top:12px}
+#comicsExplorerContent .cx-char-tree{border:1px solid color-mix(in srgb,var(--comics) 26%,var(--line));border-radius:18px;padding:10px;background:linear-gradient(160deg,var(--panel-2),var(--panel))}
+#comicsExplorerContent .cx-char-tree .cx-character-card{border:0;background:none;box-shadow:none}
+#comicsExplorerContent .cx-char-branches{display:flex;flex-wrap:wrap;gap:6px;padding:8px 6px 4px}
+#comicsExplorerContent .cx-char-branch{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:7px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg-2);color:var(--ink);font:600 11.5px var(--font-body);cursor:pointer}
+#comicsExplorerContent .cx-char-branch b{font:700 10px var(--font-mono);color:var(--comics)}
+#comicsExplorerContent .cx-char-branch:hover{border-color:var(--comics)}
+#comicsExplorerContent .cx-char-family{padding:10px 6px 4px}
+#comicsExplorerContent .cx-char-family.is-inline{padding:4px 0 6px}
+#comicsExplorerContent .cx-char-family-label{margin-bottom:7px;font:700 9px var(--font-mono);letter-spacing:.14em;color:var(--ink-faint)}
+#comicsExplorerContent .cx-char-family-track{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+#comicsExplorerContent .cx-char-family-track::-webkit-scrollbar{display:none}
+#comicsExplorerContent .cx-char-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:5px 11px 5px 5px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink);font:600 11.5px var(--font-body);cursor:pointer}
+#comicsExplorerContent .cx-char-chip i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:400 12px var(--font-display);font-style:normal;color:var(--comics);background:var(--bg-2);border:1px solid color-mix(in srgb,var(--comics) 35%,var(--line))}
+#comicsExplorerContent .cx-char-chip:hover{border-color:var(--comics)}
+
+/* collected editions: meta line, shared-editions group, edition detail */
+#comicsExplorerContent .cx-collection-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:7px;font-style:normal;font-size:9.5px;color:var(--ink-dim)}
+#comicsExplorerContent .cx-review-flag{padding:2px 6px;border-radius:999px;border:1px solid color-mix(in srgb,#e0702b 55%,var(--line));color:#e9925a;font:700 8px var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+#comicsExplorerContent .cx-collection-group-label{margin:16px 0 8px;font:700 9.5px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+#comicsExplorerContent .cx-edition-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:14px 0 4px}
+#comicsExplorerContent .cx-edition-facts div{padding:9px 10px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2);min-width:0}
+#comicsExplorerContent .cx-edition-facts span{display:block;font:700 8.5px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+#comicsExplorerContent .cx-edition-facts b{display:block;margin-top:3px;font-size:12.5px;color:var(--ink);overflow-wrap:anywhere}
+#comicsExplorerContent .cx-edition-facts .is-flag b{color:#e9925a}
+#comicsExplorerContent .cx-edition-cov{display:grid;gap:6px}
+#comicsExplorerContent .cx-edition-cov-row{display:block;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2);color:var(--ink);text-align:left;cursor:pointer}
+#comicsExplorerContent .cx-edition-cov-row strong{display:block;font-size:12.5px}
+#comicsExplorerContent .cx-edition-cov-row span{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-dim);line-height:1.45}
+#comicsExplorerContent .cx-edition-cov-row.is-oos{cursor:default;border-style:dashed}
+#comicsExplorerContent .cx-source-links{display:flex;flex-wrap:wrap;gap:6px}
+#comicsExplorerContent .cx-source-links a{padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:11px;color:var(--comics);text-decoration:none}
+
+@media (min-width:760px){
+  #comicsExplorerContent .cxa-name{font-size:64px}
+  #comicsExplorerContent .cxa-jump{margin:0 0 6px;padding:10px 0}
+  #comicsExplorerContent .cxa-constellation{display:grid;grid-template-columns:minmax(260px,320px) 1fr;align-items:center;gap:8px;padding:16px}
+  #comicsExplorerContent .cxa-orbit{border-top:0;border-left:1px dashed color-mix(in srgb,var(--comics) 30%,var(--line));padding:4px 0 4px 14px;flex-wrap:wrap;overflow:visible}
+  #comicsExplorerContent .cxa-events{grid-template-columns:1fr 1fr;align-items:start}
+  #comicsExplorerContent .cx-edition-facts{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){#comicsExplorerContent .cxa-sat i{transition:none}}
