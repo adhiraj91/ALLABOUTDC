@@ -25,6 +25,10 @@ function issueBuckets(issues){
 function tabs(active,items){return `<div class="cx-tabs" role="tablist">${items.map(x=>`<button class="cx-tab ${x[0]===active?"is-active":""}" data-tab="${esc(x[0])}" role="tab">${esc(x[1])}${x[2]!=null?` <span>${x[2]}</span>`:""}</button>`).join("")}</div>`;}
 function row(title,sub,attrs=""){return `<div class="cx-row" ${attrs}><div class="cx-row-body"><div class="cx-row-title">${esc(title)}</div>${sub?`<div class="cx-row-sub">${esc(sub)}</div>`:""}</div><div class="cx-row-chevron">›</div></div>`;}
 function empty(msg){return `<div class="cx-empty">${esc(msg)}</div>`;}
+// Run coverage line, e.g. "Issues #1–#52 · 2011-09–2016-05" — built only from the run record's own fields.
+function coverage(r){const a=r?.startIssue,b=r?.endIssue;const has=v=>v!=null&&String(v)!=="";const iss=has(a)&&has(b)?(String(a)===String(b)?`Issue #${a}`:`Issues #${a}–#${b}`):"Issue range not recorded";const yrs=range(r);return yrs?`${iss} · ${yrs}`:iss;}
+// Annual / special rows; data-pub is what wirePublications() listens for to open the issue screen.
+function publicationRows(list){if(!list||!list.length)return empty("None recorded.");return `<div class="cx-list">${list.map(i=>row(i.issueLabel||(i.issueNumber!=null?`#${i.issueNumber}`:"Issue"),[i.title,i.publicationDate].filter(Boolean).join(" · "),`data-pub="${esc(i.id)}"`)).join("")}</div>`;}
 function stat(label,value){return `<div class="cx-stat"><strong>${esc(value)}</strong><span>${esc(label)}</span></div>`;}
 function formatKey(c){
   const title=String(c?.title||"").toLowerCase();
@@ -122,10 +126,25 @@ async function continuityList(){
 }
 
 async function continuity(p){const ct=p.continuity;const [series,chars]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllCharacters(200)]);const roots=chars.filter(c=>c?.browseRoot===true&&c.continuityIds?.includes(ct.id));
- let html=`<div class="cx-kicker">CONTINUITY / ERA</div><h2 class="cx-title">${esc(ct.name)}</h2><div class="cx-subtitle">${esc(ct.startDate||"")}${ct.endDate?`–${esc(ct.endDate)}`:""} · ${series.length} mapped series</div>`;
- if(ct.description)html+=`<div class="sheet-section"><div class="sheet-label">ABOUT THIS TERRITORY</div><div class="cx-info-card">${esc(ct.description)}</div></div>`;
- if(roots.length)html+=`<div class="sheet-section"><div class="sheet-label">ENTRY POINTS</div><div class="cx-character-grid">${roots.map(c=>`<button class="cx-character-card" data-root-char="${esc(c.id)}"><div class="cx-character-orb">${esc(titleOf(c).slice(0,1))}</div><div><span>CHARACTER</span><strong>${esc(titleOf(c))}</strong><small>Open character territory</small></div><b>→</b></button>`).join("")}</div></div>`;
- html+=`<div class="sheet-section"><div class="sheet-label">SERIES IN THIS TERRITORY</div><div class="cx-series-grid">${series.sort((a,b)=>groupRank(a.lineCategory)-groupRank(b.lineCategory)||year(a).localeCompare(year(b))||a.title.localeCompare(b.title)).map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(s.lineCategory||"SERIES")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`;
+ // Group the continuity's series by their real lineCategory into distinct "shelves" rather than one flat list.
+ const bySection=new Map();
+ series.forEach(s=>{const k=s.lineCategory||"Other";if(!bySection.has(k))bySection.set(k,[]);bySection.get(k).push(s);});
+ const sections=[...bySection.keys()].sort((a,b)=>groupRank(a)-groupRank(b));
+ let html=`<div class="cx-world-hero"><div class="cx-world-hero-art" aria-hidden="true"></div><div class="cx-kicker">CONTINUITY / ERA</div><h2 class="cx-world-title">${esc(ct.name)}</h2><div class="cx-world-meta">${esc(ct.startDate||"")}${ct.endDate?`–${esc(ct.endDate)}`:""} · ${series.length} mapped series${roots.length?` · ${roots.length} entry point${roots.length===1?"":"s"}`:""}</div>${ct.description?`<p class="cx-world-desc">${esc(ct.description)}</p>`:""}</div>`;
+ if(roots.length){
+   html+=`<div class="sheet-section"><div class="sheet-label">ENTRY POINTS</div><div class="cx-root-stack">${roots.map((c,i)=>{
+     const n=series.filter(s=>s.characterIds?.includes(c.id)).length;
+     return `<button class="cx-root-feature ${i===0?"is-primary":""}" data-root-char="${esc(c.id)}"><div class="cx-root-orb">${esc(titleOf(c).slice(0,1))}</div><div class="cx-root-body"><span>CHARACTER TERRITORY</span><strong>${esc(titleOf(c))}</strong><small>${n} mapped series in this continuity</small></div><b>Enter →</b></button>`;
+   }).join("")}</div></div>`;
+ }
+ if(sections.length){
+   html+=`<div class="sheet-section"><div class="sheet-label">SERIES BY LINE</div><div class="cx-shelf-stack">${sections.map((cat,idx)=>{
+     const list=bySection.get(cat).sort((a,b)=>year(a).localeCompare(year(b))||a.title.localeCompare(b.title));
+     return `<div class="cx-shelf" data-size="${idx===0?"lg":"md"}"><div class="cx-shelf-head"><h3>${esc(cat)}</h3><em>${list.length} series</em></div><div class="cx-shelf-track">${list.map(s=>`<button class="cx-shelf-card" data-series="${esc(s.id)}"><div class="cx-shelf-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`;
+   }).join("")}</div></div>`;
+ } else {
+   html+=`<div class="sheet-section">${empty("No series are mapped in this continuity yet.")}</div>`;
+ }
  return{html,wire(c){c.querySelectorAll("[data-root-char]").forEach(r=>r.addEventListener("click",()=>{const x=roots.find(v=>v.id===r.dataset.rootChar);push("character",titleOf(x),{character:x});}));c.querySelectorAll("[data-series]").forEach(r=>r.addEventListener("click",()=>{const x=series.find(v=>v.id===r.dataset.series);push("series",x.title,{series:x});}));}};
 }
 
