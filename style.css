@@ -2385,3 +2385,15 @@ main.comics-home-main > .grid{
 #comicsExplorerContent .cx-bp-fmt{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--gold,#d4af37);margin-right:6px;vertical-align:1px}
 #comicsExplorerContent .cx-bp-return{display:block;margin-top:8px;font-size:12px;color:var(--muted)}
 #comicsExplorerContent .cx-bp-return .cx-bp-vol{margin-left:4px}
+/* compact crossover list: collapsed rows, expand on demand */
+#comicsExplorerContent .cx-bp{padding:0;overflow:hidden}
+#comicsExplorerContent .cx-bp-row{display:flex;align-items:center;justify-content:space-between;width:100%;font:inherit;font-size:15px;font-weight:700;color:inherit;background:transparent;border:0;padding:12px 14px;cursor:pointer;text-align:left}
+#comicsExplorerContent .cx-bp-row i{font-style:normal;font-size:20px;color:var(--muted);transition:transform .15s}
+#comicsExplorerContent .cx-bp[data-open="true"] .cx-bp-row i{transform:rotate(90deg)}
+#comicsExplorerContent .cx-bp-panel{padding:0 12px 12px}
+#comicsExplorerContent .cx-bp-panel[hidden]{display:none}
+#comicsExplorerContent .cx-bp-compact{border:1px solid var(--line);border-left:3px solid var(--gold,#d4af37);border-radius:12px;padding:10px 12px}
+#comicsExplorerContent .cx-bp-compact strong{display:block;font-size:15px}
+#comicsExplorerContent .cx-bp-compact small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+#comicsExplorerContent .cx-bp-sel{display:block;font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--gold,#d4af37);text-transform:uppercase;margin-bottom:3px}
+#comicsExplorerContent .cx-bp-more{font:inherit;font-size:12px;font-weight:700;color:var(--gold,#d4af37);background:transparent;border:0;padding:8px 0 0;cursor:pointer;display:block}

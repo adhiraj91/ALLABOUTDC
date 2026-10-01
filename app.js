@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc16");
+      const mod = await import("./comics-v2/landing.js?v=dc17");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -3221,6 +3221,23 @@ $("#importNew52FlashGlBtn")?.addEventListener("click", async ()=>{
     if(errors.length){ msg.textContent=`Wrote ${total} records, but ${errors.length} problem(s): ${errors.slice(0,3).join(" | ")}`; msg.className="form-msg err"; }
     else{ msg.textContent=`Done — ${w.comicSeries||0} series, ${w.comicIssues||0} issues, ${w.comicCollections||0} editions added/updated (${total} records). Existing Batman / Superman data untouched.`; msg.className="form-msg ok"; refreshComicsCount(); }
   }catch(err){ console.error("[Comics v2] Flash + Green Lantern import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
+  finally{ btn.disabled=false; }
+});
+
+/* Additive import — New 52 Batch 1. Never clears or resets; deterministic upserts; ids of other datasets are reserved. */
+$("#importNew52Batch1Btn")?.addEventListener("click", async ()=>{
+  const btn=$("#importNew52Batch1Btn"), msg=$("#importNew52Batch1Msg");
+  const mod=window.__comicsV2?.new52Batch1;
+  if(!mod?.import){ msg.textContent="Comics v2 module is not loaded."; msg.className="form-msg err"; return; }
+  if(!confirm("Add New 52 Batch 1 (Justice League, Wonder Woman, Aquaman, Aquaman and The Others, Green Arrow)? Nothing is deleted and existing comics are not touched. Safe to run again.")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating Batch 1 data…";
+  try{
+    const r=await mod.import(m=>{ msg.textContent=m; });
+    if(!r?.validation?.valid){ msg.textContent="Validation failed — nothing was imported: "+(r?.validation?.errors||[]).slice(0,4).join(" | "); msg.className="form-msg err"; return; }
+    const errs=[...(r.errors||[]),...(r.paths?.errors||[])]; const w=r.written||{}; const total=Object.values(w).reduce((a,b)=>a+(Number(b)||0),0);
+    if(errs.length){ msg.textContent=`Wrote ${total} records, but ${errs.length} problem(s): ${errs.slice(0,3).join(" | ")}`; msg.className="form-msg err"; }
+    else{ msg.textContent=`Done — ${w.comicSeries||0} series, ${w.comicIssues||0} issues, ${w.comicCollections||0} editions, ${r.paths?.written||0} crossover paths added/updated. Existing comics untouched.`; msg.className="form-msg ok"; refreshComicsCount(); }
+  }catch(err){ console.error("[Comics v2] Batch 1 import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
   finally{ btn.disabled=false; }
 });
 
