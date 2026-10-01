@@ -2,7 +2,7 @@
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
 import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
-import * as bp from "./branch-paths.js?v=bp1";
+import * as bp from "./branch-paths.js?v=bp2";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -360,33 +360,35 @@ async function bpLoad(path,sid){
 function bpVolBtn(c){return `<button class="cx-bp-vol" data-bp-coll="${esc(c.id)}">${esc(displayCollectionTitle(c))}</button>`;}
 function bpNode(kind,label,body){return `<div class="cx-bp-node is-${kind}"><span class="cx-bp-tag">${esc(label)}</span>${body}</div>`;}
 const bpArrow=`<div class="cx-bp-arrow" aria-hidden="true">↓</div>`;
-async function bpPathHtml(path,s,mode,pick,paths){
-  const L=await bpLoad(path,s.id);const here=(path.branches||[]).some(b=>b.seriesId===s.id);
-  const sInfo=await L.bySeries(s.id);const names=new Map();
-  for(const b of path.branches||[])if(b.seriesId)names.set(b.seriesId,b.label);names.set(s.id,names.get(s.id)||s.title);
+const bpJoin=a=>a.length<2?a.join(""):a.length===2?a.join(" and "):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+async function bpPathHtml(path,s,mode,paths){
+  const L=await bpLoad(path,s.id);
+  const mine=(path.branches||[]).find(b=>b.seriesId===s.id);
+  const sInfo=await L.bySeries(s.id);
   const evBtns=L.ev.length?`<div class="cx-evt-eds">${L.ev.map(c=>`<button class="cx-evt-ed" data-bp-coll="${esc(c.id)}"><span>${esc(pillLabel(c))}</span>${c.publicationDate?`<em>${esc(String(c.publicationDate).slice(0,4))}</em>`:""}</button>`).join("")}</div>`:"";
-  const merge=path.branchType==="multi_series_merge";
-  const mainBody=`<strong>${esc(s.title)}</strong><small>${sInfo.tie.length?"Read this volume to reach the event":esc(path.branchFrom||"")}</small>${sInfo.tie.length?`<div class="cx-bp-vols">${sInfo.tie.map(bpVolBtn).join("")}</div>`:`<small>${esc(path.branchFrom||"")}</small>`}`;
-  const crossBody=`<strong>${esc(path.title)}</strong><small>${esc(path.readingInstruction||"")}</small>${evBtns}`;
-  const retRow=async(sid,label)=>{const i=await L.bySeries(sid);return `<div class="cx-bp-ret"><b>${esc(label)}</b>${i.ret?`<span>then ${bpVolBtn(i.ret)}</span>`:`<span class="cx-bp-note">continues with the series' next issues</span>`}</div>`;};
+  const linked=async(id)=>id?(paths||[]).find(x=>x.id===id)||null:null;
+  const next=await linked(path.nextPathId),prev=await linked(path.followsPathId);
+  const retRow=async(sid,label)=>{const i=await L.bySeries(sid);return `<div class="cx-bp-ret"><b>${esc(label)}</b>${i.ret?`<span>then ${bpVolBtn(i.ret)}</span>`:`<span class="cx-bp-note">carries on with the series' next issues</span>`}</div>`;};
+  const nextNote=next?`<small class="cx-bp-note">Then continue into ${esc(next.title)}.</small>`:"";
+  const prevNote=prev?`<small class="cx-bp-note">Follows ${esc(prev.title)}.</small>`:"";
   let html="";
   if(mode==="main"){
-    html=bpNode("main","MAIN PATH",mainBody)+bpArrow+bpNode("cross",merge?"MERGE POINT":"CROSSOVER",crossBody+(path.branches.filter(b=>b.seriesId!==s.id).length?`<small class="cx-bp-note">${path.branches.length-(here?1:0)} more ${path.branches.length-(here?1:0)===1?"branch":"branches"} in this event — switch to “Complete event”.</small>`:""))+bpArrow+bpNode("ret","RETURN TO MAIN STORY",await retRow(s.id,s.title));
-  }else if(mode==="complete"){
-    const cards=await Promise.all((path.branches||[]).map(async b=>{
-      if(!b.seriesId)return `<div class="cx-bp-branch is-connection"><b>${esc(b.label)}</b><small>${esc(b.note||"Event connection")}</small></div>`;
-      const i=await L.bySeries(b.seriesId);
-      return (`<div class="cx-bp-branch ${b.seriesId===s.id?"is-here":""}"><b>${esc(b.label)}${b.related?` <em>related</em>`:""}</b><small>${esc(compressLabels(i.rows)||"Event material")}</small>${i.tie.length?`<div class="cx-bp-vols">${i.tie.map(bpVolBtn).join("")}</div>`:""}${b.seriesId===s.id?`<span class="cx-bp-here">You are here</span>`:`<button class="cx-bp-open" data-bp-series="${esc(b.seriesId)}">Open series →</button>`}</div>`);}));
-    const rets=(await Promise.all((path.branches||[]).filter(b=>b.seriesId).map(b=>retRow(b.seriesId,b.label)))).join("");
-    const src=merge&&path.mergeFromPathId?paths.find(p=>p.id===path.mergeFromPathId):null;
-    const branchNode=bpNode("branch",merge?"BRANCHES CONVERGE":"BRANCHES",`${merge&&src?`<small class="cx-bp-note">Converging from ${esc(src.title)}</small>`:""}<div class="cx-bp-branches">${cards.join("")}</div>`);
-    html=merge?branchNode+bpArrow+bpNode("cross","MERGE POINT",crossBody)+bpArrow+bpNode("ret","RETURN TO MAIN STORY",rets):bpNode("main","MAIN PATH",mainBody)+bpArrow+bpNode("cross","CROSSOVER",crossBody)+bpArrow+branchNode+bpArrow+bpNode("ret","RETURN TO MAIN STORY",rets);
+    const titles=sInfo.tie.map(displayCollectionTitle);
+    const intro=titles.length?`Read through ${bpJoin(titles)}, then explore the crossover branches. Return to the main story afterward.`:(path.readingInstruction||"");
+    const names=(path.branches||[]).map(b=>b.label);
+    html=bpNode("main","MAIN PATH",`<strong>${esc(s.title)}</strong><small class="cx-bp-here-line">You are here</small><small>${esc(intro)}</small>${sInfo.tie.length?`<div class="cx-bp-vols">${sInfo.tie.map(bpVolBtn).join("")}</div>`:""}`)+bpArrow
+      +bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>Optional, parallel reading. Participating series: ${esc(bpJoin(names))}.</small>${evBtns}${prevNote}`)+bpArrow
+      +bpNode("ret","RETURN TO MAIN STORY",await retRow(s.id,s.title)+nextNote);
   }else{
-    const cands=(path.branches||[]).filter(b=>b.seriesId);const sel=cands.find(b=>b.seriesId===pick)||cands.find(b=>b.seriesId!==s.id)||cands[0];
-    const chips=(path.branches||[]).map(b=>b.seriesId?`<button class="cx-bp-chip ${sel&&b.seriesId===sel.seriesId?"is-active":""}" data-bp-pick="${esc(b.seriesId)}">${esc(b.label)}</button>`:`<span class="cx-bp-chip is-static" title="${esc(b.note||"")}">${esc(b.label)} · connection</span>`).join("");
-    let body="";if(sel){const i=await L.bySeries(sel.seriesId);
-      body=bpNode("branch","BRANCH",`<strong>${esc(sel.label)}</strong><small>${esc(compressLabels(i.rows)||"Event material")}</small>${i.tie.length?`<div class="cx-bp-vols">${i.tie.map(bpVolBtn).join("")}</div>`:""}${sel.seriesId!==s.id?`<button class="cx-bp-open" data-bp-series="${esc(sel.seriesId)}">Open series →</button>`:""}`)+bpArrow+bpNode("ret","RETURN TO MAIN STORY",await retRow(sel.seriesId,sel.label));}
-    html=`<div class="cx-bp-chips">${chips}</div>`+body;
+    const cards=await Promise.all((path.branches||[]).map(async b=>{
+      if(!b.seriesId){const cs=(await Promise.all((b.collectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const one=cs.filter(c=>formatKey(c)==="TPB").concat(cs).slice(0,1);
+        return `<div class="cx-bp-branch is-text"><b>${esc(b.label)}</b><small>${esc(b.note||"")}</small>${one.length?`<div class="cx-bp-vols">${one.map(bpVolBtn).join("")}</div>`:""}<span class="cx-bp-opt">Optional branch</span></div>`;}
+      const i=await L.bySeries(b.seriesId);const here=b.seriesId===s.id;
+      return `<div class="cx-bp-branch ${here?"is-here":""}"><b>${esc(b.label)}${b.related?` <em>related title</em>`:""}</b><small>${esc(compressLabels(i.rows)||"")}</small>${i.tie.length?`<div class="cx-bp-vols">${i.tie.map(bpVolBtn).join("")}</div>`:""}${here?`<span class="cx-bp-here">You are here</span>`:`<button class="cx-bp-open" data-bp-series="${esc(b.seriesId)}">Open series →</button><span class="cx-bp-opt">Optional branch</span>`}</div>`;}));
+    const rets=(await Promise.all((path.branches||[]).filter(b=>b.seriesId).map(b=>retRow(b.seriesId,b.label)))).join("");
+    html=bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>${esc(path.readingInstruction||"")}</small>${evBtns}${prevNote}`)+bpArrow
+      +bpNode("branch","PARTICIPATING SERIES",`<div class="cx-bp-branches">${cards.join("")}</div>`)+bpArrow
+      +bpNode("ret","RETURN TO MAIN STORY",rets+nextNote);
   }
   return html;
 }
@@ -395,11 +397,10 @@ async function mountReadingPaths(host,s,range){
   if(!paths.length)return;
   if(range){const keep=[];for(const p of paths){const ev=(await Promise.all((p.eventCollectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const ex=(p.branches||[]).find(b=>b.seriesId===s.id)?.collectionIds||[];const cs=[...ev,...(await Promise.all(ex.map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean)];const ns=cs.flatMap(c=>(c.issueCoverage||[]).filter(r=>r.seriesId===s.id).map(r=>bpNum(r.issueLabel))).filter(n=>n!=null);if(!ns.length||ns.some(n=>n>=range[0]&&n<=range[1]))keep.push(p);}paths=keep;if(!paths.length)return;}
   paths.sort((a,b)=>String(a.pathCode).localeCompare(String(b.pathCode)));
-  const state=new Map(paths.map(p=>[p.id,{mode:"main",pick:null}]));
-  host.innerHTML=`<div class="cx-series-section cx-bp-wrap"><div class="cx-section-head"><div><span>READING PATH</span><h3>Events &amp; branches</h3></div><em>${paths.length} ${paths.length===1?"event":"events"}</em></div><div class="cx-bp-list">${paths.map(p=>`<div class="cx-bp" data-bp="${esc(p.id)}"><div class="cx-bp-head"><div><small>${esc(String(p.family||"").toUpperCase())} · EVENT</small><strong>${esc(p.title)}</strong></div></div><div class="cx-bp-modes"><button class="cx-bp-mode is-active" data-mode="main">Main path</button><button class="cx-bp-mode" data-mode="complete">Complete event</button><button class="cx-bp-mode" data-mode="explore">Explore branch</button></div><div class="cx-bp-body"><div class="cx-loading">Loading…</div></div></div>`).join("")}</div></div>`;
-  const draw=async(box,p)=>{const st=state.get(p.id);const body=box.querySelector(".cx-bp-body");try{body.innerHTML=await bpPathHtml(p,s,st.mode,st.pick,paths);}catch(e){console.warn(e);body.innerHTML=empty("This path couldn't be loaded right now.");}
+  const state=new Map(paths.map(p=>[p.id,{mode:"main"}]));
+  host.innerHTML=`<div class="cx-series-section cx-bp-wrap"><div class="cx-section-head"><div><span>READING PATH</span><h3>Crossovers</h3></div><em>${paths.length} ${paths.length===1?"crossover":"crossovers"}</em></div><div class="cx-bp-list">${paths.map(p=>`<div class="cx-bp" data-bp="${esc(p.id)}"><div class="cx-bp-head"><div><small>${esc(String(p.family||"").toUpperCase())} · CROSSOVER</small><strong>${esc(p.title)}</strong></div></div><div class="cx-bp-modes"><button class="cx-bp-mode is-active" data-mode="main">Main Path</button><button class="cx-bp-mode" data-mode="cross">Crossover</button></div><div class="cx-bp-body"><div class="cx-loading">Loading…</div></div></div>`).join("")}</div></div>`;
+  const draw=async(box,p)=>{const st=state.get(p.id);const body=box.querySelector(".cx-bp-body");try{body.innerHTML=await bpPathHtml(p,s,st.mode,paths);}catch(e){console.warn(e);body.innerHTML=empty("This path couldn't be loaded right now.");}
     box.querySelectorAll(".cx-bp-mode").forEach(b=>b.classList.toggle("is-active",b.dataset.mode===st.mode));
-    body.querySelectorAll("[data-bp-pick]").forEach(b=>b.addEventListener("click",()=>{st.pick=b.dataset.bpPick;draw(box,p);}));
     body.querySelectorAll("[data-bp-coll]").forEach(b=>b.addEventListener("click",async()=>{const c=await get(COLLECTIONS.COLLECTIONS,b.dataset.bpColl);if(c)push("collection",c.title,{collectionEntity:c});}));
     body.querySelectorAll("[data-bp-series]").forEach(b=>b.addEventListener("click",async()=>{const x=await get(COLLECTIONS.SERIES,b.dataset.bpSeries);if(x)push("series",x.title,{series:x});}));};
   host.querySelectorAll(".cx-bp").forEach(box=>{const p=paths.find(x=>x.id===box.dataset.bp);box.querySelectorAll(".cx-bp-mode").forEach(b=>b.addEventListener("click",()=>{state.get(p.id).mode=b.dataset.mode;draw(box,p);}));draw(box,p);});

@@ -8,7 +8,7 @@ import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
-import * as branchPaths from "./branch-paths.js?v=bp1";
+import * as branchPaths from "./branch-paths.js?v=bp2";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
