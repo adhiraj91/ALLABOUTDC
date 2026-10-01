@@ -357,40 +357,36 @@ async function bpLoad(path,sid){
     return {rows:[...new Map(exRows.map(r=>[r.issueId,r])).values()],...v};};
   return {ev,bySeries};
 }
-function bpVolBtn(c){return `<button class="cx-bp-vol" data-bp-coll="${esc(c.id)}">${esc(displayCollectionTitle(c))}</button>`;}
+function bpVolBtn(c){return `<button class="cx-bp-vol" data-bp-coll="${esc(c.id)}"><span class="cx-bp-fmt">${esc(pillLabel(c))}</span>${esc(displayCollectionTitle(c))}</button>`;}
 function bpNode(kind,label,body){return `<div class="cx-bp-node is-${kind}"><span class="cx-bp-tag">${esc(label)}</span>${body}</div>`;}
 const bpArrow=`<div class="cx-bp-arrow" aria-hidden="true">↓</div>`;
 const bpJoin=a=>a.length<2?a.join(""):a.length===2?a.join(" and "):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
 async function bpPathHtml(path,s,mode,paths){
   const L=await bpLoad(path,s.id);
-  const mine=(path.branches||[]).find(b=>b.seriesId===s.id);
   const sInfo=await L.bySeries(s.id);
   const evBtns=L.ev.length?`<div class="cx-evt-eds">${L.ev.map(c=>`<button class="cx-evt-ed" data-bp-coll="${esc(c.id)}"><span>${esc(pillLabel(c))}</span>${c.publicationDate?`<em>${esc(String(c.publicationDate).slice(0,4))}</em>`:""}</button>`).join("")}</div>`:"";
-  const linked=async(id)=>id?(paths||[]).find(x=>x.id===id)||null:null;
-  const next=await linked(path.nextPathId),prev=await linked(path.followsPathId);
-  const retRow=async(sid,label)=>{const i=await L.bySeries(sid);return `<div class="cx-bp-ret"><b>${esc(label)}</b>${i.ret?`<span>then ${bpVolBtn(i.ret)}</span>`:`<span class="cx-bp-note">carries on with the series' next issues</span>`}</div>`;};
+  const linked=id=>id?(paths||[]).find(x=>x.id===id)||null:null;
+  const next=linked(path.nextPathId),prev=linked(path.followsPathId);
+  const retLine=i=>i.ret?`<span class="cx-bp-return">Return to main story: then ${bpVolBtn(i.ret)}</span>`:`<span class="cx-bp-return">Return to main story: carries on with the series' next issues.</span>`;
   const nextNote=next?`<small class="cx-bp-note">Then continue into ${esc(next.title)}.</small>`:"";
   const prevNote=prev?`<small class="cx-bp-note">Follows ${esc(prev.title)}.</small>`:"";
-  let html="";
+  // ONE renderer for every event: each participating series resolves to its existing collection(s) + issue range (event-scoped
+  // by this path's own event collections), or to the collection's own wording where the series has no record of its own.
+  const cards=(await Promise.all((path.branches||[]).map(async b=>{
+    if(!b.seriesId){const cs=(await Promise.all((b.collectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const one=cs.filter(c=>formatKey(c)==="TPB").concat(cs).slice(0,1);
+      return `<div class="cx-bp-branch is-text"><b>${esc(b.label)}</b><small>${esc(b.note||"")}</small>${one.length?`<div class="cx-bp-vols">${one.map(bpVolBtn).join("")}</div>`:""}<span class="cx-bp-opt">Optional branch</span></div>`;}
+    const i=await L.bySeries(b.seriesId);const here=b.seriesId===s.id;
+    const evOnly=!i.tie.length&&L.ev.length?`<small>Collected in ${esc(L.ev.map(c=>displayCollectionTitle(c)).filter((t,k,a)=>a.indexOf(t)===k).join(" / "))}</small>`:"";
+    return `<div class="cx-bp-branch ${here?"is-here":""}"><b>${esc(b.label)}${b.related?` <em>related title</em>`:""}</b><small>${esc(compressLabels(i.rows)||"")}</small>${i.tie.length?`<div class="cx-bp-vols">${i.tie.map(bpVolBtn).join("")}</div>`:evOnly}${retLine(i)}${here?`<span class="cx-bp-here">You are here</span>`:`<button class="cx-bp-open" data-bp-series="${esc(b.seriesId)}">Open series →</button><span class="cx-bp-opt">Optional branch</span>`}</div>`;}))).join("");
+  const participants=bpNode("branch","PARTICIPATING SERIES",`<div class="cx-bp-branches">${cards}</div>`);
+  const ret=bpNode("ret","RETURN TO MAIN STORY",`<div class="cx-bp-ret"><b>${esc(s.title)}</b>${sInfo.ret?`<span>then ${bpVolBtn(sInfo.ret)}</span>`:`<span class="cx-bp-note">carries on with the series' next issues</span>`}</div>${nextNote}`);
   if(mode==="main"){
     const titles=sInfo.tie.map(displayCollectionTitle);
     const intro=titles.length?`Read through ${bpJoin(titles)}, then explore the crossover branches. Return to the main story afterward.`:(path.readingInstruction||"");
-    const names=(path.branches||[]).map(b=>b.label);
-    html=bpNode("main","MAIN PATH",`<strong>${esc(s.title)}</strong><small class="cx-bp-here-line">You are here</small><small>${esc(intro)}</small>${sInfo.tie.length?`<div class="cx-bp-vols">${sInfo.tie.map(bpVolBtn).join("")}</div>`:""}`)+bpArrow
-      +bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>Optional, parallel reading. Participating series: ${esc(bpJoin(names))}.</small>${evBtns}${prevNote}`)+bpArrow
-      +bpNode("ret","RETURN TO MAIN STORY",await retRow(s.id,s.title)+nextNote);
-  }else{
-    const cards=await Promise.all((path.branches||[]).map(async b=>{
-      if(!b.seriesId){const cs=(await Promise.all((b.collectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);const one=cs.filter(c=>formatKey(c)==="TPB").concat(cs).slice(0,1);
-        return `<div class="cx-bp-branch is-text"><b>${esc(b.label)}</b><small>${esc(b.note||"")}</small>${one.length?`<div class="cx-bp-vols">${one.map(bpVolBtn).join("")}</div>`:""}<span class="cx-bp-opt">Optional branch</span></div>`;}
-      const i=await L.bySeries(b.seriesId);const here=b.seriesId===s.id;
-      return `<div class="cx-bp-branch ${here?"is-here":""}"><b>${esc(b.label)}${b.related?` <em>related title</em>`:""}</b><small>${esc(compressLabels(i.rows)||"")}</small>${i.tie.length?`<div class="cx-bp-vols">${i.tie.map(bpVolBtn).join("")}</div>`:""}${here?`<span class="cx-bp-here">You are here</span>`:`<button class="cx-bp-open" data-bp-series="${esc(b.seriesId)}">Open series →</button><span class="cx-bp-opt">Optional branch</span>`}</div>`;}));
-    const rets=(await Promise.all((path.branches||[]).filter(b=>b.seriesId).map(b=>retRow(b.seriesId,b.label)))).join("");
-    html=bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>${esc(path.readingInstruction||"")}</small>${evBtns}${prevNote}`)+bpArrow
-      +bpNode("branch","PARTICIPATING SERIES",`<div class="cx-bp-branches">${cards.join("")}</div>`)+bpArrow
-      +bpNode("ret","RETURN TO MAIN STORY",rets+nextNote);
+    return bpNode("main","MAIN PATH",`<strong>${esc(s.title)}</strong><small class="cx-bp-here-line">You are here</small><small>${esc(intro)}</small>${sInfo.tie.length?`<div class="cx-bp-vols">${sInfo.tie.map(bpVolBtn).join("")}</div>`:""}`)+bpArrow
+      +bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>Optional, parallel reading.</small>${evBtns}${prevNote}`)+bpArrow+participants+bpArrow+ret;
   }
-  return html;
+  return bpNode("cross","CROSSOVER",`<strong>${esc(path.title)}</strong><small>${esc(path.readingInstruction||"")}</small>${evBtns}${prevNote}`)+bpArrow+participants+bpArrow+ret;
 }
 async function mountReadingPaths(host,s,range){
   if(!host)return;let paths;try{paths=await bp.getBranchPathsForSeries(s.id);}catch(e){console.warn("[Comics Explorer] reading paths unavailable",e);return;}
