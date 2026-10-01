@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc12");
+      const mod = await import("./comics-v2/landing.js?v=dc13");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -3205,6 +3205,25 @@ $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
   }finally{ btn.disabled=false; }
 });
 
+/* Additive import — New 52 Flash + Green Lantern. Separate from the Batman/Superman reset above: it never calls
+   resetAndImport, never clears anything, and is safe to run repeatedly (deterministic ids). */
+$("#importNew52FlashGlBtn")?.addEventListener("click", async ()=>{
+  const btn=$("#importNew52FlashGlBtn"), msg=$("#importNew52FlashGlMsg");
+  const mod=window.__comicsV2?.new52FlashGl;
+  if(!mod?.import){ msg.textContent="Comics v2 module is not loaded."; msg.className="form-msg err"; return; }
+  if(!confirm("Add the New 52 Flash + Green Lantern data? Nothing is deleted and Batman / Superman are not touched. Safe to run again.")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating Flash + Green Lantern data…";
+  try{
+    const result=await mod.import(m=>{ msg.textContent=m; });
+    if(!result?.validation?.valid){ msg.textContent="Validation failed — nothing was imported: "+(result?.validation?.errors||[]).slice(0,5).join(" | "); msg.className="form-msg err"; return; }
+    const errors=result.errors||[];
+    const w=result.written||{}; const total=Object.values(w).reduce((a,b)=>a+(Number(b)||0),0);
+    if(errors.length){ msg.textContent=`Wrote ${total} records, but ${errors.length} problem(s): ${errors.slice(0,3).join(" | ")}`; msg.className="form-msg err"; }
+    else{ msg.textContent=`Done — ${w.comicSeries||0} series, ${w.comicIssues||0} issues, ${w.comicCollections||0} editions added/updated (${total} records). Existing Batman / Superman data untouched.`; msg.className="form-msg ok"; refreshComicsCount(); }
+  }catch(err){ console.error("[Comics v2] Flash + Green Lantern import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
+  finally{ btn.disabled=false; }
+});
+
 $("#readerGoAdminTools").addEventListener("click", ()=>{
   closeSheetEl(readerBackdrop, readerSheet);
   renderAdminDataHealth();
@@ -3417,11 +3436,27 @@ function realComicsEras(){
   return Object.keys(withYear).sort((a,b)=>(withYear[a]||9999)-(withYear[b]||9999))
     .map(era=>({ era, count:(DATA.comics||[]).filter(d=>d.era===era).length }));
 }
+/* Comics tile count. Root cause of "0 entries": the tile read DATA.comics.length — the legacy flat `comics`
+   collection — but the Comics catalogue now lives in the V2 collections (comicSeries …), and the Reset & Import
+   deliberately empties the legacy one. So the count is read from the V2 catalogue itself; the legacy length is
+   only a fallback while V2 is empty or unreachable. */
+let comicsV2Count = null;
+const comicsEntryCount = ()=> comicsV2Count>0 ? comicsV2Count : (DATA.comics||[]).length;
+async function refreshComicsCount(){
+  try{
+    const d = window.__comicsV2?.data;
+    if(!d?.getAllSeries) return;
+    comicsV2Count = ((await d.getAllSeries(500))||[]).filter(Boolean).length;
+  }catch(e){ comicsV2Count = null; return; }
+  const el = document.querySelector(".discover-tile.comics .discover-tile-count");
+  if(el) el.textContent = `${comicsEntryCount()} entries`;
+}
 function buildExploreGrid(){
+  refreshComicsCount();
   exploreGrid.innerHTML = CATS.map(c=>`<div class="discover-tile ${c.id}" data-cat="${c.id}">
       <div class="discover-tile-icon">${CAT_ICON[c.id]||""}</div>
       <div class="discover-tile-label">${c.label}</div>
-      <div class="discover-tile-count">${DATA[c.id].length} entries</div>
+      <div class="discover-tile-count">${c.id==="comics"?comicsEntryCount():DATA[c.id].length} entries</div>
     </div>`).join("");
   exploreGrid.querySelectorAll(".discover-tile").forEach(t=>{
     t.addEventListener("click", ()=>{

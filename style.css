@@ -2334,3 +2334,14 @@ main.comics-home-main > .grid{
 #comicsExplorerContent .cx-evt-ed span{font:700 8px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--comics)}
 #comicsExplorerContent .cx-evt-ed em{font-style:normal;font-size:11px;color:var(--ink-faint)}
 #comicsExplorerContent .cx-evt-ed:hover{border-color:var(--comics)}
+
+/* ---- Characters page: catalogue-root cards ----
+   Root cause of the over-wide cards: .cx-char-trees is a grid whose single column was sized by its
+   widest content (the horizontally-scrolling family-chip track), so each tree grew past the screen.
+   The column and the tree are now allowed to shrink (min-width:0 / minmax(0,1fr)); the cards are tightened. */
+#comicsExplorerContent .cx-char-trees{grid-template-columns:minmax(0,1fr)}
+#comicsExplorerContent .cx-char-tree{min-width:0;padding:8px}
+#comicsExplorerContent .cx-char-tree .cx-character-card{min-height:0;padding:8px 10px;gap:11px;border-radius:14px}
+#comicsExplorerContent .cx-char-tree .cx-character-orb{width:44px;height:44px;flex:0 0 44px;font-size:20px}
+#comicsExplorerContent .cx-char-tree .cx-character-card strong{font-size:16px;margin-top:3px}
+#comicsExplorerContent .cx-char-tree .cx-character-card b{font-size:18px}
