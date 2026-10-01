@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=44">
+<link rel="stylesheet" href="style.css?v=45">
 </head>
 <body>
 
@@ -244,7 +244,7 @@
   <div class="sheet-section" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
     <div class="sheet-label">COMICS · BATMAN / NEW 52</div>
     <div class="admin-tool-row">
-      <button class="btn btn-ghost" id="importBatmanNew52Btn">RESET & IMPORT · BATMAN / NEW 52</button>
+      <button class="btn btn-ghost" id="importBatmanNew52Btn">RESET & IMPORT · NEW 52 (BATMAN + SUPERMAN)</button>
       <div class="form-msg" id="importBatmanNew52Msg"></div>
     </div>
   </div>
@@ -344,17 +344,17 @@
 </div>
 
 <script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js?v=50"></script>
+<script type="module" src="app.js?v=51"></script>
 <!-- Comics domain-model foundation (Phase 1) — independent of app.js, renders nothing, adds no UI.
      Loading it only attaches window.__comicsV2 for developer verification (see comics-v2/index.js). -->
-<script type="module" src="comics-v2/index.js?v=dc9"></script>
+<script type="module" src="comics-v2/index.js?v=dc10"></script>
 <!-- Interactive Comics Continuity Explorer (Phase 3 / Pointer 3) — independent of app.js, same as
      comics-v2/index.js. Adds one entry-point button inside the existing Comics tab (app.js renders
      it, id="comicsExplorerEntryBtn") plus its own sheet UI (#comicsExplorerSheet above). -->
-<script type="module" src="comics-v2/explorer.js?v=dc11"></script>
+<script type="module" src="comics-v2/explorer.js?v=dc12"></script>
 <!-- Pointer 4: dedicated Comics landing (what the Comics tab opens; app.js delegates to it and falls back to
      the old catalogue if it hasn't loaded) + the zoomable/expandable Comics Story Map. Both independent of app.js. -->
-<script type="module" src="comics-v2/landing.js?v=dc11"></script>
+<script type="module" src="comics-v2/landing.js?v=dc12"></script>
 <script type="module" src="comics-v2/storymap.js?v=dc2"></script>
 </body>
 </html>

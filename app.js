@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc11");
+      const mod = await import("./comics-v2/landing.js?v=dc12");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -3176,8 +3176,8 @@ $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
     msg.className="form-msg err";
     return;
   }
-  if(!confirm("This will DELETE the existing Comics v2 data and the old Comics catalogue, then create ONLY the Batman / New 52 dataset. Continue?")) return;
-  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating clean Batman / New 52 dataset…";
+  if(!confirm("This will DELETE the existing Comics v2 data and the old Comics catalogue, then create ONLY the New 52 (Batman + Superman) dataset. Continue?")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating clean New 52 dataset…";
   try{
     const result=await window.__comicsV2.batmanNew52.resetAndImport((collectionName,done,total)=>{
       msg.textContent=`Clearing ${collectionName}: ${done}/${total}…`;
@@ -3194,7 +3194,7 @@ $("#importBatmanNew52Btn")?.addEventListener("click", async ()=>{
       msg.className="form-msg err";
     }else{
       DATA.comics=[];
-      msg.textContent=`Done — Comics reset to Batman / New 52 only (${total} records).`;
+      msg.textContent=`Done — Comics reset to New 52 Batman + Superman (${total} records).`;
       msg.className="form-msg ok";
       buildTabs(); renderCards(); renderComicsLanding();
     }

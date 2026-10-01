@@ -2321,3 +2321,16 @@ main.comics-home-main > .grid{
   #comicsExplorerContent .cx-edition-facts{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media (prefers-reduced-motion:reduce){#comicsExplorerContent .cxa-sat i{transition:none}}
+
+/* ---- Crossovers & events tab (series page): event groups with their editions ---- */
+#comicsExplorerContent .cx-evt-list{display:flex;flex-direction:column;gap:10px}
+#comicsExplorerContent .cx-evt{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+#comicsExplorerContent .cx-evt-head{display:flex;gap:10px;align-items:flex-start}
+#comicsExplorerContent .cx-evt-mark{color:var(--comics);font-size:14px;line-height:1.2}
+#comicsExplorerContent .cx-evt-head strong{display:block;font-size:14px;line-height:1.25}
+#comicsExplorerContent .cx-evt-head small{display:block;margin-top:3px;color:var(--ink-faint);font-size:11.5px;line-height:1.4}
+#comicsExplorerContent .cx-evt-eds{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#comicsExplorerContent .cx-evt-ed{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;padding:6px 10px;font:inherit;cursor:pointer}
+#comicsExplorerContent .cx-evt-ed span{font:700 8px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--comics)}
+#comicsExplorerContent .cx-evt-ed em{font-style:normal;font-size:11px;color:var(--ink-faint)}
+#comicsExplorerContent .cx-evt-ed:hover{border-color:var(--comics)}
