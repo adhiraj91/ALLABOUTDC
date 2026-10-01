@@ -8,6 +8,7 @@ import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
+import * as branchPaths from "./branch-paths.js?v=bp1";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -97,6 +98,12 @@ export async function importNew52FlashAndGreenLantern(progress) {
   });
 }
 
+// Additive import: New 52 branching reading paths (event -> branches -> return). Writes ONLY bp-* documents in
+// comicReadingPaths, at deterministic ids; reads series/collections to verify they exist; never clears or edits anything else.
+export async function importNew52BranchPaths(progress) {
+  return branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress });
+}
+
 // Developer inspection hooks. No writes occur merely by loading this module.
 window.__comicsV2 = {
   schema,
@@ -109,6 +116,11 @@ window.__comicsV2 = {
     dataset: flashGl.dataset,
     validate: flashGl.validateDataset,
     import: importNew52FlashAndGreenLantern,
+  },
+  new52BranchPaths: {
+    build: branchPaths.buildAll,
+    validate: branchPaths.validate,
+    import: importNew52BranchPaths,
   },
   batmanNew52: {
     dataset,
