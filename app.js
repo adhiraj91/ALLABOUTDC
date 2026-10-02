@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc20");
+      const mod = await import("./comics-v2/landing.js?v=dc23");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -3272,6 +3272,22 @@ $("#importNew52Batch3Btn")?.addEventListener("click", async ()=>{
     if(errs.length){ msg.textContent=`Wrote ${total} records, but ${errs.length} problem(s): ${errs.slice(0,3).join(" | ")}`; msg.className="form-msg err"; }
     else{ msg.textContent=`Done — ${w.comicSeries||0} series, ${w.comicIssues||0} issues, ${w.comicCollections||0} editions, ${r.paths?.written||0} crossover paths added/updated. Existing comics untouched.`; msg.className="form-msg ok"; refreshComicsCount(); }
   }catch(err){ console.error("[Comics v2] Batch 3 import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
+  finally{ btn.disabled=false; }
+});
+
+$("#importNew52PendingBtn")?.addEventListener("click", async ()=>{
+  const btn=$("#importNew52PendingBtn"), msg=$("#importNew52PendingMsg");
+  const mod=window.__comicsV2?.new52Pending;
+  if(!mod?.import){ msg.textContent="Comics v2 module is not loaded."; msg.className="form-msg err"; return; }
+  if(!confirm("Add the New 52 pending master batch (34 series: WildStorm, War & Military, Cosmic & Fourth World, extra Magic & Supernatural, DC You titles and more)? Batches 1 and 2 must already be imported. Existing comics are not changed, and nothing is reset.")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating pending-master data…";
+  try{
+    const r=await mod.import(m=>{ msg.textContent=m; });
+    if(!r?.validation?.valid){ msg.textContent="Validation failed — nothing was imported: "+(r?.validation?.errors||[]).slice(0,4).join(" | "); msg.className="form-msg err"; return; }
+    const errs=[...(r.errors||[]),...(r.paths?.errors||[])]; const w=r.written||{}; const total=Object.values(w).reduce((a,b)=>a+(Number(b)||0),0);
+    if(errs.length){ msg.textContent=`Wrote ${total} records, but ${errs.length} problem(s): ${errs.slice(0,3).join(" | ")}`; msg.className="form-msg err"; }
+    else{ msg.textContent=`Done — ${w.comicSeries||0} series, ${w.comicIssues||0} issues, ${w.comicCollections||0} editions, ${r.paths?.written||0} crossover paths added/updated. Existing comics untouched.`; msg.className="form-msg ok"; refreshComicsCount(); }
+  }catch(err){ console.error("[Comics v2] Pending master import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
   finally{ btn.disabled=false; }
 });
 
