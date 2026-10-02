@@ -9,8 +9,8 @@ import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "ht
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
 import * as branchPaths from "./branch-paths.js?v=bp4";
-import * as batch1 from "./seed-new52-batch1.js?v=b1b";
-import * as batch2 from "./seed-new52-batch2.js?v=b2b";
+import * as batch1 from "./seed-new52-batch1.js?v=b1c";
+import * as batch2 from "./seed-new52-batch2.js?v=b2c";
 import * as batch3 from "./seed-new52-batch3.js?v=b3";
 
 export const COLLECTIONS = schema.COLLECTIONS;
@@ -113,7 +113,7 @@ export async function importNew52Batch1(progress) {
   const reserved = {};
   for (const ds of [dataset, flashGl.dataset]) { const s = sets(ds); for (const k of Object.keys(s)) reserved[k] = new Set([...(reserved[k] || []), ...s[k]]); }
   const result = await batch1.importDataset({
-    upsertEntity: data.upsertEntity, upsertCollectionEdition: data.upsertCollectionEdition, getEntity: data.getEntity, COLLECTIONS, reserved, progress,
+    upsertEntity: data.upsertEntity, upsertCollectionEdition: data.upsertCollectionEdition, getEntity: data.getEntity, patchEntity: data.patchEntity, COLLECTIONS, reserved, progress,
   });
   if (result.validation?.valid && !result.errors.length) {
     result.paths = await branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress, only: BATCH1_PATH_IDS });

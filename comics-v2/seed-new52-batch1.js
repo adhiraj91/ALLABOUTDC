@@ -89,7 +89,7 @@ export function plannedIds(){return {characters:characters.map(x=>x.id),creators
  * Additive import. `reserved` = {characters,creators,series,runs,issues,collections: Set<id>} owned by other datasets.
  * Nothing is deleted. Returns {validation, written, skipped, ensured, errors}.
  */
-export async function importDataset({upsertEntity,upsertCollectionEdition,getEntity,COLLECTIONS,reserved={},progress}){
+export async function importDataset({upsertEntity,upsertCollectionEdition,getEntity,patchEntity,COLLECTIONS,reserved={},progress}){
   const validation=validateDataset(); const result={validation,written:{},skipped:{},ensured:{},errors:[]};
   if(!validation.valid)return result;
   const plan=plannedIds();
@@ -103,6 +103,10 @@ export async function importDataset({upsertEntity,upsertCollectionEdition,getEnt
   // characters / creators: another dataset's record is never overwritten; our own are refreshed
   const own=async(col,list,resKey)=>{let n=0,sk=0; for(const e of list){if(reserved[resKey]?.has(e.id)){sk++;continue;} try{await upsertEntity(col,e.id,e);n++;}catch(err){result.errors.push(`${col}/${e.id}: ${err.message}`);}} result.written[col]=n; if(sk)result.skipped[col]=(result.skipped[col]||0)+sk;};
   say("Writing characters and creators…"); await own(COLLECTIONS.CHARACTERS,characters,"characters"); await own(COLLECTIONS.CREATORS,creators,"creators");
+  // A catalogue root that another dataset already owns (Wonder Woman: written non-root by the Superman seed) is never overwritten —
+  // only its single browseRoot field is patched so it appears as a top-level character. Nothing else on that record changes.
+  for(const c of characters){ if(!c.browseRoot||!reserved.characters?.has(c.id)||!patchEntity)continue;
+    try{const ex=await getEntity(COLLECTIONS.CHARACTERS,c.id); if(ex&&ex.browseRoot!==true){await patchEntity(COLLECTIONS.CHARACTERS,c.id,{browseRoot:true}); (result.rootsPromoted=result.rootsPromoted||[]).push(c.id);}}catch(err){result.errors.push(`characters/${c.id} (browseRoot): ${err.message}`);} }
   const all=async(col,list,fn,label)=>{say(`Writing ${label}…`); let n=0; for(const e of list){try{if(fn)await fn(e.id,e);else await upsertEntity(col,e.id,e);n++;}catch(err){result.errors.push(`${col}/${e.id}: ${err.message}`);}} result.written[col]=n;};
   await all(COLLECTIONS.SERIES,seriesList,null,"series"); await all(COLLECTIONS.RUNS,runs,null,"runs"); await all(COLLECTIONS.ISSUES,issues,null,"issues"); await all(COLLECTIONS.COLLECTIONS,collections,upsertCollectionEdition,"collected editions");
   return result;

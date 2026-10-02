@@ -10,7 +10,7 @@
 // ============================================================================
 import * as schema from "./schema.js";
 import * as slug from "./slug.js";
-import {B2_DESCRIPTIONS,B2_CHARACTERS,B2_CREATORS,B2_DEFS,B2_RUNS,B2_STATUS,B2_EXTERNAL,B2_COLLECTION_RECORDS} from "./data-new52-batch2.js?v=b2b";
+import {B2_DESCRIPTIONS,B2_CHARACTERS,B2_CREATORS,B2_DEFS,B2_RUNS,B2_STATUS,B2_EXTERNAL,B2_COLLECTION_RECORDS} from "./data-new52-batch2.js?v=b2c";
 const {makeUniverse,makeContinuity,makeCharacter,makeSeries,makeRun,makeIssue,makeCollection,makeCreator,makeSourceInfo,validateSeries,validateRun,validateIssue,validateCollection,validateCharacter,validateCreator}=schema;
 
 const UNIVERSE_ID=slug.buildUniverseId("DC Universe"), CONTINUITY_ID=slug.buildContinuityId("The New 52");

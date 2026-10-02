@@ -25,9 +25,16 @@ async function allSeries(){return (await data.getAllSeries(500)).filter(Boolean)
 function resolveRoots(chars,series){
   const list=(chars||[]).filter(Boolean);
   const flagged=list.filter(c=>c.browseRoot===true);
-  if(flagged.length)return flagged;
-  const leads=new Set((series||[]).map(s=>s?.characterIds?.[0]).filter(Boolean));
-  return list.filter(c=>!c.parentCharacterId&&leads.has(c.id));
+  let roots;
+  if(flagged.length)roots=flagged;
+  else{
+    const leads=new Set((series||[]).map(s=>s?.characterIds?.[0]).filter(Boolean));
+    roots=list.filter(c=>!c.parentCharacterId&&leads.has(c.id));
+  }
+  // Deterministic catalogue order (never alphabetical): a root takes the rank of the franchise category
+  // of the series it leads (categories.js order); ties keep stable id order.
+  const rank=c=>{let r=999;for(const s of (series||[])){if(s?.characterIds?.[0]===c.id)r=Math.min(r,categoryRank(categoryOf(s).key));}return r;};
+  return roots.map(c=>[c,rank(c)]).sort((a,b)=>a[1]-b[1]||(a[0].id<b[0].id?-1:a[0].id>b[0].id?1:0)).map(x=>x[0]);
 }
 const childrenOf=(c,chars)=>(chars||[]).filter(x=>x&&x.parentCharacterId===c.id);
 // A character's territory: series featuring the character or anyone in its family branch.
@@ -196,7 +203,7 @@ async function category(p){
 async function characterList(){
   const [all,series]=await Promise.all([data.getAllCharacters(200),allSeries()]);
   if(!all.length)return {html:empty("No character records are in the comics database yet. An admin can load them from Admin Tools → Reset & Import · New 52.")};
-  const roots=resolveRoots(all,series).sort((a,b)=>titleOf(a).localeCompare(titleOf(b)));
+  const roots=resolveRoots(all,series);
   if(!roots.length)return {html:empty("Characters are recorded, but none is marked as a catalogue entry point yet.")};
   const trees=roots.map(c=>{
     const kids=childrenOf(c,all).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b)));
