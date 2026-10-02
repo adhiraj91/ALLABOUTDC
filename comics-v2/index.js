@@ -8,10 +8,11 @@ import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
-import * as branchPaths from "./branch-paths.js?v=bp4";
+import * as branchPaths from "./branch-paths.js?v=bp5";
 import * as batch1 from "./seed-new52-batch1.js?v=b1c";
 import * as batch2 from "./seed-new52-batch2.js?v=b2c";
 import * as batch3 from "./seed-new52-batch3.js?v=b3";
+import * as pending from "./seed-new52-pending.js?v=p2";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -165,6 +166,25 @@ export async function importNew52Batch3(progress) {
   return result;
 }
 
+// Pending master batch (34 series, 62 collection records). Additive + idempotent: every earlier dataset's ids are reserved (a collision aborts before any write),
+// referenced existing issues (Justice League #23.3, Red Lanterns #10, Gotham Academy #17) are verified live, and the Culling path is rewritten (bp-* doc only).
+const PENDING_PATH_IDS = ["bp-teen-culling"];
+export async function importNew52Pending(progress) {
+  const sets = (ds) => ({
+    characters: ds.characters.map(x => x.id), creators: ds.creators.map(x => x.id), series: ds.series.map(x => x.id),
+    runs: ds.runs.map(x => x.id), issues: ds.issues.map(x => x.id), collections: ds.collections.map(x => x.id),
+  });
+  const reserved = {};
+  for (const ds of [dataset, flashGl.dataset, batch1.dataset, batch2.dataset, batch3.dataset]) { const s = sets(ds); for (const k of Object.keys(s)) reserved[k] = new Set([...(reserved[k] || []), ...s[k]]); }
+  const result = await pending.importDataset({
+    upsertEntity: data.upsertEntity, upsertCollectionEdition: data.upsertCollectionEdition, getEntity: data.getEntity, COLLECTIONS, reserved, progress,
+  });
+  if (result.validation?.valid && !result.errors.length) {
+    result.paths = await branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress, only: PENDING_PATH_IDS });
+  }
+  return result;
+}
+
 // Additive import: New 52 branching reading paths (event -> branches -> return). Writes ONLY bp-* documents in
 // comicReadingPaths, at deterministic ids; reads series/collections to verify they exist; never clears or edits anything else.
 export async function importNew52BranchPaths(progress) {
@@ -193,6 +213,11 @@ window.__comicsV2 = {
     dataset: batch2.dataset,
     validate: batch2.validateDataset,
     import: importNew52Batch2,
+  },
+  new52Pending: {
+    dataset: pending.dataset,
+    validate: pending.validateDataset,
+    import: importNew52Pending,
   },
   new52Batch3: {
     dataset: batch3.dataset,

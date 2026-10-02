@@ -2,8 +2,8 @@
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
 import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
-import * as bp from "./branch-paths.js?v=bp4";
-import {CATEGORIES,categoryOf,categoryRank} from "./categories.js?v=cat1";
+import * as bp from "./branch-paths.js?v=bp5";
+import {CATEGORIES,categoryOf,categoryRank} from "./categories.js?v=cat2";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -12,7 +12,7 @@ const issueType=i=>String(i?.issueLabelType||"numbered");
 const issueNum=i=>{const n=parseFloat(i?.issueNumber);return Number.isFinite(n)?n:Infinity;};
 const sortIssues=a=>a.sort((x,y)=>issueNum(x)-issueNum(y)||String(x.issueLabel||"").localeCompare(String(y.issueLabel||"")));
 const titleOf=c=>c?.displayName||c?.name||"Character";
-const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core Dark":0,"Extended League":10,"Legion":0,"Future":10,"Earth 2 Core":0,"Earth 2 Companions":10,"Other Heroes":0,"Dark":10,"Trinity of Sin":20,"Young Heroes":30,"Task Force":40,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
+const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core Dark":0,"Extended League":10,"New 52":0,"DC You (2015)":10,"Legion":0,"Future":10,"Earth 2 Core":0,"Earth 2 Companions":10,"Other Heroes":0,"Dark":10,"Trinity of Sin":20,"Young Heroes":30,"Task Force":40,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
 const groupRank=g=>GROUP_ORDER[g]??50;
 
 const cache=new Map();
@@ -454,12 +454,13 @@ async function series(p){
   const ml=mainlineSummary(collections,s.id);
   const first=b.numbered[0]?.issueNumber,last=b.numbered[b.numbered.length-1]?.issueNumber;
   let html=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2><div class="cx-subtitle">${esc(range(s))} · ${counts.issues} numbered issues${counts.annuals?` · ${counts.annuals} annuals`:""}${counts.specials?` · ${counts.specials} specials/one-shots`:""}</div>`;
+  if(s.anthology)html+=`<div class="cx-tag-row"><span class="tag">Anthology</span></div>`;
   if(creators.filter(Boolean).length)html+=`<div class="cx-tag-row">${creators.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;
   html+=`<div class="sheet-section"><div class="sheet-label">THE STORY</div><div class="cx-info-card">${esc(s.description||"A New 52 publication mapped as part of the connected DC Comics catalogue.")}</div></div>`;
   html+=`<div class="cx-publication-summary"><div>${stat("Issues",counts.issues)}<span class="cx-summary-detail">${counts.issues?`#${first}–#${last}`:"Not recorded"}</span></div><div>${stat("Annuals",counts.annuals)}<span class="cx-summary-detail">${counts.annuals?"Annual publications recorded":"None recorded"}</span></div><div>${stat("Specials",counts.specials)}<span class="cx-summary-detail">${counts.specials?"Special / one-shot units":"None recorded"}</span></div></div>`;
   if(runs.length){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>CREATIVE HISTORY</span><h3>Creative runs</h3></div><em>${runs.length} runs</em></div><div class="cx-run-grid">${runs.sort((a,b)=>(Number(a.startIssue)||0)-(Number(b.startIssue)||0)).map((r,i)=>`<div class="cx-run-card"><strong>${esc(r.title||creators.filter(Boolean).map(c=>titleOf(c)).join(" / ")||"Run")}</strong><span>${esc(coverage(r))}</span><b>Creative history</b></div>`).join("")}</div></div>`;}
   html+=`<div id="cxReadingPaths"></div>`;
-  html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],["collections","Collected Editions"],["annuals","Annuals",counts.annuals],["specials","Specials",counts.specials]])}<div id="cxTabBody"></div></div>`;
+  html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],collections.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxTabBody"></div></div>`;
   return{html,wire(c){mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
       if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED RUN</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>This is the complete numbered run represented in the catalogue. The story itself is organised below through its creative history and collected editions.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>${esc(ml.events||ml.shared?`Mainline volumes only · ${ml.events} crossover/event collection${ml.events===1?"":"s"} listed separately`:"Mainline volumes only")}</small></div></div></div>`;
       else if(t==="collections")mountEditions(tabBody,collections,issues,s);

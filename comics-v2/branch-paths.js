@@ -16,6 +16,7 @@ import { COLLECTIONS } from "./schema.js";
 
 export const BRANCH_BASIS = "owner_csv_branching";
 const CSV_FILE = "new52_existing_branching_reading_paths.csv";
+const CSV_FILE_PENDING = "new52_pending_master_source_of_truth.csv";
 const CSV_FILE_B12 = "new52_batch1_and_batch2_reading_paths_RIGOROUS_FINAL.csv";
 
 const GL4 = (extra = []) => [
@@ -28,6 +29,7 @@ const GL4 = (extra = []) => [
 // Participants that exist only as out-of-scope text on a collection's contents (no series record in the catalogue):
 // they are shown as text cards that open that collection. Nothing is invented — the wording is the collection's own.
 const B12 = "b12";
+const PENDING = "pending";
 const JOKER_DOTF = ["the-joker-death-of-the-family", "the-joker-death-of-the-family-hc"];
 
 // Each entry = one row of new52_all_existing_branching_source_of_truth.csv (csv:{…} verbatim) + the existing ids it resolves to.
@@ -184,14 +186,16 @@ export const BRANCH_DEFS = [
     ],
   },
   {
-    key: "teen-culling", family: "Teen Titans", src: B12, csv: { path_id: "THE_CULLING", trigger: "The Culling", branch_from: "Teen Titans + Superboy + Legion Lost", branch_to: "Teen Titans #8-14; Superboy #8-12; Legion Lost #8-10; DCPU #12", branch_type: "crossover", reading_instruction: "Teen Titans #8 → Culling → Superboy/Legion Lost branches → Teen Titans #14 → return", notes: "Event relationship is broader than the Teen Titans Vol. 2 collection, which itself contains TT #8-14 + DCPU #12." },
+    key: "teen-culling", family: "Teen Titans", src: PENDING, csv: { path_id: "THE_CULLING", trigger: "The Culling", branch_from: "Teen Titans Annual #1", branch_to: "Teen Titans Annual #1; Superboy #9; Legion Lost #9; Teen Titans #9; The Ravagers #1", branch_type: "crossover", reading_instruction: "Official sequence: Teen Titans Annual #1 → Superboy #9 → Legion Lost #9 → Teen Titans #9 (finale) → The Ravagers #1 follows directly.", notes: "Annual #1 begins the event; Superboy #9 continues it into Legion Lost #9, which continues into Teen Titans #9; Teen Titans #9 is the finale and leads directly into The Ravagers #1. The event belongs to the 2011 Teen Titans run, not the later 2014 relaunch. Collections (Teen Titans Vol. 2 collects Teen Titans #8-14 and DC Universe Presents #12; Legion Lost Vol. 2 collects Legion Lost #0 and #8-16) are collection mappings, not the canonical event order." },
     anchorSeriesIds: ["teen-titans-2011"], eventCollectionIds: ["teen-titans-vol-2-the-culling"],
     branches: [
-      { label: "Teen Titans", seriesId: "teen-titans-2011", collectionIds: ["teen-titans-vol-2-the-culling"], labels: ["8", "9", "10", "11", "12", "13", "14"] },
-      { label: "Superboy", seriesId: "superboy-2011", collectionIds: ["superboy-vol-2-extraction"], labels: ["8", "9", "10", "11", "12"] },
-      { label: "Legion Lost", seriesId: "legion-lost-2011", collectionIds: ["legion-lost-vol-2-the-culling"], labels: ["8", "9"],
-        ifMissing: { seriesId: null, collectionIds: [], labels: [], note: "Legion Lost #8-10 — not catalogued as a series here." } },
-      { label: "DC Universe Presents #12", seriesId: null, collectionIds: ["teen-titans-vol-2-the-culling"], note: "Included in Teen Titans Vol. 2: The Culling." },
+      { label: "Teen Titans Annual #1", seriesId: null, collectionIds: [], note: "Opens The Culling (Teen Titans 2011, Annual #1)." },
+      { label: "Superboy", seriesId: "superboy-2011", collectionIds: ["superboy-vol-2-extraction"], labels: ["9"] },
+      { label: "Legion Lost", seriesId: "legion-lost-2011", collectionIds: ["legion-lost-vol-2-the-culling"], labels: ["9"],
+        ifMissing: { seriesId: null, collectionIds: [], labels: [], note: "Legion Lost #9 — not catalogued as a series here." } },
+      { label: "Teen Titans", seriesId: "teen-titans-2011", collectionIds: ["teen-titans-vol-2-the-culling"], labels: ["9"], note: "Finale." },
+      { label: "The Ravagers", seriesId: "the-ravagers-2012", collectionIds: ["the-ravagers-vol-1-the-kids-from-n-o-w-h-e-r-e"], labels: ["1"],
+        ifMissing: { seriesId: null, collectionIds: [], labels: [], note: "The Ravagers #1 — follows The Culling directly; not catalogued as a series here." } },
     ],
   },
 ];
@@ -216,7 +220,7 @@ export function buildDoc(d) {
     branchType: d.csv.branch_type, branchFrom: d.csv.branch_from, branchTo: d.csv.branch_to,
     readingInstruction: d.csv.reading_instruction, csvNotes: d.csv.notes, pathCode: d.csv.path_id,
     dataBasis: BRANCH_BASIS,
-    sourceInfo: { sourceUrl: null, sourceName: d.src === B12 ? CSV_FILE_B12 : CSV_FILE, verificationStatus: "owner_supplied", notes: d.src === B12 ? "Owner-supplied Batch 1 + Batch 2 reading-path CSV." : "Owner-supplied branching reading-path CSV." },
+    sourceInfo: { sourceUrl: null, sourceName: d.src === PENDING ? CSV_FILE_PENDING : d.src === B12 ? CSV_FILE_B12 : CSV_FILE, verificationStatus: "owner_supplied", notes: d.src === PENDING ? "Owner-supplied pending master CSV (CROSSOVER row)." : d.src === B12 ? "Owner-supplied Batch 1 + Batch 2 reading-path CSV." : "Owner-supplied branching reading-path CSV." },
   };
 }
 export const buildAll = () => BRANCH_DEFS.map(buildDoc);

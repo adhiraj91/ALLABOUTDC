@@ -23,6 +23,8 @@ export const CATEGORIES = [
   { key: "other-dc-heroes", label: "Other DC Heroes" },
   { key: "wildstorm", label: "WildStorm" },
   { key: "all-star-western", label: "All-Star Western" },
+  { key: "war-military", label: "War & Military" },
+  { key: "cosmic-fourth-world", label: "Cosmic & Fourth World" },
   { key: "other-obscure", label: "Other / Obscure" },
 ];
 const RANK = new Map(CATEGORIES.map((c, i) => [c.key, i]));
