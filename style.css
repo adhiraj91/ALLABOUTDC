@@ -1922,16 +1922,92 @@ main.comics-home-main > .grid{
 /* ======================================================================
    Comics rebuild — generic DC landing + data-driven explorer
    ====================================================================== */
-.dcx-wrap{max-width:1500px;margin:0 auto;padding:0 28px 90px;color:var(--ink)}
-.dcx-hero{position:relative;min-height:300px;margin:20px 0 28px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:radial-gradient(circle at 72% 35%,color-mix(in srgb,var(--comics) 13%,transparent),transparent 42%),var(--panel-2);display:flex;align-items:center;padding:44px;gap:30px}
-.dcx-hero-art{position:absolute;inset:0;overflow:hidden;pointer-events:none}.dcx-hero-art:before,.dcx-hero-art:after{content:"";position:absolute;border:1px solid color-mix(in srgb,var(--comics) 40%,transparent);border-radius:50%;width:540px;height:540px;right:-100px;top:-150px}.dcx-hero-art:after{width:780px;height:780px;right:-220px;top:-270px;opacity:.45}.dcx-orbit{position:absolute;border:1px solid color-mix(in srgb,var(--comics) 25%,transparent);border-radius:50%;right:4%;top:15%;width:220px;height:220px}.dcx-orbit.b{width:120px;height:120px;right:13%;top:34%}.dcx-orbit.c{width:340px;height:340px;right:0;top:2%}.dcx-hero-mark{position:absolute;right:10%;top:25%;font-family:var(--font-display);font-size:110px;color:color-mix(in srgb,var(--comics) 18%,transparent)}
-.dcx-hero-copy{position:relative;z-index:1;max-width:720px}.dcx-kicker{font-family:var(--font-mono);font-weight:700;letter-spacing:.18em;font-size:11px;color:var(--comics);text-transform:uppercase}.dcx-hero h2{font-family:var(--font-display);font-size:62px;line-height:.95;margin:8px 0 12px}.dcx-hero h2 span{color:var(--comics)}.dcx-hero p{font-size:21px;margin:0 0 8px}.dcx-hero small{display:block;color:var(--ink-dim);font-size:14px;max-width:600px}.dcx-quote{position:relative;z-index:1;margin-left:auto;max-width:250px;padding:20px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 86%,transparent);color:var(--ink-dim);font-size:13px;line-height:1.5}.dcx-quote b{color:var(--ink)}
-.dcx-section{margin:28px 0}.dcx-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:14px}.dcx-head h3{font-family:var(--font-display);font-size:28px;margin:3px 0 0}.dcx-head span{font-size:12px;color:var(--ink-faint)}.dcx-start-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.dcx-start-grid button{min-height:180px;text-align:left;position:relative;padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);cursor:pointer;display:flex;flex-direction:column}.dcx-start-grid button:hover{border-color:var(--ink-faint);transform:translateY(-1px)}.dcx-start-grid b{font-size:28px;color:var(--comics);margin-bottom:28px}.dcx-start-grid strong{font-size:18px}.dcx-start-grid small{color:var(--ink-faint);line-height:1.4;margin-top:5px;max-width:220px}.dcx-start-grid i{position:absolute;right:16px;bottom:16px;font-style:normal;font-size:20px;color:var(--ink-dim)}
-.dcx-browse{width:100%;display:flex;align-items:center;gap:16px;padding:18px 22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);cursor:pointer;text-align:left}.dcx-browse>span{font-size:28px;color:var(--comics)}.dcx-browse div{flex:1}.dcx-browse strong{display:block;font-size:18px}.dcx-browse small{color:var(--ink-faint)}.dcx-browse>b{font-size:22px}
-.dcx-territory{display:flex;align-items:center;gap:24px;padding:22px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(115deg,color-mix(in srgb,var(--comics) 10%,var(--panel)),var(--panel) 65%)}.dcx-territory-art{flex:0 0 150px;height:130px;border-radius:12px;background:radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--comics) 25%,transparent),transparent 48%),var(--bg-2);border:1px solid color-mix(in srgb,var(--comics) 35%,var(--line));display:grid;place-items:center}.dcx-territory-art span{font-family:var(--font-display);font-size:70px;color:var(--comics)}.dcx-territory strong{font-family:var(--font-display);font-size:28px}.dcx-territory p{color:var(--ink-dim);line-height:1.5;margin:6px 0 14px}.dcx-territory button,.dcx-batman-card button{border:1px solid var(--comics);background:color-mix(in srgb,var(--comics) 13%,var(--panel));color:var(--ink);border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer}.dcx-batman-card{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}.dcx-batman-card strong{font-family:var(--font-display);font-size:34px}.dcx-batman-card p{color:var(--ink-dim);margin:5px 0 0;max-width:800px;line-height:1.5}
-
-.cx-tabs{display:flex;gap:7px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}.cx-tabs::-webkit-scrollbar{display:none}.cx-tab{flex:0 0 auto;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);border-radius:999px;padding:8px 12px;font:600 12px var(--font-body);cursor:pointer;white-space:nowrap}.cx-tab span{color:var(--ink-faint);margin-left:4px}.cx-tab.is-active{border-color:var(--comics);background:color-mix(in srgb,var(--comics) 12%,var(--panel));color:var(--ink)}.cx-overview-line,.cx-coverage-callout{padding:14px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2);color:var(--ink-dim);font-size:13px}.cx-section-note{font-size:12px;color:var(--ink-faint);margin:-6px 0 10px}.cx-row-title{color:var(--ink)!important}.cx-row-sub{color:var(--ink-faint)!important}.cx-kicker{color:var(--comics)!important}.cx-title{color:var(--ink)!important}.cx-subtitle{color:var(--ink-dim)!important}.cx-entry-btn-label{color:var(--ink)!important}.cx-entry-btn-sub{color:var(--ink-faint)!important}
-@media(max-width:759px){.dcx-wrap{padding:0 14px 78px}.dcx-hero{min-height:340px;padding:28px 22px;align-items:flex-end}.dcx-hero h2{font-size:46px}.dcx-hero p{font-size:17px}.dcx-quote{display:none}.dcx-start-grid{grid-template-columns:1fr 1fr}.dcx-start-grid button{min-height:155px;padding:16px}.dcx-start-grid b{margin-bottom:18px}.dcx-head{align-items:flex-start;flex-direction:column;gap:4px}.dcx-territory{align-items:flex-start}.dcx-territory-art{flex-basis:92px;height:92px}.dcx-territory-art span{font-size:48px}.dcx-batman-card{align-items:flex-start;flex-direction:column}.cx-tabs{margin-right:-2px}.cx-title{font-size:29px!important}}
+/* ======================================================================
+   COMICS HOME — "The DC Universe" (Phase 1). Scoped to .cxh; always dark (the hero artwork dissolves into the dark page).
+   ====================================================================== */
+main:has(> .grid > .cxh){max-width:none;padding:0 0 0}
+main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
+.cxh{--cxh-bg:#121319;--cxh-ink:#eef0f4;--cxh-dim:#9aa0af;--cxh-gold:var(--comics,#e0ac2b);--cxh-line:rgba(255,255,255,.13);position:relative;overflow-x:clip;background:var(--cxh-bg);color:var(--cxh-ink);color-scheme:dark;font-family:var(--font-body);padding-bottom:112px}
+.cxh *{box-sizing:border-box}
+.cxh button{font-family:inherit;-webkit-tap-highlight-color:transparent}
+.cxh :focus-visible{outline:2px solid var(--cxh-gold);outline-offset:3px}
+.cxh h2:focus{outline:none}
+.cxh-hero .cxh-kicker,.cxh-hero .cxh-title,.cxh-hero .cxh-tag{text-shadow:0 1px 16px rgba(0,0,0,.65)}
+.cxh-in{width:100%;max-width:1100px;margin:0 auto;padding:0 20px}
+.cxh-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* Screen 1 — hero */
+.cxh-hero{position:relative;isolation:isolate;min-height:clamp(600px,calc(100svh - 130px),820px);display:flex;align-items:flex-end;padding-bottom:56px}
+.cxh-art{position:absolute;left:0;right:0;top:0;height:74%;z-index:-2;overflow:hidden}
+.cxh-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:53% 38%}
+.cxh-hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(18,19,25,.30) 0,rgba(18,19,25,0) 16%,rgba(18,19,25,0) 34%,rgba(18,19,25,.62) 52%,rgba(18,19,25,.92) 74%,var(--cxh-bg) 92%)}
+.cxh-hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.5;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.05) 1px,transparent 0);background-size:3px 3px;mix-blend-mode:overlay}
+.cxh-kicker{font:700 11px/1 var(--font-mono);letter-spacing:.22em;color:var(--cxh-gold);margin-bottom:14px}
+.cxh-title{font-family:var(--font-display);font-weight:400;font-size:clamp(48px,15vw,72px);line-height:.94;letter-spacing:.01em;margin:0 0 18px;color:#fff}
+.cxh-tag{margin:0 0 30px;font-size:21px;line-height:1.3;color:#fff}
+.cxh-tag span{display:block}
+.cxh-btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border:0;border-radius:4px;background:var(--cxh-gold);color:#14110a;font-weight:700;font-size:14px;letter-spacing:.16em;cursor:pointer;transition:transform .15s ease,filter .15s ease}
+.cxh-btn:active{transform:scale(.98);filter:brightness(.9)}
+/* Screen 2 — the universe spine */
+.cxh-universe{padding:72px 0 40px}
+.cxh-h2{font-family:var(--font-display);font-weight:400;font-size:34px;line-height:1;letter-spacing:.02em;margin:0 0 36px;color:#fff}
+.cxh-spine{list-style:none;margin:0;padding:0 0 0 40px;position:relative}
+.cxh-spine::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(255,255,255,.08),rgba(255,255,255,.2) 45%,rgba(255,255,255,.2) 75%,rgba(255,255,255,.07))}
+.cxh-era{position:relative;padding:15px 0;min-height:52px;display:flex;align-items:center}
+.cxh-era.cxh-gap{margin-top:26px}
+.cxh-era::before{content:"";position:absolute;left:-34px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#4a4f5e;transition:background .4s ease,transform .4s ease}
+.cxh-era-name{font-family:var(--font-display);font-size:20px;letter-spacing:.09em;text-transform:uppercase;color:#8a90a0;transition:color .4s ease}
+.cxh-era.is-in::before{background:#7b8194}
+.cxh-era.is-in .cxh-era-name{color:var(--cxh-dim)}
+.cxh-era-live{min-height:84px;margin:6px 0}
+.cxh-era-live::before{left:-38px;width:15px;height:15px;margin-top:-7.5px;background:var(--cxh-gold)!important;box-shadow:0 0 0 5px rgba(224,172,43,.16),0 0 26px rgba(224,172,43,.55)}
+.cxh-era-live::after{content:"";position:absolute;left:-31px;top:-34px;bottom:-34px;width:1px;background:linear-gradient(to bottom,transparent,rgba(224,172,43,.85) 35%,rgba(224,172,43,.85) 65%,transparent)}
+.cxh-era-btn{position:relative;z-index:1;display:flex;align-items:center;width:100%;min-height:64px;margin:0;padding:6px 0;background:none;border:0;color:#fff;text-align:left;cursor:pointer}
+.cxh-era-live .cxh-era-name,.cxh-era-live.is-in .cxh-era-name{font-size:46px;letter-spacing:.04em;color:#fff}
+.cxh-era-btn:active .cxh-era-name{color:var(--cxh-gold)}
+/* Screen 3 — New 52 */
+.cxh-new52{position:relative;overflow:hidden;padding:96px 0 104px;border-top:1px solid var(--cxh-line);background:radial-gradient(ellipse at 90% 12%,rgba(224,172,43,.10),transparent 55%),radial-gradient(ellipse at 0% 70%,rgba(61,143,214,.10),transparent 55%),var(--cxh-bg)}
+.cxh-mark{position:absolute;right:-3%;top:6px;font-family:var(--font-display);font-size:clamp(260px,78vw,520px);line-height:.8;color:rgba(255,255,255,.04);pointer-events:none;user-select:none}
+.cxh-new52 .cxh-in{position:relative}
+.cxh-big{font-family:var(--font-display);font-weight:400;font-size:64px;line-height:.95;letter-spacing:.02em;margin:0 0 10px;color:#fff}
+.cxh-years{margin:0 0 44px;font:600 14px/1 var(--font-mono);letter-spacing:.22em;color:var(--cxh-dim)}
+.cxh-chain{list-style:none;margin:0 0 48px;padding:0}
+.cxh-chain li{position:relative;font-family:var(--font-display);font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:#fff;padding:0 0 38px 24px;cursor:default}
+.cxh-chain li:last-child{padding-bottom:0}
+.cxh-chain li::before{content:"";position:absolute;left:0;top:3px;width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.85)}
+.cxh-chain li:not(:last-child)::after{content:"";position:absolute;left:3px;top:16px;bottom:7px;width:1px;background:linear-gradient(to bottom,rgba(255,255,255,.5),rgba(255,255,255,.15))}
+.cxh-cta{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 24px;background:transparent;border:1px solid var(--cxh-gold);border-radius:4px;color:var(--cxh-gold);font-weight:700;font-size:14px;letter-spacing:.16em;cursor:pointer;transition:background .15s ease,color .15s ease}
+.cxh-cta:active,.cxh-cta.is-pressed{background:var(--cxh-gold);color:#14110a}
+/* Screen 4 — explore */
+.cxh-explore{padding:80px 0 0;border-top:1px solid var(--cxh-line)}
+.cxh-rows{border-bottom:1px solid var(--cxh-line)}
+.cxh-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;align-items:center;width:100%;min-height:96px;padding:20px 0;background:none;border:0;border-top:1px solid var(--cxh-line);color:#fff;text-align:left;cursor:pointer}
+.cxh-row:first-child{border-top:0}
+.cxh-row-t{grid-column:1;font-family:var(--font-display);font-size:28px;letter-spacing:.04em;line-height:1.05}
+.cxh-row-d{grid-column:1;margin-top:6px;font-size:14px;line-height:1.4;color:var(--cxh-dim)}
+.cxh-row-a{grid-column:2;grid-row:1 / span 2;font-size:24px;color:var(--cxh-dim);transition:color .15s ease,transform .15s ease}
+.cxh-row:active .cxh-row-a,.cxh-row:focus-visible .cxh-row-a{color:var(--cxh-gold);transform:translateX(3px)}
+.cxh-link{display:inline-flex;align-items:center;min-height:48px;margin-top:20px;padding:0;background:none;border:0;color:var(--cxh-dim);font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.cxh-link:active{color:#fff}
+.cxh-era,.cxh-era-btn{min-width:0}.cxh-era-name,.cxh-row-t,.cxh-row-d,.cxh-chain li,.cxh-big,.cxh-title,.cxh-h2{overflow-wrap:anywhere}
+@media(max-width:260px){.cxh-in{padding:0 14px}.cxh-title{font-size:40px}.cxh-era-live .cxh-era-name,.cxh-era-live.is-in .cxh-era-name{font-size:34px}.cxh-big{font-size:48px}.cxh-row-t{font-size:22px}.cxh-btn,.cxh-cta{letter-spacing:.08em;padding:0 14px;text-align:center}}
+/* motion */
+@keyframes cxh-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.cxh-kicker,.cxh-title,.cxh-tag span,.cxh-btn{animation:cxh-rise .8s cubic-bezier(.2,.7,.2,1) both}
+.cxh-title{animation-delay:.1s}.cxh-tag span:nth-child(1){animation-delay:.35s}.cxh-tag span:nth-child(2){animation-delay:.5s}.cxh-tag span:nth-child(3){animation-delay:.65s}.cxh-btn{animation-delay:.9s}
+.cxh-anim .cxh-era,.cxh-anim .cxh-chain li,.cxh-anim .cxh-row{opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease}
+.cxh-anim .cxh-era.is-in,.cxh-anim .cxh-chain li.is-in,.cxh-anim .cxh-row.is-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.cxh *,.cxh *::before,.cxh *::after{animation:none!important;transition:none!important}}
+/* desktop adapts from the mobile design */
+@media (min-width:900px){
+  .cxh-in{padding:0 48px}
+  .cxh-hero{min-height:clamp(640px,calc(100svh - 130px),860px)}
+  .cxh-art{height:100%}
+  .cxh-art img{object-position:50% 30%}
+  .cxh-hero::before{background:linear-gradient(to bottom,rgba(18,19,25,.25) 0,rgba(18,19,25,0) 14%,rgba(18,19,25,0) 40%,rgba(18,19,25,.7) 66%,rgba(18,19,25,.94) 84%,var(--cxh-bg) 98%)}
+  .cxh-tag{font-size:22px}
+  .cxh-row-t{font-size:34px}
+}
+@media(max-width:759px){.cx-tabs{margin-right:-2px}.cx-title{font-size:29px!important}}
 
 /* ======================================================================
    DC COMICS EXPLORER — immersive catalogue pass
