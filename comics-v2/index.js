@@ -10,7 +10,8 @@ import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
 import * as branchPaths from "./branch-paths.js?v=bp4";
 import * as batch1 from "./seed-new52-batch1.js?v=b1b";
-import * as batch2 from "./seed-new52-batch2.js?v=b2";
+import * as batch2 from "./seed-new52-batch2.js?v=b2b";
+import * as batch3 from "./seed-new52-batch3.js?v=b3";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -125,7 +126,7 @@ export async function importNew52Batch1(progress) {
 // resets, deterministic upserts only, ids owned by every other dataset are reserved, and referenced existing issues (Batman #17, Aquaman #31 …) are
 // verified to exist before anything is written. Its six event paths + the Teen Titans participation in the existing Death of the Family path are
 // written at the end (bp-* documents only; the Death of the Family event is the existing global one, not a duplicate).
-const BATCH2_PATH_IDS = ["bp-dark-rise-of-the-vampires", "bp-dark-rotworld", "bp-dark-blight", "bp-ss-resurrection-man", "bp-teen-culling", "bp-bat-dotf"];
+const BATCH2_PATH_IDS = ["bp-dark-rise-of-the-vampires", "bp-dark-rotworld", "bp-dark-blight", "bp-ss-resurrection-man", "bp-teen-culling", "bp-bat-dotf", "bp-jl-forever-evil", "bp-ga-hawkman-wanted"];
 export async function importNew52Batch2(progress) {
   const sets = (ds) => ({
     characters: ds.characters.map(x => x.id), creators: ds.creators.map(x => x.id), series: ds.series.map(x => x.id),
@@ -138,6 +139,28 @@ export async function importNew52Batch2(progress) {
   });
   if (result.validation?.valid && !result.errors.length) {
     result.paths = await branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress, only: BATCH2_PATH_IDS });
+  }
+  return result;
+}
+
+// Additive import: New 52 Batch 3 (Justice League International / of America / Vibe / United, Legion of Super-Heroes, Legion Lost, Justice League 3000 / 3001,
+// Earth 2, Earth 2: World's End, Worlds' Finest, The Savage Hawkman, Cyborg, Martian Manhunter, Captain Atom, Mister Terrific). Same safety model as Batches 1-2:
+// never clears or resets, deterministic upserts only, ids owned by every other dataset are reserved, referenced existing issues (Firestorm #9, Batman/Superman #8-9)
+// are verified to exist first. Justice League International Vol. 2 reuses the id of the Batch 2 cross-title record (one publication, not two). The Culling and
+// Hawkman: Wanted paths are rewritten so Legion Lost / Savage Hawkman become real participants (bp-* documents only).
+const BATCH3_PATH_IDS = ["bp-teen-culling", "bp-ga-hawkman-wanted"];
+export async function importNew52Batch3(progress) {
+  const sets = (ds) => ({
+    characters: ds.characters.map(x => x.id), creators: ds.creators.map(x => x.id), series: ds.series.map(x => x.id),
+    runs: ds.runs.map(x => x.id), issues: ds.issues.map(x => x.id), collections: ds.collections.map(x => x.id),
+  });
+  const reserved = {};
+  for (const ds of [dataset, flashGl.dataset, batch1.dataset, batch2.dataset]) { const s = sets(ds); for (const k of Object.keys(s)) reserved[k] = new Set([...(reserved[k] || []), ...s[k]]); }
+  const result = await batch3.importDataset({
+    upsertEntity: data.upsertEntity, upsertCollectionEdition: data.upsertCollectionEdition, getEntity: data.getEntity, COLLECTIONS, reserved, progress,
+  });
+  if (result.validation?.valid && !result.errors.length) {
+    result.paths = await branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress, only: BATCH3_PATH_IDS });
   }
   return result;
 }
@@ -170,6 +193,11 @@ window.__comicsV2 = {
     dataset: batch2.dataset,
     validate: batch2.validateDataset,
     import: importNew52Batch2,
+  },
+  new52Batch3: {
+    dataset: batch3.dataset,
+    validate: batch3.validateDataset,
+    import: importNew52Batch3,
   },
   new52BranchPaths: {
     build: branchPaths.buildAll,

@@ -118,20 +118,25 @@ export const BRANCH_DEFS = [
     ],
   },
   {
-    key: "ga-hawkman-wanted", family: "Green Arrow", csv: { path_id: "HAWKMAN_WANTED", trigger: "Hawkman: Wanted", branch_from: "Green Arrow", branch_to: "Green Arrow #14; Deathstroke #14; Savage Hawkman #14", branch_type: "crossover", reading_instruction: "Green Arrow → crossover → return", notes: "Green Arrow #14 is one chapter of the crossover; do not misclassify the other books as Green Arrow series." },
+    key: "ga-hawkman-wanted", family: "Green Arrow", csv: { path_id: "HAWKMAN_WANTED", trigger: "Hawkman: Wanted", branch_from: "Green Arrow", branch_to: "Green Arrow #14; Deathstroke #14; Savage Hawkman #14", branch_type: "crossover", reading_instruction: "Green Arrow → crossover → return", notes: "Green Arrow #14 is one chapter of the crossover; do not misclassify the other books as Green Arrow series. Batch 3 lists Savage Hawkman #13 for this event; the Batch 1 Green Arrow Vol. 3 listing says Savage Hawkman #14 (both kept as supplied)." },
     anchorSeriesIds: ["green-arrow-2011"], eventCollectionIds: [],
     branches: [
       { label: "Green Arrow", seriesId: "green-arrow-2011", collectionIds: ["green-arrow-vol-3-harrow"], labels: ["14"] },
-      { label: "Deathstroke", seriesId: null, note: "Deathstroke #14 — not catalogued as a series here." },
-      { label: "Savage Hawkman", seriesId: null, collectionIds: ["green-arrow-vol-3-harrow"], note: "Savage Hawkman #14 — included in Green Arrow Vol. 3: Harrow." },
+      { label: "Deathstroke", seriesId: "deathstroke-2011", collectionIds: ["deathstroke-vol-2-lobo-hunt-original-edition", "deathstroke-vol-2-lobo-hunt-expanded-resolicited-edition"], labels: ["14"],
+        ifMissing: { seriesId: null, collectionIds: [], labels: [], note: "Deathstroke #14 — not catalogued as a series here." } },
+      { label: "Savage Hawkman", seriesId: "the-savage-hawkman-2011", collectionIds: ["the-savage-hawkman-vol-2-wanted"], labels: ["13"],
+        ifMissing: { seriesId: null, collectionIds: ["green-arrow-vol-3-harrow"], labels: [], note: "Savage Hawkman #14 — included in Green Arrow Vol. 3: Harrow." } },
     ],
   },
   {
     key: "jl-forever-evil", family: "Justice League", src: B12, csv: { path_id: "FOREVER_EVIL", trigger: "Forever Evil", branch_from: "Justice League", branch_to: "Forever Evil #1-7; Justice League #24-29", branch_type: "crossover", reading_instruction: "JL main path after Trinity War → Forever Evil → JL branch / Crime Syndicate aftermath → return at JL #30", notes: "Justice League branch of the universe-wide Forever Evil event; JL #24-29 are collected as Forever Heroes. No duplicate issue records for the event." },
     anchorSeriesIds: ["justice-league-2011"], eventCollectionIds: ["forever-evil-hc"], followsKey: "jl-trinity-war",
     branches: [
+      // Main event first, then the Justice League branch, then the tie-in books the catalogue already holds (only where they exist).
+      { label: "Forever Evil", seriesId: null, collectionIds: ["forever-evil-hc"], note: "Main event: Forever Evil #1-7 — collected in Forever Evil HC." },
       { label: "Justice League", seriesId: "justice-league-2011", collectionIds: ["justice-league-vol-5-forever-heroes"], labels: ["24", "25", "26", "27", "28", "29"] },
-      { label: "Forever Evil", seriesId: null, collectionIds: ["forever-evil-hc"], note: "Forever Evil #1-7 — the main event series, collected in Forever Evil HC." },
+      { label: "Forever Evil: Blight", seriesId: null, collectionIds: ["forever-evil-blight"], optional: true, note: "Tie-in: Justice League Dark #24-29, Constantine #9-12, Trinity of Sin: Pandora #6-9, Trinity of Sin: Phantom Stranger #14-17 — collected in Forever Evil: Blight." },
+      { label: "Forever Evil: Rogues Rebellion", seriesId: null, collectionIds: ["forever-evil-rogues-rebellion"], optional: true, note: "Tie-in collected in Forever Evil: Rogues Rebellion." },
     ],
   },
   {
@@ -184,7 +189,8 @@ export const BRANCH_DEFS = [
     branches: [
       { label: "Teen Titans", seriesId: "teen-titans-2011", collectionIds: ["teen-titans-vol-2-the-culling"], labels: ["8", "9", "10", "11", "12", "13", "14"] },
       { label: "Superboy", seriesId: "superboy-2011", collectionIds: ["superboy-vol-2-extraction"], labels: ["8", "9", "10", "11", "12"] },
-      { label: "Legion Lost", seriesId: null, note: "Legion Lost #8-10 — not catalogued as a series here." },
+      { label: "Legion Lost", seriesId: "legion-lost-2011", collectionIds: ["legion-lost-vol-2-the-culling"], labels: ["8", "9"],
+        ifMissing: { seriesId: null, collectionIds: [], labels: [], note: "Legion Lost #8-10 — not catalogued as a series here." } },
       { label: "DC Universe Presents #12", seriesId: null, collectionIds: ["teen-titans-vol-2-the-culling"], note: "Included in Teen Titans Vol. 2: The Culling." },
     ],
   },
@@ -233,9 +239,9 @@ export function validate() {
 async function resolveDef(d, getEntity) {
   const branches = [];
   for (const b of d.branches) {
-    if (!b.ifMissing) { branches.push(b); continue; }
+    if (!b.ifMissing && !b.optional) { branches.push(b); continue; }
     const ok = (!b.seriesId || await getEntity(COLLECTIONS.SERIES, b.seriesId)) && (await Promise.all((b.collectionIds || []).map(id => getEntity(COLLECTIONS.COLLECTIONS, id)))).every(Boolean);
-    branches.push(ok ? b : { label: b.label, ...b.ifMissing });
+    if (ok) branches.push(b); else if (!b.optional) branches.push({ label: b.label, ...b.ifMissing });
   }
   return { ...d, branches };
 }

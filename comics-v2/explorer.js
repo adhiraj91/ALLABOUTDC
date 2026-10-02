@@ -3,6 +3,7 @@
 import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
 import * as bp from "./branch-paths.js?v=bp4";
+import {CATEGORIES,categoryOf,categoryRank} from "./categories.js?v=cat1";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -11,7 +12,7 @@ const issueType=i=>String(i?.issueLabelType||"numbered");
 const issueNum=i=>{const n=parseFloat(i?.issueNumber);return Number.isFinite(n)?n:Infinity;};
 const sortIssues=a=>a.sort((x,y)=>issueNum(x)-issueNum(y)||String(x.issueLabel||"").localeCompare(String(y.issueLabel||"")));
 const titleOf=c=>c?.displayName||c?.name||"Character";
-const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core Dark":0,"Dark":10,"Trinity of Sin":20,"Young Heroes":30,"Task Force":40,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
+const GROUP_ORDER={"Core Batman":0,"Core Superman":0,"Core Flash":0,"Core Lantern":0,"Core Justice League":0,"Core Wonder Woman":0,"Core Aquaman":0,"Core Green Arrow":0,"Aquaman Spin-offs":10,"Core Dark":0,"Extended League":10,"Legion":0,"Future":10,"Earth 2 Core":0,"Earth 2 Companions":10,"Other Heroes":0,"Dark":10,"Trinity of Sin":20,"Young Heroes":30,"Task Force":40,"Core":0,"Bat-Family":10,"Superman Family":10,"Lantern Spin-offs":10,"Lantern-Adjacent":20,"Gotham & Spin-offs":20,"Gotham & Spin-Offs":20,"Team-Ups":30,"Limited Series":40,"Other":99};
 const groupRank=g=>GROUP_ORDER[g]??50;
 
 const cache=new Map();
@@ -166,12 +167,30 @@ async function root(){
   const roots=resolveRoots(chars,series); const ct=conts[0]; const u=universes[0];
   return {html:`<div class="cx-kicker">DC COMICS</div><h2 class="cx-title">Explore the DC Universe</h2><div class="cx-subtitle">The catalogue grows territory by territory. Current mapped coverage: ${esc(ct?.shortName||"The New 52")} → ${esc(roots.map(titleOf).sort().join(" · ")||"first territories")}.</div>
     <div class="cx-entry-grid">
+      <button class="cx-entry-btn" data-go="categoryList"><span class="cx-entry-icon">❖</span><span class="cx-entry-btn-label">By Category</span><span class="cx-entry-btn-sub">${CATEGORIES.length} franchise categories, in reading order</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="characterList"><span class="cx-entry-icon">◉</span><span class="cx-entry-btn-label">By Character</span><span class="cx-entry-btn-sub">${roots.length} mapped starting character${roots.length===1?"":"s"}</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="continuityList"><span class="cx-entry-icon">◎</span><span class="cx-entry-btn-label">By Continuity / Era</span><span class="cx-entry-btn-sub">Explore the DC timeline by era and continuity</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="seriesList"><span class="cx-entry-icon">▦</span><span class="cx-entry-btn-label">Browse Series</span><span class="cx-entry-btn-sub">${series.length} currently mapped series</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="atlas"><span class="cx-entry-icon">✦</span><span class="cx-entry-btn-label">Story Map</span><span class="cx-entry-btn-sub">Enter the connected DC universe graph</span><span class="cx-entry-arrow">↗</span></button>
     </div>`,
-    wire(c){c.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.go;if(a==="atlas"){window.__comicsStoryMap?.open?.("universe",u?.id);return;}if(a==="continuity")push("continuity",ct?.name||"Continuity",{continuity:ct});else{const labels={characterList:"Characters",continuityList:"Continuity / Era",seriesList:"Series"};push(a,labels[a]||a,{});}}));}};
+    wire(c){c.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.go;if(a==="atlas"){window.__comicsStoryMap?.open?.("universe",u?.id);return;}if(a==="continuity")push("continuity",ct?.name||"Continuity",{continuity:ct});else{const labels={categoryList:"Categories",characterList:"Characters",continuityList:"Continuity / Era",seriesList:"Series"};push(a,labels[a]||a,{});}}));}};
+}
+
+async function categoryList(){
+  const ss=await allSeries();const by=new Map(CATEGORIES.map(c=>[c.key,[]]));ss.forEach(s=>by.get(categoryOf(s).key).push(s));
+  const rows=CATEGORIES.map(c=>{const list=by.get(c.key);const issues=list.reduce((n,s)=>n+(Number(s.issueCount)||0),0);
+    return list.length?row(c.label,`${list.length} series · ${issues} numbered issues`,`data-cat="${esc(c.key)}"`):`<div class="cx-row" style="opacity:.5" aria-disabled="true"><div class="cx-row-body"><div class="cx-row-title">${esc(c.label)}</div><div class="cx-row-sub">Not mapped yet</div></div></div>`;}).join("");
+  return{html:`<div class="cx-kicker">THE NEW 52</div><h2 class="cx-title">Browse by category</h2><div class="cx-subtitle">The New 52 organised by franchise, in a fixed order. Each category opens its series.</div><div class="cx-list">${rows}</div>`,
+    wire(c){c.querySelectorAll("[data-cat]").forEach(r=>r.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===r.dataset.cat);push("category",x.label,{categoryKey:x.key});}));}};
+}
+async function category(p){
+  const cat=CATEGORIES.find(c=>c.key===p.categoryKey);if(!cat)return{html:empty("Category not found.")};
+  const series=(await allSeries()).filter(s=>categoryOf(s).key===cat.key);
+  const lines=lineGroups(series);const totalIssues=series.reduce((n,s)=>n+(Number(s.issueCount)||0),0);
+  let html=`<div class="cx-kicker">CATEGORY</div><h2 class="cx-title">${esc(cat.label)}</h2><div class="cx-stat-grid">${stat("Series",series.length)}${stat("Numbered issues",totalIssues)}${stat("Publication lines",lines.length)}</div>`;
+  if(!series.length)html+=`<div class="sheet-section">${empty("No series are mapped to this category yet.")}</div>`;
+  for(const [g,list] of lines){html+=`<div class="cx-series-section" data-line-section="${esc(g)}"><div class="cx-section-head"><div><span>${esc(g.toUpperCase())}</span><h3>${esc(g)}</h3></div><em>${list.length} series</em></div><div class="cx-series-grid">${list.map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`;}
+  return{html,wire(cn){cn.querySelectorAll("[data-series]").forEach(r=>r.addEventListener("click",()=>{const s=series.find(x=>x.id===r.dataset.series);if(s)push("series",s.title,{series:s});}));}};
 }
 
 async function characterList(){
@@ -330,7 +349,7 @@ async function continuity(p){
   }};
 }
 
-async function seriesList(){const ss=(await allSeries()).sort((a,b)=>groupRank(a.lineCategory)-groupRank(b.lineCategory)||year(a).localeCompare(year(b))||a.title.localeCompare(b.title));if(!ss.length)return{html:empty("No series are mapped yet.")};const groups=new Map();ss.forEach(s=>{const k=s.lineCategory||"Other";if(!groups.has(k))groups.set(k,[]);groups.get(k).push(s);});let html=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">DC Comics catalogue</h2><div class="cx-subtitle">Every mapped publication, grouped by publishing line. New territories appear here automatically.</div>`;for(const [g,list] of groups){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>${esc(g.toUpperCase())}</span><h3>${esc(g)}</h3></div><em>${list.length} series</em></div><div class="cx-series-grid">${list.map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`;}return{html,wire(c){c.querySelectorAll("[data-series]").forEach(r=>r.addEventListener("click",()=>{const s=ss.find(x=>x.id===r.dataset.series);push("series",s.title,{series:s});}));}};}
+async function seriesList(){const ss=(await allSeries()).sort((a,b)=>categoryRank(categoryOf(a).key)-categoryRank(categoryOf(b).key)||groupRank(a.lineCategory)-groupRank(b.lineCategory)||year(a).localeCompare(year(b))||a.title.localeCompare(b.title));if(!ss.length)return{html:empty("No series are mapped yet.")};const groups=new Map();ss.forEach(s=>{const k=categoryOf(s).label;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(s);});let html=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">DC Comics catalogue</h2><div class="cx-subtitle">Every mapped publication, grouped by franchise category in a fixed order. New territories appear here automatically.</div>`;for(const [g,list] of groups){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>${esc(g.toUpperCase())}</span><h3>${esc(g)}</h3></div><em>${list.length} series</em></div><div class="cx-series-grid">${list.map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`;}return{html,wire(c){c.querySelectorAll("[data-series]").forEach(r=>r.addEventListener("click",()=>{const s=ss.find(x=>x.id===r.dataset.series);push("series",s.title,{series:s});}));}};}
 
 // ---- Reading paths: MAIN PATH -> CROSSOVER -> BRANCHES -> RETURN. Pure relationships between existing series/collections;
 // nothing here owns issues. Shown on a series (or run) page only when the owner-supplied branch paths mention that series.
@@ -484,7 +503,7 @@ async function collection(p){
   return{html,wire(el){el.querySelectorAll("[data-cov-series]").forEach(b=>b.addEventListener("click",()=>{const s=ss[sids.indexOf(b.dataset.covSeries)];if(s)push("series",s.title,{series:s});}));}};
 }
 
-const LEVELS={root,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection};
+const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection};
 let stack=[];let token=0;
 function shell(body){const crumbs=stack.map((x,i)=>`${i?`<span class="cx-crumb-sep">/</span>`:""}<span class="cx-crumb" data-i="${i}" data-current="${i===stack.length-1}">${esc(x.label)}</span>`).join("");return `<div class="cx-topbar"><button class="cx-back-btn" id="cxBackBtn">${stack.length>1?"←":"✕"}</button><div class="cx-breadcrumb">${crumbs}</div></div>${body}`;}
 async function render(){const el=document.getElementById("comicsExplorerContent");if(!el||!stack.length)return;const t=++token;el.innerHTML=shell(`<div class="cx-loading">Loading…</div>`);let out;try{out=await LEVELS[stack.at(-1).level](stack.at(-1).params||{});}catch(e){console.error("[Comics Explorer]",e);out={html:`<div class="cx-error">Couldn't load this right now. ${esc(e.message||"")}</div>`};}if(t!==token)return;el.innerHTML=shell(out.html);el.querySelector("#cxBackBtn")?.addEventListener("click",back);el.querySelectorAll('.cx-crumb[data-current="false"]').forEach(x=>x.addEventListener("click",()=>{stack=stack.slice(0,+x.dataset.i+1);render();}));out.wire?.(el);}
