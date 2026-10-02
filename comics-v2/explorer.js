@@ -36,6 +36,10 @@ function resolveRoots(chars,series){
   const rank=c=>{let r=999;for(const s of (series||[])){if(s?.characterIds?.[0]===c.id)r=Math.min(r,categoryRank(categoryOf(s).key));}return r;};
   return roots.map(c=>[c,rank(c)]).sort((a,b)=>a[1]-b[1]||(a[0].id<b[0].id?-1:a[0].id>b[0].id?1:0)).map(x=>x[0]);
 }
+// Top-level browse entries = the franchise categories (categories.js order), each with its mapped series.
+function categoryEntries(series){const by=new Map(CATEGORIES.map(c=>[c.key,[]]));(series||[]).forEach(s=>{const k=categoryOf(s).key;if(by.has(k))by.get(k).push(s);});return CATEGORIES.map(c=>({cat:c,list:by.get(c.key)})).filter(e=>e.list.length);}
+// A category that is led by a catalogue-root character (Batman, Superman, Green Lantern …) keeps that character's family chips.
+const rootOfCat=(catKey,roots,series)=>(roots||[]).find(r=>(series||[]).some(s=>s?.characterIds?.[0]===r.id&&categoryOf(s).key===catKey));
 const childrenOf=(c,chars)=>(chars||[]).filter(x=>x&&x.parentCharacterId===c.id);
 // A character's territory: series featuring the character or anyone in its family branch.
 function territorySeries(c,chars,series){const ids=new Set([c.id,...childrenOf(c,chars).map(x=>x.id)]);return (series||[]).filter(s=>(s.characterIds||[]).some(id=>ids.has(id)));}
@@ -172,10 +176,9 @@ function wirePublications(el,issues,collections,s){el.querySelectorAll("[data-pu
 async function root(){
   const [universes,conts,chars,series]=await Promise.all([data.getAllUniverses(20),data.getAllContinuities(50),data.getAllCharacters(200),allSeries()]);
   const roots=resolveRoots(chars,series); const ct=conts[0]; const u=universes[0];
-  return {html:`<div class="cx-kicker">DC COMICS</div><h2 class="cx-title">Explore the DC Universe</h2><div class="cx-subtitle">The catalogue grows territory by territory. Current mapped coverage: ${esc(ct?.shortName||"The New 52")} → ${esc(roots.map(titleOf).sort().join(" · ")||"first territories")}.</div>
+  return {html:`<div class="cx-kicker">DC COMICS</div><h2 class="cx-title">Explore the DC Universe</h2><div class="cx-subtitle">The catalogue grows territory by territory. Current mapped coverage: ${esc(ct?.shortName||"The New 52")} → ${esc(categoryEntries(series).map(e=>e.cat.label).join(" · ")||"first territories")}.</div>
     <div class="cx-entry-grid">
-      <button class="cx-entry-btn" data-go="categoryList"><span class="cx-entry-icon">❖</span><span class="cx-entry-btn-label">By Category</span><span class="cx-entry-btn-sub">${CATEGORIES.length} franchise categories, in reading order</span><span class="cx-entry-arrow">↗</span></button>
-      <button class="cx-entry-btn" data-go="characterList"><span class="cx-entry-icon">◉</span><span class="cx-entry-btn-label">By Character</span><span class="cx-entry-btn-sub">${roots.length} mapped starting character${roots.length===1?"":"s"}</span><span class="cx-entry-arrow">↗</span></button>
+      <button class="cx-entry-btn" data-go="characterList"><span class="cx-entry-icon">◉</span><span class="cx-entry-btn-label">By Character</span><span class="cx-entry-btn-sub">${categoryEntries(series).length} franchise categories</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="continuityList"><span class="cx-entry-icon">◎</span><span class="cx-entry-btn-label">By Continuity / Era</span><span class="cx-entry-btn-sub">Explore the DC timeline by era and continuity</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="seriesList"><span class="cx-entry-icon">▦</span><span class="cx-entry-btn-label">Browse Series</span><span class="cx-entry-btn-sub">${series.length} currently mapped series</span><span class="cx-entry-arrow">↗</span></button>
       <button class="cx-entry-btn" data-go="atlas"><span class="cx-entry-icon">✦</span><span class="cx-entry-btn-label">Story Map</span><span class="cx-entry-btn-sub">Enter the connected DC universe graph</span><span class="cx-entry-arrow">↗</span></button>
@@ -202,20 +205,18 @@ async function category(p){
 
 async function characterList(){
   const [all,series]=await Promise.all([data.getAllCharacters(200),allSeries()]);
-  if(!all.length)return {html:empty("No character records are in the comics database yet. An admin can load them from Admin Tools → Reset & Import · New 52.")};
-  const roots=resolveRoots(all,series);
-  if(!roots.length)return {html:empty("Characters are recorded, but none is marked as a catalogue entry point yet.")};
-  const trees=roots.map(c=>{
-    const kids=childrenOf(c,all).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b)));
-    const terr=territorySeries(c,all,series);const lines=lineGroups(terr);
+  const entries=categoryEntries(series); const roots=resolveRoots(all,series);
+  if(!entries.length)return {html:empty("No series are mapped yet. An admin can load them from Admin Tools → Reset & Import · New 52.")};
+  const trees=entries.map(({cat,list})=>{const lines=lineGroups(list);
+    const rc=rootOfCat(cat.key,roots,series); const kids=rc?childrenOf(rc,all).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b))):[];
     return `<div class="cx-char-tree">
-      <button class="cx-character-card" data-char="${esc(c.id)}"><div class="cx-character-orb">${esc(titleOf(c).slice(0,1))}</div><div><span>CATALOGUE ROOT</span><strong>${esc(titleOf(c))}</strong><small>${terr.length} series in this territory${kids.length?` · ${kids.length} family characters`:""}</small></div><b>→</b></button>
-      ${lines.length?`<div class="cx-char-branches">${lines.map(([k,v])=>`<button class="cx-char-branch" data-char="${esc(c.id)}" data-line="${esc(k)}"><span>${esc(k)}</span><b>${v.length}</b></button>`).join("")}</div>`:""}
+      <button class="cx-character-card" data-cat="${esc(cat.key)}"><div class="cx-character-orb">${esc(cat.label.slice(0,1))}</div><div><span>CATEGORY</span><strong>${esc(cat.label)}</strong><small>${list.length} series in this category</small></div><b>→</b></button>
+      ${lines.length>1?`<div class="cx-char-branches">${lines.map(([k,v])=>`<button class="cx-char-branch" data-cat="${esc(cat.key)}"><span>${esc(k)}</span><b>${v.length}</b></button>`).join("")}</div>`:""}
       ${kids.length?`<div class="cx-char-family"><div class="cx-char-family-label">FAMILY &amp; ALLIES</div><div class="cx-char-family-track">${kids.map(k=>`<button class="cx-char-chip" data-char="${esc(k.id)}"><i>${esc(titleOf(k).slice(0,1))}</i><span>${esc(titleOf(k))}</span></button>`).join("")}</div></div>`:""}
-    </div>`;
-  }).join("");
-  return {html:`<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Enter through a character</h2><div class="cx-subtitle">Each catalogue root opens its connected territory — family, publishing lines and series.</div><div class="cx-char-trees">${trees}</div>`,
-    wire(el){el.querySelectorAll("[data-char]").forEach(r=>r.addEventListener("click",()=>{const x=all.find(v=>v.id===r.dataset.char);if(x)push("character",titleOf(x),{character:x,line:r.dataset.line||null});}));}};
+    </div>`;}).join("");
+  return {html:`<div class="cx-kicker">CHARACTERS</div><h2 class="cx-title">Enter through a franchise</h2><div class="cx-subtitle">Each category opens its connected series, in catalogue order.</div><div class="cx-char-trees">${trees}</div>`,
+    wire(el){el.querySelectorAll("[data-cat]").forEach(r=>r.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===r.dataset.cat);if(x)push("category",x.label,{categoryKey:x.key});}));
+      el.querySelectorAll("[data-char]").forEach(r=>r.addEventListener("click",()=>{const x=all.find(v=>v.id===r.dataset.char);if(x)push("character",titleOf(x),{character:x});}));}};
 }
 
 async function character(p){
@@ -253,7 +254,7 @@ async function continuity(p){
   if(!series.length)return{html:`<div class="cxa-id"><h2 class="cxa-name">${esc(ct.name)}</h2></div>${empty("No series are mapped in this continuity yet.")}`};
   const sIds=new Set(series.map(s=>s.id));const seriesById=new Map(series.map(s=>[s.id,s]));
   const chars=allChars.filter(c=>!c.continuityIds?.length||c.continuityIds.includes(ct.id));
-  const roots=resolveRoots(chars,series);
+  const catEntries=categoryEntries(series); const roots=resolveRoots(chars,series);
   const ctColls=colls.filter(c=>(c.seriesIds||[]).some(id=>sIds.has(id)));
 
   // Crossovers: editions flagged as crossovers or spanning 3+ of this continuity's series.
@@ -287,22 +288,19 @@ async function continuity(p){
   </div>`;
 
   // ---- jump bar ----
-  const jumps=[roots.length?["characters","Characters"]:null,["lines","Publishing lines"],events.length?["crossovers","Crossovers"]:null,years.length>1?["timeline","Timeline"]:null].filter(Boolean);
+  const jumps=[catEntries.length?["characters","Characters"]:null,["lines","Publishing lines"],events.length?["crossovers","Crossovers"]:null,years.length>1?["timeline","Timeline"]:null].filter(Boolean);
   html+=`<nav class="cxa-jump" aria-label="Explore ${esc(ct.name)}">${jumps.map(([k,l])=>`<button data-jump="${k}">${esc(l)}</button>`).join("")}</nav>`;
 
   // ---- characters: each root with its family orbiting it ----
-  if(roots.length){
-    html+=`<section class="cxa-sec" data-sec="characters"><div class="cxa-sec-head"><span>01</span><h3>Characters</h3></div>${roots.map(r=>{
-      const kids=childrenOf(r,chars).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b)));
-      const terr=territorySeries(r,chars,series);
-      return `<div class="cxa-constellation">
-        <button class="cxa-core" data-char="${esc(r.id)}"><span class="cxa-core-orb">${esc(titleOf(r).slice(0,1))}</span><span class="cxa-core-body"><em>Territory</em><strong>${esc(titleOf(r))}</strong><small>${terr.length} series${kids.length?` · ${kids.length} family characters`:""}</small></span><b>Enter →</b></button>
+  if(catEntries.length){
+    html+=`<section class="cxa-sec" data-sec="characters"><div class="cxa-sec-head"><span>01</span><h3>Characters</h3></div>${catEntries.map(({cat,list})=>{const rc=rootOfCat(cat.key,roots,series);const kids=rc?childrenOf(rc,chars).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b))):[];return `<div class="cxa-constellation">
+        <button class="cxa-core" data-cat="${esc(cat.key)}"><span class="cxa-core-orb">${esc(cat.label.slice(0,1))}</span><span class="cxa-core-body"><em>Category</em><strong>${esc(cat.label)}</strong><small>${list.length} series</small></span><b>Enter →</b></button>
         ${kids.length?`<div class="cxa-orbit">${kids.map(k=>{const n=leadCount(k,series);return `<button class="cxa-sat" data-char="${esc(k.id)}"><i>${esc(titleOf(k).slice(0,1))}</i><span>${esc(titleOf(k))}</span>${n?`<small>${n} lead series</small>`:`<small>supporting</small>`}</button>`;}).join("")}</div>`:""}
       </div>`;}).join("")}</section>`;
   }
 
   // ---- publishing lines: one line at a time, series drawn as lifespans across the era ----
-  html+=`<section class="cxa-sec" data-sec="lines"><div class="cxa-sec-head"><span>${roots.length?"02":"01"}</span><h3>Publishing lines</h3></div>
+  html+=`<section class="cxa-sec" data-sec="lines"><div class="cxa-sec-head"><span>${catEntries.length?"02":"01"}</span><h3>Publishing lines</h3></div>
     <div class="cxa-line-tabs" role="tablist">${lines.map(([k,v],i)=>`<button role="tab" data-line="${i}" aria-selected="${i===0}">${esc(k)}<b>${v.length}</b></button>`).join("")}</div>
     <div class="cxa-axis" aria-hidden="true">${years.map(y=>`<span style="left:${pct((Math.max(lo,y*12)+Math.min(hi,y*12+11))/2)}%">${String(y).slice(2)}</span>`).join("")}</div>
     ${lines.map(([k,v],i)=>`<div class="cxa-line-panel" data-line-panel="${i}" ${i===0?"":"hidden"}>${v.map(s=>{const a=mo(s.startDate)??lo,b=mo(s.endDate)??hi;return `<button class="cxa-life" data-series="${esc(s.id)}"><span class="cxa-life-head"><strong>${esc(s.title)}</strong><em>${s.issueCount?`${s.issueCount} issues`:""}</em></span><span class="cxa-life-track"><i style="left:${pct(a)}%;width:${Math.max(1.5,(b-a+1)/span*100).toFixed(2)}%"></i></span><small>${esc(range(s))}</small></button>`;}).join("")}</div>`).join("")}
@@ -332,6 +330,7 @@ async function continuity(p){
   return{html,wire(el){
     const go=(id)=>{const s=seriesById.get(id);if(s)push("series",s.title,{series:s});};
     el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();go(b.dataset.series);}));
+    el.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===b.dataset.cat);if(x)push("category",x.label,{categoryKey:x.key});}));
     el.querySelectorAll("[data-char]").forEach(b=>b.addEventListener("click",()=>{const x=chars.find(v=>v.id===b.dataset.char);if(x)push("character",titleOf(x),{character:x});}));
     el.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=ctColls.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));
     el.querySelectorAll("[data-jump]").forEach(b=>b.addEventListener("click",()=>{const t=el.querySelector(`[data-sec="${b.dataset.jump}"]`);if(t)t.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});}));
