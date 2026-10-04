@@ -45,20 +45,24 @@ async function openNew52(){
   }
 }
 
-const ERAS = [
-  { n: "Golden Age",          a: "#3a2a12", b: "#14110d", g: "rgba(214,160,60,.34)" },
-  { n: "Silver Age",          a: "#252e3c", b: "#12141a", g: "rgba(150,175,205,.30)" },
-  { n: "Bronze Age",          a: "#3a2216", b: "#14100e", g: "rgba(200,120,70,.32)" },
-  { n: "Crisis / Transition", a: "#3a1519", b: "#120d0f", g: "rgba(215,60,60,.34)" },
-  { n: "Post-Crisis",         a: "#1c2142", b: "#10111a", g: "rgba(110,120,230,.32)" },
-  { n: "Flashpoint",          a: "#43200f", b: "#130e0d", g: "rgba(255,110,40,.40)" },
-  { n: "NEW 52", live: true,  a: "#12263f", b: "#2a170c", g: "rgba(224,172,43,.34)" },
-  { n: "Rebirth",             a: "#352c14", b: "#13120e", g: "rgba(240,205,110,.30)" },
-  { n: "Infinite Frontier",   a: "#14303a", b: "#0f1318", g: "rgba(70,190,210,.30)" },
-  { n: "Dawn of DC",          a: "#3a2418", b: "#12151f", g: "rgba(255,150,90,.32)" },
-  { n: "Current Era",         a: "#232733", b: "#111218", g: "rgba(160,170,200,.26)" },
+// Atlas journey — semantics, labels and navigation live here, never in filenames.
+// "era" = an era card; "transition" = a bridge event between two eras (rendered as a rupture, never as an equivalent era card).
+// Only New 52 has a destination (action "new52"); every other node is a visual node. No dates are invented.
+const ATLAS_DIR = "./assets/atlas/";
+const JOURNEY = [
+  { type: "era", id: "golden-age", name: "Golden Age", file: "01-golden-age.webp" },
+  { type: "era", id: "silver-age", name: "Silver Age", file: "02-silver-age.webp" },
+  { type: "era", id: "bronze-age", name: "Bronze Age", file: "03-bronze-age.webp" },
+  { type: "era", id: "crisis-transition", name: "Crisis / Transition", file: "04-crisis-transition.webp" },
+  { type: "era", id: "post-crisis", name: "Post-Crisis", sub: "Pre-Flashpoint", file: "05-post-crisis.webp" },
+  { type: "transition", id: "flashpoint", name: "Flashpoint", kind: "Transition Event", file: "06-flashpoint.webp" },
+  { type: "era", id: "new52", name: "New 52", years: "2011 — 2016", file: "07-new-52.webp", action: "new52" },
+  { type: "era", id: "rebirth", name: "Rebirth", file: "08-rebirth.webp" },
+  { type: "era", id: "infinite-frontier", name: "Infinite Frontier", file: "09-infinite-frontier.webp" },
+  { type: "era", id: "dawn-of-dc", name: "Dawn of DC", file: "10-dawn-of-dc.webp" },
+  { type: "era", id: "current-era", name: "Current Era", file: "11-current-era.webp" },
 ];
-const LIVE_INDEX = ERAS.findIndex(e => e.live);
+const assetUrl = f => new URL(ATLAS_DIR + f + "?v=1", import.meta.url).href;
 const HERO_SRC = new URL("./assets/hero-dc-universe.webp?v=2", import.meta.url).href;
 
 const reduced = () => { try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } };
@@ -78,15 +82,24 @@ function gatewayHtml(){
   </div>`;
 }
 
-/* ---------------- Stage 2 — the DC Universe Atlas (horizontal era journey) ---------------- */
+/* ---------------- Stage 2 — the DC Universe Atlas (one config-driven journey: vertical on phones/tablets, horizontal on desktop) ---------------- */
+function nodeHtml(it, i){
+  const img = `<img src="${assetUrl(it.file)}" alt="" width="1122" height="1402" decoding="async" loading="${i === 0 ? "eager" : "lazy"}">`;
+  if (it.type === "transition") {
+    return `<li class="cxh-node cxh-rupture" data-id="${it.id}" aria-label="${it.kind}: ${it.name}">
+     <div class="cxh-rup-art" aria-hidden="true">${img}</div>
+     <div class="cxh-rup-body"><span class="cxh-rup-kind">${it.kind}</span><h3 class="cxh-rup-name">${it.name}</h3></div>
+    </li>`;
+  }
+  const live = !!it.action;
+  const head = `<h3 class="cxh-pname">${it.name}</h3>${it.sub ? `<p class="cxh-sub">${it.sub}</p>` : ""}${it.years ? `<p class="cxh-years">${it.years}</p>` : ""}`;
+  const cta = live ? `<button type="button" class="cxh-cta" data-go="${it.action}" aria-label="Explore ${it.name}">EXPLORE ${it.name.toUpperCase()} →</button>` : "";
+  return `<li class="cxh-node cxh-era${live ? " cxh-era-live" : ""}" data-id="${it.id}">
+   <div class="cxh-card"><div class="cxh-card-art" aria-hidden="true">${img}</div><div class="cxh-card-body">${head}${cta}</div></div>
+  </li>`;
+}
+
 function atlasHtml(){
-  const panels = ERAS.map((e, i) => {
-    const num = String(i + 1).padStart(2, "0");
-    const style = `--ea:${e.a};--eb:${e.b};--eg:${e.g}`;
-    if (e.live) return `<li class="cxh-panel cxh-panel-live" style="${style}" data-i="${i}"><span class="cxh-ord" aria-hidden="true">${num}</span><span class="cxh-mark" aria-hidden="true">52</span><div class="cxh-pbody"><h3 class="cxh-pname">NEW 52</h3><p class="cxh-years">2011 — 2016</p><button type="button" class="cxh-cta" data-go="new52">EXPLORE NEW 52 →</button></div></li>`;
-    return `<li class="cxh-panel" style="${style}" data-i="${i}"><span class="cxh-ord" aria-hidden="true">${num}</span><div class="cxh-pbody"><h3 class="cxh-pname">${e.n}</h3></div></li>`;
-  }).join("");
-  const ticks = ERAS.map((e, i) => `<span class="${e.live ? "is-live" : ""}" data-i="${i}"></span>`).join("");
   return `<div class="cxh cxh-atlasview">
    <section class="cxh-atlas" aria-labelledby="cxh-atlas-title">
     <div class="cxh-atlas-top cxh-in">
@@ -94,22 +107,22 @@ function atlasHtml(){
      <h2 class="cxh-atlas-kicker" id="cxh-atlas-title">DC UNIVERSE ATLAS</h2>
     </div>
     <div class="cxh-stage">
-     <div class="cxh-track" tabindex="0" role="region" aria-label="DC eras. Swipe or use the arrow keys to move between eras.">
-      <ol class="cxh-eras">${panels}</ol>
+     <div class="cxh-track" role="region" aria-label="DC Universe timeline, oldest to newest">
+      <ol class="cxh-journey">${JOURNEY.map(nodeHtml).join("")}</ol>
      </div>
-     <button type="button" class="cxh-nav cxh-prev" data-go="prev" aria-label="Previous era">‹</button>
-     <button type="button" class="cxh-nav cxh-next" data-go="next" aria-label="Next era">›</button>
+     <button type="button" class="cxh-nav cxh-prev" data-go="prev" aria-label="Earlier eras">‹</button>
+     <button type="button" class="cxh-nav cxh-next" data-go="next" aria-label="Later eras">›</button>
     </div>
-    <div class="cxh-prog" aria-hidden="true">${ticks}</div>
    </section>
   </div>`;
 }
 
-let host = null, atlasOpen = false;
+let host = null, atlasOpen = false, onResize = null;
 
 function showGateway(){
   if (!host || !host.isConnected) return;
   atlasOpen = false;
+  if (onResize) { window.removeEventListener("resize", onResize); onResize = null; }
   host.innerHTML = gatewayHtml();
   host.querySelector("[data-go='enter']").addEventListener("click", enterAtlas);
 }
@@ -125,40 +138,32 @@ function enterAtlas(){
 
 function wireAtlas(root){
   const track = root.querySelector(".cxh-track");
-  const panels = [...root.querySelectorAll(".cxh-panel")];
-  const ticks = [...root.querySelectorAll(".cxh-prog span")];
-  let active = -1;
-  const centerOf = el => el.offsetLeft + el.offsetWidth / 2;
-  const setActive = i => {
-    if (i === active) return; active = i;
-    panels.forEach((p, k) => p.classList.toggle("is-active", k === i));
-    ticks.forEach((t, k) => t.classList.toggle("is-active", k === i));
+  const horizontal = () => track.scrollWidth > track.clientWidth + 4 && getComputedStyle(root.querySelector(".cxh-journey")).flexDirection === "row";
+  const step = dir => {
+    const w = (root.querySelector(".cxh-card")?.offsetWidth || 300) + 80;
+    track.scrollBy({ left: dir * w, behavior: reduced() ? "auto" : "smooth" });
   };
-  const nearest = () => {
-    const mid = track.scrollLeft + track.clientWidth / 2; let best = 0, d = Infinity;
-    panels.forEach((p, k) => { const dd = Math.abs(centerOf(p) - mid); if (dd < d) { d = dd; best = k; } });
-    return best;
-  };
-  let target = LIVE_INDEX, until = 0; // rapid taps stack on the pending target instead of the half-scrolled position
-  const cur = () => (Date.now() < until ? target : nearest());
-  const goTo = (i, smooth) => {
-    i = Math.max(0, Math.min(panels.length - 1, i)); target = i; until = smooth && !reduced() ? Date.now() + 700 : 0;
-    const p = panels[i];
-    track.scrollTo({ left: centerOf(p) - track.clientWidth / 2, behavior: smooth && !reduced() ? "smooth" : "auto" });
+  const sync = () => {
+    const h = horizontal(); if (h) track.setAttribute("tabindex", "0"); else track.removeAttribute("tabindex");
+    const max = track.scrollWidth - track.clientWidth - 2;
+    root.querySelector(".cxh-prev").hidden = !h || track.scrollLeft <= 2;
+    root.querySelector(".cxh-next").hidden = !h || track.scrollLeft >= max;
   };
   let raf = 0;
-  track.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => setActive(nearest())); }, { passive: true });
+  track.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(sync); }, { passive: true });
+  if (onResize) window.removeEventListener("resize", onResize);
+  onResize = sync; window.addEventListener("resize", onResize);
   track.addEventListener("keydown", e => {
-    if (e.key === "ArrowRight") { e.preventDefault(); goTo(cur() + 1, true); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); goTo(cur() - 1, true); }
+    if (!horizontal()) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
   });
-  // The Atlas opens on the one era that has data; the earlier and later eras stay partly visible on either side.
-  requestAnimationFrame(() => { goTo(LIVE_INDEX, false); setActive(LIVE_INDEX); });
+  requestAnimationFrame(sync);
 
   root.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => {
     const a = b.dataset.go;
-    if (a === "prev") return goTo(cur() - 1, true);
-    if (a === "next") return goTo(cur() + 1, true);
+    if (a === "prev") return step(-1);
+    if (a === "next") return step(1);
     if (a === "back") { if (history.state && history.state.cxhAtlas) { history.back(); } else { showGateway(); } return; }
     if (a === "new52") {
       if (b.dataset.busy) return;
