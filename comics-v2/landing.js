@@ -2,7 +2,7 @@
 // Self-contained UI: no Firestore dependency on load. The explorer / data modules load only when a navigation action is tapped.
 const openExplorer = async (level, label, params = {}) => {
   try {
-    const mod = await import(`./explorer.js?v=dc24`);
+    const mod = await import(`./explorer.js?v=dc25`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     openAt([{ level, label, params }]);
@@ -21,26 +21,39 @@ function openAtlas(){
   window.__comicsStoryMap?.open?.("universe", "dc-universe");
 }
 
-// The explorer's own stack, so Back from the New 52 page walks through the existing era list and the existing Comics explorer root (Characters, Story Map, Series).
-const ROOT_LEVEL = { level: "root", label: "Comics", params: {} };
-const ERA_LEVEL = { level: "continuityList", label: "Continuity / Era", params: {} };
+// The New 52 Era Hub opens over the Atlas (explorer root stays one tap away via the "Comics" crumb); its Back arrow closes the explorer and lands on the Atlas.
+const ERA_HUB = "eraHub";
 
-/** New 52 continuity: same navigation the era list uses (era list → continuity page). The lookup runs on tap only, never on load. */
+// Opening the hub adds one history entry, so browser Back closes it and lands on the Atlas; closing it from the UI removes that entry again.
+function pushExplorerEntry(){
+  try { if (!(history.state && history.state.cxhExplorer)) history.pushState({ ...(history.state || {}), cxhExplorer: true }, "", location.href); } catch (e) { /* ignore */ }
+}
+(function watchExplorerClose(){
+  const sheet = document.getElementById("comicsExplorerSheet");
+  if (!sheet || typeof MutationObserver === "undefined") return;
+  new MutationObserver(() => {
+    if (sheet.dataset.open !== "true" && history.state && history.state.cxhExplorer) { try { history.back(); } catch (e) { /* ignore */ } }
+  }).observe(sheet, { attributes: true, attributeFilter: ["data-open"] });
+})();
+
+/** New 52 Era Hub: resolves the existing New 52 continuity record (no new record is created). The lookup runs on tap only, never on load. */
 async function openNew52(){
   try {
-    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc24`), import(`./data.js?v=dc3`)]);
+    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc25`), import(`./data.js?v=dc3`)]);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     const all = await data.getAllContinuities(50);
     const ct = all.find(c => /new\s*52/i.test(`${c.shortName || ""} ${c.name || ""}`));
     if (!ct) throw new Error("New 52 continuity not found");
-    openAt([ROOT_LEVEL, ERA_LEVEL, { level: "continuity", label: ct.name, params: { continuity: ct } }]);
+    pushExplorerEntry();
+    openAt([{ level: ERA_HUB, label: ct.name, params: { continuity: ct, exitOnBack: true } }]);
   } catch (e) {
     console.warn("[Comics landing] New 52 lookup failed — using the era list", e);
+    pushExplorerEntry();
     try {
-      const mod = await import(`./explorer.js?v=dc24`);
+      const mod = await import(`./explorer.js?v=dc25`);
       const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
-      if (typeof openAt === "function") openAt([ROOT_LEVEL, ERA_LEVEL]);
+      if (typeof openAt === "function") openAt([{ level: "continuityList", label: "Continuity / Era", params: {} }]);
     } catch (e2) { console.error("[Comics landing] Explorer failed to open", e2); }
   }
 }
@@ -140,7 +153,7 @@ function wireAtlas(root){
   const track = root.querySelector(".cxh-track");
   const horizontal = () => track.scrollWidth > track.clientWidth + 4 && getComputedStyle(root.querySelector(".cxh-journey")).flexDirection === "row";
   const step = dir => {
-    const w = (root.querySelector(".cxh-card")?.offsetWidth || 300) + 80;
+    const w = (root.querySelector(".cxh-card")?.offsetWidth || 300) + 48;
     track.scrollBy({ left: dir * w, behavior: reduced() ? "auto" : "smooth" });
   };
   const sync = () => {

@@ -2,7 +2,7 @@
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
 import * as data from "./data.js?v=dc3";
 import { COLLECTIONS } from "./schema.js";
-import * as bp from "./branch-paths.js?v=bp5";
+import * as bp from "./branch-paths.js?v=bp6";
 import {CATEGORIES,categoryOf,categoryRank} from "./categories.js?v=cat2";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
@@ -360,7 +360,7 @@ async function seriesList(){const ss=(await allSeries()).sort((a,b)=>categoryRan
 // ---- Reading paths: MAIN PATH -> CROSSOVER -> BRANCHES -> RETURN. Pure relationships between existing series/collections;
 // nothing here owns issues. Shown on a series (or run) page only when the owner-supplied branch paths mention that series.
 const bpMemo=new Map();
-const bpColls=sid=>{if(!bpMemo.has(sid))bpMemo.set(sid,data.getCollectionsForSeries(sid).catch(()=>[]));return bpMemo.get(sid);};
+const bpColls=sid=>{if(!bpMemo.has(sid))bpMemo.set(sid,data.getCollectionsForSeries(sid).then(l=>(l||[]).filter(c=>!c.runId)).catch(()=>[]));return bpMemo.get(sid);};
 const bpNum=l=>{const m=String(l||"").match(/^#?(\d+(?:\.\d+)?)$/);return m?parseFloat(m[1]):null;};
 const bpRange=(c,sid)=>{const ns=(c.issueCoverage||[]).filter(r=>r.seriesId===sid).map(r=>bpNum(r.issueLabel)).filter(n=>n!=null);return ns.length?[Math.min(...ns),Math.max(...ns)]:null;};
 function bpVolumes(sid,colls,evRows,explicit){
@@ -449,9 +449,11 @@ async function mountReadingPaths(host,s,range){
 
 async function series(p){
   const s=p.series;if(!s)return{html:empty("Series not found.")};
-  const [issues,collections,runs,creators]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[]),data.getRunsForSeries(s.id),Promise.all((s.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)))]);sortIssues(issues);const b=issueBuckets(issues);
+  const [issues,collections,runs,creators]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[]),data.getRunsForSeries(s.id),Promise.all((s.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)))]);sortIssues(issues);
+  // A relaunch run (e.g. Deathstroke 2014) lives in the same series but restarts numbering: its issues/collections carry a runId and are shown on that run's page, never mixed into this run's counts.
+  const mainColl=collections.filter(c=>!c.runId);const b=issueBuckets(issues.filter(i=>!i.runId));
   const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length};
-  const ml=mainlineSummary(collections,s.id);
+  const ml=mainlineSummary(mainColl,s.id);
   const first=b.numbered[0]?.issueNumber,last=b.numbered[b.numbered.length-1]?.issueNumber;
   let html=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2><div class="cx-subtitle">${esc(range(s))} · ${counts.issues} numbered issues${counts.annuals?` · ${counts.annuals} annuals`:""}${counts.specials?` · ${counts.specials} specials/one-shots`:""}</div>`;
   if(s.anthology)html+=`<div class="cx-tag-row"><span class="tag">Anthology</span></div>`;
@@ -460,10 +462,10 @@ async function series(p){
   html+=`<div class="cx-publication-summary"><div>${stat("Issues",counts.issues)}<span class="cx-summary-detail">${counts.issues?`#${first}–#${last}`:"Not recorded"}</span></div><div>${stat("Annuals",counts.annuals)}<span class="cx-summary-detail">${counts.annuals?"Annual publications recorded":"None recorded"}</span></div><div>${stat("Specials",counts.specials)}<span class="cx-summary-detail">${counts.specials?"Special / one-shot units":"None recorded"}</span></div></div>`;
   if(runs.length){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>CREATIVE HISTORY</span><h3>Creative runs</h3></div><em>${runs.length} runs</em></div><div class="cx-run-grid">${runs.sort((a,b)=>(Number(a.startIssue)||0)-(Number(b.startIssue)||0)).map((r,i)=>`<div class="cx-run-card"><strong>${esc(r.title||creators.filter(Boolean).map(c=>titleOf(c)).join(" / ")||"Run")}</strong><span>${esc(coverage(r))}</span><b>Creative history</b></div>`).join("")}</div></div>`;}
   html+=`<div id="cxReadingPaths"></div>`;
-  html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],collections.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxTabBody"></div></div>`;
+  html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],mainColl.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxTabBody"></div></div>`;
   return{html,wire(c){mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
       if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED RUN</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>This is the complete numbered run represented in the catalogue. The story itself is organised below through its creative history and collected editions.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>${esc(ml.events||ml.shared?`Mainline volumes only · ${ml.events} crossover/event collection${ml.events===1?"":"s"} listed separately`:"Mainline volumes only")}</small></div></div></div>`;
-      else if(t==="collections")mountEditions(tabBody,collections,issues,s);
+      else if(t==="collections")mountEditions(tabBody,mainColl,issues,s);
       else if(t==="annuals")tabBody.innerHTML=publicationRows(b.annual);
       else tabBody.innerHTML=publicationRows([...b.special,...b.one_shot]);
       if(t!=="collections")wirePublications(tabBody,issues,collections,s);
@@ -474,18 +476,20 @@ async function run(p){
   const r=p.run,s=p.series;if(!r||!s)return{html:empty("Run not found.")};
   const creators=await Promise.all((r.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)));
   const [issues,collections]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[])]);sortIssues(issues);
-  const lo=Number(r.startIssue),hi=Number(r.endIssue);const inRun=Number.isFinite(lo)&&Number.isFinite(hi)?issues.filter(i=>{const n=issueNum(i);return n>=lo&&n<=hi;}):[];const b=issueBuckets(inRun);
+  const rel=Array.isArray(r.issueIds)&&r.issueIds.length>0;const runIss=new Set(r.issueIds||[]);
+  const lo=rel?NaN:Number(r.startIssue),hi=rel?NaN:Number(r.endIssue);const inRun=rel?issues.filter(i=>runIss.has(i.id)):(Number.isFinite(lo)&&Number.isFinite(hi)?issues.filter(i=>{if(i.runId)return false;const n=issueNum(i);return n>=lo&&n<=hi;}):[]);const b=issueBuckets(inRun);
+  const runColls=rel?collections.filter(c=>c.runId===r.id):collections.filter(c=>!c.runId);
   const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length};
-  const ml=mainlineSummary(collections,s.id);
-  let html=`<div class="cx-kicker">CREATIVE RUN</div><h2 class="cx-title">${esc(r.title||creators.filter(Boolean).map(titleOf).join(" / ")||"Run")}</h2><div class="cx-subtitle">${esc(coverage(r))}${inRun.length?` · ${inRun.length} numbered issues`:""}</div>`;
+  const ml=mainlineSummary(runColls,s.id);
+  let html=`<div class="cx-kicker">CREATIVE RUN</div><h2 class="cx-title">${esc(r.title||creators.filter(Boolean).map(titleOf).join(" / ")||"Run")}</h2><div class="cx-subtitle">${esc(coverage(r))}${counts.issues?` · ${counts.issues} numbered issues`:""}</div>`;
   if(creators.filter(Boolean).length)html+=`<div class="cx-tag-row">${creators.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;
   html+=`<div class="cx-publication-summary">${stat("Issues",counts.issues)}${stat("Annuals",counts.annuals)}${stat("Specials",counts.specials)}</div>`;
   html+=`<div class="sheet-section"><div class="sheet-label">PUBLICATION COVERAGE</div><div class="cx-coverage-callout">${esc(coverage(r))}</div></div>`;
   html+=`<div id="cxReadingPaths"></div>`;
-  html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Run material</h3></div></div>${tabs("overview",[["overview","Overview"],["collections","Collected Editions"],["annuals","Annuals",counts.annuals],["specials","Specials",counts.specials]])}<div id="cxRunTab"></div></div>`;
-  return{html,wire(c){mountReadingPaths(c.querySelector("#cxReadingPaths"),s,Number.isFinite(lo)&&Number.isFinite(hi)?[lo,hi]:null);const body=c.querySelector("#cxRunTab");const draw=t=>{
+  html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Run material</h3></div></div>${tabs("overview",[["overview","Overview"],runColls.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxRunTab"></div></div>`;
+  return{html,wire(c){if(!rel)mountReadingPaths(c.querySelector("#cxReadingPaths"),s,Number.isFinite(lo)&&Number.isFinite(hi)?[lo,hi]:null);const body=c.querySelector("#cxRunTab");const draw=t=>{
       if(t==="overview")body.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>RUN COVERAGE</span><strong>${esc(coverage(r))}</strong><small>${counts.issues} numbered issue${counts.issues===1?"":"s"} in this creative run. Annuals and specials are listed separately below.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>Mainline volumes of the series</small></div></div></div>`;
-      else if(t==="collections")mountEditions(body,collections,issues,s);
+      else if(t==="collections")mountEditions(body,runColls,issues,s);
       else if(t==="annuals")body.innerHTML=publicationRows(b.annual);
       else body.innerHTML=publicationRows([...b.special,...b.one_shot]);
       if(t!=="collections")wirePublications(body,inRun,collections,s);
@@ -510,14 +514,122 @@ async function collection(p){
   return{html,wire(el){el.querySelectorAll("[data-cov-series]").forEach(b=>b.addEventListener("click",()=>{const s=ss[sids.indexOf(b.dataset.covSeries)];if(s)push("series",s.title,{series:s});}));}};
 }
 
-const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection};
+
+// ============================================================================
+// ERA HUB — one destination per continuity/era with four routes. A pure navigation layer over the existing sources:
+//   Timeline & Events → new52-map-data.js (transition events, crossover spine, lanes) — read, never copied
+//   Characters & Families → categories.js + existing root/family logic (curated lead-series eligibility from data.js)
+//   Series → data.getSeriesForContinuity, in categories.js order
+//   Reading Paths → comicReadingPaths via data.getAllReadingPaths, only paths that touch this era's series
+// Every route opens the existing series / category / character / collection levels. Nothing here owns data.
+// ============================================================================
+const eraYears=ct=>{const a=ct?.startDate?String(ct.startDate).slice(0,4):"",b=ct?.endDate?String(ct.endDate).slice(0,4):"";return a?`${a} — ${b||"present"}`:"";};
+const isNew52=ct=>/new\s*52/i.test(`${ct?.shortName||""} ${ct?.name||""}`);
+const eraTop=(ct,kicker,title,sub)=>`<div class="cxe-head"><div class="cx-kicker">${esc(kicker)}</div><h2 class="cx-title">${esc(title)}</h2>${sub?`<div class="cx-subtitle">${esc(sub)}</div>`:""}</div>`;
+async function eraHub(p){
+  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
+  const [series,allPaths]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllReadingPaths(200).catch(()=>[])]);
+  const ids=new Set(series.map(s=>s.id));
+  const nPaths=allPaths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id))).length;
+  const nCats=categoryEntries(series).length;
+  const routes=[
+    ["timeline","Timeline & Events","What happened?",isNew52(ct)?"Flashpoint → New 52 → Rebirth":"Events and crossovers"],
+    ["characters","Characters & Families","Who? Which family?",nCats?`${nCats} franchises`:"No franchises mapped yet"],
+    ["series","Series","What comics exist?",series.length?`${series.length} series`:"No series mapped yet"],
+    ["reading","Reading Paths","How should I start?",nPaths?`${nPaths} path${nPaths===1?"":"s"}`:"None recorded yet"]];
+  const yrs=eraYears(ct);
+  const html=`${p.exitOnBack?`<button type="button" class="cxe-atlas-link" data-atlas>← DC UNIVERSE ATLAS</button>`:""}
+    <div class="cxe-hero"><div class="cx-kicker">ERA</div><h2 class="cx-title">${esc(ct.name)}</h2>${yrs?`<div class="cxe-years">${esc(yrs)}</div>`:""}${ct.description?`<p class="cxe-blurb">${esc(ct.description)}</p>`:""}</div>
+    <div class="cxe-routes" role="list">${routes.map(([k,t,q,sub],i)=>`<button type="button" class="cxe-route" role="listitem" data-route="${k}"><span class="cxe-route-n">0${i+1}</span><span class="cxe-route-body"><strong>${esc(t)}</strong><em>${esc(q)}</em><small>${esc(sub)}</small></span><b aria-hidden="true">→</b></button>`).join("")}</div>`;
+  return{html,wire(el){
+    el.querySelector("[data-atlas]")?.addEventListener("click",close);
+    const L={timeline:["eraTimeline","Timeline & Events"],characters:["eraCharacters","Characters & Families"],series:["eraSeries","Series"],reading:["eraReading","Reading Paths"]};
+    el.querySelectorAll("[data-route]").forEach(b=>b.addEventListener("click",()=>{const [lv,lb]=L[b.dataset.route];push(lv,lb,{continuity:ct});}));
+  }};
+}
+
+// Timeline & Events — grouped by publishing lane / transition, never one forced chain.
+async function eraTimeline(p){
+  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
+  if(!isNew52(ct))return{html:`${eraTop(ct,"TIMELINE & EVENTS",ct.name)}${empty("A timeline for this era has not been built yet.")}`};
+  const m=await import("./new52-map-data.js?v=1");
+  const byId=id=>m.transitionEvents.find(t=>t.id===id);
+  const flash=byId("transition-new52"),toRebirth=byId("transition-rebirth");
+  const bridge=(t,tag)=>t?`<div class="cxe-bridge"><span class="cxe-bridge-tag">${esc(tag)}</span><strong>${esc(t.title)}</strong><small class="cxe-bridge-k">${esc(t.kicker||"")}</small><p>${esc(t.summary||"")}</p>${(t.issues||[]).length?`<div class="cxe-chips">${t.issues.map(i=>`<span>${esc(i)}</span>`).join("")}</div>`:""}</div>`:"";
+  const evs=m.crossoverSpine.filter(e=>e.type!=="transition");
+  const laneTitle=id=>m.getLane(id)?.title||id;
+  const lane=l=>{const list=evs.filter(e=>(e.lanes||[]).includes(l.id));if(!list.length)return "";
+    return `<div class="cxe-lane"><div class="cxe-lane-head"><strong>${esc(l.title)}</strong><small>${esc(l.sub||"")}</small></div><div class="cxe-evlist">${list.map(e=>{const also=(e.lanes||[]).filter(x=>x!==l.id).map(laneTitle);return `<div class="cxe-ev"><button type="button" class="cxe-ev-head" aria-expanded="false"><span>${esc(e.title)}</span><i aria-hidden="true">›</i></button><div class="cxe-ev-more" hidden><div class="cxe-ev-issues">${esc(e.issues||"")}</div>${also.length?`<small>Also runs through: ${esc(also.join(" · "))}</small>`:""}</div></div>`;}).join("")}</div></div>`;};
+  const main=m.new52Era.mainLanes.map(lane).join(""),alt=m.new52Era.alternateLanes.map(lane).join("");
+  const html=`${eraTop(ct,"TIMELINE & EVENTS",ct.name,"What happened — how it begins, the events that connect the lines, and how it hands over to Rebirth.")}
+    <section class="cxe-sec"><div class="cxe-sec-label">01 · HOW IT BEGINS</div>${bridge(flash,"TRANSITION INTO NEW 52")}</section>
+    <section class="cxe-sec"><div class="cxe-sec-label">02 · THE PUBLISHING LANDSCAPE</div><p class="cxe-note">${esc(m.new52Era.description||"")}</p><p class="cxe-note is-soft">Events are grouped by the publishing lane they run through. An event that crosses lanes appears in each one — this is a map of overlap, not a strict chronology.</p>${main}${alt?`<div class="cxe-sec-sub">PARALLEL &amp; FUTURE EARTHS</div>${alt}`:""}</section>
+    <section class="cxe-sec"><div class="cxe-sec-label">03 · TOWARD REBIRTH</div>${bridge(toRebirth,"TRANSITION OUT OF NEW 52")}</section>
+    <section class="cxe-sec"><button type="button" class="cxe-more" data-full>Collected crossover editions &amp; year-by-year timeline <b>→</b></button></section>`;
+  return{html,wire(el){
+    el.querySelectorAll(".cxe-ev-head").forEach(h=>h.addEventListener("click",()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));}));
+    el.querySelector("[data-full]")?.addEventListener("click",()=>push("continuity",ct.name,{continuity:ct}));
+  }};
+}
+
+// Characters & Families — the existing franchise categories and root/family logic, scoped to this era. Family chips follow the
+// curated rule (lead of a series with the minimum issue count); everyone else stays reachable via series, stories, search, Story Map.
+async function eraCharacters(p){
+  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
+  const [all,series]=await Promise.all([data.getAllCharacters(200),data.getSeriesForContinuity(ct.id)]);
+  const chars=all.filter(c=>!c.continuityIds?.length||c.continuityIds.includes(ct.id));
+  const entries=categoryEntries(series),roots=resolveRoots(chars,series);
+  if(!entries.length)return{html:`${eraTop(ct,"CHARACTERS & FAMILIES",ct.name)}${empty("No franchises are mapped in this era yet.")}`};
+  const trees=entries.map(({cat,list})=>{const rc=rootOfCat(cat.key,roots,series);
+    const kids=rc?childrenOf(rc,chars).filter(k=>data.isEligibleLeadCharacter(k.id,series)).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b))):[];
+    return `<div class="cx-char-tree"><button class="cx-character-card" data-cat="${esc(cat.key)}"><div class="cx-character-orb">${esc(cat.label.slice(0,1))}</div><div><span>FRANCHISE</span><strong>${esc(cat.label)}</strong><small>${list.length} series</small></div><b>→</b></button>
+      ${kids.length?`<div class="cx-char-family"><div class="cx-char-family-label">FAMILY &amp; ALLIES</div><div class="cx-char-family-track">${kids.map(k=>`<button class="cx-char-chip" data-char="${esc(k.id)}"><i>${esc(titleOf(k).slice(0,1))}</i><span>${esc(titleOf(k))}</span></button>`).join("")}</div></div>`:""}</div>`;}).join("");
+  return{html:`${eraTop(ct,"CHARACTERS & FAMILIES",ct.name,"Enter through a franchise, in catalogue order. Family chips show characters who lead their own series; supporting characters are reachable through series, stories, search and the Story Map.")}<div class="cx-char-trees">${trees}</div>`,
+    wire(el){el.querySelectorAll("[data-cat]").forEach(r=>r.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===r.dataset.cat);if(x)push("category",x.label,{categoryKey:x.key});}));
+      el.querySelectorAll("[data-char]").forEach(r=>r.addEventListener("click",()=>{const x=chars.find(v=>v.id===r.dataset.char);if(x)push("character",titleOf(x),{character:x});}));}};
+}
+
+// Series — this era's series (never a second list), grouped in categories.js order.
+async function eraSeries(p){
+  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
+  const series=await data.getSeriesForContinuity(ct.id);
+  const entries=categoryEntries(series);
+  if(!entries.length)return{html:`${eraTop(ct,"SERIES",ct.name)}${empty("No series are mapped in this era yet.")}`};
+  const html=entries.map(({cat,list})=>`<div class="cx-series-section"><div class="cx-section-head"><div><span>${esc(cat.label.toUpperCase())}</span><h3>${esc(cat.label)}</h3></div><em>${list.length} series</em></div><div class="cx-series-grid">${[...list].sort((a,b)=>String(a.startDate||"").localeCompare(String(b.startDate||""))||String(a.title).localeCompare(String(b.title))).map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`).join("");
+  return{html:`${eraTop(ct,"SERIES",ct.name,`${series.length} series mapped in this era, grouped by franchise.`)}${html}`,
+    wire(el){el.querySelectorAll("[data-series]").forEach(r=>r.addEventListener("click",()=>{const s=series.find(x=>x.id===r.dataset.series);if(s)push("series",s.title,{series:s});}));}};
+}
+
+// Reading Paths — explicit comicReadingPaths records that touch this era's series. Nothing is derived from dates or issue numbers.
+async function eraReading(p){
+  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
+  const rc=await import("./reading-collections.js?v=p6");
+  const [series,allPaths]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllReadingPaths(200).catch(()=>[])]);
+  const ids=new Set(series.map(s=>s.id)),byId=new Map(series.map(s=>[s.id,s]));
+  const paths=rc.sortPathsByType(allPaths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id))).sort((a,b)=>String(a.pathCode||a.title).localeCompare(String(b.pathCode||b.title))));
+  const sub="How should I start? Reading paths recorded for this era.";
+  if(!paths.length)return{html:`${eraTop(ct,"READING PATHS",ct.name,sub)}${empty("No reading paths are recorded for this era yet.")}`};
+  const item=x=>{const br=(x.branches||[]).filter(b=>b.seriesId&&byId.has(b.seriesId));const note=x.readingInstruction||x.description||"";
+    return `<div class="cxe-path" data-path="${esc(x.id)}"><button type="button" class="cxe-path-head" aria-expanded="false"><span class="cxe-path-type">${esc(rc.pathTypeLabel(x.pathType))}</span><strong>${esc(x.title)}</strong><i aria-hidden="true">›</i></button>
+      <div class="cxe-path-more" hidden>${note?`<p>${esc(note)}</p>`:""}${br.length?`<div class="cxe-chips is-btn">${br.map(b=>`<button type="button" data-series="${esc(b.seriesId)}">${esc(b.label||byId.get(b.seriesId).title)}</button>`).join("")}</div>`:""}<div class="cxe-path-eds" data-eds="${esc((x.eventCollectionIds||[]).join(","))}"></div></div></div>`;};
+  return{html:`${eraTop(ct,"READING PATHS",ct.name,sub)}<div class="cxe-paths">${paths.map(item).join("")}</div>`,
+    wire(el){
+      el.querySelectorAll(".cxe-path-head").forEach(h=>h.addEventListener("click",async()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));
+        const box=more.querySelector("[data-eds]");if(o&&box&&box.dataset.eds&&!box.dataset.done){box.dataset.done="1";
+          const cs=(await Promise.all(box.dataset.eds.split(",").filter(Boolean).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);
+          if(cs.length){box.innerHTML=`<div class="cxe-eds-label">Collected in</div><div class="cxe-chips is-btn">${cs.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(pillLabel(c))} · ${esc(displayCollectionTitle(c))}</button>`).join("")}</div>`;
+            box.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=cs.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));}}}));
+      el.querySelectorAll(".cxe-path-more [data-series]").forEach(b=>b.addEventListener("click",()=>{const s=byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));}};
+}
+
+const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraTimeline,eraCharacters,eraSeries,eraReading};
 let stack=[];let token=0;
 function shell(body){const crumbs=stack.map((x,i)=>`${i?`<span class="cx-crumb-sep">/</span>`:""}<span class="cx-crumb" data-i="${i}" data-current="${i===stack.length-1}">${esc(x.label)}</span>`).join("");return `<div class="cx-topbar"><button class="cx-back-btn" id="cxBackBtn">${stack.length>1?"←":"✕"}</button><div class="cx-breadcrumb">${crumbs}</div></div>${body}`;}
 async function render(){const el=document.getElementById("comicsExplorerContent");if(!el||!stack.length)return;const t=++token;el.innerHTML=shell(`<div class="cx-loading">Loading…</div>`);let out;try{out=await LEVELS[stack.at(-1).level](stack.at(-1).params||{});}catch(e){console.error("[Comics Explorer]",e);out={html:`<div class="cx-error">Couldn't load this right now. ${esc(e.message||"")}</div>`};}if(t!==token)return;el.innerHTML=shell(out.html);el.querySelector("#cxBackBtn")?.addEventListener("click",back);el.querySelectorAll('.cx-crumb[data-current="false"]').forEach(x=>x.addEventListener("click",()=>{stack=stack.slice(0,+x.dataset.i+1);render();}));out.wire?.(el);}
 function push(level,label,params){const actual=label?.label?String(label.label):label;stack.push({level,label:actual||level,params:params||{}});render();}
 function openAt(trail){stack=[{level:"root",label:"Comics",params:{}}];for(const t of (trail||[])){if(LEVELS[t.level])stack.push({level:t.level,label:t.label||t.level,params:t.params||{}});}open();render();}
 function open(){const b=document.getElementById("comicsExplorerBackdrop"),s=document.getElementById("comicsExplorerSheet");if(b)b.dataset.open="true";if(s)s.dataset.open="true";}
-function back(){if(stack.length<=1){close();return;}stack.pop();render();}
+function back(){if(stack.length<=1||stack.at(-1).params?.exitOnBack){close();return;}stack.pop();render();}
 function close(){document.getElementById("comicsExplorerBackdrop")?.setAttribute("data-open","false");document.getElementById("comicsExplorerSheet")?.setAttribute("data-open","false");}
 export function openComicsExplorer(){stack=[{level:"root",label:"Comics",params:{}}];open();render();}
 export function openComicsExplorerAt(t){openAt(t);}
