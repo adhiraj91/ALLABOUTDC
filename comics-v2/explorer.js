@@ -516,113 +516,162 @@ async function collection(p){
 
 
 // ============================================================================
-// ERA HUB — one destination per continuity/era with four routes. A pure navigation layer over the existing sources:
-//   Timeline & Events → new52-map-data.js (transition events, crossover spine, lanes) — read, never copied
-//   Characters & Families → categories.js + existing root/family logic (curated lead-series eligibility from data.js)
-//   Series → data.getSeriesForContinuity, in categories.js order
-//   Reading Paths → comicReadingPaths via data.getAllReadingPaths, only paths that touch this era's series
-// Every route opens the existing series / category / character / collection levels. Nothing here owns data.
+// ERA HUB — an atlas "dashboard" of four horizontal rails, one per question. A navigation/presentation layer over existing sources:
+//   WHAT HAPPENED?            → new52-map-data.js (crossoverSpine order, transitionEvents, lanes) — read, never copied
+//   WHO / WHICH CORNER?       → categories.js + existing root/family logic (curated lead-series eligibility, data.js)
+//   WHAT WAS PUBLISHED?       → data.getSeriesForContinuity, in categories.js order
+//   HOW SHOULD I EXPERIENCE IT? → new52ReadingPaths (explicit ordered eventIds) ; each step is enriched with the matching
+//                               comicReadingPaths crossover record (matched by title) for its participating series/editions.
+// Every card opens an existing level (series / category / character / collection) or one of the three detail levels below.
+// Nothing here owns data; phases are presentation groupings, not records.
 // ============================================================================
 const eraYears=ct=>{const a=ct?.startDate?String(ct.startDate).slice(0,4):"",b=ct?.endDate?String(ct.endDate).slice(0,4):"";return a?`${a} — ${b||"present"}`:"";};
 const isNew52=ct=>/new\s*52/i.test(`${ct?.shortName||""} ${ct?.name||""}`);
-const eraTop=(ct,kicker,title,sub)=>`<div class="cxe-head"><div class="cx-kicker">${esc(kicker)}</div><h2 class="cx-title">${esc(title)}</h2>${sub?`<div class="cx-subtitle">${esc(sub)}</div>`:""}</div>`;
+const ATLAS_IMG=f=>new URL(`./assets/atlas/${f}?v=1`,import.meta.url).href;
+const MAP_DATA="./new52-map-data.js?v=1";
+// Presentation phases: a phase starts at these events of the source's own New 52 Core path. Forever Evil is not a boundary — the records
+// link it as following Trinity War (bp-jl-forever-evil.followsPathId), so the two stay together. Every non-transition spine event lands in exactly one phase.
+const PHASES=[
+  {n:1,title:"The Launch",from:"court-owls",img:"07-new-52.webp"},
+  {n:2,title:"The Universe Expands",from:"throne-atlantis"},
+  {n:3,title:"Escalation",from:"trinity-war"},
+  {n:4,title:"Late Era",from:"futures-end"},
+  {n:5,title:"The Finale",from:"darkseid-war"}];
+function derivePhases(m){
+  const spine=m.crossoverSpine.filter(e=>e.type!=="transition");
+  const cuts=PHASES.map(ph=>({ph,i:spine.findIndex(e=>e.id===ph.from)})).filter(x=>x.i>=0).sort((a,b)=>a.i-b.i);
+  return cuts.map((c,k)=>({...c.ph,events:spine.slice(c.i,k+1<cuts.length?cuts[k+1].i:spine.length)})).filter(x=>x.events.length);
+}
+const phaseLanes=(ph,m)=>[...new Set(ph.events.flatMap(e=>e.lanes||[]))].map(id=>m.getLane(id)?.title).filter(Boolean);
+const normKey=t=>eventKey(t).toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g,"");
+const recordFor=(ev,recs)=>(recs||[]).find(r=>normKey(r.title)===normKey(ev.title))||null;
+const eraTop=(kicker,title,sub)=>`<div class="cxe-head"><div class="cx-kicker">${esc(kicker)}</div><h2 class="cx-title">${esc(title)}</h2>${sub?`<div class="cx-subtitle">${esc(sub)}</div>`:""}</div>`;
+const hueOf=i=>`--h:${(i*47+210)%360}`;
+const rail=(id,q,title,body,extra="")=>`<section class="cxe-railsec" data-rail="${id}"><div class="cxe-rail-head"><div><span class="cxe-q">${esc(q)}</span><h3>${esc(title)}</h3></div><div class="cxe-rail-nav"><button type="button" data-dir="-1" aria-label="Scroll ${esc(title)} back">‹</button><button type="button" data-dir="1" aria-label="Scroll ${esc(title)} forward">›</button></div></div><div class="cxe-rail ${extra}" tabindex="0" role="list" aria-label="${esc(title)}">${body}</div></section>`;
+const bgImg=f=>f?`<img class="cxe-bg" src="${ATLAS_IMG(f)}" alt="" loading="lazy" decoding="async">`:"";
+function wireRails(el){
+  el.querySelectorAll(".cxe-rail-nav button").forEach(b=>b.addEventListener("click",()=>{const r=b.closest(".cxe-railsec").querySelector(".cxe-rail");r.scrollBy({left:+b.dataset.dir*Math.max(240,r.clientWidth*.8),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}));
+  el.querySelectorAll("img.cxe-bg").forEach(i=>i.addEventListener("error",()=>i.remove()));
+}
+
 async function eraHub(p){
   const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
-  const [series,allPaths]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllReadingPaths(200).catch(()=>[])]);
-  const ids=new Set(series.map(s=>s.id));
-  const nPaths=allPaths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id))).length;
-  const nCats=categoryEntries(series).length;
-  const routes=[
-    ["timeline","Timeline & Events","What happened?",isNew52(ct)?"Flashpoint → New 52 → Rebirth":"Events and crossovers"],
-    ["characters","Characters & Families","Who? Which family?",nCats?`${nCats} franchises`:"No franchises mapped yet"],
-    ["series","Series","What comics exist?",series.length?`${series.length} series`:"No series mapped yet"],
-    ["reading","Reading Paths","How should I start?",nPaths?`${nPaths} path${nPaths===1?"":"s"}`:"None recorded yet"]];
-  const yrs=eraYears(ct);
-  const html=`${p.exitOnBack?`<button type="button" class="cxe-atlas-link" data-atlas>← DC UNIVERSE ATLAS</button>`:""}
-    <div class="cxe-hero"><div class="cx-kicker">ERA</div><h2 class="cx-title">${esc(ct.name)}</h2>${yrs?`<div class="cxe-years">${esc(yrs)}</div>`:""}${ct.description?`<p class="cxe-blurb">${esc(ct.description)}</p>`:""}</div>
-    <div class="cxe-routes" role="list">${routes.map(([k,t,q,sub],i)=>`<button type="button" class="cxe-route" role="listitem" data-route="${k}"><span class="cxe-route-n">0${i+1}</span><span class="cxe-route-body"><strong>${esc(t)}</strong><em>${esc(q)}</em><small>${esc(sub)}</small></span><b aria-hidden="true">→</b></button>`).join("")}</div>`;
-  return{html,wire(el){
-    el.querySelector("[data-atlas]")?.addEventListener("click",close);
-    const L={timeline:["eraTimeline","Timeline & Events"],characters:["eraCharacters","Characters & Families"],series:["eraSeries","Series"],reading:["eraReading","Reading Paths"]};
-    el.querySelectorAll("[data-route]").forEach(b=>b.addEventListener("click",()=>{const [lv,lb]=L[b.dataset.route];push(lv,lb,{continuity:ct});}));
-  }};
-}
-
-// Timeline & Events — grouped by publishing lane / transition, never one forced chain.
-async function eraTimeline(p){
-  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
-  if(!isNew52(ct))return{html:`${eraTop(ct,"TIMELINE & EVENTS",ct.name)}${empty("A timeline for this era has not been built yet.")}`};
-  const m=await import("./new52-map-data.js?v=1");
-  const byId=id=>m.transitionEvents.find(t=>t.id===id);
-  const flash=byId("transition-new52"),toRebirth=byId("transition-rebirth");
-  const bridge=(t,tag)=>t?`<div class="cxe-bridge"><span class="cxe-bridge-tag">${esc(tag)}</span><strong>${esc(t.title)}</strong><small class="cxe-bridge-k">${esc(t.kicker||"")}</small><p>${esc(t.summary||"")}</p>${(t.issues||[]).length?`<div class="cxe-chips">${t.issues.map(i=>`<span>${esc(i)}</span>`).join("")}</div>`:""}</div>`:"";
-  const evs=m.crossoverSpine.filter(e=>e.type!=="transition");
-  const laneTitle=id=>m.getLane(id)?.title||id;
-  const lane=l=>{const list=evs.filter(e=>(e.lanes||[]).includes(l.id));if(!list.length)return "";
-    return `<div class="cxe-lane"><div class="cxe-lane-head"><strong>${esc(l.title)}</strong><small>${esc(l.sub||"")}</small></div><div class="cxe-evlist">${list.map(e=>{const also=(e.lanes||[]).filter(x=>x!==l.id).map(laneTitle);return `<div class="cxe-ev"><button type="button" class="cxe-ev-head" aria-expanded="false"><span>${esc(e.title)}</span><i aria-hidden="true">›</i></button><div class="cxe-ev-more" hidden><div class="cxe-ev-issues">${esc(e.issues||"")}</div>${also.length?`<small>Also runs through: ${esc(also.join(" · "))}</small>`:""}</div></div>`;}).join("")}</div></div>`;};
-  const main=m.new52Era.mainLanes.map(lane).join(""),alt=m.new52Era.alternateLanes.map(lane).join("");
-  const html=`${eraTop(ct,"TIMELINE & EVENTS",ct.name,"What happened — how it begins, the events that connect the lines, and how it hands over to Rebirth.")}
-    <section class="cxe-sec"><div class="cxe-sec-label">01 · HOW IT BEGINS</div>${bridge(flash,"TRANSITION INTO NEW 52")}</section>
-    <section class="cxe-sec"><div class="cxe-sec-label">02 · THE PUBLISHING LANDSCAPE</div><p class="cxe-note">${esc(m.new52Era.description||"")}</p><p class="cxe-note is-soft">Events are grouped by the publishing lane they run through. An event that crosses lanes appears in each one — this is a map of overlap, not a strict chronology.</p>${main}${alt?`<div class="cxe-sec-sub">PARALLEL &amp; FUTURE EARTHS</div>${alt}`:""}</section>
-    <section class="cxe-sec"><div class="cxe-sec-label">03 · TOWARD REBIRTH</div>${bridge(toRebirth,"TRANSITION OUT OF NEW 52")}</section>
-    <section class="cxe-sec"><button type="button" class="cxe-more" data-full>Collected crossover editions &amp; year-by-year timeline <b>→</b></button></section>`;
-  return{html,wire(el){
-    el.querySelectorAll(".cxe-ev-head").forEach(h=>h.addEventListener("click",()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));}));
-    el.querySelector("[data-full]")?.addEventListener("click",()=>push("continuity",ct.name,{continuity:ct}));
-  }};
-}
-
-// Characters & Families — the existing franchise categories and root/family logic, scoped to this era. Family chips follow the
-// curated rule (lead of a series with the minimum issue count); everyone else stays reachable via series, stories, search, Story Map.
-async function eraCharacters(p){
-  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
-  const [all,series]=await Promise.all([data.getAllCharacters(200),data.getSeriesForContinuity(ct.id)]);
-  const chars=all.filter(c=>!c.continuityIds?.length||c.continuityIds.includes(ct.id));
+  const n52=isNew52(ct);
+  const [series,allChars,paths,m]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllCharacters(200),data.getAllReadingPaths(200).catch(()=>[]),n52?import(MAP_DATA):null]);
+  const chars=allChars.filter(c=>!c.continuityIds?.length||c.continuityIds.includes(ct.id));
   const entries=categoryEntries(series),roots=resolveRoots(chars,series);
-  if(!entries.length)return{html:`${eraTop(ct,"CHARACTERS & FAMILIES",ct.name)}${empty("No franchises are mapped in this era yet.")}`};
-  const trees=entries.map(({cat,list})=>{const rc=rootOfCat(cat.key,roots,series);
-    const kids=rc?childrenOf(rc,chars).filter(k=>data.isEligibleLeadCharacter(k.id,series)).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b))):[];
-    return `<div class="cx-char-tree"><button class="cx-character-card" data-cat="${esc(cat.key)}"><div class="cx-character-orb">${esc(cat.label.slice(0,1))}</div><div><span>FRANCHISE</span><strong>${esc(cat.label)}</strong><small>${list.length} series</small></div><b>→</b></button>
-      ${kids.length?`<div class="cx-char-family"><div class="cx-char-family-label">FAMILY &amp; ALLIES</div><div class="cx-char-family-track">${kids.map(k=>`<button class="cx-char-chip" data-char="${esc(k.id)}"><i>${esc(titleOf(k).slice(0,1))}</i><span>${esc(titleOf(k))}</span></button>`).join("")}</div></div>`:""}</div>`;}).join("");
-  return{html:`${eraTop(ct,"CHARACTERS & FAMILIES",ct.name,"Enter through a franchise, in catalogue order. Family chips show characters who lead their own series; supporting characters are reachable through series, stories, search and the Story Map.")}<div class="cx-char-trees">${trees}</div>`,
-    wire(el){el.querySelectorAll("[data-cat]").forEach(r=>r.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===r.dataset.cat);if(x)push("category",x.label,{categoryKey:x.key});}));
-      el.querySelectorAll("[data-char]").forEach(r=>r.addEventListener("click",()=>{const x=chars.find(v=>v.id===r.dataset.char);if(x)push("character",titleOf(x),{character:x});}));}};
+  const yrs=eraYears(ct);
+  let html=`${p.exitOnBack?`<button type="button" class="cxe-atlas-link" data-atlas>← DC UNIVERSE ATLAS</button>`:""}<div class="cxe-hero"><div class="cx-kicker">ERA</div><h2 class="cx-title">${esc(ct.name)}</h2>${yrs?`<div class="cxe-years">${esc(yrs)}</div>`:""}</div>`;
+
+  // 1 — WHAT HAPPENED? a journey: transition → phases → transition
+  if(m){
+    const phases=derivePhases(m),T=id=>m.transitionEvents.find(t=>t.id===id);
+    const flash=T("transition-new52"),reb=T("transition-rebirth");
+    const bridgeCard=(t,key,img,from,to)=>t?`<div class="cxe-card cxe-bridgecard" role="listitem">${bgImg(img)}<button type="button" class="cxe-card-main" data-bridge="${key}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(from)} → ${esc(to)}</small></button></div>`:"";
+    const cards=[bridgeCard(flash,"transition-new52","06-flashpoint.webp","Pre-Flashpoint","New 52"),
+      ...phases.map((ph,i)=>{const e=ph.events;const desc=e.length>1?`${e[0].title} → ${e[e.length-1].title}`:e[0].title;
+        return `<div class="cxe-card cxe-phase" role="listitem" style="${hueOf(i)}">${bgImg(ph.img)}<button type="button" class="cxe-card-main" data-phase="${ph.n}"><span class="cxe-phase-n">0${ph.n}</span><strong>${esc(ph.title)}</strong><small>${esc(desc)}</small><span class="cxe-minis">${e.slice(0,4).map(x=>`<i>${esc(x.title.split(" / ")[0])}</i>`).join("")}${e.length>4?`<i>+${e.length-4}</i>`:""}</span><span class="cxe-go">Explore →</span></button></div>`;}),
+      bridgeCard(reb,"transition-rebirth","08-rebirth.webp","New 52","Rebirth"),
+      `<div class="cxe-card cxe-endcard" role="listitem"><button type="button" class="cxe-card-main" data-lanes><span class="cxe-tag">DETAIL</span><strong>By publishing lane</strong><small>The same events, grouped by the lines they run through</small></button></div>`,
+      `<div class="cxe-card cxe-endcard" role="listitem"><button type="button" class="cxe-card-main" data-full><span class="cxe-tag">DETAIL</span><strong>Crossover editions &amp; year timeline</strong><small>Collected editions and year-by-year activity</small></button></div>`].join("");
+    html+=rail("timeline","WHAT HAPPENED?","Timeline & Events",cards,"is-journey");
+  }
+  // 2 — WHO / WHICH CORNER?
+  if(entries.length){
+    const cards=entries.map(({cat,list},i)=>{const rc=rootOfCat(cat.key,roots,series);
+      const kids=rc?childrenOf(rc,chars).filter(k=>data.isEligibleLeadCharacter(k.id,series)).sort((a,b)=>leadCount(b,series)-leadCount(a,series)||titleOf(a).localeCompare(titleOf(b))).slice(0,3):[];
+      const lines=lineGroups(list).map(x=>x[0]).slice(0,3).join(" · ");
+      return `<div class="cxe-card cxe-faction" role="listitem" style="${hueOf(categoryRank(cat.key))}"><span class="cxe-glyph" aria-hidden="true">${esc(cat.label.slice(0,1))}</span><button type="button" class="cxe-card-main" data-cat="${esc(cat.key)}"><span class="cxe-tag">${esc(lines||"Franchise")}</span><strong>${esc(cat.label)}</strong><small>${list.length} series</small><span class="cxe-go">Explore →</span></button>${kids.length?`<div class="cxe-kids">${kids.map(k=>`<button type="button" data-char="${esc(k.id)}">${esc(titleOf(k))}</button>`).join("")}</div>`:""}</div>`;}).join("");
+    html+=rail("factions","WHO? WHICH CORNER OF THE UNIVERSE?","Heroes & Factions",cards);
+  }
+  // 3 — WHAT WAS PUBLISHED?
+  if(entries.length){
+    const cards=entries.map(({cat,list},gi)=>`<div class="cxe-div" role="listitem" style="${hueOf(categoryRank(cat.key))}"><strong>${esc(cat.label)}</strong><small>${list.length} series</small></div>${[...list].sort((a,b)=>String(a.startDate||"").localeCompare(String(b.startDate||""))||String(a.title).localeCompare(String(b.title))).map(s=>`<div class="cxe-card cxe-ser" role="listitem" style="${hueOf(categoryRank(cat.key))}"><button type="button" class="cxe-card-main" data-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><span class="cxe-count">${Number(s.issueCount)||0} issues</span></button></div>`).join("")}`).join("");
+    html+=rail("series","WHAT WAS PUBLISHED?","Series",cards,"is-catalogue");
+  }
+  // 4 — HOW SHOULD I EXPERIENCE IT? ordered routes from the source's own path definitions
+  if(m&&m.new52ReadingPaths.length){
+    const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));
+    const cards=m.new52ReadingPaths.map((rp,i)=>{const steps=rp.eventIds.map(id=>evById.get(id)).filter(Boolean);if(!steps.length)return "";
+      return `<div class="cxe-card cxe-path" role="listitem" style="${hueOf(i+3)}"><button type="button" class="cxe-card-main" data-path="${esc(rp.id)}"><span class="cxe-tag">${esc(pathTypeLabelOf(rp.type))}</span><strong>${esc(rp.title)}</strong><small>${esc(rp.sub||"")}</small><span class="cxe-route-line"><i>${esc(steps[0].title.split(" / ")[0])}</i><b aria-hidden="true">→</b><i>${esc(steps[steps.length-1].title.split(" / ")[0])}</i></span><span class="cxe-count">${steps.length} steps</span><span class="cxe-go">Start path →</span></button></div>`;}).join("");
+    html+=rail("paths","HOW SHOULD I EXPERIENCE IT?","Reading Paths",cards);
+  }
+  return{html,wire(el){
+    wireRails(el);
+    el.querySelector("[data-atlas]")?.addEventListener("click",close);
+    el.querySelectorAll("[data-phase]").forEach(b=>b.addEventListener("click",()=>{const ph=PHASES.find(x=>x.n===+b.dataset.phase);push("eraPhase",`${String(ph.n).padStart(2,"0")} · ${ph.title}`,{continuity:ct,phase:ph.n});}));
+    el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>push("eraPhase",b.dataset.bridge==="transition-new52"?"Flashpoint":"Convergence → Rebirth",{continuity:ct,bridge:b.dataset.bridge})));
+    el.querySelector("[data-lanes]")?.addEventListener("click",()=>push("eraLanes","By publishing lane",{continuity:ct}));
+    el.querySelector("[data-full]")?.addEventListener("click",()=>push("continuity",ct.name,{continuity:ct}));
+    el.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===b.dataset.cat);if(x)push("category",x.label,{categoryKey:x.key});}));
+    el.querySelectorAll("[data-char]").forEach(b=>b.addEventListener("click",()=>{const x=chars.find(v=>v.id===b.dataset.char);if(x)push("character",titleOf(x),{character:x});}));
+    el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=series.find(x=>x.id===b.dataset.series);if(s)push("series",s.title,{series:s});}));
+    el.querySelectorAll("[data-path]").forEach(b=>b.addEventListener("click",()=>{const rp=m.new52ReadingPaths.find(x=>x.id===b.dataset.path);push("eraPath",rp.title,{continuity:ct,pathId:rp.id});}));
+  }};
+}
+const pathTypeLabelOf=t=>({essential:"Essential",main_series:"Series route",event_crossover:"Crossover spine"})[t]||String(t||"Path").replace(/_/g," ");
+
+// One event, expandable: recorded issue ranges, involved publishing lanes, and — where a crossover record with the same title exists —
+// its own reading instruction, participating series and collected editions. A crossover touching several lanes appears once, with all its lanes.
+function eventItem(ev,m,rec){
+  const lanes=(ev.lanes||[]).map(id=>m.getLane(id)?.title).filter(Boolean);
+  return `<div class="cxe-ev" data-ev="${esc(ev.id)}"><button type="button" class="cxe-ev-head" aria-expanded="false"><span>${esc(ev.title)}</span><i aria-hidden="true">›</i></button><div class="cxe-ev-more" hidden>
+    <div class="cxe-ev-issues">${esc(ev.issues||"")}</div>
+    ${lanes.length?`<div class="cxe-chips">${lanes.map(l=>`<span>${esc(l)}</span>`).join("")}</div>`:""}
+    ${rec?`<div class="cxe-rec" data-rec="${esc(rec.id)}">${rec.readingInstruction?`<p>${esc(rec.readingInstruction)}</p>`:""}<div class="cxe-rec-box"></div></div>`:""}</div></div>`;
+}
+function wireEvents(el,{recs,byId}){
+  el.querySelectorAll(".cxe-ev-head").forEach(h=>h.addEventListener("click",async()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));
+    const box=more.querySelector(".cxe-rec-box");if(!o||!box||box.dataset.done)return;box.dataset.done="1";
+    const rec=recs.find(r=>r.id===box.parentElement.dataset.rec);if(!rec)return;
+    const br=(rec.branches||[]).filter(b=>b.seriesId&&byId.has(b.seriesId));
+    const cs=(await Promise.all((rec.eventCollectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);
+    box.innerHTML=`${br.length?`<div class="cxe-eds-label">Participating series</div><div class="cxe-chips is-btn">${br.map(b=>`<button type="button" data-series="${esc(b.seriesId)}">${esc(b.label||byId.get(b.seriesId).title)}</button>`).join("")}</div>`:""}${cs.length?`<div class="cxe-eds-label">Collected in</div><div class="cxe-chips is-btn">${cs.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(pillLabel(c))} · ${esc(displayCollectionTitle(c))}</button>`).join("")}</div>`:""}`;
+    box.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));
+    box.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=cs.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));}));
+}
+async function eraCtx(ct){
+  const [series,paths,m]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllReadingPaths(200).catch(()=>[]),import(MAP_DATA)]);
+  const ids=new Set(series.map(s=>s.id));
+  return {m,series,byId:new Map(series.map(s=>[s.id,s])),recs:paths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id)))};
 }
 
-// Series — this era's series (never a second list), grouped in categories.js order.
-async function eraSeries(p){
-  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
-  const series=await data.getSeriesForContinuity(ct.id);
-  const entries=categoryEntries(series);
-  if(!entries.length)return{html:`${eraTop(ct,"SERIES",ct.name)}${empty("No series are mapped in this era yet.")}`};
-  const html=entries.map(({cat,list})=>`<div class="cx-series-section"><div class="cx-section-head"><div><span>${esc(cat.label.toUpperCase())}</span><h3>${esc(cat.label)}</h3></div><em>${list.length} series</em></div><div class="cx-series-grid">${[...list].sort((a,b)=>String(a.startDate||"").localeCompare(String(b.startDate||""))||String(a.title).localeCompare(String(b.title))).map(s=>`<button class="cx-series-card" data-series="${esc(s.id)}"><div class="cx-series-card-top"><span>${esc(year(s)||"DC")}</span><b>${String(s.issueCount||0).padStart(2,"0")}</b></div><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><i>Open series →</i></button>`).join("")}</div></div>`).join("");
-  return{html:`${eraTop(ct,"SERIES",ct.name,`${series.length} series mapped in this era, grouped by franchise.`)}${html}`,
-    wire(el){el.querySelectorAll("[data-series]").forEach(r=>r.addEventListener("click",()=>{const s=series.find(x=>x.id===r.dataset.series);if(s)push("series",s.title,{series:s});}));}};
+// A phase (its events) or a transition bridge.
+async function eraPhase(p){
+  const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Timeline not available for this era.")};
+  const X=await eraCtx(ct),{m}=X;
+  if(p.bridge){const t=m.transitionEvents.find(x=>x.id===p.bridge);if(!t)return{html:empty("Transition not found.")};
+    return{html:`${eraTop("TRANSITION",t.title,t.kicker)}<div class="cxe-bridge"><p>${esc(t.summary||"")}</p>${(t.issues||[]).length?`<div class="cxe-chips">${t.issues.map(i=>`<span>${esc(i)}</span>`).join("")}</div>`:""}</div>`};}
+  const ph=derivePhases(m).find(x=>x.n===p.phase);if(!ph)return{html:empty("Phase not found.")};
+  const lanes=phaseLanes(ph,m);
+  const html=`${eraTop(`PHASE 0${ph.n} · ${ct.name}`,ph.title,`${ph.events.length} event${ph.events.length===1?"":"s"} in the source's order — not dated, and events overlap.`)}
+    ${lanes.length?`<div class="cxe-chips">${lanes.map(l=>`<span>${esc(l)}</span>`).join("")}</div>`:""}
+    <div class="cxe-evlist is-page">${ph.events.map(e=>eventItem(e,m,recordFor(e,X.recs))).join("")}</div>`;
+  return{html,wire(el){wireEvents(el,X);}};
 }
 
-// Reading Paths — explicit comicReadingPaths records that touch this era's series. Nothing is derived from dates or issue numbers.
-async function eraReading(p){
-  const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
-  const rc=await import("./reading-collections.js?v=p6");
-  const [series,allPaths]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllReadingPaths(200).catch(()=>[])]);
-  const ids=new Set(series.map(s=>s.id)),byId=new Map(series.map(s=>[s.id,s]));
-  const paths=rc.sortPathsByType(allPaths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id))).sort((a,b)=>String(a.pathCode||a.title).localeCompare(String(b.pathCode||b.title))));
-  const sub="How should I start? Reading paths recorded for this era.";
-  if(!paths.length)return{html:`${eraTop(ct,"READING PATHS",ct.name,sub)}${empty("No reading paths are recorded for this era yet.")}`};
-  const item=x=>{const br=(x.branches||[]).filter(b=>b.seriesId&&byId.has(b.seriesId));const note=x.readingInstruction||x.description||"";
-    return `<div class="cxe-path" data-path="${esc(x.id)}"><button type="button" class="cxe-path-head" aria-expanded="false"><span class="cxe-path-type">${esc(rc.pathTypeLabel(x.pathType))}</span><strong>${esc(x.title)}</strong><i aria-hidden="true">›</i></button>
-      <div class="cxe-path-more" hidden>${note?`<p>${esc(note)}</p>`:""}${br.length?`<div class="cxe-chips is-btn">${br.map(b=>`<button type="button" data-series="${esc(b.seriesId)}">${esc(b.label||byId.get(b.seriesId).title)}</button>`).join("")}</div>`:""}<div class="cxe-path-eds" data-eds="${esc((x.eventCollectionIds||[]).join(","))}"></div></div></div>`;};
-  return{html:`${eraTop(ct,"READING PATHS",ct.name,sub)}<div class="cxe-paths">${paths.map(item).join("")}</div>`,
-    wire(el){
-      el.querySelectorAll(".cxe-path-head").forEach(h=>h.addEventListener("click",async()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));
-        const box=more.querySelector("[data-eds]");if(o&&box&&box.dataset.eds&&!box.dataset.done){box.dataset.done="1";
-          const cs=(await Promise.all(box.dataset.eds.split(",").filter(Boolean).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);
-          if(cs.length){box.innerHTML=`<div class="cxe-eds-label">Collected in</div><div class="cxe-chips is-btn">${cs.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(pillLabel(c))} · ${esc(displayCollectionTitle(c))}</button>`).join("")}</div>`;
-            box.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=cs.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));}}}));
-      el.querySelectorAll(".cxe-path-more [data-series]").forEach(b=>b.addEventListener("click",()=>{const s=byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));}};
+// Secondary detail: the same events grouped by publishing lane (an event that crosses lanes appears under each).
+async function eraLanes(p){
+  const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Not available for this era.")};
+  const X=await eraCtx(ct),{m}=X;const evs=m.crossoverSpine.filter(e=>e.type!=="transition");
+  const lane=l=>{const list=evs.filter(e=>(e.lanes||[]).includes(l.id));if(!list.length)return "";
+    return `<div class="cxe-lane"><div class="cxe-lane-head"><strong>${esc(l.title)}</strong><small>${esc(l.sub||"")}</small></div><div class="cxe-evlist">${list.map(e=>eventItem(e,m,recordFor(e,X.recs))).join("")}</div></div>`;};
+  const alt=m.new52Era.alternateLanes.map(lane).join("");
+  return{html:`${eraTop("TIMELINE & EVENTS · DETAIL","By publishing lane","Publication lanes are context, not phases. An event that crosses lanes appears under each one.")}${m.new52Era.mainLanes.map(lane).join("")}${alt?`<div class="cxe-sec-sub">PARALLEL &amp; FUTURE EARTHS</div>${alt}`:""}`,wire(el){wireEvents(el,X);}};
 }
 
-const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraTimeline,eraCharacters,eraSeries,eraReading};
+// A reading path as a route: START → numbered steps → FINISH, in the explicit order of the path definition. Never re-sorted.
+async function eraPath(p){
+  const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Not available for this era.")};
+  const X=await eraCtx(ct),{m}=X;const rp=m.new52ReadingPaths.find(x=>x.id===p.pathId);if(!rp)return{html:empty("Path not found.")};
+  const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));const steps=rp.eventIds.map(id=>evById.get(id)).filter(Boolean);
+  const html=`${eraTop(pathTypeLabelOf(rp.type).toUpperCase(),rp.title,rp.sub)}
+    <p class="cxe-note is-soft">${steps.length} steps in the order recorded for this path. Open a step for its issue ranges, publishing lanes and — where recorded — the participating series.</p>
+    <ol class="cxe-route"><li class="cxe-route-end">START HERE</li>${steps.map((e,i)=>`<li class="cxe-step${e.type==="transition"?" is-transition":""}"><span class="cxe-step-n">${i+1}</span>${eventItem(e,m,recordFor(e,X.recs))}</li>`).join("")}<li class="cxe-route-end">FINISH</li></ol>`;
+  return{html,wire(el){wireEvents(el,X);}};
+}
+
+const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath};
 let stack=[];let token=0;
 function shell(body){const crumbs=stack.map((x,i)=>`${i?`<span class="cx-crumb-sep">/</span>`:""}<span class="cx-crumb" data-i="${i}" data-current="${i===stack.length-1}">${esc(x.label)}</span>`).join("");return `<div class="cx-topbar"><button class="cx-back-btn" id="cxBackBtn">${stack.length>1?"←":"✕"}</button><div class="cx-breadcrumb">${crumbs}</div></div>${body}`;}
 async function render(){const el=document.getElementById("comicsExplorerContent");if(!el||!stack.length)return;const t=++token;el.innerHTML=shell(`<div class="cx-loading">Loading…</div>`);let out;try{out=await LEVELS[stack.at(-1).level](stack.at(-1).params||{});}catch(e){console.error("[Comics Explorer]",e);out={html:`<div class="cx-error">Couldn't load this right now. ${esc(e.message||"")}</div>`};}if(t!==token)return;el.innerHTML=shell(out.html);el.querySelector("#cxBackBtn")?.addEventListener("click",back);el.querySelectorAll('.cx-crumb[data-current="false"]').forEach(x=>x.addEventListener("click",()=>{stack=stack.slice(0,+x.dataset.i+1);render();}));out.wire?.(el);}
