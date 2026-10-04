@@ -1923,7 +1923,7 @@ main.comics-home-main > .grid{
    Comics rebuild — generic DC landing + data-driven explorer
    ====================================================================== */
 /* ======================================================================
-   COMICS HOME — Stage 1 gateway + Stage 2 "DC Universe Atlas" (horizontal era journey). Scoped to .cxh; always dark.
+   COMICS HOME — Stage 1 gateway + Stage 2 "DC Universe Atlas" (era journey). Scoped to .cxh; always dark.
    ====================================================================== */
 main:has(> .grid > .cxh){max-width:none;padding:0 0 0}
 main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
@@ -1946,54 +1946,72 @@ main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
 .cxh-tag span{display:block}
 .cxh-btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border:0;border-radius:4px;background:var(--cxh-gold);color:#14110a;font-weight:700;font-size:14px;letter-spacing:.16em;cursor:pointer;transition:transform .15s ease,filter .15s ease}
 .cxh-btn:active{transform:scale(.98);filter:brightness(.9)}
-/* Stage 2 — atlas */
-.cxh-atlasview{background:radial-gradient(ellipse at 50% 38%,rgba(224,172,43,.07),transparent 60%),var(--cxh-bg)}
+/* Stage 2 — atlas: one journey list. Vertical (phones + tablets) by default, horizontal on desktop. */
+.cxh-atlasview{background:radial-gradient(ellipse at 50% 20%,rgba(224,172,43,.06),transparent 60%),var(--cxh-bg)}
 .cxh-atlas-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;padding-bottom:10px}
 .cxh-back{min-height:48px;min-width:48px;margin-left:-6px;padding:0 6px;background:none;border:0;color:#fff;font:700 12px/1 var(--font-mono);letter-spacing:.16em;cursor:pointer}
 .cxh-back:active{color:var(--cxh-gold)}
 .cxh-atlas-kicker{margin:0;font:700 11px/1 var(--font-mono);letter-spacing:.22em;color:var(--cxh-gold)}
 .cxh-stage{position:relative}
-.cxh-track{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;padding:10px 0 20px}
-.cxh-track::-webkit-scrollbar{display:none}
 .cxh-track:focus-visible{outline-offset:-3px}
-.cxh-eras{--pw:74vw;list-style:none;margin:0;display:flex;gap:12px;width:max-content;padding:0 calc((100% - var(--pw))/2)}
-.cxh-panel{position:relative;flex:0 0 var(--pw);width:var(--pw);height:clamp(400px,calc(100svh - 320px),600px);scroll-snap-align:center;border:1px solid rgba(255,255,255,.11);border-radius:6px;overflow:hidden;background:radial-gradient(ellipse at 85% 6%,var(--eg),transparent 64%),linear-gradient(165deg,var(--ea),var(--eb));display:flex;align-items:flex-end;padding:26px 22px;transform:scale(.92);opacity:.7;transition:transform .45s ease,opacity .45s ease}
-.cxh-panel.is-active{transform:none;opacity:1}
-.cxh-panel::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.05) 1px,transparent 0);background-size:3px 3px;mix-blend-mode:overlay}
-.cxh-ord{position:absolute;top:2px;right:14px;font-family:var(--font-display);font-size:150px;line-height:1;color:rgba(255,255,255,.07);pointer-events:none;user-select:none}
-.cxh-pbody{position:relative;z-index:1;width:100%}
-.cxh-pname{font-family:var(--font-display);font-weight:400;font-size:clamp(34px,10.5vw,46px);line-height:1;letter-spacing:.03em;text-transform:uppercase;color:#fff;margin:0;overflow-wrap:anywhere}
-.cxh-panel-live{border-color:rgba(224,172,43,.65);background:radial-gradient(ellipse at 50% 0%,rgba(224,172,43,.34),transparent 62%),linear-gradient(100deg,#13294a 0%,#1b2b45 42%,#4a2610 100%);box-shadow:0 0 0 1px rgba(224,172,43,.22),0 20px 60px rgba(224,172,43,.2)}
-.cxh-panel-live .cxh-ord{display:none}
-.cxh-mark{position:absolute;right:-6px;top:-8px;font-family:var(--font-display);font-size:230px;line-height:1;color:rgba(255,255,255,.08);pointer-events:none;user-select:none}
-.cxh-panel-live .cxh-pname{font-size:clamp(50px,15vw,68px);letter-spacing:.02em}
-.cxh-years{margin:12px 0 30px;font:600 14px/1 var(--font-mono);letter-spacing:.22em;color:rgba(255,255,255,.85)}
-.cxh-cta{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;background:var(--cxh-gold);border:0;border-radius:4px;color:#14110a;font-weight:700;font-size:14px;letter-spacing:.14em;cursor:pointer;transition:filter .15s ease,transform .15s ease}
+.cxh-journey{list-style:none;margin:0;padding:10px 20px 0;display:flex;flex-direction:column;align-items:center}
+.cxh-node{position:relative;width:100%;max-width:520px}
+.cxh-node:not(:last-child){margin-bottom:56px}
+.cxh-node:not(:last-child)::after{content:"";position:absolute;left:50%;top:100%;width:2px;height:56px;margin-left:-1px;background:linear-gradient(to bottom,rgba(224,172,43,.75),rgba(224,172,43,.25));pointer-events:none}
+.cxh-card{position:relative;aspect-ratio:4/5;border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:hidden;background:#1a1c25;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.cxh-card-art,.cxh-card-art img{position:absolute;inset:0;width:100%;height:100%}
+.cxh-card-art img{object-fit:cover;display:block}
+.cxh-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:52%;pointer-events:none;background:linear-gradient(to bottom,rgba(10,11,16,0),rgba(10,11,16,.78) 58%,rgba(10,11,16,.94))}
+.cxh-card-body{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:0 22px 24px}
+.cxh-pname{font-family:var(--font-display);font-weight:400;font-size:clamp(34px,10.5vw,46px);line-height:1;letter-spacing:.03em;text-transform:uppercase;color:#fff;margin:0;overflow-wrap:anywhere;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.cxh-sub{margin:8px 0 0;font:600 11px/1 var(--font-mono);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.cxh-years{margin:10px 0 0;font:600 14px/1 var(--font-mono);letter-spacing:.22em;color:rgba(255,255,255,.9)}
+.cxh-era-live .cxh-card{border-color:rgba(224,172,43,.8);box-shadow:0 0 0 1px rgba(224,172,43,.25),0 18px 56px rgba(224,172,43,.22)}
+.cxh-era-live .cxh-pname{font-size:clamp(46px,14vw,62px)}
+.cxh-cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;margin-top:20px;padding:0 18px;background:var(--cxh-gold);border:0;border-radius:4px;color:#14110a;font-weight:700;font-size:14px;letter-spacing:.14em;cursor:pointer;transition:filter .15s ease,transform .15s ease}
 .cxh-cta:active,.cxh-cta.is-pressed{filter:brightness(.88);transform:scale(.98)}
+/* Flashpoint — a transition event between two eras, deliberately not an era card */
+.cxh-rupture{position:relative;aspect-ratio:16/10;border-top:2px solid #ff7a2e;border-bottom:2px solid #ff7a2e;overflow:hidden;background:#1a0f0a;box-shadow:0 0 44px rgba(255,110,40,.35)}
+.cxh-rup-art,.cxh-rup-art img{position:absolute;inset:0;width:100%;height:100%}
+.cxh-rup-art img{object-fit:cover;object-position:50% 38%;display:block}
+.cxh-rupture::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to bottom,rgba(10,11,16,.55),rgba(10,11,16,.2) 40%,rgba(10,11,16,.8))}
+.cxh-rup-body{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:0 22px 18px;text-align:center}
+.cxh-rup-kind{display:block;font:700 11px/1 var(--font-mono);letter-spacing:.24em;text-transform:uppercase;color:#ffb27a}
+.cxh-rup-name{margin:8px 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(36px,11vw,52px);line-height:1;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.7)}
+.cxh-rupture::after{display:none}
+.cxh-node.cxh-rupture{max-width:none;width:calc(100% + 40px);margin-left:-20px;margin-right:-20px}
+.cxh-node.cxh-rupture:not(:last-child)::after{display:block;content:"";position:absolute;left:50%;top:100%;width:2px;height:56px;margin-left:-1px;background:linear-gradient(to bottom,rgba(255,122,46,.9),rgba(224,172,43,.25))}
 .cxh-nav{display:none}
-.cxh-prog{display:flex;justify-content:center;gap:6px;padding:4px 20px 0}
-.cxh-prog span{width:14px;height:2px;background:rgba(255,255,255,.2);transition:background .3s ease,width .3s ease}
-.cxh-prog span.is-live{background:rgba(224,172,43,.55)}
-.cxh-prog span.is-active{width:28px;background:#fff}
-.cxh-prog span.is-live.is-active{background:var(--cxh-gold)}
 /* motion */
 @keyframes cxh-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .cxh-kicker,.cxh-title,.cxh-tag span,.cxh-btn{animation:cxh-rise .8s cubic-bezier(.2,.7,.2,1) both}
 .cxh-title{animation-delay:.1s}.cxh-tag span:nth-child(1){animation-delay:.35s}.cxh-tag span:nth-child(2){animation-delay:.5s}.cxh-tag span:nth-child(3){animation-delay:.65s}.cxh-btn{animation-delay:.9s}
 @media (prefers-reduced-motion:reduce){.cxh *,.cxh *::before,.cxh *::after{animation:none!important;transition:none!important}}
 /* narrow / zoomed */
-@media(max-width:260px){.cxh-in{padding:0 14px}.cxh-title{font-size:36px}.cxh-pname{font-size:28px}.cxh-panel-live .cxh-pname{font-size:38px}.cxh-btn,.cxh-cta{letter-spacing:.06em;padding:0 12px;text-align:center}.cxh-eras{--pw:84vw}}
-/* desktop adapts from the mobile design */
+@media(max-width:260px){.cxh-in{padding:0 14px}.cxh-title{font-size:36px}.cxh-pname{font-size:28px}.cxh-era-live .cxh-pname{font-size:38px}.cxh-btn,.cxh-cta{letter-spacing:.06em;padding:0 12px;text-align:center}.cxh-journey{padding:10px 14px 0}.cxh-node.cxh-rupture{width:calc(100% + 28px);margin-left:-14px;margin-right:-14px}}
+/* tablet: keep the vertical journey, larger cards */
+@media (min-width:700px) and (max-width:999px){.cxh-node{max-width:560px}.cxh-pname{font-size:52px}.cxh-era-live .cxh-pname{font-size:68px}.cxh-node.cxh-rupture{max-width:none;width:calc(100% + 40px);aspect-ratio:21/9}}
+/* desktop: the same journey runs horizontally */
 @media (min-width:900px){
   .cxh-art{max-width:calc(47svh*1.7917);margin:0 auto;-webkit-mask-image:linear-gradient(to right,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(to right,transparent,#000 9%,#000 91%,transparent)}
   .cxh-gate-copy{text-align:center;margin-top:-18px}
   .cxh-tag{font-size:21px;margin-bottom:28px}.cxh-tag span{display:inline}.cxh-tag span+span::before{content:" "}
   .cxh-title{font-size:clamp(52px,6vw,68px);margin-bottom:16px}
-  .cxh-eras{--pw:clamp(320px,28vw,420px);gap:20px}
-  .cxh-panel{height:clamp(420px,calc(100svh - 300px),600px)}
-  .cxh-nav{display:flex;align-items:center;justify-content:center;position:absolute;top:50%;margin-top:-34px;width:48px;height:48px;background:rgba(18,19,25,.72);border:1px solid var(--cxh-line);border-radius:50%;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:2}
+}
+@media (min-width:1000px){
+  .cxh-track{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent;overscroll-behavior-x:contain}
+  .cxh-journey{--cw:clamp(250px,calc((100svh - 250px)*.8),340px);flex-direction:row;align-items:center;width:max-content;min-width:100%;padding:20px 72px 28px}
+  .cxh-node{flex:0 0 auto;width:var(--cw);max-width:none}
+  .cxh-node:not(:last-child){margin-bottom:0;margin-right:64px}
+  .cxh-node:not(:last-child)::after,.cxh-node.cxh-rupture:not(:last-child)::after{left:100%;top:50%;width:64px;height:2px;margin:-1px 0 0;background:linear-gradient(to right,rgba(224,172,43,.75),rgba(224,172,43,.25))}
+  .cxh-node.cxh-rupture:not(:last-child)::after{background:linear-gradient(to right,rgba(255,122,46,.9),rgba(224,172,43,.25))}
+  .cxh-pname{font-size:38px}.cxh-era-live .cxh-pname{font-size:50px}
+  .cxh-node.cxh-rupture{width:calc(var(--cw)*.5);height:calc(var(--cw)*1.5);aspect-ratio:auto;margin-left:0;margin-right:64px;border:2px solid #ff7a2e;border-radius:4px}
+  .cxh-rup-name{font-size:40px}
+  .cxh-nav{display:flex;align-items:center;justify-content:center;position:absolute;top:50%;margin-top:-24px;width:48px;height:48px;background:rgba(18,19,25,.78);border:1px solid var(--cxh-line);border-radius:50%;color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:2}
+  .cxh-nav[hidden]{display:none}
   .cxh-nav:hover{border-color:rgba(255,255,255,.4)}
-  .cxh-prev{left:28px}.cxh-next{right:28px}
+  .cxh-prev{left:20px}.cxh-next{right:20px}
 }
 @media(max-width:759px){.cx-tabs{margin-right:-2px}.cx-title{font-size:29px!important}}
 
