@@ -460,10 +460,12 @@ async function series(p){
   if(creators.filter(Boolean).length)html+=`<div class="cx-tag-row">${creators.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;
   html+=`<div class="sheet-section"><div class="sheet-label">THE STORY</div><div class="cx-info-card">${esc(s.description||"A New 52 publication mapped as part of the connected DC Comics catalogue.")}</div></div>`;
   html+=`<div class="cx-publication-summary"><div>${stat("Issues",counts.issues)}<span class="cx-summary-detail">${counts.issues?`#${first}–#${last}`:"Not recorded"}</span></div><div>${stat("Annuals",counts.annuals)}<span class="cx-summary-detail">${counts.annuals?"Annual publications recorded":"None recorded"}</span></div><div>${stat("Specials",counts.specials)}<span class="cx-summary-detail">${counts.specials?"Special / one-shot units":"None recorded"}</span></div></div>`;
-  if(runs.length){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>CREATIVE HISTORY</span><h3>Creative runs</h3></div><em>${runs.length} runs</em></div><div class="cx-run-grid">${runs.sort((a,b)=>(Number(a.startIssue)||0)-(Number(b.startIssue)||0)).map((r,i)=>`<div class="cx-run-card"><strong>${esc(r.title||creators.filter(Boolean).map(c=>titleOf(c)).join(" / ")||"Run")}</strong><span>${esc(coverage(r))}</span><b>Creative history</b></div>`).join("")}</div></div>`;}
+  if(runs.length){html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>CREATIVE HISTORY</span><h3>Creative runs</h3></div><em>${runs.length} runs</em></div><div class="cx-run-grid">${runs.sort((a,b)=>(Number(a.startIssue)||0)-(Number(b.startIssue)||0)).map((r,i)=>`<button type="button" class="cx-run-card is-link" data-run="${esc(r.id)}"><strong>${esc(r.title||creators.filter(Boolean).map(c=>titleOf(c)).join(" / ")||"Run")}</strong><span>${esc(coverage(r))}</span><b>Open run →</b></button>`).join("")}</div></div>`;}
+  // A series with no run records has no run level to hang its story arcs on, so they are listed here, from its own collected editions.
+  const serArcs=runs.length?null:arcsOf(mainColl,s);if(serArcs)html+=arcsHtml(serArcs,s,false,"Story arcs");
   html+=`<div id="cxReadingPaths"></div>`;
   html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],mainColl.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxTabBody"></div></div>`;
-  return{html,wire(c){mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
+  return{html,wire(c){c.querySelectorAll("[data-arc]").forEach(b=>b.addEventListener("click",()=>{const a=serArcs&&[...serArcs.arcs,...serArcs.crossovers].find(x=>x.primary.id===b.dataset.arc);if(a)push("story",a.title,{series:s,arc:a});}));c.querySelectorAll("[data-run]").forEach(b=>b.addEventListener("click",()=>{const r=runs.find(x=>x.id===b.dataset.run);if(r)push("run",r.title||"Run",{run:r,series:s});}));mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
       if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED RUN</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>This is the complete numbered run represented in the catalogue. The story itself is organised below through its creative history and collected editions.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>${esc(ml.events||ml.shared?`Mainline volumes only · ${ml.events} crossover/event collection${ml.events===1?"":"s"} listed separately`:"Mainline volumes only")}</small></div></div></div>`;
       else if(t==="collections")mountEditions(tabBody,mainColl,issues,s);
       else if(t==="annuals")tabBody.innerHTML=publicationRows(b.annual);
@@ -472,6 +474,24 @@ async function series(p){
     };renderTab("overview");c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(t=>t.addEventListener("click",()=>{c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(x=>x.classList.remove("is-active"));t.classList.add("is-active");renderTab(t.dataset.tab);}));}};
 }
 
+// Story arcs and crossovers of one series, derived from its own collected editions (nothing is invented): a mainline volume titled "… Vol. N: Arc" is
+// that arc's collection; crossover-role editions that include this series are listed as participation, never as the series' own stories.
+const ARC_RE=/\bVol(?:ume)?\.?\s*\d+\s*:\s*(.+)$/i;
+function arcsOf(colls,s){
+  const rowsOf=c=>(c.issueCoverage||[]).filter(r=>r.seriesId===s.id);
+  const firstNum=rows=>{const ns=rows.map(r=>parseFloat(String(r.issueLabel).replace(/[^0-9.]/g,""))).filter(Number.isFinite);return ns.length?Math.min(...ns):9999;};
+  const arcs=new Map(),xo=new Map();
+  for(const c of colls){const rows=rowsOf(c);if(!rows.length)continue;const role=roleOf(c);
+    if(role==="mainline"){const m=String(c.title).match(ARC_RE);if(!m||new Set((c.issueCoverage||[]).map(r=>r.seriesId)).size>1)continue;
+      const t=m[1].trim().replace(/\s*\(.*?\)\s*$/,""),k=plain(eventKey(t));const a=arcs.get(k);if(a)a.others.push(c);else arcs.set(k,{kind:"arc",title:t,primary:c,others:[],rows});}
+    else if(role==="crossover"){const k=plain(eventKey(c.title));const a=xo.get(k);if(a)a.others.push(c);else xo.set(k,{kind:"crossover",title:c.title,primary:c,others:[],rows});}}
+  const fin=a=>{const key=plain(eventKey(a.title));if(key.length>=6)colls.forEach(c=>{if(c!==a.primary&&!a.others.includes(c)&&rowsOf(c).length&&plain(c.title).includes(key))a.others.push(c);});a.first=firstNum(a.rows);return a;};
+  const by=(x,y)=>x.first-y.first;
+  return{arcs:[...arcs.values()].map(fin).sort(by),crossovers:[...xo.values()].map(fin).sort(by)};
+}
+const arcsHtml=(a,s,open,runLabel="Story arcs in this run")=>{const row=x=>`<button type="button" class="cxe-serrow" data-arc="${esc(x.primary.id)}"><strong>${esc(x.title)}</strong><small>${esc(compressLabels(x.rows))}</small><b>${x.kind==="arc"?"Story arc":"Crossover · participation"}</b></button>`;
+  const box=(k,h,list,note)=>`<details class="cxe-arcs"${open?" open":""}><summary><span><em>${k}</em><strong>${h}</strong></span><b>${list.length}</b></summary>${note?`<p class="cxe-note is-soft">${note}</p>`:""}<div class="cxe-serlist is-page">${list.map(row).join("")}</div></details>`;
+  return `${a.arcs.length?box("STORIES",runLabel,a.arcs,""):""}${a.crossovers.length?box("CROSSOVERS",`Crossovers ${esc(s.title)} takes part in`,a.crossovers,"Taking part is not owning: these are shared stories with their own collected editions."):""}`;};
 async function run(p){
   const r=p.run,s=p.series;if(!r||!s)return{html:empty("Run not found.")};
   const creators=await Promise.all((r.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)));
@@ -485,9 +505,10 @@ async function run(p){
   if(creators.filter(Boolean).length)html+=`<div class="cx-tag-row">${creators.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;
   html+=`<div class="cx-publication-summary">${stat("Issues",counts.issues)}${stat("Annuals",counts.annuals)}${stat("Specials",counts.specials)}</div>`;
   html+=`<div class="sheet-section"><div class="sheet-label">PUBLICATION COVERAGE</div><div class="cx-coverage-callout">${esc(coverage(r))}</div></div>`;
+  const arcSet=arcsOf(runColls,s);html+=arcsHtml(arcSet,s);
   html+=`<div id="cxReadingPaths"></div>`;
   html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Run material</h3></div></div>${tabs("overview",[["overview","Overview"],runColls.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxRunTab"></div></div>`;
-  return{html,wire(c){if(!rel)mountReadingPaths(c.querySelector("#cxReadingPaths"),s,Number.isFinite(lo)&&Number.isFinite(hi)?[lo,hi]:null);const body=c.querySelector("#cxRunTab");const draw=t=>{
+  return{html,wire(c){c.querySelectorAll("[data-arc]").forEach(b=>b.addEventListener("click",()=>{const a=[...arcSet.arcs,...arcSet.crossovers].find(x=>x.primary.id===b.dataset.arc);if(a)push("story",a.title,{series:s,run:r,arc:a});}));if(!rel)mountReadingPaths(c.querySelector("#cxReadingPaths"),s,Number.isFinite(lo)&&Number.isFinite(hi)?[lo,hi]:null);const body=c.querySelector("#cxRunTab");const draw=t=>{
       if(t==="overview")body.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>RUN COVERAGE</span><strong>${esc(coverage(r))}</strong><small>${counts.issues} numbered issue${counts.issues===1?"":"s"} in this creative run. Annuals and specials are listed separately below.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>Mainline volumes of the series</small></div></div></div>`;
       else if(t==="collections")mountEditions(body,runColls,issues,s);
       else if(t==="annuals")body.innerHTML=publicationRows(b.annual);
@@ -570,7 +591,8 @@ const launchWhen=m=>(String(m.new52Era?.description||"").match(new RegExp(`(?:${
 const bridgeLabel=t=>String(t.title||"").replace("DC Universe: ","");
 const eraTitleOf=(m,id)=>m.eras.find(e=>e.id===id)?.title||id;
 const kindLabel=k=>({multiverse:"Multiverse / Limited series",event:"Event limited series",maxiseries:"Maxi-series",miniseries:"Miniseries","tie-in":"Tie-in miniseries",transition:"Transition limited series","dc-you-continuation":"DC You continuation"})[k]||String(k||"Limited series").replace(/[-_]/g," ");
-const pathTypeLabelOf=t=>({essential:"Core event spine",main_series:"Lane event list",event_crossover:"Full event spine"})[t]||"Event spine";
+const pathTypeLabelOf=t=>({essential:"Curated path · core",main_series:"Curated path · one line",event_crossover:"Curated path · whole era"})[t]||"Curated path";
+const pathForOf=t=>({essential:["Readers who want the milestone moments without following every series.","The biggest moments from the central publishing lines."],main_series:["Readers following one publishing line.","That line's own stories and the events it takes part in."],event_crossover:["Readers who want the events that connect the whole era.","Events that link several publishing lines, rather than any one line's own stories."]})[t]||["Readers exploring the era.","The listed stories and events."];
 const evTypeLabel=t=>({story:"Story arc",crossover:"Crossover",event:"Event",multiverse:"Multiverse work",transition:"Transition"})[t]||"Event";
 const issueLabel=l=>/^\d/.test(String(l))?`#${l}`:String(l);
 
@@ -583,6 +605,10 @@ async function eraHub(p){
   const yrs=eraYears(ct);
   let html=`${p.exitOnBack?`<button type="button" class="cxe-atlas-link" data-atlas>← DC UNIVERSE ATLAS</button>`:""}<div class="cxe-hero"><div class="cx-kicker">ERA</div><h2 class="cx-title">${esc(ct.name)}</h2>${yrs?`<div class="cxe-years">${esc(yrs)}</div>`:""}</div>`;
 
+  // The four doors into the same universe: each scrolls to its section below (no routes of their own).
+  const doors=[["timeline","door-timeline.webp","Timeline & Events","What happened, and where the era sits"],["factions","door-heroes.webp","Heroes & Factions","Characters, families and teams"],["series","door-series.webp","Series","The publications, by territory"],["paths","door-paths.webp","Reading Paths","Curated routes through the era"]]
+    .filter(d=>d[0]==="timeline"?!!m:d[0]==="paths"?!!(m&&m.new52ReadingPaths.length):entries.length>0);
+  if(doors.length)html+=`<nav class="cxe-doors" aria-label="Ways into ${esc(ct.name)}">${doors.map(d=>`<button type="button" class="cxe-door" data-door="${d[0]}"><img src="${ATLAS_IMG(d[1])}" alt="" loading="lazy" decoding="async"><span><strong>${esc(d[2])}</strong><small>${esc(d[3])}</small></span></button>`).join("")}</nav>`;
   // 1 — WHAT HAPPENED? a journey: transition → phases → transition
   if(m){
     const phases=derivePhases(m),T=id=>m.transitionEvents.find(t=>t.id===id);
@@ -618,10 +644,11 @@ async function eraHub(p){
     const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));
     const cards=m.new52ReadingPaths.map((rp,i)=>{const steps=rp.eventIds.map(id=>evById.get(id)).filter(e=>e&&e.type!=="transition");if(!steps.length)return "";
       return `<div class="cxe-card cxe-path" role="listitem" style="${hueOf(i+3)}"><button type="button" class="cxe-card-main" data-path="${esc(rp.id)}"><span class="cxe-tag">${esc(pathTypeLabelOf(rp.type))}</span><strong>${esc(rp.title)}</strong><small>${esc(rp.sub||"")}</small><span class="cxe-route-line"><i>${esc(steps[0].title.split(" / ")[0])}</i><b aria-hidden="true">→</b><i>${esc(steps[steps.length-1].title.split(" / ")[0])}</i></span><span class="cxe-count">${steps.length} events</span><span class="cxe-go">Open spine →</span></button></div>`;}).join("");
-    html+=rail("paths","HOW SHOULD I EXPERIENCE IT?","Paths & Event Spines",cards);
+    html+=rail("paths","WHERE DO I START?","Reading Paths",cards);
   }
   return{html,wire(el){
     wireRails(el);
+    el.querySelectorAll("[data-door]").forEach(b=>b.addEventListener("click",()=>{const t=el.querySelector(`[data-rail="${b.dataset.door}"]`);if(t){t.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});t.querySelector(".cxe-rail")?.focus({preventScroll:true});}}));
     el.querySelector("[data-atlas]")?.addEventListener("click",close);
     el.querySelectorAll("[data-phase]").forEach(b=>b.addEventListener("click",()=>{const ph=PHASES.find(x=>x.n===+b.dataset.phase);push("eraPhase",`${String(ph.n).padStart(2,"0")} · ${ph.title}`,{continuity:ct,phase:ph.n});}));
     el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=m.transitionEvents.find(x=>x.id===b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));
@@ -693,6 +720,7 @@ function eventItem(ev,m,rec,o={}){
   if(o.lane&&ev.type==="story")role="Story arc in this lane";
   else if(o.lane){role=owner===o.lane?"Main series in this lane":multi?`Participates${owner?` · main series: ${laneTitle(m,owner)}`:" · multi-lane crossover"}`:"Lane crossover";}
   else role=`${evTypeLabel(ev.type)}${multi?` · across ${ids.length} lanes`:""}`;
+  if(o.stop)role=`Stop ${o.stop} · ${role}`;
   const chips=ids.map(id=>{const t=laneTitle(m,id);return owner===id&&multi?`<span class="is-owner">${esc(t)} · main series</span>`:`<span>${esc(t)}${multi&&owner&&owner!==id?" · participates":""}</span>`;}).join("");
   const eds=(work?.collections||[]);
   return `<div class="cxe-ev" data-ev="${esc(ev.id)}"><button type="button" class="cxe-ev-head" aria-expanded="false"><span class="cxe-ev-t"><strong>${esc(ev.title)}</strong><small>${esc(role)}</small>${o.showIssues?`<small class="cxe-ev-rng">${esc(ev.issues||"")}</small>`:""}${o.showIssues&&(eds.length||rec?.eventCollectionIds?.length)?`<small class="cxe-ev-eds">${(eds.length||0)+(rec?.eventCollectionIds?.length||0)} collected edition${(eds.length||0)+(rec?.eventCollectionIds?.length||0)===1?"":"s"} recorded</small>`:""}</span><i aria-hidden="true">›</i></button><div class="cxe-ev-more" hidden>
@@ -855,13 +883,40 @@ async function eraPath(p){
   const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));const steps=rp.eventIds.map(id=>evById.get(id)).filter(e=>e&&e.type!=="transition");
   const T=id=>m.transitionEvents.find(t=>t.id===id);const full=rp.type==="event_crossover";
   const bridge=t=>t?`<li class="cxe-spine-bridge"><button type="button" class="cxe-bridgerow" data-bridge="${esc(t.id)}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(eraTitleOf(m,t.from))} → ${esc(eraTitleOf(m,t.to))}</small></button></li>`:"";
-  const html=`${eraTop(pathTypeLabelOf(rp.type).toUpperCase(),rp.title,rp.sub)}
-    <p class="cxe-note is-soft">${steps.length} major stories and events from across the era — a curated guide to the big moments, not an issue-by-issue reading order and not a strict timeline. Open one for its issues, series and collected editions.</p>
-    <ul class="cxe-spine">${full?bridge(T("transition-new52")):""}${steps.map(e=>`<li class="cxe-spine-ev">${eventItem(e,m,recordFor(e,X.recs))}</li>`).join("")}${full?bridge(T("transition-rebirth")):""}</ul>`;
+  const cnt=t=>steps.filter(e=>e.type===t).length,lanes=[...new Set(steps.flatMap(e=>eventLaneIds(e,m)))].map(id=>laneTitle(m,id)).filter(Boolean);
+  const cover=[cnt("story")?`${cnt("story")} story arc${cnt("story")===1?"":"s"}`:"",cnt("crossover")?`${cnt("crossover")} crossover${cnt("crossover")===1?"":"s"}`:"",cnt("event")?`${cnt("event")} event${cnt("event")===1?"":"s"}`:"",cnt("multiverse")?`${cnt("multiverse")} multiverse work${cnt("multiverse")===1?"":"s"}`:""].filter(Boolean).join(" · ");
+  const [who,prio]=pathForOf(rp.type);
+  const html=`${eraTop("CURATED READING PATH",rp.title,rp.sub)}
+    <div class="cxe-pathfacts"><div><span>WHO IS THIS FOR?</span><p>${esc(who)}</p></div><div><span>WHAT DOES IT COVER?</span><p>${steps.length} stops — ${esc(cover)}${lanes.length?`, across ${esc(lanes.join(", "))}`:""}.</p></div><div><span>WHAT DOES IT PRIORITIZE?</span><p>${esc(prio)}</p></div></div>
+    <p class="cxe-note is-soft">${esc(pathTypeLabelOf(rp.type))}. A way in through the big moments — not the one correct reading order, and not a chronology. Open a stop for its series, issues and collected editions.</p>
+    <ul class="cxe-spine">${full?bridge(T("transition-new52")):""}${steps.map((e,i)=>`<li class="cxe-spine-ev">${eventItem(e,m,recordFor(e,X.recs),{stop:i+1})}</li>`).join("")}${full?bridge(T("transition-rebirth")):""}</ul>`;
   return{html,wire(el){wireEvents(el,X);el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=T(b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));}};
 }
 
-const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath,eraTimeline,eraWork};
+// A story arc or crossover, from its collected edition(s): the issues it covers, the series involved, and every edition that collects it. When the
+// New 52 map classifies the same title, that classification (story arc / crossover) and its lanes are shown; otherwise only what the editions say.
+async function story(p){
+  const a=p.arc,s=p.series;if(!a||!s)return{html:empty("Story not found.")};
+  const rows=(a.primary.issueCoverage||[]);const bySer=new Map();rows.forEach(r=>{if(!bySer.has(r.seriesId))bySer.set(r.seriesId,[]);bySer.get(r.seriesId).push(r);});
+  const sers=new Map((await Promise.all([...bySer.keys()].map(id=>get(COLLECTIONS.SERIES,id)))).filter(Boolean).map(x=>[x.id,x]));
+  let cls=null,m=null;
+  try{const cts=await data.getAllContinuities();if((s.continuityIds||[]).some(id=>isNew52(cts.find(c=>c.id===id)))){m=await import(MAP_DATA);const k=plain(eventKey(a.title));cls=m.crossoverSpine.find(e=>plain(eventKey(e.title))===k&&(a.kind==="arc"?e.type==="story":e.type!=="story"))||null;}}catch(e){}
+  const colls=[a.primary,...a.others];const multi=bySer.size>1;
+  const kick=cls?evTypeLabel(cls.type).toUpperCase():(a.kind==="arc"?"STORY ARC":"CROSSOVER");
+  const lanes=cls?eventLaneIds(cls,m).map(id=>laneTitle(m,id)).filter(Boolean):[];
+  let html=`<div class="cx-kicker">${esc(kick)}</div><h2 class="cx-title">${esc(a.title)}</h2><div class="cx-subtitle">${esc(multi?`${bySer.size} series take part`:`${s.title} · ${compressLabels(rows)}`)}</div>`;
+  if(lanes.length)html+=`<div class="cxe-chips">${lanes.map(l=>`<span>${esc(l)}</span>`).join("")}</div>`;
+  if(a.kind==="crossover")html+=`<p class="cxe-note is-soft">A crossover spans several series. Each series takes part; none owns it.</p>`;
+  html+=`<div class="cxe-sec-sub">${multi?"PARTICIPATING SERIES":"SERIES"}</div><div class="cxe-chips is-btn">${[...bySer.keys()].map(id=>sers.get(id)?`<button type="button" data-series="${esc(id)}">${esc(sers.get(id).title)}<em>${esc(compressLabels(bySer.get(id)))}</em></button>`:"").join("")}</div>`;
+  html+=`<div class="cxe-sec-sub">ISSUES · ${rows.length}</div><div class="cxe-chips is-btn">${rows.map(r=>`<button type="button" data-issue="${esc(r.issueId)}" data-iser="${esc(r.seriesId)}">${esc(String(sers.get(r.seriesId)?.title||"").replace(/\s*\(.*?\)/,""))} ${esc(issueLabel(r.issueLabel))}</button>`).join("")}</div>`;
+  html+=`<div class="cxe-sec-sub">COLLECTED IN</div><div class="cxe-chips is-btn">${colls.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(c.title)}<em>${esc(pillLabel(c))}</em></button>`).join("")}</div>`;
+  return{html,wire(el){
+    el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const x=sers.get(b.dataset.series);if(x)push("series",x.title,{series:x});}));
+    el.querySelectorAll("[data-issue]").forEach(b=>b.addEventListener("click",async()=>{const i=await get(COLLECTIONS.ISSUES,b.dataset.issue);if(i)push("issue",i.issueLabel||b.textContent,{issue:i,series:sers.get(b.dataset.iser)||s});}));
+    el.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=colls.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));}};
+}
+
+const LEVELS={story,root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath,eraTimeline,eraWork};
 let stack=[];let token=0;
 // Navigation = one explorer stack level per Back, from every input. The stack is mirrored in browser history (one entry per level pushed above the
 // level the explorer opened at), so the phone's system Back / browser Back pops exactly one level too instead of closing the whole sheet.
