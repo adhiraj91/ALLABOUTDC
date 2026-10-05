@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc29");
+      const mod = await import("./comics-v2/landing.js?v=dc30");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -1922,7 +1922,9 @@ function syncHistoryForTab(){
     history.pushState({cat:state.cat}, "", want || (location.pathname + location.search));
   }
 }
-window.addEventListener("popstate", ()=>{
+window.addEventListener("popstate", (e)=>{
+  // The Comics explorer mirrors its level stack in history: a Back that only steps up one explorer level is consumed there and must not close the sheet.
+  try{ if(window.__comicsExplorerPop && window.__comicsExplorerPop(e)) return; }catch(_){ /* fall through to the default */ }
   if(document.querySelector('.sheet[data-open="true"]')){ closeAllSheets(); return; }
   const cat = tabFromHash() || "home";
   if(cat !== state.cat && loaded){
