@@ -79,7 +79,10 @@ export const transitionEvents = [
 ];
 
 export const crossoverSpine = [
-  { id:'court-owls', title:'Court of Owls / Night of the Owls', issues:'Batman #1–12; Batman-family Night of the Owls tie-ins', lanes:['batman'], type:'crossover' },
+  // Split: the Court of Owls is a Batman (2011) story arc (collected in Batman Vol. 1, #1–7, role "mainline"); Night of the Owls is the separate Bat-family crossover
+  // (its own collection, crossover:true — Batman #8–11 + Annual #1 and tie-ins). They were one merged record typed "crossover".
+  { id:'court-owls', title:'The Court of Owls', issues:'Batman #1–7', lanes:['batman'], type:'story' },
+  { id:'night-of-owls', title:'Night of the Owls', issues:'Batman #8–11 + Annual #1, with Batman-family tie-ins', lanes:['batman'], type:'crossover' },
   { id:'death-family', title:'Death of the Family', issues:'Batman #13–17 + Bat-family tie-ins', lanes:['batman'], type:'crossover' },
   { id:'throne-atlantis', title:'Throne of Atlantis', issues:'Justice League #13–17 + Aquaman #15–16', lanes:['justice'], type:'crossover' },
   { id:'rotworld', title:'Rotworld', issues:'Animal Man #12–17; Swamp Thing #12–18', lanes:['dark'], type:'crossover' },
@@ -619,12 +622,12 @@ export const new52CharacterHubs = [
 export function getNew52CharacterHub(id) { return new52CharacterHubs.find(x => x.id === id) || null; }
 
 export const new52ReadingPaths = [
-  {id:'new52-core',title:'New 52 Core Event Spine',type:'essential',sub:'Milestone events across the central Earth-0 publishing lanes.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
-  {id:'new52-batman',title:'Batman / Gotham',type:'main_series',sub:'Batman and the parallel Gotham-family series kept as separate publications.',laneIds:['batman'],eventIds:['court-owls','death-family','robin-rises','endgame']},
+  {id:'new52-core',title:'New 52 Core Event Spine',type:'essential',sub:'Milestone events across the central Earth-0 publishing lanes.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','night-of-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
+  {id:'new52-batman',title:'Batman / Gotham',type:'main_series',sub:'Batman and the parallel Gotham-family series kept as separate publications.',laneIds:['batman'],eventIds:['court-owls','night-of-owls','death-family','robin-rises','endgame']},
   {id:'new52-superman',title:'Superman Family',type:'main_series',sub:'The Superman-family line plus its major crossover spine.',laneIds:['superman'],eventIds:['hel-earth','krypton-returns','doomed']},
   {id:'new52-lantern',title:'Green Lantern / Corps',type:'main_series',sub:'The Lantern books and the major Corps-wide events.',laneIds:['lantern'],eventIds:['rise-third-army','wrath-first-lantern','lights-out','red-daughter','uprising','godhead']},
   {id:'new52-dark',title:'Dark / Supernatural',type:'main_series',sub:'The supernatural line and its crossovers.',laneIds:['dark'],eventIds:['rotworld','trinity-war','blight']},
-  {id:'new52-complete',title:'New 52 Crossover Spine',type:'event_crossover',sub:'Major connective events across the New 52 publication lanes.',laneIds:[],eventIds:['court-owls','death-family','throne-atlantis','rotworld','hel-earth','rise-third-army','wrath-first-lantern','lights-out','trinity-war','forever-evil','blight','krypton-returns','doomed','red-daughter','uprising','futures-end','godhead','robin-rises','endgame','darkseid-war','multiversity','convergence']},
+  {id:'new52-complete',title:'New 52 Crossover Spine',type:'event_crossover',sub:'Major connective events across the New 52 publication lanes.',laneIds:[],eventIds:['court-owls','night-of-owls','death-family','throne-atlantis','rotworld','hel-earth','rise-third-army','wrath-first-lantern','lights-out','trinity-war','forever-evil','blight','krypton-returns','doomed','red-daughter','uprising','futures-end','godhead','robin-rises','endgame','darkseid-war','multiversity','convergence']},
 ];
 
 export function getNew52SeriesByIds(ids=[]) {
