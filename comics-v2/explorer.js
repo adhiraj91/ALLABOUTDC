@@ -1,6 +1,6 @@
 // ALLABOUTDC Comics Explorer — generic DC architecture, currently seeded with New 52 Batman territory.
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
-import * as data from "./data.js?v=dc3";
+import * as data from "./data.js?v=dc4";
 import { COLLECTIONS } from "./schema.js";
 import * as bp from "./branch-paths.js?v=bp6";
 import * as RP from "./reading-progress.js?v=p6";
@@ -47,8 +47,8 @@ function territorySeries(c,chars,series){const ids=new Set([c.id,...childrenOf(c
 const leadCount=(c,series)=>(series||[]).filter(s=>s?.characterIds?.[0]===c.id).length;
 function lineGroups(list){const m=new Map();(list||[]).forEach(s=>{const k=s.lineCategory||"Other";if(!m.has(k))m.set(k,[]);m.get(k).push(s);});return [...m.entries()].sort((a,b)=>groupRank(a[0])-groupRank(b[0])||a[0].localeCompare(b[0])).map(([k,v])=>[k,v.sort((x,y)=>String(x.startDate||"").localeCompare(String(y.startDate||""))||x.title.localeCompare(y.title))]);}
 function issueBuckets(issues){
-  const b={numbered:[],annual:[],special:[],one_shot:[]};
-  for(const i of issues){const t=issueType(i);if(t==="annual")b.annual.push(i);else if(t==="one_shot")b.one_shot.push(i);else if(t==="special")b.special.push(i);else b.numbered.push(i);}
+  const b={numbered:[],annual:[],special:[],one_shot:[],other:[]};
+  for(const i of issues){const t=issueType(i);if(t==="annual")b.annual.push(i);else if(t==="one_shot")b.one_shot.push(i);else if(t==="special")b.special.push(i);else if(t==="other")b.other.push(i);else b.numbered.push(i);}  // issueLabelType is authoritative: "other" is never counted as numbered
   Object.values(b).forEach(sortIssues);return b;
 }
 function tabs(active,items){return `<div class="cx-tabs" role="tablist">${items.map(x=>`<button class="cx-tab ${x[0]===active?"is-active":""}" data-tab="${esc(x[0])}" role="tab">${esc(x[1])}${x[2]!=null?` <span>${x[2]}</span>`:""}</button>`).join("")}</div>`;}
@@ -454,7 +454,7 @@ async function series(p){
   const cstories=await data.getStoriesForSeries(s.id).catch(()=>[]);
   // A relaunch run (e.g. Deathstroke 2014) lives in the same series but restarts numbering: its issues/collections carry a runId and are shown on that run's page, never mixed into this run's counts.
   const mainColl=collections.filter(c=>!c.runId);const b=issueBuckets(issues.filter(i=>!i.runId));
-  const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length};
+  const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length+b.other.length};
   const ml=mainlineSummary(mainColl,s.id);
   const first=b.numbered[0]?.issueNumber,last=b.numbered[b.numbered.length-1]?.issueNumber;
   let html=`<div class="cx-kicker">SERIES</div><h2 class="cx-title">${esc(s.title)}</h2><div class="cx-subtitle">${esc(range(s))} · ${counts.issues} numbered issues${counts.annuals?` · ${counts.annuals} annuals`:""}${counts.specials?` · ${counts.specials} specials/one-shots`:""}</div>`;
@@ -470,10 +470,10 @@ async function series(p){
   html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],mainColl.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxTabBody"></div></div>`;
   html+=`<div id="cxReadingPaths"></div>`;
   return{html,wire(c){wireStories(c,cstories);{const nm=c.querySelector(".cxe-nums");if(nm)wirePublications(nm,issues,collections,s);}c.querySelectorAll("[data-arc]").forEach(b=>b.addEventListener("click",()=>{const a=serArcs&&[...serArcs.arcs,...serArcs.crossovers].find(x=>x.primary.id===b.dataset.arc);if(a)push("story",a.title,{series:s,arc:a});}));c.querySelectorAll("[data-run]").forEach(b=>b.addEventListener("click",()=>{const r=runs.find(x=>x.id===b.dataset.run);if(r)push("run",r.title||"Run",{run:r,series:s});}));mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
-      if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED RUN</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>This is the complete numbered run represented in the catalogue. The story itself is organised below through its creative history and collected editions.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>${esc(ml.events||ml.shared?`Mainline volumes only · ${ml.events} crossover/event collection${ml.events===1?"":"s"} listed separately`:"Mainline volumes only")}</small></div></div></div>`;
+      if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED ISSUES</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>These are the numbered issues of this series represented in the catalogue. Creative runs, stories and collected editions are organised separately.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot,...b.other].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>${esc(ml.events||ml.shared?`Mainline volumes only · ${ml.events} crossover/event collection${ml.events===1?"":"s"} listed separately`:"Mainline volumes only")}</small></div></div></div>`;
       else if(t==="collections")mountEditions(tabBody,mainColl,issues,s);
       else if(t==="annuals")tabBody.innerHTML=publicationRows(b.annual);
-      else tabBody.innerHTML=publicationRows([...b.special,...b.one_shot]);
+      else tabBody.innerHTML=publicationRows([...b.special,...b.one_shot,...b.other]);
       if(t!=="collections")wirePublications(tabBody,issues,collections,s);
     };renderTab("overview");c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(t=>t.addEventListener("click",()=>{c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(x=>x.classList.remove("is-active"));t.classList.add("is-active");renderTab(t.dataset.tab);}));}};
 }
@@ -505,9 +505,13 @@ async function run(p){
   const [issues,collections]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[])]);sortIssues(issues);
   const cstories=await data.getStoriesForRun(r.id).catch(()=>[]);
   const rel=Array.isArray(r.issueIds)&&r.issueIds.length>0;const runIss=new Set(r.issueIds||[]);
-  const lo=rel?NaN:Number(r.startIssue),hi=rel?NaN:Number(r.endIssue);const inRun=rel?issues.filter(i=>runIss.has(i.id)):(Number.isFinite(lo)&&Number.isFinite(hi)?issues.filter(i=>{if(i.runId)return false;const n=issueNum(i);return n>=lo&&n<=hi;}):[]);const b=issueBuckets(inRun);
-  const runColls=rel?collections.filter(c=>c.runId===r.id):collections.filter(c=>!c.runId);
-  const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length};
+  const bnd=v=>v==null||String(v).trim()===""?NaN:Number(v);  // a missing boundary is NOT 0 (Number(null)===0 would turn "no range recorded" into issue #0)
+  const lo=rel?NaN:bnd(r.startIssue),hi=rel?NaN:bnd(r.endIssue);const inRun=rel?issues.filter(i=>runIss.has(i.id)):(Number.isFinite(lo)&&Number.isFinite(hi)?issues.filter(i=>{if(i.runId)return false;const n=issueNum(i);return n>=lo&&n<=hi;}):[]);const b=issueBuckets(inRun);
+  // A collection belongs to THIS run only by stored evidence: its explicit runId, or structured coverage of an issue inside this run's boundary.
+  // No runId is NOT ownership (a series can have several runs), another run's runId never leaks in, and a run with no recorded boundary owns none by coverage.
+  const runIssueIds=new Set(inRun.map(i=>i.id));
+  const runColls=collections.filter(c=>c.runId?c.runId===r.id:(c.issueIdsCovered||(c.issueCoverage||[]).map(x=>x.issueId)).some(id=>runIssueIds.has(id)));
+  const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length+b.other.length};
   const ml=mainlineSummary(runColls,s.id);
   let html=`<div class="cx-kicker">CREATIVE RUN</div><h2 class="cx-title">${esc(r.title||creators.filter(Boolean).map(titleOf).join(" / ")||"Run")}</h2><div class="cx-subtitle">${esc(coverage(r))}${counts.issues?` · ${counts.issues} numbered issues`:""}</div>`;
   if(creators.filter(Boolean).length)html+=`<div class="cx-tag-row">${creators.filter(Boolean).map(c=>`<span class="tag">${esc(titleOf(c))}</span>`).join("")}</div>`;
@@ -519,10 +523,10 @@ async function run(p){
   html+=`<div id="cxReadingPaths"></div>`;
   html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Run material</h3></div></div>${tabs("overview",[["overview","Overview"],runColls.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxRunTab"></div></div>`;
   return{html,wire(c){wireStories(c,cstories);{const nm=c.querySelector(".cxe-nums");if(nm)wirePublications(nm,inRun,collections,s,r.title||"this run");}c.querySelectorAll("[data-arc]").forEach(b=>b.addEventListener("click",()=>{const a=[...arcSet.arcs,...arcSet.crossovers].find(x=>x.primary.id===b.dataset.arc);if(a)push("story",a.title,{series:s,run:r,arc:a});}));if(!rel)mountReadingPaths(c.querySelector("#cxReadingPaths"),s,Number.isFinite(lo)&&Number.isFinite(hi)?[lo,hi]:null);const body=c.querySelector("#cxRunTab");const draw=t=>{
-      if(t==="overview")body.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>RUN COVERAGE</span><strong>${esc(coverage(r))}</strong><small>${counts.issues} numbered issue${counts.issues===1?"":"s"} in this creative run. Annuals and specials are listed separately below.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>Mainline volumes of the series</small></div></div></div>`;
+      if(t==="overview")body.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>RUN COVERAGE</span><strong>${esc(coverage(r))}</strong><small>${counts.issues} numbered issue${counts.issues===1?"":"s"} in this creative run. Annuals and specials are listed separately below.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot,...b.other].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>Mainline volumes of the series</small></div></div></div>`;
       else if(t==="collections")mountEditions(body,runColls,issues,s);
       else if(t==="annuals")body.innerHTML=publicationRows(b.annual);
-      else body.innerHTML=publicationRows([...b.special,...b.one_shot]);
+      else body.innerHTML=publicationRows([...b.special,...b.one_shot,...b.other]);
       if(t!=="collections")wirePublications(body,inRun,collections,s,r.title||"this run");
     };draw("overview");c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(t=>t.addEventListener("click",()=>{c.querySelectorAll(":scope > .cx-series-section .cx-tabs > .cx-tab").forEach(x=>x.classList.remove("is-active"));t.classList.add("is-active");draw(t.dataset.tab);}));}};
 }
@@ -535,20 +539,28 @@ async function collection(p){
   const status=c.reviewStatus==="needs_review"?"Needs review":c.dataBasis==="owner_csv"?"Supplied dataset":vs==="verified"?"Verified":vs==="partially_verified"?"Partially verified":"Unverified";
   const fmt=pillLabel(c);
   const cst=(await Promise.all((c.storyIds||[]).map(id=>get(COLLECTIONS.STORIES,id)))).filter(Boolean);
+  // Stories also reach a collection through its structured coverage: covered Issue entities → their issue.storyIds → canonical Story records.
+  // Targeted batches only (ceil(n/30) reads per hop); never inferred from title, volume or date. Explicit storyIds stay first and are not repeated.
+  const covIds=[...new Set([...sids.flatMap(id=>(m.get(id)||[]).map(r=>r.issueId)),...(c.issueIdsCovered||[])].filter(Boolean))];
+  const exP=data.getEntitiesByIds(COLLECTIONS.ISSUES,covIds).then(l=>(l||[]).filter(Boolean)).catch(()=>[]);
   let html=`<div class="cx-kicker">${roleOf(c)==="mainline"?"COLLECTED EDITION":roleOf(c)==="crossover"?"CROSSOVER COLLECTION":roleOf(c)==="anthology"?"GLOBAL ANTHOLOGY":"EVENT COLLECTION"} · ${esc(fmt.toUpperCase())}</div><h2 class="cx-title">${esc(c.title)}</h2><div class="cx-subtitle">${esc([c.editionInfo?.editionName,sids.length>1?`Collects ${sids.length} series`:titleFor(sids[0])].filter(Boolean).join(" · "))}</div>`;
   const facts=[["On sale",c.publicationDate],["Pages",c.pageCount],["US price",c.priceUSD?`$${c.priceUSD}`:null],["ISBN-13",c.isbn],["ISBN-10",c.isbn10],["Status",status]].filter(x=>x[1]!=null&&x[1]!=="");
   html+=`<div class="cx-edition-facts">${facts.map(([k,v])=>`<div${k==="Status"&&status!=="Verified"?' class="is-flag"':""}><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}</div>`;
   html+=`<div class="sheet-section"><div class="sheet-label">COLLECTS</div><div class="cx-edition-cov">${sids.map(id=>{const rows=m.get(id);const full=rows.filter(r=>r.coveragePart!=="partial");const part=rows.filter(r=>r.coveragePart==="partial");return `<button class="cx-edition-cov-row" data-cov-series="${esc(id)}"><strong>${esc(titleFor(id))}</strong><span>${esc([full.length?compressLabels(full):"",part.length?`material from ${compressLabels(part)}`:""].filter(Boolean).join(" · "))}</span></button>`;}).join("")}${c.coverageNote?`<div class="cx-edition-cov-row is-oos"><strong>Note</strong><span>${esc(c.coverageNote)}</span></div>`:""}${c.outOfScopeContents?`<div class="cx-edition-cov-row is-oos"><strong>Also includes</strong><span>${esc(c.outOfScopeContents)}</span></div>`:""}</div></div>`;
   // COLLECTION → SERIES → ISSUES: every structured coverage row, grouped by series; rows with an Issue entity open it, partial coverage stays marked.
   html+=`<div class="sheet-section"><div class="sheet-label">ISSUES IN THIS EDITION</div>${sids.map(id=>{const rows=(m.get(id)||[]).filter(r=>r.issueId);return `<details class="cxe-arcs" data-cissues="${esc(id)}"${rows.length<=12?" open":""}><summary><span><em>${esc(sids.length>1?"SERIES":"COVERAGE")}</em><strong>${esc(titleFor(id))}</strong></span><b>${rows.length}</b></summary><div class="cxe-chips is-btn cxe-cissues"><span class="is-static">Loading…</span></div></details>`;}).join("")}</div>`;
-  if(cst.length)html+=`<div class="sheet-section"><div class="sheet-label">STORIES</div><div class="cxe-chips is-btn">${cst.map(st=>`<button type="button" data-cstory="${esc(st.id)}">${esc(st.title)}</button>`).join("")}</div></div>`;
+  html+=`<div class="sheet-section" data-cstbox${cst.length?"":" hidden"}><div class="sheet-label">STORIES</div><div class="cxe-chips is-btn" data-cstchips>${cst.map(st=>`<button type="button" data-cstory="${esc(st.id)}">${esc(st.title)}</button>`).join("")}</div><p class="cxe-note is-soft" data-cstnote hidden>“Via covered issues” stories are not linked to this edition directly; the edition covers issues that belong to them, and may hold only part of the story.</p></div>`;
   if(c.reprints?.length)html+=`<div class="sheet-section"><div class="sheet-label">OTHER PRINTINGS · SAME CONTENTS</div><div class="cx-list">${c.reprints.map(r=>`<div class="cx-row"><div class="cx-row-body"><div class="cx-row-title">${esc(r.editionNote||r.title)}</div><div class="cx-row-sub">${esc([r.onSaleDate,r.isbn13?`ISBN ${r.isbn13}`:null,r.priceUSD?`$${r.priceUSD}`:null].filter(Boolean).join(" · ")||"Details not recorded")}</div></div></div>`).join("")}</div></div>`;
   const srcs=(c.sources&&c.sources.length)?c.sources:(c.sourceInfo?.sourceUrl?[c.sourceInfo.sourceUrl]:[]);
   if(srcs.length)html+=`<div class="sheet-section"><div class="sheet-label">SOURCES</div><div class="cx-source-links">${srcs.map(u=>{let h=u;try{h=new URL(u).hostname.replace(/^www\./,"");}catch(e){}return `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(h)}</a>`;}).join("")}</div></div>`;
   return{html,wire(el){el.querySelectorAll("[data-cov-series]").forEach(b=>b.addEventListener("click",()=>{const s=ss[sids.indexOf(b.dataset.covSeries)];if(s)push("series",s.title,{series:s});}));
     wireStories(el,cst);
+    exP.then(async list=>{const have=new Set(cst.map(x=>x.id)),ids=[...new Set(list.flatMap(x=>x.storyIds||[]))].filter(id=>!have.has(id));if(!ids.length)return;
+      const via=(await data.getEntitiesByIds(COLLECTIONS.STORIES,ids).catch(()=>[])).filter(Boolean);const box=el.querySelector("[data-cstbox]"),chips=el.querySelector("[data-cstchips]");if(!via.length||!box||!chips)return;
+      via.forEach(st=>{const b=document.createElement("button");b.type="button";b.dataset.cstory=st.id;b.innerHTML=`${esc(st.title)}<em>via covered issues</em>`;b.addEventListener("click",()=>push("story",st.title,{story:st}));chips.appendChild(b);});
+      box.hidden=false;el.querySelector("[data-cstnote]").hidden=false;});
     el.querySelectorAll("[data-cissues]").forEach(d=>{const id=d.dataset.cissues,rows=(m.get(id)||[]).filter(r=>r.issueId);let done=false;
-      const load=async()=>{if(done)return;done=true;const ex=new Map((await data.getEntitiesByIds(COLLECTIONS.ISSUES,rows.map(r=>r.issueId))).filter(Boolean).map(x=>[x.id,x]));const box=d.querySelector(".cxe-cissues");
+      const load=async()=>{if(done)return;done=true;const ex=new Map((await exP).map(x=>[x.id,x]));const box=d.querySelector(".cxe-cissues");
         box.innerHTML=rows.map(r=>{const lab=r.issueLabel?issueLabel(r.issueLabel):"Issue",part=r.coveragePart==="partial"?"<em>partial</em>":"";return ex.has(r.issueId)?`<button type="button" data-ci="${esc(r.issueId)}">${esc(lab)}${part}</button>`:`<span class="is-static">${esc(lab)}${part}<em>not catalogued</em></span>`;}).join("");
         box.querySelectorAll("[data-ci]").forEach(b=>b.addEventListener("click",()=>openIssue(b.dataset.ci,ss[sids.indexOf(id)],{label:c.title,ids:rows.map(r=>r.issueId)})));};
       d.addEventListener("toggle",()=>{if(d.open)load();});if(d.open)load();});}};
@@ -926,7 +938,7 @@ async function eraPath(p){
 // ============================================================================
 const issuesOfSeries=sid=>{const k=`issues:${sid}`;if(!cache.has(k))cache.set(k,data.getIssuesForSeries(sid).catch(()=>[]));return cache.get(k);};
 const runsOfSeries=sid=>{const k=`runs:${sid}`;if(!cache.has(k))cache.set(k,data.getRunsForSeries(sid).catch(()=>[]));return cache.get(k);};
-const TYPE_WORD={numbered:"Issue",annual:"Annual",special:"Special",one_shot:"One-shot"};
+const TYPE_WORD={numbered:"Issue",annual:"Annual",special:"Special",one_shot:"One-shot",other:"Other"};
 const REL_PHRASE={crossover_with:"Crossover with",tie_in_to:"Tie-in to",part_of_event:"Part of event",sequel_to:"Sequel to",prequel_to:"Prequel to",spin_off_from:"Spin-off from",continues:"Continues",relaunches:"Relaunches",alternate_version_of:"Alternate version of",features_character:"Features"};
 const REL_COL={character:COLLECTIONS.CHARACTERS,series:COLLECTIONS.SERIES,story:COLLECTIONS.STORIES,issue:COLLECTIONS.ISSUES,collection:COLLECTIONS.COLLECTIONS,run:COLLECTIONS.RUNS,creator:COLLECTIONS.CREATORS,universe:COLLECTIONS.UNIVERSES,continuity:COLLECTIONS.CONTINUITIES};
 const entTitle=e=>e?(e.title||e.displayName||e.name||e.issueLabel||""):"";
@@ -967,7 +979,7 @@ async function issue(p){
     runsOfSeries(i.seriesId),neighboursOf(i,p.scope).catch(()=>null)]);
   const T=issueType(i),num=issueNum(i);
   const run=runs.find(r=>i.runId&&r.id===i.runId)||runs.find(r=>Array.isArray(r.issueIds)&&r.issueIds.includes(i.id))||
-    (T==="numbered"&&!i.runId?runs.find(r=>!(r.issueIds||[]).length&&Number.isFinite(Number(r.startIssue))&&Number.isFinite(Number(r.endIssue))&&num>=Number(r.startIssue)&&num<=Number(r.endIssue)):null)||null;
+    (T==="numbered"&&!i.runId?runs.find(r=>!(r.issueIds||[]).length&&r.startIssue!=null&&r.endIssue!=null&&String(r.startIssue).trim()!==""&&String(r.endIssue).trim()!==""&&Number.isFinite(Number(r.startIssue))&&Number.isFinite(Number(r.endIssue))&&num>=Number(r.startIssue)&&num<=Number(r.endIssue)):null)||null;
   const vs=i.sourceInfo?.verificationStatus;const status=vs==="verified"?"Verified":vs==="partially_verified"?"Partially verified":vs?"Unverified":"";
   let html=`<div class="cx-kicker">PUBLICATION · ${esc((TYPE_WORD[T]||"Issue").toUpperCase())}</div><h2 class="cx-title">${esc(i.issueLabel||"Issue")}${i.title?` — ${esc(i.title)}`:""}</h2><div class="cx-subtitle">${esc(s?.title||"")}${i.publicationDate?` · ${esc(i.publicationDate)}`:""}</div>`;
   const facts=[["On sale",i.publicationDate],["Cover date",i.coverDate],["Type",TYPE_WORD[T]||T],["Status",status]].filter(x=>x[1]);
@@ -978,7 +990,7 @@ async function issue(p){
   html+=secHtml("WHERE IT SITS",chipRow(place,"is-btn"));
   // STORY CONTEXT: canonical Story records first; otherwise the arcs the structured collection coverage places this issue in (labelled as derived).
   const cstories=stories.filter(Boolean);
-  const derived=cstories.length||!s?{arcs:[],crossovers:[]}:arcsOf(colls,s);
+  const derived=!s?{arcs:[],crossovers:[]}:arcsOf(colls,s);if(cstories.length)derived.arcs=[];  // a canonical Story replaces the derived arc only — crossover/event participation is a separate layer and stays
   const mine=a=>(a.primary.issueCoverage||[]).some(r=>r.issueId===i.id);
   const dArcs=derived.arcs.filter(mine),dX=derived.crossovers.filter(mine);
   const sRows=cstories.map(st=>`<button type="button" data-ostory="${esc(st.id)}">${esc(st.title)}<em>story</em></button>`);
@@ -1045,6 +1057,12 @@ async function canonStory(p){
     get(COLLECTIONS.RUNS,st.runId),get(COLLECTIONS.CONTINUITIES,st.continuityId),get(COLLECTIONS.UNIVERSES,st.universeId),
     Promise.all((st.characterIds||[]).map(id=>get(COLLECTIONS.CHARACTERS,id))),Promise.all((st.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id))),
     relationsOf(st.id)]);
+  // The Story's issue set = issues that name it (issue.storyIds) plus the ids the Story record lists itself (st.issueIds); both are stored relationships.
+  const have=new Set(issues.map(x=>x.id)),extraIds=(st.issueIds||[]).filter(id=>!have.has(id));
+  if(extraIds.length)issues.push(...(await data.getEntitiesByIds(COLLECTIONS.ISSUES,extraIds).catch(()=>[])).filter(Boolean));
+  // Editions: explicit collection.storyIds first (colls); then EVERY edition whose structured coverage touches the story's issues (complete: ceil(n/30) reads).
+  const explicitIds=new Set(colls.map(c=>c.id));
+  const covering=(await data.getCollectionsCoveringIssues(issues.map(x=>x.id)).catch(()=>[])).filter(c=>!explicitIds.has(c.id));
   const series=sers.filter(Boolean),multi=series.length>1;
   const ordered=sortIssues([...issues]),serOf=new Map(series.map(x=>[x.id,x]));
   const scope={label:st.title,ids:ordered.map(x=>x.id)};
@@ -1060,11 +1078,13 @@ async function canonStory(p){
   html+=secHtml("CREATORS",chipRow(cr.map(c=>`<span>${esc(titleOf(c))}</span>`)));
   html+=secHtml("RELATIONSHIPS",relHtml(rels));
   html+=secHtml(`COLLECTED IN · ${colls.length} edition${colls.length===1?"":"s"}`,chipRow(colls.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(c.title)}<em>${esc(pillLabel(c))}</em></button>`),"is-btn"));
+  html+=secHtml(`ALSO COVERS THESE ISSUES · ${covering.length} edition${covering.length===1?"":"s"}`,chipRow(covering.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(c.title)}<em>${esc(pillLabel(c))} · via issue coverage</em></button>`),"is-btn"));
+  if(covering.length)html+=`<p class="cxe-note is-soft">These editions are not linked to this story record; they collect one or more of its issues in their structured issue coverage, and may hold only part of the story.</p>`;
   return{html,wire(el){
     el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const x=serOf.get(b.dataset.series);if(x)push("series",x.title,{series:x});}));
     el.querySelector("[data-srun]")?.addEventListener("click",()=>{const s0=series.find(x=>x.id===run.seriesId)||series[0];if(s0)push("run",run.title||"Run",{run,series:s0});});
     el.querySelectorAll("[data-issue]").forEach(b=>b.addEventListener("click",()=>openIssue(b.dataset.issue,serOf.get(b.dataset.iser)||series[0],scope)));
-    el.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=colls.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));
+    el.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=[...colls,...covering].find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));
     wireRels(el,rels);}};
 }
 

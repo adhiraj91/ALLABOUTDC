@@ -334,6 +334,22 @@ export async function getCollectionsSharingIssues(issueIds, excludeId = null) {
 }
 
 /**
+ * Phase 4.1 — COMPLETE issue-coverage lookup: every collection whose structured issueIdsCovered contains ANY of the given issue ids.
+ * getCollectionsSharingIssues() above deliberately samples at most 12 ids, so for a long story it can miss an edition that only covers
+ * the unsampled issues. This one reads ALL ids, but still targeted and bounded: one `array-contains-any` query per 30 ids
+ * (Firestore's limit), run in parallel — ceil(n/30) reads, never a collection scan. Structured coverage only; no title/volume/date inference.
+ */
+export async function getCollectionsCoveringIssues(issueIds) {
+  const uniq = [...new Set((issueIds || []).filter(Boolean))];
+  if (!uniq.length) return [];
+  const snaps = await Promise.all(chunk(uniq, IN_LIMIT).map(part =>
+    getDocs(query(collection(db, COLLECTIONS.COLLECTIONS), where("issueIdsCovered", "array-contains-any", part)))));
+  const byId = new Map();
+  snaps.flatMap(docsOf).forEach(c => byId.set(c.id, c));
+  return [...byId.values()];
+}
+
+/**
  * "What collections cover this story" — the ROBUST version of
  * getCollectionsContainingStory(), for callers that have the story's own
  * issueIds handy (every comicStories document already has this — see
