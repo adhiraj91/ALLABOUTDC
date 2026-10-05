@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc30");
+      const mod = await import("./comics-v2/landing.js?v=dc31");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);

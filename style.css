@@ -2665,3 +2665,7 @@ main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
 #comicsExplorerContent .cxe-struct strong{font-size:13px;line-height:1.25;overflow-wrap:anywhere}
 #comicsExplorerContent .cxe-chips span.is-static{border-style:dashed;color:var(--ink-dim,var(--ink-faint))}
 #comicsExplorerContent .cxe-ev-head i,#comicsExplorerContent .cxe-lane-head i{display:inline-block;flex:0 0 14px;width:14px;text-align:center;line-height:1}
+/* canonical routes inside events + launch material */
+.cxe-canon,.cxe-launchmat{margin-top:10px}.cxe-launchmat{margin-bottom:6px}
+.cxe-canon-run{display:block;margin:6px 0 2px;color:var(--muted,#8a8f9c);font-size:12px;line-height:1.4}
+.cxe-canon .cxe-chips button em,.cxe-launchmat .cxe-chips button em{margin-left:6px;font-style:normal;opacity:.7;font-size:11px}
