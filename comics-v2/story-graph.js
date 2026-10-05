@@ -37,6 +37,7 @@ const GROUP_BY_TYPE = {
 
 /** Short phrase shown on each connected row, from this story's point of view. */
 const PHRASE_BY_TYPE = {
+  impacts: ["Changes", "Changed by"],
   sequel_to: ["Comes before this story", "Continues after this story"],
   prequel_to: ["Comes after this story", "Leads into this story"],
   continues: ["This continues it", "Continues this"],
@@ -92,4 +93,64 @@ export function groupConnections(storyId, rels) {
 /** True for connection kinds that must never be read as "read this next". */
 export function isNonOrderingGroup(groupId) {
   return groupId === "event" || groupId === "in_event" || groupId === "crossover" || groupId === "tie_ins" || groupId === "related";
+}
+
+// ============================================================================
+// PHASE 5 — EVENT structure (pure). An Event is its own record (comicEvents); this groups what is CONNECTED to it.
+// Nothing here is a reading order: reading paths stay in comicReadingPaths / branch-paths.js.
+// ============================================================================
+export const EVENT_SECTIONS = [
+  { id: "core", label: "Core story" },
+  { id: "participating", label: "Participating stories" },
+  { id: "tie_ins", label: "Tie-ins" },
+  { id: "series", label: "Participating series" },
+  { id: "issues", label: "Issues" },
+  { id: "characters", label: "Characters" },
+  { id: "consequences", label: "Consequences" },
+  { id: "related", label: "Related events" },
+];
+
+const EVENT_EDGE_PHRASE = {
+  sequel_to: ["Follows", "Followed by"],
+  prequel_to: ["Leads into", "Follows from"],
+  continues: ["Continues", "Continued by"],
+  crossover_with: ["Crosses over with", "Crosses over with"],
+  tie_in_to: ["Ties in to", "Tie-in"],
+  part_of_event: ["Part of", "Part of this event"],
+  impacts: ["Changes", "Changed by"],
+};
+export const eventEdgePhrase = (type, outgoing) => {
+  const p = EVENT_EDGE_PHRASE[type];
+  return p ? p[outgoing ? 0 : 1] : human(type);
+};
+
+/**
+ * groupEventStructure(eventId, { coreStoryIds, rels, issues, characterIds })
+ *   rels = comicRelationships touching the event (any direction). issues = the event's participating issues (issue.eventIds).
+ * → [{ id, label, items:[{ id, type, phrase?, rel? }] }] — only non-empty sections, in EVENT_SECTIONS order.
+ * Self-links ignored, duplicates collapsed; unknown edge types go to "Related events" only when the other end is an event.
+ */
+export function groupEventStructure(eventId, { coreStoryIds = [], rels = [], issues = [], characterIds = [] } = {}) {
+  const out = new Map(EVENT_SECTIONS.map(s => [s.id, []]));
+  const seen = new Set();
+  const add = (sec, id, type, extra) => { const k = sec + "|" + type + "|" + id; if (!id || seen.has(k)) return; seen.add(k); out.get(sec).push({ id, type, ...extra }); };
+  const core = new Set(coreStoryIds || []);
+  core.forEach(id => add("core", id, "story"));
+  (rels || []).forEach(rel => {
+    if (!rel || rel.sourceId === rel.targetId) return;
+    const outgoing = rel.sourceId === eventId;
+    if (!outgoing && rel.targetId !== eventId) return;
+    const otherId = outgoing ? rel.targetId : rel.sourceId, otherType = outgoing ? rel.targetType : rel.sourceType;
+    const t = rel.relationshipType, phrase = eventEdgePhrase(t, outgoing);
+    if (t === "impacts" && outgoing) return add("consequences", otherId, otherType, { phrase, rel });
+    if (otherType === "event") return add("related", otherId, "event", { phrase, rel });
+    if (otherType === "story" && !outgoing && t === "part_of_event") return core.has(otherId) ? null : add("participating", otherId, "story", { phrase, rel });
+    if (otherType === "story" && !outgoing && t === "tie_in_to") return add("tie_ins", otherId, "story", { phrase, rel });
+    if (otherType === "story" && !outgoing && t === "crossover_with") return add("participating", otherId, "story", { phrase, rel });
+  });
+  const bySeries = new Map();
+  (issues || []).forEach(i => { add("issues", i.id, "issue"); if (i.seriesId) bySeries.set(i.seriesId, (bySeries.get(i.seriesId) || 0) + 1); });
+  [...bySeries].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))).forEach(([sid, n]) => add("series", sid, "series", { count: n }));
+  (characterIds || []).forEach(id => add("characters", id, "character"));
+  return EVENT_SECTIONS.map(s => ({ ...s, items: out.get(s.id) })).filter(s => s.items.length);
 }

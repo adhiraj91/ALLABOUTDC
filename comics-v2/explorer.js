@@ -1,10 +1,11 @@
 // ALLABOUTDC Comics Explorer — generic DC architecture, currently seeded with New 52 Batman territory.
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
-import * as data from "./data.js?v=dc4";
+import * as data from "./data.js?v=dc5";
 import { COLLECTIONS } from "./schema.js";
 import * as bp from "./branch-paths.js?v=bp6";
 import * as RP from "./reading-progress.js?v=p6";
 import {CATEGORIES,categoryOf,categoryRank} from "./categories.js?v=cat2";
+import { groupEventStructure } from "./story-graph.js?v=ev1";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -151,15 +152,15 @@ function eventsHtml(ctx,seriesId,seriesTitle){
 }
 // Sub-tabs: one per format that actually has mainline editions (counted per format), then Crossovers & shared.
 // A format with no editions gets no tab.
-function mountEditions(container,collections,issues,s){
+function mountEditions(container,collections,issues,s,evs=[]){
   const sp=splitEditions(collections,s.id);const ctx={...sp,groups:eventGroups(sp.events)};
   const fmts=Array.from(new Set(sp.own.map(formatKey))).sort((a,b)=>(FORMAT_ORDER[a]??9)-(FORMAT_ORDER[b]??9)||a.localeCompare(b));
-  const extra=ctx.groups.length+sp.shared.length+sp.anth.length;
+  const extra=ctx.groups.length+sp.shared.length+sp.anth.length+evs.length;
   const items=[...fmts.map(f=>[f,formatLabel(f),sp.own.filter(c=>formatKey(c)===f).length]),...(extra?[["__x","Crossovers & shared",extra]]:[])];
   if(!items.length){container.innerHTML=empty("No collected editions are recorded for this series.");return;}
   container.innerHTML=`<div class="cx-subtab-wrap">${tabs(items[0][0],items)}<div class="cx-edition-body"></div></div>`;
   const body=container.querySelector(".cx-edition-body");
-  const draw=k=>{body.innerHTML=k==="__x"?eventsHtml(ctx,s.id,s.title):mainlineGrid(sp.own.filter(c=>formatKey(c)===k),s.id,s.title);wirePublications(body,issues,collections,s);};
+  const draw=k=>{body.innerHTML=k==="__x"?(evs.length?`<div class="cx-collection-group-label">Events this series takes part in</div>${eventChips(evs)}`:"")+eventsHtml(ctx,s.id,s.title):mainlineGrid(sp.own.filter(c=>formatKey(c)===k),s.id,s.title);wirePublications(body,issues,collections,s);wireEventChips(body,evs);};
   draw(items[0][0]);
   container.querySelectorAll(".cx-subtab-wrap > .cx-tabs .cx-tab").forEach(btn=>btn.addEventListener("click",()=>{container.querySelectorAll(".cx-subtab-wrap > .cx-tabs .cx-tab").forEach(x=>x.classList.remove("is-active"));btn.classList.add("is-active");draw(btn.dataset.tab);}));
 }
@@ -452,6 +453,7 @@ async function series(p){
   const s=p.series;if(!s)return{html:empty("Series not found.")};
   const [issues,collections,runs,creators]=await Promise.all([data.getIssuesForSeries(s.id),data.getCollectionsForSeries(s.id).catch(()=>[]),data.getRunsForSeries(s.id),Promise.all((s.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id)))]);sortIssues(issues);
   const cstories=await data.getStoriesForSeries(s.id).catch(()=>[]);
+  const sevs=await eventsOfIssues(issues);
   // A relaunch run (e.g. Deathstroke 2014) lives in the same series but restarts numbering: its issues/collections carry a runId and are shown on that run's page, never mixed into this run's counts.
   const mainColl=collections.filter(c=>!c.runId);const b=issueBuckets(issues.filter(i=>!i.runId));
   const counts={issues:b.numbered.length,annuals:b.annual.length,specials:b.special.length+b.one_shot.length+b.other.length};
@@ -468,10 +470,11 @@ async function series(p){
   const serArcs=arcsOf(mainColl,s);if(cstories.length){html+=canonStoriesHtml(cstories,"Stories");serArcs.arcs=[];}
   html+=arcsHtml(serArcs,s,false,"Story arcs");html+=numsHtml(b.numbered);
   html+=`<div class="cx-series-section"><div class="cx-section-head"><div><span>PUBLICATIONS</span><h3>Collected editions & extras</h3></div></div>${tabs("overview",[["overview","Overview"],mainColl.length?["collections","Collected Editions"]:null,counts.annuals?["annuals","Annuals",counts.annuals]:null,counts.specials?["specials","Specials",counts.specials]:null].filter(Boolean))}<div id="cxTabBody"></div></div>`;
+  html+=sevs.length?`<div class="cx-series-section"><div class="cx-section-head"><div><span>EVENTS</span><h3>Events &amp; crossovers</h3></div><em>${sevs.length}</em></div>${eventChips(sevs)}<p class="cxe-note is-soft">Taking part is not owning: these events have their own page, and each lists its participating series.</p></div>`:"";
   html+=`<div id="cxReadingPaths"></div>`;
-  return{html,wire(c){wireStories(c,cstories);{const nm=c.querySelector(".cxe-nums");if(nm)wirePublications(nm,issues,collections,s);}c.querySelectorAll("[data-arc]").forEach(b=>b.addEventListener("click",()=>{const a=serArcs&&[...serArcs.arcs,...serArcs.crossovers].find(x=>x.primary.id===b.dataset.arc);if(a)push("story",a.title,{series:s,arc:a});}));c.querySelectorAll("[data-run]").forEach(b=>b.addEventListener("click",()=>{const r=runs.find(x=>x.id===b.dataset.run);if(r)push("run",r.title||"Run",{run:r,series:s});}));mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
+  return{html,wire(c){wireStories(c,cstories);wireEventChips(c,sevs);{const nm=c.querySelector(".cxe-nums");if(nm)wirePublications(nm,issues,collections,s);}c.querySelectorAll("[data-arc]").forEach(b=>b.addEventListener("click",()=>{const a=serArcs&&[...serArcs.arcs,...serArcs.crossovers].find(x=>x.primary.id===b.dataset.arc);if(a)push("story",a.title,{series:s,arc:a});}));c.querySelectorAll("[data-run]").forEach(b=>b.addEventListener("click",()=>{const r=runs.find(x=>x.id===b.dataset.run);if(r)push("run",r.title||"Run",{run:r,series:s});}));mountReadingPaths(c.querySelector("#cxReadingPaths"),s);const tabBody=c.querySelector("#cxTabBody");const renderTab=t=>{
       if(t==="overview")tabBody.innerHTML=`<div class="cx-overview-panel"><div class="cx-issue-box"><span>NUMBERED ISSUES</span><strong>${esc(counts.issues?`#${first} — #${last}`:"No numbered issues recorded")}</strong><small>These are the numbered issues of this series represented in the catalogue. Creative runs, stories and collected editions are organised separately.</small></div><div class="cx-overview-grid"><div><b>${counts.annuals}</b><span>Annual publications</span><small>${esc(b.annual.map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${counts.specials}</b><span>Specials / one-shots</span><small>${esc([...b.special,...b.one_shot,...b.other].map(i=>i.issueLabel).join(" · ")||"None recorded")}</small></div><div><b>${ml.n}</b><span>${esc(ml.label)}</span><small>${esc(ml.events||ml.shared?`Mainline volumes only · ${ml.events} crossover/event collection${ml.events===1?"":"s"} listed separately`:"Mainline volumes only")}</small></div></div></div>`;
-      else if(t==="collections")mountEditions(tabBody,mainColl,issues,s);
+      else if(t==="collections")mountEditions(tabBody,mainColl,issues,s,sevs);
       else if(t==="annuals")tabBody.innerHTML=publicationRows(b.annual);
       else tabBody.innerHTML=publicationRows([...b.special,...b.one_shot,...b.other]);
       if(t!=="collections")wirePublications(tabBody,issues,collections,s);
@@ -763,11 +766,13 @@ function eventItem(ev,m,rec,o={}){
     ${chips?`<div class="cxe-chips">${chips}</div>`:""}
     ${eds.length?`<div class="cxe-eds-label">COLLECTED EDITIONS</div><div class="cxe-chips">${eds.map(c=>`<span>${esc(c.format)} · ${esc(c.title)}</span>`).join("")}</div>`:""}
     ${work?`<div class="cxe-chips is-btn"><button type="button" data-work="${esc(work.id)}">Open ${esc(work.title)} detail →</button></div>`:""}
+    ${ev.type!=="story"?`<div class="cxe-chips is-btn"><button type="button" data-evhub="${esc(ev.id)}">Open event hub →</button></div>`:""}
     ${!rec&&ev.type!=="transition"&&ev.type!=="multiverse"?`<div class="cxe-canon" data-canon="${esc(ev.id)}"></div>`:""}
     ${rec?`<div class="cxe-rec" data-rec="${esc(rec.id)}">${rec.readingInstruction?`<p>${esc(rec.readingInstruction)}</p>`:""}<div class="cxe-rec-box"></div></div>`:""}</div></div>`;
 }
 function wireEvents(el,X){
   const {recs,byId,ct}=X;
+  el.querySelectorAll("[data-evhub]").forEach(b=>b.addEventListener("click",()=>{const e=X.m.crossoverSpine.find(x=>x.id===b.dataset.evhub);push("event",e?e.title:"Event",{eventId:b.dataset.evhub});}));
   el.querySelectorAll("[data-work]").forEach(b=>b.addEventListener("click",()=>{const w=X.m.new52Limited.find(x=>x.id===b.dataset.work);if(w)push("eraWork",w.title,{continuity:ct,workId:w.id});}));
   el.querySelectorAll(".cxe-ev-head").forEach(h=>h.addEventListener("click",async()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));
     const cb=more.querySelector(".cxe-canon");if(o&&cb&&!cb.dataset.done){cb.dataset.done="1";const ev=X.m.crossoverSpine.find(e=>e.id===cb.dataset.canon);if(ev)fillCanon(cb,ev,X);}
@@ -939,8 +944,8 @@ async function eraPath(p){
 const issuesOfSeries=sid=>{const k=`issues:${sid}`;if(!cache.has(k))cache.set(k,data.getIssuesForSeries(sid).catch(()=>[]));return cache.get(k);};
 const runsOfSeries=sid=>{const k=`runs:${sid}`;if(!cache.has(k))cache.set(k,data.getRunsForSeries(sid).catch(()=>[]));return cache.get(k);};
 const TYPE_WORD={numbered:"Issue",annual:"Annual",special:"Special",one_shot:"One-shot",other:"Other"};
-const REL_PHRASE={crossover_with:"Crossover with",tie_in_to:"Tie-in to",part_of_event:"Part of event",sequel_to:"Sequel to",prequel_to:"Prequel to",spin_off_from:"Spin-off from",continues:"Continues",relaunches:"Relaunches",alternate_version_of:"Alternate version of",features_character:"Features"};
-const REL_COL={character:COLLECTIONS.CHARACTERS,series:COLLECTIONS.SERIES,story:COLLECTIONS.STORIES,issue:COLLECTIONS.ISSUES,collection:COLLECTIONS.COLLECTIONS,run:COLLECTIONS.RUNS,creator:COLLECTIONS.CREATORS,universe:COLLECTIONS.UNIVERSES,continuity:COLLECTIONS.CONTINUITIES};
+const REL_PHRASE={crossover_with:"Crossover with",tie_in_to:"Tie-in to",part_of_event:"Part of event",sequel_to:"Sequel to",prequel_to:"Prequel to",spin_off_from:"Spin-off from",continues:"Continues",relaunches:"Relaunches",alternate_version_of:"Alternate version of",features_character:"Features",impacts:"Changes"};
+const REL_COL={character:COLLECTIONS.CHARACTERS,series:COLLECTIONS.SERIES,story:COLLECTIONS.STORIES,issue:COLLECTIONS.ISSUES,collection:COLLECTIONS.COLLECTIONS,run:COLLECTIONS.RUNS,creator:COLLECTIONS.CREATORS,universe:COLLECTIONS.UNIVERSES,continuity:COLLECTIONS.CONTINUITIES,event:COLLECTIONS.EVENTS};
 const entTitle=e=>e?(e.title||e.displayName||e.name||e.issueLabel||""):"";
 const chipRow=(items,cls="")=>items.length?`<div class="cxe-chips${cls?` ${cls}`:""}">${items.join("")}</div>`:"";
 const secHtml=(label,body)=>body?`<div class="cxe-sec-sub">${esc(label)}</div>${body}`:"";
@@ -952,10 +957,10 @@ async function relationsOf(id){
     const col=REL_COL[ot];if(!col)continue;const e=await get(col,oid);if(!e)continue;out.push({phrase:mine?phrase:`${phrase} (inverse)`,type:ot,entity:e});}
   return out;
 }
-const relHtml=list=>list.length?`<div class="cxe-rels">${list.map((r,k)=>{const go=["story","series","collection","issue"].includes(r.type);return go?`<button type="button" class="cxe-serrow" data-rel="${k}"><strong>${esc(entTitle(r.entity))}</strong><small>${esc(r.phrase)}</small><b>${esc(r.type)}</b></button>`:`<div class="cxe-serrow is-static"><strong>${esc(entTitle(r.entity))}</strong><small>${esc(r.phrase)}</small><b>${esc(r.type)}</b></div>`;}).join("")}</div>`:"";
+const relHtml=list=>list.length?`<div class="cxe-rels">${list.map((r,k)=>{const go=["story","series","collection","issue","event"].includes(r.type);return go?`<button type="button" class="cxe-serrow" data-rel="${k}"><strong>${esc(entTitle(r.entity))}</strong><small>${esc(r.phrase)}</small><b>${esc(r.type)}</b></button>`:`<div class="cxe-serrow is-static"><strong>${esc(entTitle(r.entity))}</strong><small>${esc(r.phrase)}</small><b>${esc(r.type)}</b></div>`;}).join("")}</div>`:"";
 function wireRels(el,list){el.querySelectorAll("[data-rel]").forEach(b=>b.addEventListener("click",async()=>{const r=list[+b.dataset.rel];if(!r)return;const e=r.entity;
   if(r.type==="story")push("story",e.title,{story:e});else if(r.type==="collection")push("collection",e.title,{collectionEntity:e});
-  else if(r.type==="series")push("series",e.title,{series:e});else if(r.type==="issue"){const s=await get(COLLECTIONS.SERIES,e.seriesId);push("issue",e.issueLabel,{issue:e,series:s});}}));}
+  else if(r.type==="series")push("series",e.title,{series:e});else if(r.type==="event")push("event",e.title,{event:e,eventId:e.id});else if(r.type==="issue"){const s=await get(COLLECTIONS.SERIES,e.seriesId);push("issue",e.issueLabel,{issue:e,series:s});}}));}
 // One issue chip that opens the Issue page, with the scope (story / run / collection / series) its Previous/Next should walk.
 async function openIssue(id,fallbackSeries,scope){const i=await get(COLLECTIONS.ISSUES,id);if(!i)return false;const s=(i.seriesId&&await get(COLLECTIONS.SERIES,i.seriesId))||fallbackSeries||null;push("issue",i.issueLabel||"Issue",{issue:i,series:s,scope});return true;}
 // Previous / Next, scoped: the story's own issues, else the run's, else the series — within the same publication type (annuals walk annuals, specials walk
@@ -970,13 +975,13 @@ async function neighboursOf(i,scope){
 async function issue(p){
   const i=p.issue;if(!i)return{html:empty("Issue not found.")};
   const s=p.series||await get(COLLECTIONS.SERIES,i.seriesId);
-  const [creators,colls,stories,rels,cont,uni,runs,nb]=await Promise.all([
+  const [creators,colls,stories,rels,cont,uni,runs,nb,ievs]=await Promise.all([
     Promise.all((i.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id))),
     data.getCollectionsContainingIssue(i.id).catch(()=>[]),
     Promise.all((i.storyIds||[]).map(id=>get(COLLECTIONS.STORIES,id))),
     relationsOf(i.id),
     get(COLLECTIONS.CONTINUITIES,i.continuityId),get(COLLECTIONS.UNIVERSES,i.universeId),
-    runsOfSeries(i.seriesId),neighboursOf(i,p.scope).catch(()=>null)]);
+    runsOfSeries(i.seriesId),neighboursOf(i,p.scope).catch(()=>null),eventsOfIssues([i])]);
   const T=issueType(i),num=issueNum(i);
   const run=runs.find(r=>i.runId&&r.id===i.runId)||runs.find(r=>Array.isArray(r.issueIds)&&r.issueIds.includes(i.id))||
     (T==="numbered"&&!i.runId?runs.find(r=>!(r.issueIds||[]).length&&r.startIssue!=null&&r.endIssue!=null&&String(r.startIssue).trim()!==""&&String(r.endIssue).trim()!==""&&Number.isFinite(Number(r.startIssue))&&Number.isFinite(Number(r.endIssue))&&num>=Number(r.startIssue)&&num<=Number(r.endIssue)):null)||null;
@@ -998,6 +1003,7 @@ async function issue(p){
   html+=secHtml(cstories.length?"STORY":"STORY ARC",chipRow(sRows,"is-btn"));
   if(!cstories.length&&dArcs.length)html+=`<p class="cxe-note is-soft">No story record is on file for this issue; the arc is read from the collected edition that covers it.</p>`;
   html+=secHtml("CROSSOVER PARTICIPATION",chipRow(dX.map(a=>`<button type="button" data-oarc="${esc(a.primary.id)}">${esc(a.title)}<em>crossover</em></button>`),"is-btn"));
+  html+=secHtml("EVENT PARTICIPATION",eventChips(ievs));
   html+=secHtml("RELATIONSHIPS",relHtml(rels));
   // CREATORS
   const cr=creators.filter(Boolean);html+=secHtml("CREATORS",chipRow(cr.map(c=>`<span>${esc(titleOf(c))}${c.role?`<em>${esc(c.role)}</em>`:""}</span>`)));
@@ -1019,7 +1025,7 @@ async function issue(p){
     el.querySelectorAll("[data-oarc]").forEach(b=>b.addEventListener("click",()=>{const a=[...derived.arcs,...derived.crossovers].find(x=>x.primary.id===b.dataset.oarc);if(a)push("story",a.title,{series:s,arc:a});}));
     el.querySelectorAll("[data-ocoll]").forEach(b=>b.addEventListener("click",()=>{const c=colls.find(x=>x.id===b.dataset.ocoll);if(c)push("collection",c.title,{collectionEntity:c});}));
     el.querySelectorAll("[data-oswap]").forEach(b=>b.addEventListener("click",async()=>{const x=await get(COLLECTIONS.ISSUES,b.dataset.oswap);if(x)swap("issue",x.issueLabel||"Issue",{issue:x,series:s,scope:p.scope});}));
-    wireRels(el,rels);
+    wireRels(el,rels);wireEventChips(el,ievs);
     const rb=el.querySelector("[data-oread]");if(rb&&bridge){const draw=()=>{const st=RP.issueState(i.id,RP.snapshot());rb.textContent=st==="read"?"✓ Read — tap to unmark":"Mark as read";rb.setAttribute("aria-pressed",String(st==="read"));rb.classList.toggle("is-on",st==="read");};draw();
       rb.addEventListener("click",()=>{bridge.setRead("issue",i.id,!bridge.isRead("issue",i.id),{});draw();});}
   }};
@@ -1051,12 +1057,12 @@ async function story(p){
 }
 async function canonStory(p){
   const st=p.story;
-  const [issues,colls,sers,run,cont,uni,chars,creators,rels]=await Promise.all([
+  const [issues,colls,sers,run,cont,uni,chars,creators,rels,evRec]=await Promise.all([
     data.getIssuesForStory(st.id).catch(()=>[]),data.getCollectionsContainingStory(st.id).catch(()=>[]),
     Promise.all((st.seriesIds||[]).map(id=>get(COLLECTIONS.SERIES,id))),
     get(COLLECTIONS.RUNS,st.runId),get(COLLECTIONS.CONTINUITIES,st.continuityId),get(COLLECTIONS.UNIVERSES,st.universeId),
     Promise.all((st.characterIds||[]).map(id=>get(COLLECTIONS.CHARACTERS,id))),Promise.all((st.creatorIds||[]).map(id=>get(COLLECTIONS.CREATORS,id))),
-    relationsOf(st.id)]);
+    relationsOf(st.id),st.eventId?loadEvent(st.eventId):null]);
   // The Story's issue set = issues that name it (issue.storyIds) plus the ids the Story record lists itself (st.issueIds); both are stored relationships.
   const have=new Set(issues.map(x=>x.id)),extraIds=(st.issueIds||[]).filter(id=>!have.has(id));
   if(extraIds.length)issues.push(...(await data.getEntitiesByIds(COLLECTIONS.ISSUES,extraIds).catch(()=>[])).filter(Boolean));
@@ -1076,6 +1082,8 @@ async function canonStory(p){
   const ch=chars.filter(Boolean),cr=creators.filter(Boolean);
   html+=secHtml("CHARACTERS",chipRow(ch.map(c=>`<span>${esc(titleOf(c))}</span>`)));
   html+=secHtml("CREATORS",chipRow(cr.map(c=>`<span>${esc(titleOf(c))}</span>`)));
+  const sev=evRec&&!rels.some(r=>r.type==="event"&&r.entity.id===evRec.ev.id)?[evRec.ev]:[];
+  html+=secHtml("PART OF EVENT",eventChips(sev));
   html+=secHtml("RELATIONSHIPS",relHtml(rels));
   html+=secHtml(`COLLECTED IN · ${colls.length} edition${colls.length===1?"":"s"}`,chipRow(colls.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(c.title)}<em>${esc(pillLabel(c))}</em></button>`),"is-btn"));
   html+=secHtml(`ALSO COVERS THESE ISSUES · ${covering.length} edition${covering.length===1?"":"s"}`,chipRow(covering.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(c.title)}<em>${esc(pillLabel(c))} · via issue coverage</em></button>`),"is-btn"));
@@ -1085,11 +1093,167 @@ async function canonStory(p){
     el.querySelector("[data-srun]")?.addEventListener("click",()=>{const s0=series.find(x=>x.id===run.seriesId)||series[0];if(s0)push("run",run.title||"Run",{run,series:s0});});
     el.querySelectorAll("[data-issue]").forEach(b=>b.addEventListener("click",()=>openIssue(b.dataset.issue,serOf.get(b.dataset.iser)||series[0],scope)));
     el.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=[...colls,...covering].find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));
-    wireRels(el,rels);}};
+    wireRels(el,rels);wireEventChips(el,sev);}};
 }
 
 
-const LEVELS={story,root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath,eraTimeline,eraWork};
+// ============================================================================
+// PHASE 5 — EVENT HUB. One generic, data-driven level for every comicEvents record (crossover, event, transition, multiverse, line-wide, other).
+// Nothing about any particular event is hardcoded here. The header paints first; every section loads independently and a failing one is replaced by a
+// short note instead of breaking the hub. Connections are never a reading order — reading paths are linked, not generated.
+// Queries per open (all targeted, none per-item): event doc (1, or the bundled owner definition when it isn't imported), issues by eventIds (1), stories
+// by eventId (1), relationships (2), continuities/stories/series/characters/related entities (ceil(n/30) each), collections covering the issues
+// (ceil(n/30)) and linked to the stories (ceil(n/30)), reading-path docs (1 each).
+// ============================================================================
+const EV_KIND={crossover:"Crossover",event:"Event",transition:"Transition Event",multiverse:"Multiverse Event",line_wide:"Line-wide Event",other:"Event"};
+const evKind=ev=>EV_KIND[ev?.eventType]||"Event";
+const EV_UNVERIFIED={verified:"",partially_verified:"Partially verified",owner_supplied:"Owner supplied · not independently verified"};
+// The Firestore record when it exists; otherwise the bundled owner definition (events-data.js, the same one the importer writes) — labelled as such.
+async function loadEvent(id){
+  if(!id)return null;
+  const ev=await data.getEntity(COLLECTIONS.EVENTS,id).catch(()=>null);if(ev)return{ev,bundled:false};  // not cached: an import made after a first look must show up
+  try{const m=await import("./events-data.js?v=ev1");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
+}
+const safe=async(fn,fb)=>{try{return await fn();}catch(e){console.warn("[Comics Explorer] event section unavailable",e);return fb;}};
+const byIdMap=list=>new Map((list||[]).filter(Boolean).map(x=>[x.id,x]));
+const ev_note=t=>`<p class="cxe-note is-soft">${esc(t)}</p>`;
+const NOT_MAPPED=ev_note("Not mapped yet.");
+const FAILED=ev_note("This section couldn't load right now.");
+const evLabel=i=>`${i.issueLabel||"Issue"}${i.issueLabelType&&i.issueLabelType!=="numbered"&&!/annual|special|one-shot/i.test(i.issueLabel||"")?` · ${TYPE_WORD[i.issueLabelType]||i.issueLabelType}`:""}`;
+async function readingPathsFor(ev){
+  const out=[];
+  for(const pid of (ev.readingPathIds||[])){
+    let d=await safe(()=>get(COLLECTIONS.READING_PATHS,pid),null);
+    if(!d)d=bp.buildAll().find(x=>x.id===pid)||null;
+    if(d)out.push(d);
+  }
+  return out;
+}
+async function event(p){
+  let ev=p.event||null,bundled=!!p.bundled;
+  if(!ev){const r=await loadEvent(p.eventId);if(r){ev=r.ev;bundled=r.bundled;}}
+  if(!ev){
+    // A legacy Story record that used to stand in for an event still opens as a Story.
+    const st=p.eventId?await get(COLLECTIONS.STORIES,p.eventId):null;
+    if(st)return canonStory({story:st});
+    return{html:empty("This event isn't mapped yet.")};
+  }
+  const kind=evKind(ev),vs=ev.sourceInfo?.verificationStatus,flag=vs&&vs!=="verified"?(EV_UNVERIFIED[vs]||"Unverified"):"";
+  let html=`<div class="cx-kicker">${esc(kind.toUpperCase())}</div><h2 class="cx-title">${esc(ev.title)}</h2>`;
+  html+=`<div class="cx-tag-row"><span class="tag">${esc(kind)}</span>${flag?`<span class="tag is-flag">${esc(flag)}</span>`:""}${bundled?`<span class="tag is-derived">Owner dataset · not imported yet</span>`:""}</div>`;
+  html+=`<div class="cx-info-card cxev-about">${ev.description?esc(ev.description):"No explanation is recorded for this event yet."}</div>`;
+  html+=`<div class="cxev" data-event="${esc(ev.id)}" aria-label="${esc(`${ev.title} — ${kind}`)}"><div class="cx-loading">Loading event material…</div></div>`;
+  return{html,wire(el){const host=el.querySelector(".cxev");if(host)fillEvent(host,ev,bundled).catch(e=>{console.warn("[Comics Explorer] event hub",e);host.innerHTML=FAILED;});}};
+}
+async function fillEvent(host,ev,bundled){
+  const id=ev.id;
+  const [issues,stories,rels]=await Promise.all([safe(()=>data.getIssuesForEvent(id),null),safe(()=>data.getStoriesForEvent(id),null),safe(()=>data.getRelationshipsForEntity(id),null)]);
+  const issueList=sortIssues([...(issues||[])]),storyList=stories||[];
+  // one batched read per entity kind
+  const contIds=[...new Set([...(ev.continuityIds||[]),ev.transitionFromContinuityId,ev.transitionToContinuityId].filter(Boolean))];
+  const synth=storyList.map(s=>({sourceId:s.id,sourceType:"story",targetId:id,targetType:"event",relationshipType:"part_of_event"}));
+  const charIds=[...new Set([...issueList.flatMap(i=>i.characterIds||[]),...storyList.flatMap(s=>s.characterIds||[])])];
+  const struct=groupEventStructure(id,{coreStoryIds:ev.coreStoryIds||[],rels:[...(rels||[]),...synth],issues:issueList,characterIds:charIds});
+  const sec=sid=>struct.find(s=>s.id===sid)?.items||[];
+  const idsOf=(type,extra=[])=>[...new Set([...extra,...struct.flatMap(s=>s.items).filter(x=>x.type===type).map(x=>x.id)])];
+  const [conts,sts,sers,chars,evs,others,rp]=await Promise.all([
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.CONTINUITIES,contIds),[]),
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.STORIES,idsOf("story",storyList.map(s=>s.id))),[]),
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.SERIES,idsOf("series")),[]),
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.CHARACTERS,idsOf("character")),[]),
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.EVENTS,idsOf("event")),[]),
+    safe(async()=>{const m=new Map();for(const t of ["continuity","universe","character","series"]){const need=sec("consequences").filter(x=>x.type===t).map(x=>x.id);if(need.length)(await data.getEntitiesByIds(REL_COL[t],need)).forEach(e=>m.set(`${t}:${e.id}`,e));}return m;},new Map()),
+    safe(()=>readingPathsFor(ev),[])]);
+  const cont=byIdMap(conts),st=byIdMap(sts),se=byIdMap(sers),ch=byIdMap(chars),eventsById=byIdMap(evs);
+  const allStoryIds=[...new Set([...(ev.coreStoryIds||[]),...storyList.map(s=>s.id)])];
+  const [covering,viaStories]=await Promise.all([
+    issueList.length?safe(()=>data.getCollectionsCoveringIssues(issueList.map(i=>i.id)),null):[],
+    allStoryIds.length?safe(()=>data.getCollectionsContainingStories(allStoryIds),null):[]]);
+  const collMap=new Map();[...(viaStories||[]),...(covering||[])].forEach(c=>collMap.set(c.id,c));
+  const nav=new Map(); // data-go key → [level,label,params]
+  const go=(key,level,label,params)=>{nav.set(key,[level,label,params]);return key;};
+  const btn=(key,text,em)=>`<button type="button" data-go="${esc(key)}">${esc(text)}${em?`<em>${esc(em)}</em>`:""}</button>`;
+  const rows=[];
+  // ---- before / after (transition mode)
+  if(ev.eventType==="transition"){
+    const end=(contId,label,fallback)=>{
+      const c=contId?cont.get(contId):null;
+      if(c)return `<button type="button" class="cxev-t-btn" data-go="${esc(go("c:"+c.id,"eraHub",c.name||c.shortName||"Continuity",{continuity:c}))}"><strong>${esc(c.name||c.shortName)}</strong><small>Open this era →</small></button>`;
+      if(label)return `<strong>${esc(label)}</strong><small>Not catalogued as a continuity record yet</small>`;
+      return `<strong>Not mapped yet</strong>`;};
+    rows.push(`<div class="cxev-trans" role="group" aria-label="${esc(`Before and after ${ev.title}`)}"><div class="cxev-t-col is-before"><span>BEFORE</span>${end(ev.transitionFromContinuityId,ev.transitionFromLabel)}</div><i aria-hidden="true">→</i><div class="cxev-t-col is-event"><span>EVENT</span><strong>${esc(ev.title)}</strong><small>${esc(evKind(ev))}</small></div><i aria-hidden="true">→</i><div class="cxev-t-col is-after"><span>AFTER</span>${end(ev.transitionToContinuityId,ev.transitionToLabel)}</div></div>`);
+  }
+  // ---- core event
+  const coreItems=sec("core").map(x=>st.get(x.id)).filter(Boolean);
+  const mat=ev.recordedMaterial||[];
+  const coreLabels=mat.filter(m=>m.role==="core").map(m=>m.label).filter(Boolean);
+  if(coreItems.length)rows.push(secHtml("CORE EVENT",chipRow(coreItems.map(s=>btn(go("s:"+s.id,"story",s.title,{story:s}),s.title,"core story")),"is-btn")));
+  else if(coreLabels.length)rows.push(secHtml("CORE EVENT",chipRow(coreLabels.map(l=>`<span>${esc(l)}</span>`))+ev_note("Recorded as labels in the owner dataset — these issues aren't catalogued yet, so they don't open.")));
+  else rows.push(secHtml("CORE EVENT",NOT_MAPPED));
+  // ---- event material (as recorded)
+  const summ=mat.filter(m=>m.role==="summary").map(m=>m.label).filter(Boolean);
+  if(summ.length)rows.push(secHtml("EVENT MATERIAL · AS RECORDED",`<p class="cxev-wording">${summ.map(esc).join("<br>")}</p>`+(issueList.length?"":ev_note("This wording is the owner's; no issues are linked to this event in the catalogue yet."))));
+  // ---- participating stories / tie-ins
+  const storyRow=x=>{const s=st.get(x.id);return s?btn(go("s:"+s.id,"story",s.title,{story:s}),s.title,x.phrase):"";};
+  const part=sec("participating").map(storyRow).filter(Boolean),ties=sec("tie_ins").map(storyRow).filter(Boolean);
+  if(part.length)rows.push(secHtml(`PARTICIPATING STORIES · ${part.length}`,chipRow(part,"is-btn")));
+  if(ties.length)rows.push(secHtml(`TIE-INS · ${ties.length}`,chipRow(ties,"is-btn")));
+  if(!part.length&&!ties.length&&!coreItems.length)rows.push(secHtml("STORIES & TIE-INS",NOT_MAPPED));
+  // ---- participating series (derived from the participating issues)
+  const serItems=sec("series").map(x=>({x,s:se.get(x.id)})).filter(r=>r.s);
+  if(issues===null)rows.push(secHtml("PARTICIPATING SERIES",FAILED));
+  else if(serItems.length){
+    rows.push(secHtml(`PARTICIPATING SERIES · ${serItems.length}`,chipRow(serItems.map(({x,s})=>btn(go("se:"+s.id,"series",s.title,{series:s}),s.title,compressLabels(issueList.filter(i=>i.seriesId===s.id)))),"is-btn")+ev_note("Derived from the issues linked to this event. Taking part is not owning: each series keeps its own story.")));
+  }else rows.push(secHtml("PARTICIPATING SERIES",NOT_MAPPED));
+  // ---- issues, grouped by series, labels and types preserved
+  if(issueList.length){
+    const scope={label:ev.title,ids:issueList.map(i=>i.id)};
+    rows.push(secHtml(`ISSUES · ${issueList.length}`,serItems.map(({s})=>`<div class="cxev-grp"><b>${esc(String(s.title).replace(/\s*\(.*?\)/,""))}</b><div class="cxe-chips is-btn">${issueList.filter(i=>i.seriesId===s.id).map(i=>`<button type="button" data-issue="${esc(i.id)}" data-iser="${esc(s.id)}">${esc(evLabel(i))}</button>`).join("")}</div></div>`).join("")));
+    host.__scope=scope;
+  }else if(issues!==null)rows.push(secHtml("ISSUES",NOT_MAPPED));
+  // ---- characters (derived)
+  const chItems=sec("characters").map(x=>ch.get(x.id)).filter(Boolean);
+  rows.push(secHtml("CHARACTERS",chItems.length?chipRow(chItems.slice(0,60).map(c=>`<span>${esc(titleOf(c))}</span>`))+ev_note("Recorded on the participating issues and stories."):NOT_MAPPED));
+  // ---- continuity impact + consequences
+  const contRows=[...(ev.continuityIds||[]).map(i=>cont.get(i)).filter(Boolean)];
+  const cons=sec("consequences").map(x=>({x,e:others.get(`${x.type}:${x.id}`)})).filter(r=>r.e);
+  const impact=[...contRows.map(c=>btn(go("c:"+c.id,"eraHub",c.name||c.shortName||"Continuity",{continuity:c}),c.name||c.shortName,"continuity")),...cons.filter(r=>r.x.type==="continuity").map(r=>btn(go("c:"+r.e.id,"eraHub",r.e.name||"Continuity",{continuity:r.e}),r.e.name||r.e.shortName,r.x.phrase))];
+  rows.push(secHtml("CONTINUITY IMPACT",impact.length?chipRow(impact,"is-btn"):NOT_MAPPED));
+  const otherCons=cons.filter(r=>r.x.type!=="continuity");
+  if(otherCons.length)rows.push(secHtml("CONSEQUENCES",chipRow(otherCons.map(r=>r.x.type==="series"?btn(go("se:"+r.e.id,"series",r.e.title,{series:r.e}),r.e.title,r.x.phrase):`<span>${esc(entTitle(r.e)||titleOf(r.e))}<em>${esc(r.x.phrase)}</em></span>`),"is-btn")));
+  // ---- related / follow-on events (non-ordering unless the edge itself is sequel/prequel/continues)
+  const rel=sec("related").map(x=>({x,e:eventsById.get(x.id)})).filter(r=>r.e);
+  rows.push(secHtml("RELATED & FOLLOW-ON EVENTS",rel.length?chipRow(rel.map(r=>btn(go("e:"+r.e.id,"event",r.e.title,{event:r.e,eventId:r.e.id}),r.e.title,r.x.phrase)),"is-btn")+ev_note("Connections between events are not a reading order."):(rels===null?FAILED:NOT_MAPPED)));
+  // ---- collections (complete issue coverage + explicit story links, kept apart)
+  const vsIds=new Set((viaStories||[]).map(c=>c.id)),covOnly=(covering||[]).filter(c=>!vsIds.has(c.id));
+  const cb=(c,em)=>btn(go("co:"+c.id,"collection",c.title,{collectionEntity:c}),displayCollectionTitle(c),`${pillLabel(c)} · ${em}`);
+  if(covering===null||viaStories===null)rows.push(secHtml("COLLECTIONS",FAILED));
+  else{
+    if(viaStories.length)rows.push(secHtml(`COLLECTED WITH ITS STORIES · ${viaStories.length}`,chipRow(viaStories.map(c=>cb(c,"linked to a story")),"is-btn")));
+    if(covOnly.length)rows.push(secHtml(`COLLECTIONS COVERING ITS ISSUES · ${covOnly.length}`,chipRow(covOnly.map(c=>cb(c,"via issue coverage")),"is-btn")+ev_note("These editions include one or more of the event's issues and may also hold material outside it.")));
+    if(!viaStories.length&&!covOnly.length)rows.push(secHtml("COLLECTIONS",ev_note(issueList.length||allStoryIds.length?"No catalogued collected edition covers this event's material yet.":"Not mapped yet — no issues or stories are linked, so no collection can be matched.")));
+  }
+  // ---- reading path + story graph
+  const rpRows=rp.map(d=>{const a=(d.anchorSeriesIds||[])[0]||(d.seriesIds||[])[0];return a?`<button type="button" data-rpath="${esc(a)}">Explore Reading Path<em>${esc(d.title||"Reading path")}</em></button>`:"";}).filter(Boolean);
+  rows.push(secHtml("READING PATH",rpRows.length?chipRow(rpRows,"is-btn")+ev_note("Opens the series page where this reading path lives. Reading order comes from reading paths only, never from event connections."):ev_note((ev.readingPathIds||[]).length?"This event's reading path isn't available right now.":"No reading path is recorded for this event yet.")));
+  if(window.__comicsStoryMap?.open)rows.push(`<div class="cxe-chips is-btn cxev-graph"><button type="button" data-graph>Open Story Graph<em>${esc(ev.title)}</em></button></div>`);
+  host.innerHTML=rows.join("");
+  host.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const n=nav.get(b.dataset.go);if(n)push(n[0],n[1],n[2]);}));
+  host.querySelectorAll("[data-issue]").forEach(b=>b.addEventListener("click",()=>openIssue(b.dataset.issue,se.get(b.dataset.iser),host.__scope)));
+  host.querySelectorAll("[data-rpath]").forEach(b=>b.addEventListener("click",async()=>{const s=se.get(b.dataset.rpath)||await get(COLLECTIONS.SERIES,b.dataset.rpath);if(s)push("series",s.title,{series:s});}));
+  host.querySelector("[data-graph]")?.addEventListener("click",()=>window.__comicsStoryMap?.open?.("event",id));
+}
+// Events a set of issues takes part in (issue.eventIds), resolved in one batched read; used by Series and Issue pages.
+async function eventsOfIssues(issues){
+  const ids=[...new Set((issues||[]).flatMap(i=>i.eventIds||[]))];
+  if(!ids.length)return[];
+  const found=await safe(()=>data.getEntitiesByIds(COLLECTIONS.EVENTS,ids),[]);
+  return found.filter(Boolean).sort((a,b)=>String(a.title).localeCompare(String(b.title)));
+}
+const eventChips=evs=>chipRow(evs.map(e=>`<button type="button" data-oevent="${esc(e.id)}">${esc(e.title)}<em>${esc(evKind(e).toLowerCase())}</em></button>`),"is-btn");
+function wireEventChips(el,evs){el.querySelectorAll("[data-oevent]").forEach(b=>b.addEventListener("click",()=>{const e=evs.find(x=>x.id===b.dataset.oevent);push("event",e?e.title:"Event",{event:e,eventId:b.dataset.oevent});}));}
+
+const LEVELS={event,story,root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath,eraTimeline,eraWork};
 let stack=[];let token=0;
 // Navigation = one explorer stack level per Back, from every input. The stack is mirrored in browser history (one entry per level pushed above the
 // level the explorer opened at), so the phone's system Back / browser Back pops exactly one level too instead of closing the whole sheet.

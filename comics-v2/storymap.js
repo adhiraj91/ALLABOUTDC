@@ -28,11 +28,11 @@
 // "?v=p4" — data.js gained new batched helpers in Pointer 4; the query string makes
 // browsers fetch the new file even if an older data.js is still cached (GitHub Pages
 // caches for ~10 min). It is only a separate module instance of the same stateless file.
-import * as data from "./data.js?v=p6";
+import * as data from "./data.js?v=ev1";
 import { COLLECTIONS } from "./schema.js";
 // Pointer 6 — reading progress (derived; subtle on the map) + the contextual Story Graph in the detail panel.
 import * as RP from "./reading-progress.js?v=p6";
-import { groupConnections, isNonOrderingGroup } from "./story-graph.js?v=p6";
+import { groupConnections, isNonOrderingGroup, groupEventStructure } from "./story-graph.js?v=ev1";
 import {
   pathTypeLabel, sortPathsByType, pathEntryCount, locateInPath,
   groupCoverageBySeries, compressCoverageRows, coverageSummaryLines,
@@ -72,7 +72,7 @@ function compressIssueLabels(issues) {
 
 const COL_BY_TYPE = {
   universe: COLLECTIONS.UNIVERSES, continuity: COLLECTIONS.CONTINUITIES, character: COLLECTIONS.CHARACTERS,
-  series: COLLECTIONS.SERIES, run: COLLECTIONS.RUNS, story: COLLECTIONS.STORIES, event: COLLECTIONS.STORIES,
+  series: COLLECTIONS.SERIES, run: COLLECTIONS.RUNS, story: COLLECTIONS.STORIES, event: COLLECTIONS.EVENTS,
   issue: COLLECTIONS.ISSUES, collection: COLLECTIONS.COLLECTIONS, creator: COLLECTIONS.CREATORS,
 };
 const TYPE_LABEL = {
@@ -80,6 +80,10 @@ const TYPE_LABEL = {
   run: "Creative Run", story: "Story Arc", event: "Event", issue: "Issue",
 };
 const SEQUENTIAL = new Set(["sequel_to", "prequel_to"]);
+/* Phase 5: an Event is its own record (comicEvents). Accessible kind labels, e.g. "Flashpoint — Transition Event". */
+const EV_KIND = { crossover: "Crossover", event: "Event", transition: "Transition Event", multiverse: "Multiverse Event", line_wide: "Line-wide Event", other: "Event" };
+const isEventRec = (n) => n && n.type === "event";
+const evKindOf = (e) => EV_KIND[e && e.eventType] || "Event";
 
 /* ============================= read-through caches =============================
    Entities by collection+id, and query results by a key. A failed read is evicted
@@ -267,6 +271,25 @@ async function childSpecs(n) {
     await Promise.all([ensureRunsFor(series.map(s => s.id)), ensureRels(series.map(s => s.id))]);
     return orderSeries(series).map(s => ({ type: "series", e: s }));
   }
+  if (n.type === "event") {
+    // Queries: issues by eventIds (1) + stories by eventId (1) + core stories (ceil/30) + their relationships and the event's own (batched) + series (ceil/30).
+    const [issues, linked] = await Promise.all([
+      memo("ife:" + e.id, () => data.getIssuesForEvent(e.id)),
+      memo("sfe:" + e.id, () => data.getStoriesForEvent(e.id)),
+    ]);
+    remember(COLLECTIONS.ISSUES, issues); remember(COLLECTIONS.STORIES, linked);
+    const core = await getMany(COLLECTIONS.STORIES, e.coreStoryIds || []);
+    const coreIds = new Set(core.map(c => c.id));
+    const stories = [...core, ...orderStories(linked.filter(st => !coreIds.has(st.id)))];
+    const sers = await getMany(COLLECTIONS.SERIES, issues.map(i => i.seriesId));
+    await ensureRels([e.id, ...stories.map(st => st.id)]);
+    const specs = stories.map(st => ({ type: "story", e: st }));
+    sers.map(se => ({ se, list: sortIssues(issues.filter(i => i.seriesId === se.id)) }))
+      .sort((a, b) => b.list.length - a.list.length || String(a.se.title).localeCompare(String(b.se.title)))
+      .forEach(({ se, list }) => specs.push({ type: "series", e: se, evIssues: list }));
+    return specs;
+  }
+  if (n.type === "series" && n.evIssues) return sortIssues(n.evIssues.slice()).map(i => ({ type: "issue", e: i }));
   if (n.type === "series") {
     const [, stories] = await Promise.all([
       ensureRunsFor([e.id]),
@@ -307,7 +330,7 @@ async function expand(n, { quiet } = {}) {
   try {
     const specs = await childSpecs(n);
     if (S !== sess) return;
-    n.children = specs.map(sp => makeNode(sp.type, sp.e, n.key, sp.pool ? { pool: sp.pool } : null).key);
+    n.children = specs.map(sp => makeNode(sp.type, sp.e, n.key, sp.pool ? { pool: sp.pool } : sp.evIssues ? { evIssues: sp.evIssues } : null).key);
     n.status = "ready";
   } catch (err) {
     if (S !== sess) return;
@@ -504,10 +527,10 @@ function buildShell() {
       <button class="sm-ctl sm-ctl-text" data-ctl="legend" aria-label="Show legend" aria-expanded="false">Key</button>
     </div>
     <div class="sm-legend" id="smLegend" hidden>
-      <div class="sm-legend-row"><svg width="34" height="10"><path d="M1 5 H33" class="sm-edge-tree"/></svg><span><b>Structure</b> — character › era › series › run › story › issues</span></div>
+      <div class="sm-legend-row"><svg width="34" height="10"><path d="M1 5 H33" class="sm-edge-tree"/></svg><span><b>Structure</b> — character › era › series › run › story › issues. An event opens to its stories and participating series.</span></div>
       <div class="sm-legend-row"><svg width="34" height="10"><path d="M1 5 H30" class="sm-rel sm-rel-seq" marker-end="url(#smArrowSeq)"/></svg><span><b>Sequel / prequel</b> — story continuity recorded in the data</span></div>
       <div class="sm-legend-row"><svg width="34" height="10"><path d="M1 5 H33" class="sm-rel sm-rel-struct"/></svg><span><b>Event · tie-in · crossover · continues</b> — how stories connect</span></div>
-      <p class="sm-legend-note">Connections are not a reading order — guided reading paths come later.</p>
+      <p class="sm-legend-note">Connections are not a reading order — use the Reading Path on an event or series.</p>
       <label class="sm-legend-toggle"><input type="checkbox" id="smRelToggle" checked> Show connections</label>
     </div>
     <aside class="sm-detail" id="smDetail" data-open="false" aria-live="polite">
@@ -533,6 +556,7 @@ function nodeKicker(n) {
   if (t === "run") return ["Creative run", runIssueRange(e)].filter(Boolean).join(" · ");
   if (t === "universe") return "Universe";
   if (t === "character") return "Character";
+  if (n.type === "event") return evKindOf(e);
   if (t === "event") return "Event";
   return "Story arc";
 }
@@ -541,6 +565,8 @@ function nodeSub(n) {
   if (t === "character") return (e.aliases || []).slice(0, 2).join(" · ");
   if (t === "universe") return e.description ? "" : "";
   if (t === "continuity") return n.pool ? `${n.pool.length} series` : "";
+  if (t === "series" && n.evIssues) return `${n.evIssues.length} issue${n.evIssues.length === 1 ? "" : "s"} in this event`;
+  if (n.type === "event") return n.children ? `${n.children.length} connected` : "";
   if (t === "series") {
     const runs = RUNS_BY_SERIES.get(e.id);
     return [e.issueCount ? `${e.issueCount} issues` : "", runs && runs.length ? `${runs.length} run${runs.length === 1 ? "" : "s"}` : ""].filter(Boolean).join(" · ");
@@ -557,7 +583,7 @@ function nodeSub(n) {
    read issue chips. Unread shows nothing, runs/series/eras show nothing (no progress-bar walls). */
 function nodeProgress(n, snap) {
   const t = displayType(n);
-  if (t !== "story" && t !== "event") return null;
+  if (n.type === "event" || (t !== "story" && t !== "event")) return null;
   const p = RP.storyProgress(n.e, snap);
   if (p.state === "unread") return null;
   return { state: p.state, text: p.state === "complete" ? "✓" : (p.total ? `${p.read}/${p.total}` : "…"), label: p.state === "complete" ? "Read" : (p.total ? `${p.read} of ${p.total} issues read` : "In progress") };
@@ -566,6 +592,7 @@ function childCountHint(n) {
   if (n.children) return n.children.length;
   if (n.type === "continuity" && n.pool) return n.pool.length;
   if (n.type === "run" && n.pool) return n.pool.length;
+  if (n.type === "series" && n.evIssues) return n.evIssues.length;
   if (n.type === "story") return (n.e.issueIds || []).length || null;
   return null;
 }
@@ -594,7 +621,7 @@ function nodeHtml(n, p, isNew) {
   const progHtml = prog ? `<span class="sm-node-prog" data-state="${prog.state}" title="${esc(prog.label)}" aria-label="${esc(prog.label)}">${esc(prog.text)}</span>` : "";
   const mono = t === "character" ? `<span class="sm-mono" aria-hidden="true">${esc(String(title).trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase())}</span>` : "";
   return `<div class="sm-node" ${common} data-expanded="${n.expanded}" style="${style}">
-      <button class="sm-node-main" data-select="${esc(n.key)}" title="${esc(title)}">
+      <button class="sm-node-main" data-select="${esc(n.key)}" title="${esc(title)}"${n.type === "event" ? ` aria-label="${esc(title + " — " + evKindOf(n.e))}"` : ""}>
         ${mono}${progHtml}<span class="sm-node-text"><span class="sm-node-kicker">${esc(nodeKicker(n))}</span><span class="sm-node-title">${esc(title)}</span>${sub ? `<span class="sm-node-sub">${esc(sub)}</span>` : ""}</span>
       </button>${toggle}
     </div>`;
@@ -1006,6 +1033,59 @@ function issueProgressSectionHtml(issue) {
       ${read ? "" : `<button class="journey-btn cx-reading-toggle" data-prog-act="sm-issue-reading" data-active="${reading}">${reading ? "Reading now" : "Start reading"}</button>`}
     </div></div>`;
 }
+/** Phase 5 — the grouped structure of one Event: Core story, Participating stories, Tie-ins, Participating series, Issues, Characters, Consequences, Related events.
+    Progressive disclosure: issues are summarised per series (the series node on the map holds the chips); characters are capped. Never a reading order. */
+async function eventStructureSectionHtml(n) {
+  const e = n.e;
+  const [issues, linked] = await Promise.all([memo("ife:" + e.id, () => data.getIssuesForEvent(e.id)), memo("sfe:" + e.id, () => data.getStoriesForEvent(e.id))]);
+  await ensureRels([e.id]);
+  const synth = linked.map(st => ({ sourceId: st.id, sourceType: "story", targetId: e.id, targetType: "event", relationshipType: "part_of_event" }));
+  const charIds = uniq([...issues.flatMap(i => i.characterIds || []), ...linked.flatMap(st => st.characterIds || [])]);
+  const groups = groupEventStructure(e.id, { coreStoryIds: e.coreStoryIds || [], rels: [...relsFor(e.id), ...synth], issues, characterIds: charIds });
+  const COLS = { story: COLLECTIONS.STORIES, series: COLLECTIONS.SERIES, event: COLLECTIONS.EVENTS, character: COLLECTIONS.CHARACTERS, continuity: COLLECTIONS.CONTINUITIES, universe: COLLECTIONS.UNIVERSES };
+  const label = `<div class="sm-d-label">Event structure</div>`;
+  if (!groups.length) return `<div class="sm-d-section sm-d-graph">${label}<div class="sm-d-graph-empty">Not mapped yet — no stories, issues or connections are recorded for this event.</div></div>`;
+  let out = `<div class="sm-d-section sm-d-graph">${label}`;
+  for (const g of groups) {
+    out += `<div class="sm-d-graph-group" data-group="${g.id}"><div class="sm-d-graph-label">${esc(g.label)}</div><div class="sm-d-rels">`;
+    if (g.id === "issues") {
+      const bySer = new Map(); issues.forEach(i => { if (!bySer.has(i.seriesId)) bySer.set(i.seriesId, []); bySer.get(i.seriesId).push(i); });
+      await getMany(COLLECTIONS.SERIES, [...bySer.keys()]);
+      out += [...bySer.entries()].map(([sid, list]) => { const se = cached(COLLECTIONS.SERIES, sid); return `<div class="sm-d-fact"><span>${esc(se ? se.title : sid)}</span><span>${esc(compressIssueLabels(list))}</span></div>`; }).join("");
+    } else if (g.id === "characters") {
+      const chars = await getMany(COLLECTIONS.CHARACTERS, g.items.map(x => x.id));
+      out += `<div class="sm-d-names">${chars.slice(0, 10).map(c => esc(c.displayName || c.name)).join(" · ")}${chars.length > 10 ? ` · +${chars.length - 10}` : ""}</div>`;
+    } else {
+      const rows = await Promise.all(g.items.map(async it => {
+        const col = COLS[it.type]; const ent = col ? await getOne(col, it.id) : null; if (!ent) return "";
+        const onMap = visibleKeyFor(it.id);
+        const phrase = it.phrase || (it.type === "series" ? `${it.count} issue${it.count === 1 ? "" : "s"}` : g.id === "core" ? "Core story" : "");
+        const go = ["story", "series", "event", "continuity"].includes(it.type);
+        const name = it.type === "series" ? entityTitle("series", ent) : (ent.title || ent.name || "Untitled");
+        return go ? `<button class="sm-d-rel" data-rel-kind="struct" data-goto="${esc(onMap || "")}" data-goto-type="${esc(it.type)}" data-goto-id="${esc(it.id)}"><span class="sm-d-rel-type">${esc(phrase)}</span><span class="sm-d-rel-name">${esc(name)}</span><span class="sm-d-rel-go">${onMap ? "Show" : "Open"}</span></button>` : `<div class="sm-d-fact"><span>${esc(phrase)}</span><span>${esc(name)}</span></div>`;
+      }));
+      out += rows.filter(Boolean).join("");
+    }
+    out += `</div></div>`;
+  }
+  return out + `<div class="sm-d-hint">Recorded connections — not a reading order. Use the event's Reading Path for what to read.</div></div>`;
+}
+/** Phase 5 — continuity root: the Events index. comicEvents with this continuity in continuityIds (1 query) plus the continuity's own majorEventIds (supplemental,
+    batched). A stale id in majorEventIds simply doesn't resolve and is skipped — it never throws. */
+async function continuityEventsSectionHtml(n) {
+  const e = n.e;
+  const [byField, listed] = await Promise.all([
+    memo("evc:" + e.id, () => data.getEventsForContinuity(e.id)).catch(() => []),
+    getMany(COLLECTIONS.EVENTS, Array.isArray(e.majorEventIds) ? e.majorEventIds : []).catch(() => []),
+  ]);
+  const seen = new Set(); const list = [];
+  [...byField, ...listed].forEach(ev => { if (ev && ev.id && !seen.has(ev.id)) { seen.add(ev.id); list.push(ev); } });
+  list.sort((a, b) => String(a.title).localeCompare(String(b.title)));
+  list.forEach(ev => remember(COLLECTIONS.EVENTS, [ev]));
+  const label = `<div class="sm-d-label">Events</div>`;
+  if (!list.length) return `<div class="sm-d-section sm-d-graph">${label}<div class="sm-d-graph-empty">Not mapped yet — no events are recorded for this era.</div></div>`;
+  return `<div class="sm-d-section sm-d-graph">${label}<div class="sm-d-rels">${list.map(ev => `<button class="sm-d-rel" data-rel-kind="struct" data-goto="" data-goto-type="event" data-goto-id="${esc(ev.id)}" data-map-event="${esc(ev.id)}"><span class="sm-d-rel-type">${esc(evKindOf(ev))}</span><span class="sm-d-rel-name">${esc(ev.title)}</span><span class="sm-d-rel-go">Map</span></button>`).join("")}</div><div class="sm-d-hint">Events are connections, not a reading order. Tap one to map it.</div></div>`;
+}
 async function storyGraphSectionHtml(n, rels) {
   const groups = groupConnections(n.id, rels);
   const items = [];
@@ -1029,7 +1109,7 @@ async function storyGraphSectionHtml(n, rels) {
       const idx = items.indexOf(it);
       const onMap = visibleKeyFor(it.otherId);
       const isStory = it.otherType === "story" || it.otherType === "event";
-      const p = isStory ? RP.storyProgress(it.entity, snap) : null;
+      const p = it.otherType === "story" ? RP.storyProgress(it.entity, snap) : null;
       const mark = p ? RP.markText(p) : "";
       return `<button class="sm-d-rel" data-rel-kind="${isNonOrderingGroup(g.id) ? "struct" : "seq"}" data-graph-idx="${idx}" data-goto="${esc(onMap || "")}">
           <span class="sm-d-rel-type">${esc(it.phrase)}</span><span class="sm-d-rel-name">${esc(entityTitle(isStory ? "story" : it.otherType, it.entity))}${mark ? ` <span class="sm-d-rel-mark" data-state="${p.state}">${esc(mark)}</span>` : ""}</span>
@@ -1069,6 +1149,7 @@ async function detailBodyHtml(n, t) {
   } else if (t === "universe") {
     if (e.description) parts.push(`<p class="sm-d-desc">${esc(e.description)}</p>`);
   } else if (t === "continuity") {
+    parts.push(await continuityEventsSectionHtml(n).catch(() => ""));
     facts.push(factRow("Short name", e.shortName && e.shortName !== e.name ? e.shortName : ""));
     facts.push(factRow("Years", yearRange(e.startDate, e.endDate)));
     const [pred, succ] = await Promise.all([getOne(COLLECTIONS.CONTINUITIES, e.predecessorId), getOne(COLLECTIONS.CONTINUITIES, e.successorId)]);
@@ -1101,6 +1182,16 @@ async function detailBodyHtml(n, t) {
     if (e.description) parts.push(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
     const runPaths = await memo("rp:run:" + e.id, () => data.getReadingPathsFor({ continuityId: series ? (series.continuityIds || [])[0] || null : null }));
     parts.push(await readingPathsSectionHtml(n.key, runPaths, e.seriesId));
+  } else if (n.type === "event") {
+    facts.push(factRow("Type", evKindOf(e)));
+    facts.push(factRow("Dates", yearRange(e.startDate, e.endDate)));
+    if (e.eventType === "transition") {
+      const [from, to] = await Promise.all([getOne(COLLECTIONS.CONTINUITIES, e.transitionFromContinuityId), getOne(COLLECTIONS.CONTINUITIES, e.transitionToContinuityId)]);
+      facts.push(factRow("Before", (from && from.name) || e.transitionFromLabel || "Not mapped yet"));
+      facts.push(factRow("After", (to && to.name) || e.transitionToLabel || "Not mapped yet"));
+    }
+    if (e.description) parts.push(`<p class="sm-d-desc" data-clamp="true">${esc(e.description)}</p>`);
+    parts.push(await eventStructureSectionHtml(n));
   } else if (t === "story" || t === "event") {
     const [issues, series, creators, chars, run] = await Promise.all([
       memo("ifs:" + e.id, () => data.getIssuesForStory(e.id)).then(l => remember(COLLECTIONS.ISSUES, l)),
@@ -1140,7 +1231,9 @@ async function detailBodyHtml(n, t) {
   // Relationships (both directions), with the other end resolved to a name.
   await ensureRels([e.id]);
   const rels = relsFor(e.id);
-  if (t === "story" || t === "event") {
+  if (n.type === "event") {
+    // handled above (eventStructureSectionHtml)
+  } else if (t === "story" || t === "event") {
     // Pointer 6: stories get the grouped, contextual Story Graph instead of a flat list.
     parts.push(await storyGraphSectionHtml(n, rels));
   } else if (rels.length) {
@@ -1182,7 +1275,9 @@ function actionsHtml(n, t) {
   const b = (act, label, primary) => `<button class="sm-d-action${primary ? " sm-d-primary" : ""}" data-act="${act}">${esc(label)}</button>`;
   const acts = [];
   const exp = canExpand(n) ? b("toggle", n.expanded ? "Collapse" : (t === "story" || t === "event" ? "View issues" : "Expand on map"), true) : "";
-  if (t === "story" || t === "event") {
+  if (n.type === "event") {
+    acts.push(b("explore-self", "Open event hub", true), exp.replace(" sm-d-primary", "").replace("Expand on map", "Show material"));
+  } else if (t === "story" || t === "event") {
     acts.push(b("explore-story", "Open story", true), exp.replace(" sm-d-primary", ""));
     if ((n.e.seriesIds || []).length) acts.push(b("explore-series", "View series"));
     if (relsFor(n.id).length) acts.push(b("related", S.relatedMode ? "Show all" : "Explore related stories"));
@@ -1213,6 +1308,7 @@ function explorerTrailFor(n) {
   chain.forEach(a => {
     if (a.type === "character") { character = a.e; trail.push({ level: "character", label: entityTitle("character", a.e), params: { character: a.e } }); }
     else if (a.type === "continuity") trail.push({ level: "continuity", label: a.e.name, params: character ? { continuity: a.e, character } : { continuity: a.e } });
+    else if (a.type === "event") trail.push({ level: "event", label: a.e.title, params: { event: a.e, eventId: a.id } });
     else if (a.type === "series") { series = a.e; trail.push({ level: "series", label: a.e.title, params: { series: a.e } }); }
     else if (a.type === "run") { run = a.e; trail.push({ level: "run", label: a.e.title || runCreatorsLabel(a.e) || "Run", params: { run: a.e, series } }); }
     else if (a.type === "story") { story = a.e; trail.push({ level: "story", label: a.e.title, params: { story: a.e, series, run } }); }
@@ -1251,7 +1347,7 @@ async function onDetailAction(act, n) {
     render(); renderDetail();
     return;
   }
-  if (act === "recenter") { openMap(n.type === "event" ? "story" : n.type, n.id, { entity: n.e }); return; }
+  if (act === "recenter") { openMap(n.type, n.id, { entity: n.e }); return; }
   void t;
 }
 
@@ -1281,7 +1377,12 @@ function goBack() {
 async function resolveRoot(type, id, entity) {
   if (entity) return entity;
   const col = COL_BY_TYPE[type];
-  return col ? await getOne(col, id) : null;
+  const found = col ? await getOne(col, id) : null;
+  if (found || type !== "event") return found;
+  // Event roots: comicEvents first; a legacy Story record that stood in for an event next; the bundled owner definition last (event not imported yet).
+  const legacy = await getOne(COLLECTIONS.STORIES, id);
+  if (legacy) return legacy;
+  try { const m = await import("./events-data.js?v=ev1"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
 }
 export async function openMap(type, id, opts = {}) {
   buildShell();
@@ -1303,7 +1404,7 @@ export async function openMap(type, id, opts = {}) {
     rootEntity = await resolveRoot(type, id, opts.entity);
     if (S !== sess) return;
     if (!rootEntity) throw new Error(`No ${type} "${id}" in the comics database`);
-    const nodeType = type === "event" ? "story" : type;
+    const nodeType = type === "event" ? (rootEntity.eventType !== undefined ? "event" : "story") : type;
     const root = makeNode(nodeType, rootEntity, null);
     S.rootKey = root.key; S.focusKey = root.key;
     if (opts.expandPath && opts.expandPath.length) {
@@ -1446,7 +1547,11 @@ function wireShell() {
       if (gr.dataset.goto) { select(gr.dataset.goto); return; }
       const it = (SM_GRAPH_ITEMS.get(n.key) || [])[+gr.dataset.graphIdx];
       if (!it) return;
-      if (it.otherType === "story" || it.otherType === "event") {
+      if (it.otherType === "event") {
+        const trail = explorerTrailFor(n);
+        trail.push({ level: "event", label: it.entity.title, params: { event: it.entity, eventId: it.entity.id } });
+        openExplorer(trail);
+      } else if (it.otherType === "story") {
         // Part 14: a concise connected-story view (reused Explorer screen), with Open Story / Issues / Paths.
         const trail = explorerTrailFor(n);
         trail.push({ level: "connected", label: it.entity.title, params: { story: it.entity, from: n.e, rel: it.rel, group: it.group } });
@@ -1459,6 +1564,8 @@ function wireShell() {
     }
     const a = e.target.closest("[data-act]");
     if (a && n) { onDetailAction(a.dataset.act, n); return; }
+    const me = e.target.closest("[data-map-event]");
+    if (me) { openMap("event", me.dataset.mapEvent); return; }
     const g = e.target.closest("[data-goto-id]");
     if (g) {
       if (g.dataset.goto) { select(g.dataset.goto); return; }
@@ -1466,13 +1573,14 @@ function wireShell() {
       const col = COL_BY_TYPE[type];
       const ent = col ? await getOne(col, id) : null;
       if (!ent) return;
-      const lvl = { story: "story", event: "story", series: "series", run: "run", issue: "issue", character: "character", continuity: "continuity", collection: "collection" }[type];
+      const lvl = { story: "story", event: "event", series: "series", run: "run", issue: "issue", character: "character", continuity: "continuity", collection: "collection" }[type];
       if (!lvl) return;
       const params = lvl === "story" ? { story: ent }
+        : lvl === "event" ? { event: ent, eventId: ent.id }
         : lvl === "run" ? { run: ent, series: await getOne(COLLECTIONS.SERIES, ent.seriesId) }
         : lvl === "collection" ? { collectionEntity: ent }
         : { [lvl]: ent };
-      openExplorer([{ level: lvl, label: lvl === "collection" ? ent.title : entityTitle(type === "event" ? "story" : type, ent), params }]);
+      openExplorer([{ level: lvl, label: lvl === "collection" ? ent.title : entityTitle(type, ent), params }]);
     }
     const d = e.target.closest(".sm-d-desc[data-clamp]");
     if (d) d.dataset.clamp = d.dataset.clamp === "true" ? "false" : "true";

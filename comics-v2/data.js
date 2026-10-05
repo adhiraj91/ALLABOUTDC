@@ -349,6 +349,42 @@ export async function getCollectionsCoveringIssues(issueIds) {
   return [...byId.values()];
 }
 
+/* ---------------------------------------------------------------------------
+   Phase 5 — Event (first-class). Every helper is ONE targeted query (or ceil(n/30) batched ones); none scans a collection.
+   Membership has one source of truth each (see schema.js §12): issues → issue.eventIds, stories → story.eventId (+ part_of_event
+   relationships, read with getRelationshipsForEntity), participating series/collections/characters are derived at read time.
+--------------------------------------------------------------------------- */
+export const getEvent = (id) => getEntity(COLLECTIONS.EVENTS, id);
+
+/** Events recorded for a continuity/era (1 query). Legacy continuity.majorEventIds is resolved separately with getEntitiesByIds. */
+export async function getEventsForContinuity(continuityId) {
+  const q = query(collection(db, COLLECTIONS.EVENTS), where("continuityIds", "array-contains", continuityId));
+  return docsOf(await getDocs(q));
+}
+
+/** Every issue that names this event in issue.eventIds (1 query). */
+export async function getIssuesForEvent(eventId) {
+  const q = query(collection(db, COLLECTIONS.ISSUES), where("eventIds", "array-contains", eventId));
+  return docsOf(await getDocs(q));
+}
+
+/** Stories that point at this event with story.eventId (1 query). part_of_event relationships are read separately. */
+export async function getStoriesForEvent(eventId) {
+  const q = query(collection(db, COLLECTIONS.STORIES), where("eventId", "==", eventId));
+  return docsOf(await getDocs(q));
+}
+
+/** Collections that EXPLICITLY list any of these stories in collection.storyIds — one array-contains-any query per 30 ids. */
+export async function getCollectionsContainingStories(storyIds) {
+  const uniq = [...new Set((storyIds || []).filter(Boolean))];
+  if (!uniq.length) return [];
+  const snaps = await Promise.all(chunk(uniq, IN_LIMIT).map(part =>
+    getDocs(query(collection(db, COLLECTIONS.COLLECTIONS), where("storyIds", "array-contains-any", part)))));
+  const byId = new Map();
+  snaps.flatMap(docsOf).forEach(c => byId.set(c.id, c));
+  return [...byId.values()];
+}
+
 /**
  * "What collections cover this story" — the ROBUST version of
  * getCollectionsContainingStory(), for callers that have the story's own

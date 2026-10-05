@@ -12,6 +12,7 @@
 //   comicUniverses, comicContinuities, comicCharacters, comicSeries,
 //   comicRuns, comicStories, comicIssues, comicCollections, comicCreators,
 //   comicRelationships, comicReadingPaths
+// Phase 5 adds one more: comicEvents (a first-class Event — see section 12).
 //
 // Design notes:
 //   - IDs are always stable slugs (see slug.js), never a raw display title.
@@ -37,6 +38,7 @@ export const COLLECTIONS = Object.freeze({
   CREATORS:       "comicCreators",
   RELATIONSHIPS:  "comicRelationships",
   READING_PATHS:  "comicReadingPaths",
+  EVENTS:         "comicEvents",
 });
 
 /* ---------------------------------------------------------------------------
@@ -65,12 +67,23 @@ export const RELATIONSHIP_TYPES = [
   "sequel_to", "prequel_to", "crossover_with", "tie_in_to", "part_of_event",
   "spin_off_from", "continues", "relaunches", "alternate_version_of",
   "adaptation_of", "features_character",
+  // Phase 5 — "impacts": the ONE edge the Event model genuinely lacked. Direction: EVENT → target (continuity, series, character,
+  // universe or another event) = "this event changed / reshaped that". NON-ORDERING (it is a consequence link, never a reading order);
+  // the inverse UI meaning is "Changed by". sequel_to / prequel_to / continues already cover event→event ordering (predecessor /
+  // successor) and part_of_event / tie_in_to / crossover_with / features_character already cover membership, so nothing else was added.
+  "impacts",
 ];
+
+/** Edges that express chronology/continuity between two entities. Everything else is a plain connection and must never be read as "read next". */
+export const ORDERING_RELATIONSHIP_TYPES = ["sequel_to", "prequel_to", "continues"];
 
 export const ENTITY_TYPES = [
   "universe", "continuity", "character", "series", "run", "story",
-  "issue", "collection", "creator",
+  "issue", "collection", "creator", "event",
 ];
+
+/** Starting (extensible, never closed) set of event kinds. A value outside it is allowed — validators only flag it. */
+export const EVENT_TYPES = ["crossover", "event", "transition", "multiverse", "line_wide", "other"];
 
 export const READING_PATH_TYPES = [
   "beginner", "essential", "main_series", "complete",
@@ -391,5 +404,45 @@ export function validateReadingPath(p) {
     if (!e.entityType || !e.entityId) errors.push(`readingPath.entries[${idx}] needs entityType + entityId`);
   });
   if (p) validateSourceInfo(p.sourceInfo, errors, "readingPath");
+  return { valid: errors.length === 0, errors };
+}
+
+/* ---------------------------------------------------------------------------
+   12. EVENT (Phase 5 — first-class; NOT a Story, NOT a Collection, NOT an Era)
+   An Event is a larger narrative/publishing happening that can contain a core story, crossover stories, tie-ins, participating
+   series/issues and (for eventType "transition") bridge two continuities. One source of truth per relationship:
+     - membership of ISSUES  → issue.eventIds (reverse: issues where eventIds array-contains eventId)
+     - membership of STORIES → story.eventId or a part_of_event relationship (story → event)
+     - core story            → coreStoryIds (the only direct list: it names WHICH member story is the main one)
+     - predecessor/successor → sequel_to / prequel_to relationships (event → event), not fields
+     - participating series, collections, characters → derived from the above at read time, never stored
+     - transition endpoints  → transitionFromContinuityId / transitionToContinuityId (labels only when that continuity is not catalogued yet)
+     - curated reading paths → readingPathIds (comicReadingPaths has no event field and its records are owner-supplied, so the link lives here)
+     - recordedMaterial      → owner-recorded entries that exist only as text (no Story/Issue/Collection entity yet); shown honestly, never as a link
+--------------------------------------------------------------------------- */
+export function makeEvent({
+  id, title, description = "", eventType = "event", universeId = null, continuityIds = [],
+  startDate = null, endDate = null, coreStoryIds = [],
+  transitionFromContinuityId = null, transitionToContinuityId = null,
+  transitionFromLabel = "", transitionToLabel = "",
+  readingPathIds = [], recordedMaterial = [], sourceInfo,
+} = {}) {
+  return {
+    id, title, description, eventType, universeId, continuityIds,
+    startDate, endDate, coreStoryIds,
+    transitionFromContinuityId, transitionToContinuityId, transitionFromLabel, transitionToLabel,
+    readingPathIds, recordedMaterial,
+    sourceInfo: sourceInfo || makeSourceInfo(),
+    createdAt: nowIso(), updatedAt: nowIso(),
+  };
+}
+export function validateEvent(ev) {
+  const errors = [];
+  if (!ev || !ev.id) errors.push("event.id is required");
+  if (!ev || !ev.title) errors.push("event.title is required");
+  if (ev && !EVENT_TYPES.includes(ev.eventType)) errors.push(`event.eventType: "${ev.eventType}" is outside the starting set (${EVENT_TYPES.join("|")}) — allowed, just flagging`);
+  if (ev && !Array.isArray(ev.continuityIds)) errors.push("event.continuityIds must be an array");
+  if (ev && !Array.isArray(ev.coreStoryIds)) errors.push("event.coreStoryIds must be an array");
+  if (ev) validateSourceInfo(ev.sourceInfo, errors, "event");
   return { valid: errors.length === 0, errors };
 }

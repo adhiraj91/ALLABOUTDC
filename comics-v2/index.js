@@ -8,11 +8,13 @@ import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
 import * as flashGl from "./seed-new52-flash-gl.js?v=dc1";
-import * as branchPaths from "./branch-paths.js?v=bp5";
+import * as branchPaths from "./branch-paths.js?v=bp6";
 import * as batch1 from "./seed-new52-batch1.js?v=b1c";
 import * as batch2 from "./seed-new52-batch2.js?v=b2c";
-import * as batch3 from "./seed-new52-batch3.js?v=b3";
+import * as batch3 from "./seed-new52-batch3.js?v=b3b";
 import * as pending from "./seed-new52-pending.js?v=p2";
+import * as eventsSeed from "./seed-events.js?v=ev1";
+import * as eventsData from "./events-data.js?v=ev1";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -187,6 +189,11 @@ export async function importNew52Pending(progress) {
 
 // Additive import: New 52 branching reading paths (event -> branches -> return). Writes ONLY bp-* documents in
 // comicReadingPaths, at deterministic ids; reads series/collections to verify they exist; never clears or edits anything else.
+// Phase 5 — additive event import (events + issue.eventIds + event→event edges). Validation-first; nothing is deleted or guessed.
+export async function importNew52Events(progress) {
+  return eventsSeed.importEvents({ data, progress });
+}
+
 export async function importNew52BranchPaths(progress) {
   return branchPaths.importBranchPaths({ upsertEntity: data.upsertEntity, getEntity: data.getEntity, progress });
 }
@@ -223,6 +230,12 @@ window.__comicsV2 = {
     dataset: batch3.dataset,
     validate: batch3.validateDataset,
     import: importNew52Batch3,
+  },
+  new52Events: {
+    build: eventsData.buildEvents,
+    members: eventsSeed.plannedMembership,
+    validate: eventsSeed.validateDataset,
+    import: importNew52Events,
   },
   new52BranchPaths: {
     build: branchPaths.buildAll,

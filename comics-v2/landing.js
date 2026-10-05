@@ -2,7 +2,7 @@
 // Self-contained UI: no Firestore dependency on load. The explorer / data modules load only when a navigation action is tapped.
 const openExplorer = async (level, label, params = {}) => {
   try {
-    const mod = await import(`./explorer.js?v=dc33`);
+    const mod = await import(`./explorer.js?v=dc34`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     openAt([{ level, label, params }]);
@@ -36,10 +36,21 @@ function pushExplorerEntry(){
   }).observe(sheet, { attributes: true, attributeFilter: ["data-open"] });
 })();
 
+/** Event Hub (Phase 5): generic — the id alone picks the record; the hub itself loads it (Firestore, else the bundled owner definition). Same history pattern as openNew52. */
+async function openEvent(eventId, title){
+  try {
+    const mod = await import(`./explorer.js?v=dc34`);
+    const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
+    if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
+    pushExplorerEntry();
+    openAt([{ level: "event", label: title || "Event", params: { eventId, exitOnBack: true } }]);
+  } catch (e) { console.error("[Comics landing] Event hub failed to open", e); }
+}
+
 /** New 52 Era Hub: resolves the existing New 52 continuity record (no new record is created). The lookup runs on tap only, never on load. */
 async function openNew52(){
   try {
-    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc33`), import(`./data.js?v=dc4`)]);
+    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc34`), import(`./data.js?v=dc5`)]);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     const all = await data.getAllContinuities(50);
@@ -51,7 +62,7 @@ async function openNew52(){
     console.warn("[Comics landing] New 52 lookup failed — using the era list", e);
     pushExplorerEntry();
     try {
-      const mod = await import(`./explorer.js?v=dc33`);
+      const mod = await import(`./explorer.js?v=dc34`);
       const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
       if (typeof openAt === "function") openAt([{ level: "continuityList", label: "Continuity / Era", params: {} }]);
     } catch (e2) { console.error("[Comics landing] Explorer failed to open", e2); }
@@ -101,7 +112,8 @@ function nodeHtml(it, i){
   if (it.type === "transition") {
     return `<li class="cxh-node cxh-rupture" data-id="${it.id}" aria-label="${it.kind}: ${it.name}">
      <div class="cxh-rup-art" aria-hidden="true">${img}</div>
-     <div class="cxh-rup-body"><span class="cxh-rup-kind">${it.kind}</span><h3 class="cxh-rup-name">${it.name}</h3></div>
+     <div class="cxh-rup-body"><span class="cxh-rup-kind">${it.kind}</span><h3 class="cxh-rup-name">${it.name}</h3><span class="cxh-rup-open" aria-hidden="true">OPEN EVENT →</span></div>
+     <button type="button" class="cxh-rup-hit" data-go="event" data-event="${it.id}" data-title="${it.name}" aria-label="${it.name} — ${it.kind}. Open the event hub"></button>
     </li>`;
   }
   const live = !!it.action;
@@ -178,6 +190,11 @@ function wireAtlas(root){
     if (a === "prev") return step(-1);
     if (a === "next") return step(1);
     if (a === "back") { if (history.state && history.state.cxhAtlas) { history.back(); } else { showGateway(); } return; }
+    if (a === "event") {
+      if (b.dataset.busy) return;
+      b.dataset.busy = "1";
+      return openEvent(b.dataset.event, b.dataset.title).finally(() => setTimeout(() => { delete b.dataset.busy; }, 400));
+    }
     if (a === "new52") {
       if (b.dataset.busy) return;
       b.dataset.busy = "1"; b.setAttribute("aria-busy", "true"); b.classList.add("is-pressed");
