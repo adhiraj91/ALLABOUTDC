@@ -228,7 +228,7 @@ export const new52Limited = [
   {id:'phantom-lady-doll-man',title:'Phantom Lady and Doll Man',lane:'edge',issues:['1','2','3','4'],kind:'miniseries'},
   {id:'the-ray',title:'The Ray',lane:'edge',issues:['1','2','3','4'],kind:'miniseries'},
   {id:'the-shade',title:'The Shade',lane:'dark',issues:['1','2','3','4','5','6','7','8','9','10','11','12'],kind:'miniseries'},
-  {id:'the-multiversity',title:'The Multiversity',lane:'alternate',issues:['#1','#2','Pax Americana','Thunderworld','The Just','Pax Americana','Guidebook','Mastermen','Ultra Comics','Multiversity #2'],kind:'multiverse',notes:'Seven complete adventures plus framing material and a guidebook across parallel Earths.'},
+  {id:'the-multiversity',title:'The Multiversity',lane:'alternate',issues:['#1','#2','Pax Americana','Thunderworld','The Just','Guidebook','Mastermen','Ultra Comics','Multiversity #2'],kind:'multiverse',notes:'Seven complete adventures plus framing material and a guidebook across parallel Earths.'},
   {id:'forever-evil',title:'Forever Evil',lane:'justice',issues:['1','2','3','4','5','6','7'],kind:'event'},
   {id:'forever-evil-argus',title:'Forever Evil: A.R.G.U.S.',lane:'edge',issues:['1','2','3','4','5','6'],kind:'tie-in'},
   {id:'arkham-war',title:'Forever Evil: Arkham War',lane:'batman',issues:['1','2','3','4','5','6'],kind:'tie-in'},
@@ -502,7 +502,7 @@ const limitedCollections = {
   'prez-v2':[coll('Prez Vol. 1: Corndog in Chief','Trade Paperback','Prez #1–6 + the Sneak Peek story from Convergence: Batgirl #2'), coll('Prez by Mark Russell and Ben Caldwell: The Deluxe Edition','Hardcover / Deluxe','Prez #1–6 + DC Sneak Peek: Prez #1 + Catwoman: Election Night #1 + Prez: Setting a Dangerous President')],
   'justice-league-3001':[coll('Justice League 3001 Vol. 1: Déjà Vu All Over Again','Trade Paperback','Justice League 3000 #14–15 + Justice League 3001 #1–6 + sneak peek from Convergence: Justice League International #2'), coll('Justice League 3001 Vol. 2: Things Fall Apart','Trade Paperback','Justice League 3001 #7–12')],
 };
-for (const s of new52Limited) { s.collections=limitedCollections[s.id]||[]; s.collectionStatus=s.collections.length?'verified-editions-listed':'no-verified-edition-record-in-current-research-index'; s.runs=[{id:`${s.id}-run`,title:s.title,years:'New 52 era',issueCoverage:s.issues.map(i=>`#${i}`).join(', '),notes:s.notes||''}]; }
+for (const s of new52Limited) { s.collections=limitedCollections[s.id]||[]; s.collectionStatus=s.collections.length?'verified-editions-listed':'no-verified-edition-record-in-current-research-index'; s.runs=[{id:`${s.id}-run`,title:s.title,years:'New 52 era',issueCoverage:s.issues.map(i=>/^\d/.test(i)?`#${i}`:i).join(', '),notes:s.notes||''}]; }
 
 export const new52ResearchSummary = {
   ongoingSeries: new52Series.length,
@@ -592,7 +592,7 @@ export const new52CharacterIndex = [
 const n52Ids = ids => ids.filter(Boolean);
 export const new52CharacterHubs = [
   {id:'batman',type:'hero',title:'Batman',sub:'The flagship Gotham line and its core Batman publications.',seriesIds:n52Ids(['batman','detective-comics','batman-and-robin','batman-dark-knight','batman-incorporated','batman-eternal'])},
-  {id:'superman',type:'hero',title:'Superman',sub:'The core Superman line, including the major cross-family books.',seriesIds:n52Ids(['action-comics','superman','batman-superman','superman-wonder-woman','superman-unchained','superboy'])},
+  {id:'superman',type:'hero',title:'Superman',sub:'The core Superman line, including the major cross-family books.',seriesIds:n52Ids(['action-comics','superman','batman-superman','superman-wonder-woman','superman-unchained'])},
   {id:'wonder-woman',type:'hero',title:'Wonder Woman',sub:'Diana’s New 52 solo run.',seriesIds:['wonder-woman']},
   {id:'flash',type:'hero',title:'The Flash',sub:'Barry Allen’s New 52 run and Flash-connected material.',seriesIds:['the-flash']},
   {id:'green-lantern',type:'hero',title:'Green Lantern',sub:'The Lantern flagship plus the Corps and emotional-spectrum family.',seriesIds:['green-lantern','green-lantern-corps','green-lantern-new-guardians','red-lanterns','larfleeze','sinestro']},
@@ -605,7 +605,7 @@ export const new52CharacterHubs = [
   {id:'deathstroke',type:'hero',title:'Deathstroke',sub:'Slade Wilson’s New 52 runs.',seriesIds:['deathstroke-v2','deathstroke-v3']},
   {id:'blue-beetle',type:'hero',title:'Blue Beetle',sub:'Jaime Reyes’ New 52 solo run.',seriesIds:['blue-beetle']},
   {id:'bat-family',type:'group',title:'Bat-Family',sub:'The rest of Gotham’s major standalone publications, kept together without merging their runs.',seriesIds:['nightwing','grayson','batgirl','batwoman','catwoman','red-hood-outlaws','birds-of-prey','batwing','talon','gotham-academy','arkham-manor','gotham-by-midnight','damian-son-of-batman','penguin-pain-prejudice']},
-  {id:'superman-family',type:'group',title:'Superman Family',sub:'Supporting Kryptonian and Superman-adjacent books, excluding Superman and Supergirl themselves.',seriesIds:['superboy','batman-superman','superman-wonder-woman','superman-unchained','action-comics']},
+  {id:'superman-family',type:'group',title:'Superman Family',sub:'Supporting Kryptonian and Superman-adjacent books, excluding Superman and Supergirl themselves.',seriesIds:['superboy','batman-superman','superman-wonder-woman','superman-unchained']},
   {id:'justice-league',type:'group',title:'Justice League & Core Teams',sub:'League books and the central shared-universe team network.',seriesIds:['justice-league','justice-league-of-america','justice-league-international','justice-league-united','justice-league-of-americas-vibe','katana','fury-of-firestorm','mister-terrific','savage-hawkman','dc-universe-presents']},
   {id:'lantern-corps',type:'group',title:'Lantern Corps & Spectrum',sub:'Corps, emotional-spectrum and Lantern-adjacent publications.',seriesIds:['green-lantern-corps','green-lantern-new-guardians','red-lanterns','larfleeze','sinestro','threshold']},
   {id:'titans-young-heroes',type:'group',title:'Titans & Young Heroes',sub:'Teen Titans, Legion, Blue Beetle, Hawk & Dove and the younger-hero branch.',seriesIds:['teen-titans-v4','teen-titans-v5','legion-lost','legion-of-super-heroes','blue-beetle','hawk-dove','static-shock','ravagers','legion-secret-origin']},
@@ -619,12 +619,12 @@ export const new52CharacterHubs = [
 export function getNew52CharacterHub(id) { return new52CharacterHubs.find(x => x.id === id) || null; }
 
 export const new52ReadingPaths = [
-  {id:'new52-core',title:'New 52 Core Universe',type:'essential',sub:'The central Earth-0 books and major connective events.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
+  {id:'new52-core',title:'New 52 Core Event Spine',type:'essential',sub:'Milestone events across the central Earth-0 publishing lanes.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
   {id:'new52-batman',title:'Batman / Gotham',type:'main_series',sub:'Batman and the parallel Gotham-family series kept as separate publications.',laneIds:['batman'],eventIds:['court-owls','death-family','robin-rises','endgame']},
   {id:'new52-superman',title:'Superman Family',type:'main_series',sub:'The Superman-family line plus its major crossover spine.',laneIds:['superman'],eventIds:['hel-earth','krypton-returns','doomed']},
   {id:'new52-lantern',title:'Green Lantern / Corps',type:'main_series',sub:'The Lantern books and the major Corps-wide events.',laneIds:['lantern'],eventIds:['rise-third-army','wrath-first-lantern','lights-out','red-daughter','uprising','godhead']},
   {id:'new52-dark',title:'Dark / Supernatural',type:'main_series',sub:'The supernatural line and its crossovers.',laneIds:['dark'],eventIds:['rotworld','trinity-war','blight']},
-  {id:'new52-complete',title:'New 52 Crossover Spine',type:'event_crossover',sub:'The major events that connect the individual publication lanes.',laneIds:[],eventIds:['court-owls','death-family','throne-atlantis','rotworld','hel-earth','rise-third-army','wrath-first-lantern','lights-out','trinity-war','forever-evil','blight','krypton-returns','doomed','red-daughter','uprising','futures-end','godhead','robin-rises','endgame','darkseid-war','multiversity','convergence']},
+  {id:'new52-complete',title:'New 52 Crossover Spine',type:'event_crossover',sub:'Major connective events across the New 52 publication lanes.',laneIds:[],eventIds:['court-owls','death-family','throne-atlantis','rotworld','hel-earth','rise-third-army','wrath-first-lantern','lights-out','trinity-war','forever-evil','blight','krypton-returns','doomed','red-daughter','uprising','futures-end','godhead','robin-rises','endgame','darkseid-war','multiversity','convergence']},
 ];
 
 export function getNew52SeriesByIds(ids=[]) {

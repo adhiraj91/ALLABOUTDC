@@ -2,7 +2,7 @@
 // Self-contained UI: no Firestore dependency on load. The explorer / data modules load only when a navigation action is tapped.
 const openExplorer = async (level, label, params = {}) => {
   try {
-    const mod = await import(`./explorer.js?v=dc26`);
+    const mod = await import(`./explorer.js?v=dc27`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     openAt([{ level, label, params }]);
@@ -24,7 +24,7 @@ function openAtlas(){
 // The New 52 Era Hub opens over the Atlas (explorer root stays one tap away via the "Comics" crumb); its Back arrow closes the explorer and lands on the Atlas.
 const ERA_HUB = "eraHub";
 
-// Opening the hub adds one history entry, so browser Back closes it and lands on the Atlas; closing it from the UI removes that entry again.
+// Opening the hub adds one history entry (plus one per explorer level pushed above it, see explorer.js), so browser Back steps up one level at a time and the last Back lands on the Atlas; closing from the UI removes all of those entries again.
 function pushExplorerEntry(){
   try { if (!(history.state && history.state.cxhExplorer)) history.pushState({ ...(history.state || {}), cxhExplorer: true }, "", location.href); } catch (e) { /* ignore */ }
 }
@@ -32,14 +32,14 @@ function pushExplorerEntry(){
   const sheet = document.getElementById("comicsExplorerSheet");
   if (!sheet || typeof MutationObserver === "undefined") return;
   new MutationObserver(() => {
-    if (sheet.dataset.open !== "true" && history.state && history.state.cxhExplorer) { try { history.back(); } catch (e) { /* ignore */ } }
+    if (sheet.dataset.open !== "true" && history.state && history.state.cxhExplorer) { try { history.go(-(1 + (history.state.cxe || 0))); } catch (e) { /* ignore */ } }
   }).observe(sheet, { attributes: true, attributeFilter: ["data-open"] });
 })();
 
 /** New 52 Era Hub: resolves the existing New 52 continuity record (no new record is created). The lookup runs on tap only, never on load. */
 async function openNew52(){
   try {
-    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc26`), import(`./data.js?v=dc3`)]);
+    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc27`), import(`./data.js?v=dc3`)]);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     const all = await data.getAllContinuities(50);
@@ -51,7 +51,7 @@ async function openNew52(){
     console.warn("[Comics landing] New 52 lookup failed — using the era list", e);
     pushExplorerEntry();
     try {
-      const mod = await import(`./explorer.js?v=dc26`);
+      const mod = await import(`./explorer.js?v=dc27`);
       const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
       if (typeof openAt === "function") openAt([{ level: "continuityList", label: "Continuity / Era", params: {} }]);
     } catch (e2) { console.error("[Comics landing] Explorer failed to open", e2); }

@@ -517,42 +517,62 @@ async function collection(p){
 
 // ============================================================================
 // ERA HUB — an atlas "dashboard" of four horizontal rails, one per question. A navigation/presentation layer over existing sources:
-//   WHAT HAPPENED?            → new52-map-data.js (crossoverSpine order, transitionEvents, lanes) — read, never copied
+//   WHAT HAPPENED?            → new52-map-data.js (crossoverSpine order, transitionEvents, lanes, limited series) — read, never copied
 //   WHO / WHICH CORNER?       → categories.js + existing root/family logic (curated lead-series eligibility, data.js)
-//   WHAT WAS PUBLISHED?       → data.getSeriesForContinuity, in categories.js order
-//   HOW SHOULD I EXPERIENCE IT? → new52ReadingPaths (explicit ordered eventIds) ; each step is enriched with the matching
-//                               comicReadingPaths crossover record (matched by title) for its participating series/editions.
-// Every card opens an existing level (series / category / character / collection) or one of the three detail levels below.
+//   WHAT WAS PUBLISHED?       → data.getSeriesForContinuity, in categories.js order; category tiles first, then that category's series
+//   HOW SHOULD I EXPERIENCE IT? → new52ReadingPaths. These are lists of EVENT ids (no issue-level order, no branches), so they are
+//                               presented as event spines, never as a reading order. comicReadingPaths records (bp-*) have no ordered
+//                               entries either, so they only enrich an event with its participating series and collected editions.
+// Every card opens an existing level (series / category / character / collection) or one of the detail levels below.
 // Nothing here owns data; phases are presentation groupings, not records.
 // ============================================================================
 const eraYears=ct=>{const a=ct?.startDate?String(ct.startDate).slice(0,4):"",b=ct?.endDate?String(ct.endDate).slice(0,4):"";return a?`${a} — ${b||"present"}`:"";};
 const isNew52=ct=>/new\s*52/i.test(`${ct?.shortName||""} ${ct?.name||""}`);
 const ATLAS_IMG=f=>new URL(`./assets/atlas/${f}?v=1`,import.meta.url).href;
-const MAP_DATA="./new52-map-data.js?v=1";
-// Presentation phases: a phase starts at these events of the source's own New 52 Core path. Forever Evil is not a boundary — the records
-// link it as following Trinity War (bp-jl-forever-evil.followsPathId), so the two stay together. Every non-transition spine event lands in exactly one phase.
+const MAP_DATA="./new52-map-data.js?v=2";
+// Presentation phases (not records). The Launch is a special state: Flashpoint is the transition into the New 52 and the relaunch is a publishing
+// event, not a story, so it owns no spine event (Court of Owls is a Batman story inside the early universe). The other phases start at these
+// events of the source's own spine order. Multiverse works and transitions are not placed in a phase (they are shown as what they are).
 const PHASES=[
-  {n:1,title:"The Launch",from:"court-owls",img:"07-new-52.webp"},
-  {n:2,title:"The Universe Expands",from:"throne-atlantis"},
-  {n:3,title:"Escalation",from:"trinity-war"},
-  {n:4,title:"Late Era",from:"futures-end"},
+  {n:1,title:"The Launch",kind:"launch",img:"07-new-52.webp"},
+  {n:2,title:"Early Universe",from:"court-owls"},
+  {n:3,title:"Escalation",from:"rotworld"},
+  {n:4,title:"Late Era",from:"doomed"},
   {n:5,title:"The Finale",from:"darkseid-war"}];
+const isStoryEvent=e=>e.type!=="transition"&&e.type!=="multiverse";
 function derivePhases(m){
-  const spine=m.crossoverSpine.filter(e=>e.type!=="transition");
-  const cuts=PHASES.map(ph=>({ph,i:spine.findIndex(e=>e.id===ph.from)})).filter(x=>x.i>=0).sort((a,b)=>a.i-b.i);
-  return cuts.map((c,k)=>({...c.ph,events:spine.slice(c.i,k+1<cuts.length?cuts[k+1].i:spine.length)})).filter(x=>x.events.length);
+  const spine=m.crossoverSpine.filter(isStoryEvent);
+  const cuts=PHASES.filter(ph=>ph.from).map(ph=>({ph,i:spine.findIndex(e=>e.id===ph.from)})).filter(x=>x.i>=0).sort((a,b)=>a.i-b.i);
+  const body=cuts.map((c,k)=>({...c.ph,events:spine.slice(c.i,k+1<cuts.length?cuts[k+1].i:spine.length)})).filter(x=>x.events.length);
+  return [...PHASES.filter(ph=>ph.kind==="launch").map(ph=>({...ph,events:[]})),...body];
 }
-const phaseLanes=(ph,m)=>[...new Set(ph.events.flatMap(e=>e.lanes||[]))].map(id=>m.getLane(id)?.title).filter(Boolean);
+const plain=t=>String(t||"").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g,"");
+// An event that is also a limited series in the source (Forever Evil, Futures End, The Multiversity…) is "owned" by that record's lane.
+const limitedFor=(ev,m)=>m.new52Limited.find(l=>plain(l.title)===plain(ev.title))||null;
+const eventLaneIds=(ev,m)=>[...new Set([...(ev.lanes||[]),...(limitedFor(ev,m)?.lane?[limitedFor(ev,m).lane]:[])])].filter(id=>m.getLane(id));
+const laneTitle=(m,id)=>m.getLane(id)?.title||"";
+const phaseLanes=(ph,m)=>[...new Set(ph.events.flatMap(e=>eventLaneIds(e,m)))].map(id=>laneTitle(m,id)).filter(Boolean);
 const normKey=t=>eventKey(t).toLowerCase().normalize("NFKD").replace(/[^a-z0-9]/g,"");
 const recordFor=(ev,recs)=>(recs||[]).find(r=>normKey(r.title)===normKey(ev.title))||null;
 const eraTop=(kicker,title,sub)=>`<div class="cxe-head"><div class="cx-kicker">${esc(kicker)}</div><h2 class="cx-title">${esc(title)}</h2>${sub?`<div class="cx-subtitle">${esc(sub)}</div>`:""}</div>`;
 const hueOf=i=>`--h:${(i*47+210)%360}`;
-const rail=(id,q,title,body,extra="")=>`<section class="cxe-railsec" data-rail="${id}"><div class="cxe-rail-head"><div><span class="cxe-q">${esc(q)}</span><h3>${esc(title)}</h3></div><div class="cxe-rail-nav"><button type="button" data-dir="-1" aria-label="Scroll ${esc(title)} back">‹</button><button type="button" data-dir="1" aria-label="Scroll ${esc(title)} forward">›</button></div></div><div class="cxe-rail ${extra}" tabindex="0" role="list" aria-label="${esc(title)}">${body}</div></section>`;
+const rail=(id,q,title,body,extra="",after="")=>`<section class="cxe-railsec" data-rail="${id}"><div class="cxe-rail-head"><div><span class="cxe-q">${esc(q)}</span><h3>${esc(title)}</h3></div><div class="cxe-rail-nav"><button type="button" data-dir="-1" aria-label="Scroll ${esc(title)} back">‹</button><button type="button" data-dir="1" aria-label="Scroll ${esc(title)} forward">›</button></div></div><div class="cxe-rail ${extra}" tabindex="0" role="list" aria-label="${esc(title)}">${body}</div>${after}</section>`;
 const bgImg=f=>f?`<img class="cxe-bg" src="${ATLAS_IMG(f)}" alt="" loading="lazy" decoding="async">`:"";
 function wireRails(el){
   el.querySelectorAll(".cxe-rail-nav button").forEach(b=>b.addEventListener("click",()=>{const r=b.closest(".cxe-railsec").querySelector(".cxe-rail");r.scrollBy({left:+b.dataset.dir*Math.max(240,r.clientWidth*.8),behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}));
   el.querySelectorAll("img.cxe-bg").forEach(i=>i.addEventListener("error",()=>i.remove()));
 }
+// Small UI memory so returning to a hub/territory screen finds it as it was left (the screens re-render on Back).
+const eraUI={serCat:null,lanes:new Set()};
+// Dates are shown only where the source states them (the era description / transition summaries); never inferred.
+const MONTHS="January|February|March|April|May|June|July|August|September|October|November|December";
+const launchWhen=m=>(String(m.new52Era?.description||"").match(new RegExp(`(?:${MONTHS})\\s+\\d{4}`))||[])[0]||"";
+const bridgeLabel=t=>String(t.title||"").replace("DC Universe: ","");
+const eraTitleOf=(m,id)=>m.eras.find(e=>e.id===id)?.title||id;
+const kindLabel=k=>({multiverse:"Multiverse / Limited series",event:"Event limited series",maxiseries:"Maxi-series",miniseries:"Miniseries","tie-in":"Tie-in miniseries",transition:"Transition limited series","dc-you-continuation":"DC You continuation"})[k]||String(k||"Limited series").replace(/[-_]/g," ");
+const pathTypeLabelOf=t=>({essential:"Core event spine",main_series:"Lane event list",event_crossover:"Full event spine"})[t]||"Event spine";
+const evTypeLabel=t=>({crossover:"Crossover",event:"Event",multiverse:"Multiverse work",transition:"Transition"})[t]||"Event";
+const issueLabel=l=>/^\d/.test(String(l))?`#${l}`:String(l);
 
 async function eraHub(p){
   const ct=p.continuity;if(!ct)return{html:empty("Era not found.")};
@@ -567,13 +587,16 @@ async function eraHub(p){
   if(m){
     const phases=derivePhases(m),T=id=>m.transitionEvents.find(t=>t.id===id);
     const flash=T("transition-new52"),reb=T("transition-rebirth");
-    const bridgeCard=(t,key,img,from,to)=>t?`<div class="cxe-card cxe-bridgecard" role="listitem">${bgImg(img)}<button type="button" class="cxe-card-main" data-bridge="${key}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(from)} → ${esc(to)}</small></button></div>`:"";
-    const cards=[bridgeCard(flash,"transition-new52","06-flashpoint.webp","Pre-Flashpoint","New 52"),
-      ...phases.map((ph,i)=>{const e=ph.events;const desc=e.length>1?`${e[0].title} → ${e[e.length-1].title}`:e[0].title;
+    const bridgeCard=(t,img)=>t?`<div class="cxe-card cxe-bridgecard" role="listitem">${bgImg(img)}<button type="button" class="cxe-card-main" data-bridge="${esc(t.id)}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(eraTitleOf(m,t.from))} → ${esc(eraTitleOf(m,t.to))}</small></button></div>`:"";
+    const when=launchWhen(m);
+    const cards=[bridgeCard(flash,"06-flashpoint.webp"),
+      ...phases.map((ph,i)=>{const e=ph.events;
+        if(ph.kind==="launch")return `<div class="cxe-card cxe-phase is-launch" role="listitem" style="${hueOf(i)}">${bgImg(ph.img)}<button type="button" class="cxe-card-main" data-phase="${ph.n}"><span class="cxe-phase-n">0${ph.n}</span><strong>${esc(ph.title)}</strong><small>Flashpoint → ${esc(when?`${when} relaunch`:"the relaunch")}</small><span class="cxe-minis"><i>Flashpoint</i><i>New 52 relaunch</i><i>First wave</i></span><span class="cxe-go">Explore the first wave →</span></button></div>`;
+        const desc=e.length>1?`${e[0].title} → ${e[e.length-1].title}`:e[0].title;
         return `<div class="cxe-card cxe-phase" role="listitem" style="${hueOf(i)}">${bgImg(ph.img)}<button type="button" class="cxe-card-main" data-phase="${ph.n}"><span class="cxe-phase-n">0${ph.n}</span><strong>${esc(ph.title)}</strong><small>${esc(desc)}</small><span class="cxe-minis">${e.slice(0,4).map(x=>`<i>${esc(x.title.split(" / ")[0])}</i>`).join("")}${e.length>4?`<i>+${e.length-4}</i>`:""}</span><span class="cxe-go">Explore →</span></button></div>`;}),
-      bridgeCard(reb,"transition-rebirth","08-rebirth.webp","New 52","Rebirth"),
-      `<div class="cxe-card cxe-endcard" role="listitem"><button type="button" class="cxe-card-main" data-lanes><span class="cxe-tag">DETAIL</span><strong>By publishing lane</strong><small>The same events, grouped by the lines they run through</small></button></div>`,
-      `<div class="cxe-card cxe-endcard" role="listitem"><button type="button" class="cxe-card-main" data-full><span class="cxe-tag">DETAIL</span><strong>Crossover editions &amp; year timeline</strong><small>Collected editions and year-by-year activity</small></button></div>`].join("");
+      bridgeCard(reb,"08-rebirth.webp"),
+      `<div class="cxe-card cxe-endcard" role="listitem"><button type="button" class="cxe-card-main" data-lanes><span class="cxe-tag">DETAIL</span><strong>Publishing territories</strong><small>Core publications and crossover participation, lane by lane</small></button></div>`,
+      `<div class="cxe-card cxe-endcard" role="listitem"><button type="button" class="cxe-card-main" data-full><span class="cxe-tag">DETAIL</span><strong>Crossover editions &amp; year timeline</strong><small>Events by period, with lanes and collected editions</small></button></div>`].join("");
     html+=rail("timeline","WHAT HAPPENED?","Timeline & Events",cards,"is-journey");
   }
   // 2 — WHO / WHICH CORNER?
@@ -584,65 +607,118 @@ async function eraHub(p){
       return `<div class="cxe-card cxe-faction" role="listitem" style="${hueOf(categoryRank(cat.key))}"><span class="cxe-glyph" aria-hidden="true">${esc(cat.label.slice(0,1))}</span><button type="button" class="cxe-card-main" data-cat="${esc(cat.key)}"><span class="cxe-tag">${esc(lines||"Franchise")}</span><strong>${esc(cat.label)}</strong><small>${list.length} series</small><span class="cxe-go">Explore →</span></button>${kids.length?`<div class="cxe-kids">${kids.map(k=>`<button type="button" data-char="${esc(k.id)}">${esc(titleOf(k))}</button>`).join("")}</div>`:""}</div>`;}).join("");
     html+=rail("factions","WHO? WHICH CORNER OF THE UNIVERSE?","Heroes & Factions",cards);
   }
-  // 3 — WHAT WAS PUBLISHED?
+  // 3 — WHAT WAS PUBLISHED? two levels: a publication territory first (compact tiles), then that territory's series in a contained panel
   if(entries.length){
-    const cards=entries.map(({cat,list},gi)=>`<div class="cxe-div" role="listitem" style="${hueOf(categoryRank(cat.key))}"><strong>${esc(cat.label)}</strong><small>${list.length} series</small></div>${[...list].sort((a,b)=>String(a.startDate||"").localeCompare(String(b.startDate||""))||String(a.title).localeCompare(String(b.title))).map(s=>`<div class="cxe-card cxe-ser" role="listitem" style="${hueOf(categoryRank(cat.key))}"><button type="button" class="cxe-card-main" data-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><span class="cxe-count">${Number(s.issueCount)||0} issues</span></button></div>`).join("")}`).join("");
-    html+=rail("series","WHAT WAS PUBLISHED?","Series",cards,"is-catalogue");
+    const tiles=entries.map(({cat,list})=>{const iss=list.reduce((n,s)=>n+(Number(s.issueCount)||0),0);
+      return `<div class="cxe-card cxe-sertile" role="listitem" style="${hueOf(categoryRank(cat.key))}"><button type="button" class="cxe-card-main" data-sercat="${esc(cat.key)}" aria-expanded="false" aria-controls="cxeSerPanel"><strong>${esc(cat.label)}</strong><small>${list.length} series</small><span class="cxe-count">${iss} issues</span></button></div>`;}).join("");
+    html+=rail("series","WHAT WAS PUBLISHED?","Series",tiles,"is-tiles",`<div class="cxe-serpanel" id="cxeSerPanel" hidden></div>`);
   }
-  // 4 — HOW SHOULD I EXPERIENCE IT? ordered routes from the source's own path definitions
+  // 4 — HOW SHOULD I EXPERIENCE IT? event spines from the source's own path definitions (event ids only — no reading order is implied)
   if(m&&m.new52ReadingPaths.length){
     const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));
-    const cards=m.new52ReadingPaths.map((rp,i)=>{const steps=rp.eventIds.map(id=>evById.get(id)).filter(Boolean);if(!steps.length)return "";
-      return `<div class="cxe-card cxe-path" role="listitem" style="${hueOf(i+3)}"><button type="button" class="cxe-card-main" data-path="${esc(rp.id)}"><span class="cxe-tag">${esc(pathTypeLabelOf(rp.type))}</span><strong>${esc(rp.title)}</strong><small>${esc(rp.sub||"")}</small><span class="cxe-route-line"><i>${esc(steps[0].title.split(" / ")[0])}</i><b aria-hidden="true">→</b><i>${esc(steps[steps.length-1].title.split(" / ")[0])}</i></span><span class="cxe-count">${steps.length} steps</span><span class="cxe-go">Start path →</span></button></div>`;}).join("");
-    html+=rail("paths","HOW SHOULD I EXPERIENCE IT?","Reading Paths",cards);
+    const cards=m.new52ReadingPaths.map((rp,i)=>{const steps=rp.eventIds.map(id=>evById.get(id)).filter(e=>e&&e.type!=="transition");if(!steps.length)return "";
+      return `<div class="cxe-card cxe-path" role="listitem" style="${hueOf(i+3)}"><button type="button" class="cxe-card-main" data-path="${esc(rp.id)}"><span class="cxe-tag">${esc(pathTypeLabelOf(rp.type))}</span><strong>${esc(rp.title)}</strong><small>${esc(rp.sub||"")}</small><span class="cxe-route-line"><i>${esc(steps[0].title.split(" / ")[0])}</i><b aria-hidden="true">→</b><i>${esc(steps[steps.length-1].title.split(" / ")[0])}</i></span><span class="cxe-count">${steps.length} events</span><span class="cxe-go">Open spine →</span></button></div>`;}).join("");
+    html+=rail("paths","HOW SHOULD I EXPERIENCE IT?","Paths & Event Spines",cards);
   }
   return{html,wire(el){
     wireRails(el);
     el.querySelector("[data-atlas]")?.addEventListener("click",close);
     el.querySelectorAll("[data-phase]").forEach(b=>b.addEventListener("click",()=>{const ph=PHASES.find(x=>x.n===+b.dataset.phase);push("eraPhase",`${String(ph.n).padStart(2,"0")} · ${ph.title}`,{continuity:ct,phase:ph.n});}));
-    el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>push("eraPhase",b.dataset.bridge==="transition-new52"?"Flashpoint":"Convergence → Rebirth",{continuity:ct,bridge:b.dataset.bridge})));
-    el.querySelector("[data-lanes]")?.addEventListener("click",()=>push("eraLanes","By publishing lane",{continuity:ct}));
-    el.querySelector("[data-full]")?.addEventListener("click",()=>push("continuity",ct.name,{continuity:ct}));
+    el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=m.transitionEvents.find(x=>x.id===b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));
+    el.querySelector("[data-lanes]")?.addEventListener("click",()=>push("eraLanes","Publishing territories",{continuity:ct}));
+    el.querySelector("[data-full]")?.addEventListener("click",()=>push("eraTimeline","Events & editions by period",{continuity:ct}));
     el.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{const x=CATEGORIES.find(v=>v.key===b.dataset.cat);if(x)push("category",x.label,{categoryKey:x.key});}));
     el.querySelectorAll("[data-char]").forEach(b=>b.addEventListener("click",()=>{const x=chars.find(v=>v.id===b.dataset.char);if(x)push("character",titleOf(x),{character:x});}));
-    el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=series.find(x=>x.id===b.dataset.series);if(s)push("series",s.title,{series:s});}));
     el.querySelectorAll("[data-path]").forEach(b=>b.addEventListener("click",()=>{const rp=m.new52ReadingPaths.find(x=>x.id===b.dataset.path);push("eraPath",rp.title,{continuity:ct,pathId:rp.id});}));
+    // series territories
+    const panel=el.querySelector("#cxeSerPanel");
+    if(panel){
+      const tilesEls=[...el.querySelectorAll("[data-sercat]")];
+      const sorted=l=>[...l].sort((a,b)=>String(a.startDate||"").localeCompare(String(b.startDate||""))||String(a.title).localeCompare(String(b.title)));
+      const show=(key,scroll)=>{const e=entries.find(x=>x.cat.key===key);eraUI.serCat=e?key:null;
+        tilesEls.forEach(t=>{const on=!!e&&t.dataset.sercat===key;t.setAttribute("aria-expanded",String(on));t.closest(".cxe-sertile").classList.toggle("is-active",on);});
+        if(!e){panel.hidden=true;panel.innerHTML="";return;}
+        const iss=e.list.reduce((n,s)=>n+(Number(s.issueCount)||0),0);
+        panel.style.cssText=hueOf(categoryRank(e.cat.key));
+        panel.innerHTML=`<div class="cxe-serpanel-head"><div><span class="cxe-q">PUBLICATION TERRITORY</span><h4>${esc(e.cat.label)}</h4><small>${e.list.length} series · ${iss} issues</small></div><button type="button" data-closepanel aria-label="Close ${esc(e.cat.label)} series">✕</button></div><div class="cxe-serlist">${sorted(e.list).map(s=>`<button type="button" class="cxe-serrow" data-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><small>${esc(range(s)||"Years not recorded")}</small><b>${Number(s.issueCount)||0} issues</b></button>`).join("")}</div>`;
+        panel.hidden=false;
+        panel.querySelector("[data-closepanel]").addEventListener("click",()=>{show(null);tilesEls.find(t=>t.dataset.sercat===key)?.focus();});
+        panel.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=series.find(x=>x.id===b.dataset.series);if(s)push("series",s.title,{series:s});}));
+        if(scroll)requestAnimationFrame(()=>panel.scrollIntoView({block:"nearest",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}));};
+      tilesEls.forEach(t=>t.addEventListener("click",()=>show(eraUI.serCat===t.dataset.sercat?null:t.dataset.sercat,true)));
+      if(eraUI.serCat)show(eraUI.serCat,false);
+    }
   }};
 }
-const pathTypeLabelOf=t=>({essential:"Essential",main_series:"Series route",event_crossover:"Crossover spine"})[t]||String(t||"Path").replace(/_/g," ");
 
-// One event, expandable: recorded issue ranges, involved publishing lanes, and — where a crossover record with the same title exists —
-// its own reading instruction, participating series and collected editions. A crossover touching several lanes appears once, with all its lanes.
-function eventItem(ev,m,rec){
-  const lanes=(ev.lanes||[]).map(id=>m.getLane(id)?.title).filter(Boolean);
-  return `<div class="cxe-ev" data-ev="${esc(ev.id)}"><button type="button" class="cxe-ev-head" aria-expanded="false"><span>${esc(ev.title)}</span><i aria-hidden="true">›</i></button><div class="cxe-ev-more" hidden>
+// One event, expandable: type, recorded issue range, involved lanes (main series vs participation), the researched editions of its own limited-series
+// record where it has one, and — where a crossover record with the same title exists — that record's participating series and collected editions.
+function eventItem(ev,m,rec,o={}){
+  const ids=eventLaneIds(ev,m),owner=limitedFor(ev,m)?.lane||null,work=limitedFor(ev,m);
+  const multi=ids.length>1;
+  let role="";
+  if(o.lane){role=owner===o.lane?"Main series in this lane":multi?`Participates${owner?` · main series: ${laneTitle(m,owner)}`:" · multi-lane crossover"}`:"Lane crossover";}
+  else role=`${evTypeLabel(ev.type)}${multi?` · across ${ids.length} lanes`:""}`;
+  const chips=ids.map(id=>{const t=laneTitle(m,id);return owner===id&&multi?`<span class="is-owner">${esc(t)} · main series</span>`:`<span>${esc(t)}${multi&&owner&&owner!==id?" · participates":""}</span>`;}).join("");
+  const eds=(work?.collections||[]);
+  return `<div class="cxe-ev" data-ev="${esc(ev.id)}"><button type="button" class="cxe-ev-head" aria-expanded="false"><span class="cxe-ev-t"><strong>${esc(ev.title)}</strong><small>${esc(role)}</small>${o.showIssues?`<small class="cxe-ev-rng">${esc(ev.issues||"")}</small>`:""}${o.showIssues&&(eds.length||rec?.eventCollectionIds?.length)?`<small class="cxe-ev-eds">${(eds.length||0)+(rec?.eventCollectionIds?.length||0)} collected edition${(eds.length||0)+(rec?.eventCollectionIds?.length||0)===1?"":"s"} recorded</small>`:""}</span><i aria-hidden="true">›</i></button><div class="cxe-ev-more" hidden>
     <div class="cxe-ev-issues">${esc(ev.issues||"")}</div>
-    ${lanes.length?`<div class="cxe-chips">${lanes.map(l=>`<span>${esc(l)}</span>`).join("")}</div>`:""}
+    ${chips?`<div class="cxe-chips">${chips}</div>`:""}
+    ${eds.length?`<div class="cxe-eds-label">COLLECTED EDITIONS · RESEARCH INDEX</div><div class="cxe-chips">${eds.map(c=>`<span>${esc(c.format)} · ${esc(c.title)}</span>`).join("")}</div>`:""}
+    ${work?`<div class="cxe-chips is-btn"><button type="button" data-work="${esc(work.id)}">Open ${esc(work.title)} detail →</button></div>`:""}
     ${rec?`<div class="cxe-rec" data-rec="${esc(rec.id)}">${rec.readingInstruction?`<p>${esc(rec.readingInstruction)}</p>`:""}<div class="cxe-rec-box"></div></div>`:""}</div></div>`;
 }
-function wireEvents(el,{recs,byId}){
+function wireEvents(el,X){
+  const {recs,byId,ct}=X;
+  el.querySelectorAll("[data-work]").forEach(b=>b.addEventListener("click",()=>{const w=X.m.new52Limited.find(x=>x.id===b.dataset.work);if(w)push("eraWork",w.title,{continuity:ct,workId:w.id});}));
   el.querySelectorAll(".cxe-ev-head").forEach(h=>h.addEventListener("click",async()=>{const more=h.nextElementSibling;const o=more.hidden;more.hidden=!o;h.setAttribute("aria-expanded",String(o));
     const box=more.querySelector(".cxe-rec-box");if(!o||!box||box.dataset.done)return;box.dataset.done="1";
     const rec=recs.find(r=>r.id===box.parentElement.dataset.rec);if(!rec)return;
     const br=(rec.branches||[]).filter(b=>b.seriesId&&byId.has(b.seriesId));
     const cs=(await Promise.all((rec.eventCollectionIds||[]).map(id=>get(COLLECTIONS.COLLECTIONS,id)))).filter(Boolean);
-    box.innerHTML=`${br.length?`<div class="cxe-eds-label">Participating series</div><div class="cxe-chips is-btn">${br.map(b=>`<button type="button" data-series="${esc(b.seriesId)}">${esc(b.label||byId.get(b.seriesId).title)}</button>`).join("")}</div>`:""}${cs.length?`<div class="cxe-eds-label">Collected in</div><div class="cxe-chips is-btn">${cs.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(pillLabel(c))} · ${esc(displayCollectionTitle(c))}</button>`).join("")}</div>`:""}`;
+    box.innerHTML=`${br.length?`<div class="cxe-eds-label">PARTICIPATING SERIES</div><div class="cxe-chips is-btn">${br.map(b=>`<button type="button" data-series="${esc(b.seriesId)}">${esc(b.label||byId.get(b.seriesId).title)}</button>`).join("")}</div>`:""}${cs.length?`<div class="cxe-eds-label">COLLECTED IN</div><div class="cxe-chips is-btn">${cs.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(pillLabel(c))} · ${esc(displayCollectionTitle(c))}</button>`).join("")}</div>`:""}`;
     box.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));
     box.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=cs.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));}));
 }
 async function eraCtx(ct){
   const [series,paths,m]=await Promise.all([data.getSeriesForContinuity(ct.id),data.getAllReadingPaths(200).catch(()=>[]),import(MAP_DATA)]);
   const ids=new Set(series.map(s=>s.id));
-  return {m,series,byId:new Map(series.map(s=>[s.id,s])),recs:paths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id)))};
+  return {ct,m,series,byId:new Map(series.map(s=>[s.id,s])),recs:paths.filter(x=>x.continuityId===ct.id||(x.seriesIds||[]).some(id=>ids.has(id)))};
+}
+// A catalogue series matching a research-index title (the two sources use different ids, so titles are the only join; no match = not clickable).
+const seriesByTitle=(X,t)=>X.series.find(s=>plain(s.title)===plain(t))||X.series.find(s=>plain(String(s.title).replace(/\(.*?\)/g,""))===plain(t))||null;
+
+// A transition bridge, rendered from whatever fields its record has (title, from → to, kicker, summary, core issues, editions).
+function transitionHtml(t,m,X){
+  const issues=Array.isArray(t.issues)?t.issues:[],eds=Array.isArray(t.editions)?t.editions:[];
+  const rel=X.series.filter(s=>issues.some(i=>plain(String(i).replace(/\s*#.*$/,""))===plain(s.title)));
+  return `${eraTop("TRANSITION",t.title,t.kicker)}<div class="cxe-bridge">
+    ${t.from||t.to?`<div class="cxe-xfer"><span>${esc(eraTitleOf(m,t.from))}</span><b aria-hidden="true">↓</b><span>${esc(eraTitleOf(m,t.to))}</span></div>`:""}
+    ${t.summary?`<p>${esc(t.summary)}</p>`:""}</div>
+    ${issues.length?`<div class="cxe-sec-sub">CORE ISSUES</div><ul class="cxe-issuegrid">${issues.map(i=>`<li><strong>${esc(i)}</strong></li>`).join("")}</ul>`:""}
+    ${eds.length?`<div class="cxe-sec-sub">COLLECTED EDITIONS</div><div class="cxe-edgrid">${eds.map(e=>`<div class="cxe-ed">${e.format?`<span class="cxe-tag">${esc(e.format)}</span>`:""}${e.title?`<strong>${esc(e.title)}</strong>`:""}${e.coverage?`<small>${esc(e.coverage)}</small>`:""}${e.notes?`<em>${esc(e.notes)}</em>`:""}</div>`).join("")}</div>`:""}
+    ${rel.length?`<div class="cxe-sec-sub">IN THE CATALOGUE</div><div class="cxe-chips is-btn">${rel.map(s=>`<button type="button" data-series="${esc(s.id)}">${esc(s.title)}</button>`).join("")}</div>`:""}`;
 }
 
-// A phase (its events) or a transition bridge.
+// A phase (its events), the special Launch state, or a transition bridge.
 async function eraPhase(p){
   const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Timeline not available for this era.")};
   const X=await eraCtx(ct),{m}=X;
+  const openSeries=el=>el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=X.byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));
   if(p.bridge){const t=m.transitionEvents.find(x=>x.id===p.bridge);if(!t)return{html:empty("Transition not found.")};
-    return{html:`${eraTop("TRANSITION",t.title,t.kicker)}<div class="cxe-bridge"><p>${esc(t.summary||"")}</p>${(t.issues||[]).length?`<div class="cxe-chips">${t.issues.map(i=>`<span>${esc(i)}</span>`).join("")}</div>`:""}</div>`};}
+    return{html:transitionHtml(t,m,X),wire(el){openSeries(el);}};}
   const ph=derivePhases(m).find(x=>x.n===p.phase);if(!ph)return{html:empty("Phase not found.")};
+  if(ph.kind==="launch"){
+    const flash=m.transitionEvents.find(t=>t.id==="transition-new52"),when=launchWhen(m);
+    const first=X.series.filter(s=>year(s)==="2011").sort((a,b)=>String(a.startDate||"").localeCompare(String(b.startDate||""))||String(a.title).localeCompare(String(b.title)));
+    const html=`${eraTop(`PHASE 01 · ${ct.name}`,ph.title,`Flashpoint → ${when?`${when} relaunch`:"the relaunch"}`)}
+      ${flash?`<button type="button" class="cxe-bridgerow" data-bridge="${esc(flash.id)}"><span class="cxe-tag">TRANSITION</span><strong>${esc(flash.title)}</strong><small>${esc(eraTitleOf(m,flash.from))} → ${esc(eraTitleOf(m,flash.to))} · ${esc(flash.kicker||"")}</small></button>`:""}
+      ${m.new52Era?.description?`<div class="sheet-section"><div class="sheet-label">THE RELAUNCH</div><div class="cx-info-card">${esc(m.new52Era.description)}</div></div>`:""}
+      <p class="cxe-note is-soft">The relaunch is a line-wide publishing initiative, not a single story, so no event is listed for it. Early crossovers — Court of Owls among them — belong to <b>02 · Early Universe</b>.</p>
+      <div class="cxe-sec-sub">THE FIRST WAVE</div>
+      ${first.length?`<p class="cxe-note">${first.length} series in the catalogue began in 2011.</p><div class="cxe-serlist is-page">${first.map(s=>`<button type="button" class="cxe-serrow" data-series="${esc(s.id)}"><strong>${esc(s.title)}</strong><small>${esc(range(s))}</small><b>${Number(s.issueCount)||0} issues</b></button>`).join("")}</div>`:`<p class="cxe-note">No 2011 start dates are recorded in the catalogue yet.</p>`}`;
+    return{html,wire(el){openSeries(el);el.querySelector("[data-bridge]")?.addEventListener("click",()=>push("eraPhase",bridgeLabel(flash),{continuity:ct,bridge:flash.id}));}};
+  }
   const lanes=phaseLanes(ph,m);
   const html=`${eraTop(`PHASE 0${ph.n} · ${ct.name}`,ph.title,`${ph.events.length} event${ph.events.length===1?"":"s"} in the source's order — not dated, and events overlap.`)}
     ${lanes.length?`<div class="cxe-chips">${lanes.map(l=>`<span>${esc(l)}</span>`).join("")}</div>`:""}
@@ -650,37 +726,117 @@ async function eraPhase(p){
   return{html,wire(el){wireEvents(el,X);}};
 }
 
-// Secondary detail: the same events grouped by publishing lane (an event that crosses lanes appears under each).
+// Dedicated New 52 event/edition view: the source's events grouped into broad periods, with type, issue range, lanes, collected editions
+// and the transitions on either side. A year is shown only where the source states one; everything else gets the broader period.
+async function eraTimeline(p){
+  const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Not available for this era.")};
+  const X=await eraCtx(ct),{m}=X;const T=id=>m.transitionEvents.find(t=>t.id===id);
+  const flash=T("transition-new52"),reb=T("transition-rebirth");
+  const when=launchWhen(m),conv=(String(m.new52Era?.description||"").match(/Convergence in (\d{4})/)||[])[1],rb=(String(reb?.summary||"").match(new RegExp(`(?:${MONTHS})\\s+\\d{4}`))||[])[0];
+  const undated="Period not dated in the source — grouped by position in its event order";
+  const bridgeRow=(t)=>t?`<button type="button" class="cxe-bridgerow" data-bridge="${esc(t.id)}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(eraTitleOf(m,t.from))} → ${esc(eraTitleOf(m,t.to))}${(t.issues||[]).length?` · ${t.issues.length} core issue entr${t.issues.length===1?"y":"ies"}`:""}${(t.editions||[]).length?` · ${t.editions.length} editions`:""}</small></button>`:"";
+  const sec=(when,title,note,body,cls="")=>`<section class="cxe-period ${cls}"><div class="cxe-period-head"><span class="cxe-period-when">${esc(when)}</span><h3>${esc(title)}</h3>${note?`<small>${esc(note)}</small>`:""}</div>${body}</section>`;
+  const list=evs=>`<div class="cxe-evlist is-page">${evs.map(e=>eventItem(e,m,recordFor(e,X.recs),{showIssues:true})).join("")}</div>`;
+  const phases=derivePhases(m),mv=m.crossoverSpine.filter(e=>e.type==="multiverse");
+  let body="";
+  body+=sec(when||"Launch","Flashpoint → New 52 launch","The transition into the New 52, then the line-wide relaunch",`${bridgeRow(flash)}<button type="button" class="cxe-bridgerow is-launch" data-phase="1"><span class="cxe-tag">LAUNCH</span><strong>The New 52 relaunch</strong><small>First-wave publications — a publishing relaunch, not a single event</small></button>`,"is-transition");
+  for(const ph of phases.filter(x=>x.events.length))body+=sec(`0${ph.n} · ${ph.title}`,`${ph.events[0].title}${ph.events.length>1?` → ${ph.events[ph.events.length-1].title}`:""}`,undated,list(ph.events));
+  if(mv.length)body+=sec("Alternate Earths","Multiverse works",undated,list(mv));
+  body+=sec([conv,rb].filter(Boolean).join(" – ")||"New 52 → Rebirth","Convergence → Rebirth","The transition out of the New 52",bridgeRow(reb),"is-transition");
+  const html=`${eraTop("TIMELINE & EVENTS · DETAIL","Crossover editions & year timeline","Major New 52 events grouped into broad periods. Exact dates appear only where the source records them; open an event for its lanes and collected editions.")}<div class="cxe-periods">${body}</div>`;
+  return{html,wire(el){wireEvents(el,X);
+    el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=T(b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));
+    el.querySelector("[data-phase]")?.addEventListener("click",()=>push("eraPhase","01 · The Launch",{continuity:ct,phase:1}));}};
+}
+
+// Publishing territories (lanes): CORE PUBLICATIONS (the lane's own series) → CROSSOVER PARTICIPATION (events it takes part in, never presented
+// as its own stories) → FAMILY / RELATED CHARACTERS (research-index groups concentrated in the lane). Alternate and future material sits apart.
 async function eraLanes(p){
   const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Not available for this era.")};
   const X=await eraCtx(ct),{m}=X;const evs=m.crossoverSpine.filter(e=>e.type!=="transition");
-  const lane=l=>{const list=evs.filter(e=>(e.lanes||[]).includes(l.id));if(!list.length)return "";
-    return `<div class="cxe-lane"><div class="cxe-lane-head"><strong>${esc(l.title)}</strong><small>${esc(l.sub||"")}</small></div><div class="cxe-evlist">${list.map(e=>eventItem(e,m,recordFor(e,X.recs))).join("")}</div></div>`;};
-  const alt=m.new52Era.alternateLanes.map(lane).join("");
-  return{html:`${eraTop("TIMELINE & EVENTS · DETAIL","By publishing lane","Publication lanes are context, not phases. An event that crosses lanes appears under each one.")}${m.new52Era.mainLanes.map(lane).join("")}${alt?`<div class="cxe-sec-sub">PARALLEL &amp; FUTURE EARTHS</div>${alt}`:""}`,wire(el){wireEvents(el,X);}};
+  const laneOf=new Map([...m.new52Series,...m.new52Limited].map(s=>[s.id,s.lane]));
+  const pub=(s,tag)=>{const fs=seriesByTitle(X,s.title);return fs?`<button type="button" data-series="${esc(fs.id)}">${esc(s.title)}${tag?` <em>${esc(tag)}</em>`:""}</button>`:`<span class="is-static">${esc(s.title)}${tag?` <em>${esc(tag)}</em>`:""}</span>`;};
+  const lane=l=>{
+    const ong=m.new52Series.filter(s=>s.lane===l.id),lim=m.new52Limited.filter(s=>s.lane===l.id);
+    const parts=evs.filter(e=>eventLaneIds(e,m).includes(l.id));
+    const fam=m.new52CharacterHubs.map(h=>({h,n:h.seriesIds.filter(id=>laneOf.get(id)===l.id).length})).filter(x=>x.n>0&&x.n*2>x.h.seriesIds.length);
+    const open=eraUI.lanes.has(l.id);
+    const secs=`${ong.length||lim.length?`<div class="cxe-sub">CORE PUBLICATIONS <em>${[ong.length?`${ong.length} ongoing`:"",lim.length?`${lim.length} limited`:""].filter(Boolean).join(" · ")}</em></div><div class="cxe-chips is-btn">${ong.map(s=>pub(s)).join("")}${lim.map(s=>pub(s,s.kind==="miniseries"?"limited":s.kind)).join("")}</div>`:""}
+      ${parts.length?`<div class="cxe-sub">CROSSOVER PARTICIPATION <em>${parts.length}</em></div><p class="cxe-note is-soft">Events this lane takes part in. Taking part is not owning: each event names its main series and the other lanes involved.</p><div class="cxe-evlist">${parts.map(e=>eventItem(e,m,recordFor(e,X.recs),{lane:l.id})).join("")}</div>`:""}
+      ${fam.length?`<div class="cxe-sub">FAMILY / RELATED CHARACTERS</div><div class="cxe-chips">${fam.map(x=>`<span>${esc(x.h.title)} · ${x.n} series</span>`).join("")}</div>`:""}`;
+    return `<section class="cxe-lane${l.alt?" is-alt":""}" data-lane-id="${esc(l.id)}"><button type="button" class="cxe-lane-head" data-lane="${esc(l.id)}" aria-expanded="${open}"><span><strong>${esc(l.title)}</strong><small>${esc(l.sub||"")}</small></span><span class="cxe-lane-n">${ong.length+lim.length} publications${parts.length?` · ${parts.length} events`:""}</span><i aria-hidden="true">›</i></button><div class="cxe-lane-body"${open?"":" hidden"}>${secs}</div></section>`;};
+  const main=m.lanes.filter(l=>!l.alt),alt=m.lanes.filter(l=>l.alt);
+  const html=`${eraTop("TIMELINE & EVENTS · DETAIL","Publishing territories","Each lane lists its own publications first. Crossovers it takes part in are shown separately as participation, not as that lane's own stories.")}${main.map(lane).join("")}<div class="cxe-sec-sub">PARALLEL &amp; FUTURE EARTHS</div><p class="cxe-note is-soft">Alternate-Earth and future material is kept apart from the main lanes.</p>${alt.map(lane).join("")}`;
+  return{html,wire(el){wireEvents(el,X);
+    el.querySelectorAll("[data-lane]").forEach(b=>b.addEventListener("click",()=>{const body=b.nextElementSibling,o=body.hidden;body.hidden=!o;b.setAttribute("aria-expanded",String(o));o?eraUI.lanes.add(b.dataset.lane):eraUI.lanes.delete(b.dataset.lane);}));
+    el.querySelectorAll(".cxe-lane-body [data-series]").forEach(b=>b.addEventListener("click",()=>{const s=X.byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));}};
 }
 
-// A reading path as a route: START → numbered steps → FINISH, in the explicit order of the path definition. Never re-sorted.
+// A limited series / maxi-series from the research index, in full: type, notes, the recorded chapters in source order, researched editions,
+// and — only where the catalogue has a matching entity — a way into it. The event spine entry stays a separate thing that links here.
+async function eraWork(p){
+  const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Not available for this era.")};
+  const X=await eraCtx(ct),{m}=X;const w=m.new52Limited.find(x=>x.id===p.workId);if(!w)return{html:empty("Series record not found.")};
+  const ev=m.crossoverSpine.find(e=>limitedFor(e,m)===w),eds=w.collections||[],fs=seriesByTitle(X,w.title),iss=w.issues||[];
+  const html=`${eraTop(`NEW 52 · ${kindLabel(w.kind).toUpperCase()}`,w.title,laneTitle(m,w.lane)?`Publishing lane: ${laneTitle(m,w.lane)}`:"")}
+    <div class="cx-stat-grid">${stat("Type",kindLabel(w.kind))}${stat("Recorded chapters",iss.length)}${stat("Collected editions",eds.length)}</div>
+    ${w.notes?`<div class="sheet-section"><div class="sheet-label">DESCRIPTION / NOTES</div><div class="cx-info-card">${esc(w.notes)}</div></div>`:""}
+    ${ev?`<div class="sheet-section"><div class="sheet-label">IN THE EVENT SPINE</div><div class="cx-info-card">${esc(ev.title)} — ${esc(ev.issues||"")}</div></div>`:""}
+    ${iss.length?`<div class="cxe-sec-sub">STRUCTURE · ${iss.length} RECORDED ENTRIES, IN SOURCE ORDER</div><ol class="cxe-struct">${iss.map((l,i)=>`<li><span>${i+1}</span><strong>${esc(issueLabel(l))}</strong></li>`).join("")}</ol>`:""}
+    ${eds.length?`<div class="cxe-sec-sub">COLLECTED EDITIONS</div><div class="cxe-edgrid">${eds.map(e=>`<div class="cxe-ed">${e.format?`<span class="cxe-tag">${esc(e.format)}</span>`:""}<strong>${esc(e.title)}</strong>${e.coverage?`<small>${esc(e.coverage)}</small>`:""}${e.notes?`<em>${esc(e.notes)}</em>`:""}</div>`).join("")}</div>`:`<p class="cxe-note is-soft">No collected edition is recorded for this title in the current research index.</p>`}
+    <div class="cxe-sec-sub">IN THE CATALOGUE</div>
+    ${fs?`<div class="cxe-chips is-btn"><button type="button" data-series="${esc(fs.id)}">Open ${esc(fs.title)} →</button></div>`:`<p class="cxe-note is-soft">This title is not mapped as a catalogue series yet, so its chapters and editions are shown from the New 52 research index only.</p>`}`;
+  return{html,wire(el){el.querySelector("[data-series]")?.addEventListener("click",()=>{if(fs)push("series",fs.title,{series:fs});});}};
+}
+
+// An event spine: a map of major events in the order the source records them. It is NOT an issue-by-issue reading order, so there is no
+// "start here"/"finish"; transitions appear only as bridges at the ends of the full-era spine.
 async function eraPath(p){
   const ct=p.continuity;if(!ct||!isNew52(ct))return{html:empty("Not available for this era.")};
-  const X=await eraCtx(ct),{m}=X;const rp=m.new52ReadingPaths.find(x=>x.id===p.pathId);if(!rp)return{html:empty("Path not found.")};
-  const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));const steps=rp.eventIds.map(id=>evById.get(id)).filter(Boolean);
+  const X=await eraCtx(ct),{m}=X;const rp=m.new52ReadingPaths.find(x=>x.id===p.pathId);if(!rp)return{html:empty("Spine not found.")};
+  const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));const steps=rp.eventIds.map(id=>evById.get(id)).filter(e=>e&&e.type!=="transition");
+  const T=id=>m.transitionEvents.find(t=>t.id===id);const full=rp.type==="event_crossover";
+  const bridge=t=>t?`<li class="cxe-spine-bridge"><button type="button" class="cxe-bridgerow" data-bridge="${esc(t.id)}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(eraTitleOf(m,t.from))} → ${esc(eraTitleOf(m,t.to))}</small></button></li>`:"";
   const html=`${eraTop(pathTypeLabelOf(rp.type).toUpperCase(),rp.title,rp.sub)}
-    <p class="cxe-note is-soft">${steps.length} steps in the order recorded for this path. Open a step for its issue ranges, publishing lanes and — where recorded — the participating series.</p>
-    <ol class="cxe-route"><li class="cxe-route-end">START HERE</li>${steps.map((e,i)=>`<li class="cxe-step${e.type==="transition"?" is-transition":""}"><span class="cxe-step-n">${i+1}</span>${eventItem(e,m,recordFor(e,X.recs))}</li>`).join("")}<li class="cxe-route-end">FINISH</li></ol>`;
-  return{html,wire(el){wireEvents(el,X);}};
+    <p class="cxe-note is-soft">${steps.length} events in the order the source records them. This is a map of major events, not an issue-by-issue reading order. Open an event for its issue ranges, publishing lanes and collected editions.</p>
+    <ul class="cxe-spine">${full?bridge(T("transition-new52")):""}${steps.map(e=>`<li class="cxe-spine-ev">${eventItem(e,m,recordFor(e,X.recs))}</li>`).join("")}${full?bridge(T("transition-rebirth")):""}</ul>`;
+  return{html,wire(el){wireEvents(el,X);el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=T(b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));}};
 }
 
-const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath};
+const LEVELS={root,categoryList,category,characterList,character,continuityList,continuity,seriesList,series,run,issue,collection,eraHub,eraPhase,eraLanes,eraPath,eraTimeline,eraWork};
 let stack=[];let token=0;
-function shell(body){const crumbs=stack.map((x,i)=>`${i?`<span class="cx-crumb-sep">/</span>`:""}<span class="cx-crumb" data-i="${i}" data-current="${i===stack.length-1}">${esc(x.label)}</span>`).join("");return `<div class="cx-topbar"><button class="cx-back-btn" id="cxBackBtn">${stack.length>1?"←":"✕"}</button><div class="cx-breadcrumb">${crumbs}</div></div>${body}`;}
-async function render(){const el=document.getElementById("comicsExplorerContent");if(!el||!stack.length)return;const t=++token;el.innerHTML=shell(`<div class="cx-loading">Loading…</div>`);let out;try{out=await LEVELS[stack.at(-1).level](stack.at(-1).params||{});}catch(e){console.error("[Comics Explorer]",e);out={html:`<div class="cx-error">Couldn't load this right now. ${esc(e.message||"")}</div>`};}if(t!==token)return;el.innerHTML=shell(out.html);el.querySelector("#cxBackBtn")?.addEventListener("click",back);el.querySelectorAll('.cx-crumb[data-current="false"]').forEach(x=>x.addEventListener("click",()=>{stack=stack.slice(0,+x.dataset.i+1);render();}));out.wire?.(el);}
-function push(level,label,params){const actual=label?.label?String(label.label):label;stack.push({level,label:actual||level,params:params||{}});render();}
-function openAt(trail){stack=[{level:"root",label:"Comics",params:{}}];for(const t of (trail||[])){if(LEVELS[t.level])stack.push({level:t.level,label:t.label||t.level,params:t.params||{}});}open();render();}
+// Navigation = one explorer stack level per Back, from every input. The stack is mirrored in browser history (one entry per level pushed above the
+// level the explorer opened at), so the phone's system Back / browser Back pops exactly one level too instead of closing the whole sheet.
+// hdepth = levels pushed since opening; baseLen = stack length when the explorer opened (or after a crumb jump below it); expectPop = history moves we made ourselves.
+let hdepth=0,baseLen=1,expectPop=0,baseEntry=false;
+const sheetOpen=()=>document.getElementById("comicsExplorerSheet")?.dataset.open==="true";
+// The explorer always sits on its own history entry (the Atlas pushes one before opening the hub; any other opener gets one here), so the Back that leaves
+// level 0 closes the explorer and returns to the page underneath instead of navigating away from the site.
+function ensureBase(){if(history.state&&history.state.cxhExplorer){baseEntry=true;return;}try{history.pushState({...(history.state||{}),cxhExplorer:true},"",location.href);baseEntry=true;}catch(e){baseEntry=false;}}
+function hpush(){try{history.pushState({...(history.state||{}),cxe:hdepth+1},"",location.href);hdepth++;}catch(e){/* history unavailable: stack-only navigation still works */}}
+function hgo(n){if(n<=0)return;expectPop++;try{history.go(-n);}catch(e){expectPop--;}}
+function shell(body){const crumbs=stack.map((x,i)=>`${i?`<span class="cx-crumb-sep">/</span>`:""}<span class="cx-crumb" data-i="${i}" data-current="${i===stack.length-1}">${esc(x.label)}</span>`).join("");return `<div class="cx-topbar"><button class="cx-back-btn" id="cxBackBtn" aria-label="${stack.length>1?"Back one level":"Close"}">${stack.length>1?"←":"✕"}</button><div class="cx-breadcrumb">${crumbs}</div></div>${body}`;}
+async function render(){const el=document.getElementById("comicsExplorerContent");if(!el||!stack.length)return;const t=++token;const top=stack.at(-1);el.innerHTML=shell(`<div class="cx-loading">Loading…</div>`);let out;try{out=await LEVELS[top.level](top.params||{});}catch(e){console.error("[Comics Explorer]",e);out={html:`<div class="cx-error">Couldn't load this right now. ${esc(e.message||"")}</div>`};}if(t!==token)return;el.innerHTML=shell(out.html);el.querySelector("#cxBackBtn")?.addEventListener("click",back);el.querySelectorAll('.cx-crumb[data-current="false"]').forEach(x=>x.addEventListener("click",()=>jumpTo(+x.dataset.i)));out.wire?.(el);if(top.scroll){const sc=document.getElementById("comicsExplorerSheet");if(sc)requestAnimationFrame(()=>{sc.scrollTop=top.scroll;});}}
+function push(level,label,params){const actual=label?.label?String(label.label):label;const sc=document.getElementById("comicsExplorerSheet");if(stack.length&&sc)stack.at(-1).scroll=sc.scrollTop;stack.push({level,label:actual||level,params:params||{}});if(sheetOpen())hpush();render();}
+// Breadcrumb jump: the same hierarchy, just several levels at once (history is unwound by the same amount).
+function jumpTo(i){const n=i+1;if(n>=stack.length)return;if(n>=baseLen){const nh=n-baseLen;hgo(hdepth-nh);hdepth=nh;}else{hgo(hdepth);hdepth=0;baseLen=n;}stack=stack.slice(0,n);render();}
+function openAt(trail){ensureBase();hdepth=0;expectPop=0;stack=[{level:"root",label:"Comics",params:{}}];for(const t of (trail||[])){if(LEVELS[t.level])stack.push({level:t.level,label:t.label||t.level,params:t.params||{}});}baseLen=stack.length;open();render();}
 function open(){const b=document.getElementById("comicsExplorerBackdrop"),s=document.getElementById("comicsExplorerSheet");if(b)b.dataset.open="true";if(s)s.dataset.open="true";}
-function back(){if(stack.length<=1||stack.at(-1).params?.exitOnBack){close();return;}stack.pop();render();}
-function close(){document.getElementById("comicsExplorerBackdrop")?.setAttribute("data-open","false");document.getElementById("comicsExplorerSheet")?.setAttribute("data-open","false");}
-export function openComicsExplorer(){stack=[{level:"root",label:"Comics",params:{}}];open();render();}
+function back(){if(stack.length<=1||stack.at(-1).params?.exitOnBack){close();return;}stack.pop();if(hdepth>0){hdepth--;hgo(1);}else baseLen=Math.min(baseLen,stack.length);render();}
+function close(){const wasOpen=sheetOpen();document.getElementById("comicsExplorerBackdrop")?.setAttribute("data-open","false");document.getElementById("comicsExplorerSheet")?.setAttribute("data-open","false");
+  // When the Atlas pushed its own entry, landing.js unwinds (1 + cxe) entries on close; otherwise unwind ours here.
+  if(wasOpen&&hdepth>0&&!baseEntry){const n=hdepth;try{history.go(-n);}catch(e){}}hdepth=0;}
+// System/browser Back (and Forward) while the sheet is open. app.js's popstate handler asks this first (it runs before any listener added later, so it
+// cannot be pre-empted from here) and only treats the step as "leave the explorer" when this returns false — i.e. a Back at depth 0.
+window.__comicsExplorerPop=e=>{
+  if(!sheetOpen())return false;
+  if(expectPop>0){expectPop--;return true;}
+  const target=(history.state&&history.state.cxe)||0;
+  if(target<hdepth){stack=stack.slice(0,baseLen+target);hdepth=target;render();return true;}
+  if(target>hdepth){hgo(target-hdepth);return true;}
+  return false;
+};
+export function openComicsExplorer(){ensureBase();hdepth=0;expectPop=0;baseLen=1;stack=[{level:"root",label:"Comics",params:{}}];open();render();}
 export function openComicsExplorerAt(t){openAt(t);}
 window.__comicsExplorer={open:openComicsExplorer,openAt:openComicsExplorerAt};
 window.dispatchEvent(new CustomEvent("comicsv2:explorer-ready"));
