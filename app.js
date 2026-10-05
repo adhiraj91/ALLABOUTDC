@@ -1463,7 +1463,7 @@ async function renderComicsLanding(){
   let landing = window.__comicsV2Landing;
   if(!landing || typeof landing.render!=="function"){
     try{
-      const mod = await import("./comics-v2/landing.js?v=dc32");
+      const mod = await import("./comics-v2/landing.js?v=dc34");
       landing = window.__comicsV2Landing || mod;
     }catch(e){
       console.error("[Comics landing] Failed to load landing module", e);
@@ -3306,6 +3306,25 @@ $("#importNew52BranchPathsBtn")?.addEventListener("click", async ()=>{
     const bits=[`${r.written} reading path${r.written===1?"":"s"} added/updated`]; if(r.skipped?.length) bits.push(`${r.skipped.length} skipped: ${r.skipped.slice(0,2).join(" | ")}`); if(r.errors?.length) bits.push(`${r.errors.length} problem(s): ${r.errors.slice(0,2).join(" | ")}`);
     msg.textContent=bits.join(" · "); msg.className="form-msg "+((r.errors?.length||r.skipped?.length)?"err":"ok");
   }catch(err){ console.error("[Comics v2] branch paths import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
+  finally{ btn.disabled=false; }
+});
+
+/* Additive import — New 52 Events (Phase 5). Writes comicEvents, adds event links to existing issues, and adds explicit event→event edges. Never deletes or edits a Story. */
+$("#importNew52EventsBtn")?.addEventListener("click", async ()=>{
+  const btn=$("#importNew52EventsBtn"), msg=$("#importNew52EventsMsg");
+  const mod=window.__comicsV2?.new52Events;
+  if(!mod?.import){ msg.textContent="Comics v2 module is not loaded."; msg.className="form-msg err"; return; }
+  if(!confirm("Add the New 52 Events (Flashpoint, Night of the Owls, Trinity War and the rest)? Event records are added and existing issues gain an event link. Nothing is deleted or reset. Safe to run again.")) return;
+  btn.disabled=true; msg.className="form-msg"; msg.textContent="Validating events…";
+  try{
+    const r=await mod.import(m=>{ msg.textContent=m; });
+    if(!r?.validation?.valid){ msg.textContent="Validation failed — nothing was written: "+(r?.validation?.errors||[]).slice(0,4).join(" | "); msg.className="form-msg err"; return; }
+    const w=r.written||{}; const bits=[`${w.comicEvents||0} events, ${w.comicIssues||0} issue links, ${w.comicRelationships||0} event links added/updated`];
+    if(r.unresolved?.length) bits.push(`${r.unresolved.length} listed issue(s) not in the catalogue yet (skipped)`);
+    if(r.skipped?.length) bits.push(`${r.skipped.length} skipped: ${r.skipped.slice(0,2).join(" | ")}`);
+    if(r.errors?.length) bits.push(`${r.errors.length} problem(s): ${r.errors.slice(0,3).join(" | ")}`);
+    msg.textContent=bits.join(" · "); msg.className="form-msg "+((r.errors?.length)?"err":"ok");
+  }catch(err){ console.error("[Comics v2] events import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
   finally{ btn.disabled=false; }
 });
 
