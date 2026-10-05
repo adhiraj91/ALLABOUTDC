@@ -621,8 +621,10 @@ export const new52CharacterHubs = [
 
 export function getNew52CharacterHub(id) { return new52CharacterHubs.find(x => x.id === id) || null; }
 
+// new52-core lists universe-level events only. The Court of Owls is a Batman (2011) story arc and Night of the Owls a Bat-family crossover; both stay in the
+// Batman path and the full spine, and under Batman → run → story. The launch (Flashpoint → relaunch, with Justice League: Origin) is the path's foundation.
 export const new52ReadingPaths = [
-  {id:'new52-core',title:'New 52 Core Event Spine',type:'essential',sub:'Milestone events across the central Earth-0 publishing lanes.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['court-owls','night-of-owls','throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
+  {id:'new52-core',title:'New 52 Core Event Spine',type:'essential',sub:'Milestone events across the central Earth-0 publishing lanes.',laneIds:['justice','batman','superman','lantern','young','dark','edge'],eventIds:['throne-atlantis','trinity-war','forever-evil','futures-end','darkseid-war']},
   {id:'new52-batman',title:'Batman / Gotham',type:'main_series',sub:'Batman and the parallel Gotham-family series kept as separate publications.',laneIds:['batman'],eventIds:['court-owls','night-of-owls','death-family','robin-rises','endgame']},
   {id:'new52-superman',title:'Superman Family',type:'main_series',sub:'The Superman-family line plus its major crossover spine.',laneIds:['superman'],eventIds:['hel-earth','krypton-returns','doomed']},
   {id:'new52-lantern',title:'Green Lantern / Corps',type:'main_series',sub:'The Lantern books and the major Corps-wide events.',laneIds:['lantern'],eventIds:['rise-third-army','wrath-first-lantern','lights-out','red-daughter','uprising','godhead']},

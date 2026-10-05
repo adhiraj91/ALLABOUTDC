@@ -550,7 +550,7 @@ async function collection(p){
 const eraYears=ct=>{const a=ct?.startDate?String(ct.startDate).slice(0,4):"",b=ct?.endDate?String(ct.endDate).slice(0,4):"";return a?`${a} — ${b||"present"}`:"";};
 const isNew52=ct=>/new\s*52/i.test(`${ct?.shortName||""} ${ct?.name||""}`);
 const ATLAS_IMG=f=>new URL(`./assets/atlas/${f}?v=1`,import.meta.url).href;
-const MAP_DATA="./new52-map-data.js?v=3";
+const MAP_DATA="./new52-map-data.js?v=4";
 // Presentation phases (not records). The Launch is a special state: Flashpoint is the transition into the New 52 and the relaunch is a publishing
 // event, not a story, so it owns no spine event (Court of Owls is a Batman story inside the early universe). The other phases start at these
 // events of the source's own spine order. Multiverse works and transitions are not placed in a phase (they are shown as what they are).
@@ -883,14 +883,17 @@ async function eraPath(p){
   const evById=new Map(m.crossoverSpine.map(e=>[e.id,e]));const steps=rp.eventIds.map(id=>evById.get(id)).filter(e=>e&&e.type!=="transition");
   const T=id=>m.transitionEvents.find(t=>t.id===id);const full=rp.type==="event_crossover";
   const bridge=t=>t?`<li class="cxe-spine-bridge"><button type="button" class="cxe-bridgerow" data-bridge="${esc(t.id)}"><span class="cxe-tag">TRANSITION</span><strong>${esc(t.title)}</strong><small>${esc(eraTitleOf(m,t.from))} → ${esc(eraTitleOf(m,t.to))}</small></button></li>`:"";
+  // The core path rests on the launch: shown only when the catalogue holds the launch story's collection (title and series come from that record).
+  let found="",foundSer="";if(rp.type==="essential"){const lc=await get(COLLECTIONS.COLLECTIONS,LAUNCH_COLLECTION),r0=(lc?.issueCoverage||[]).find(r=>X.byId.has(r.seriesId));const tm=String(lc?.title||"").match(/^(.*?)\s+Vol\.\s*\d+:\s*(.+)$/);if(r0&&tm){found=`${tm[1]}: ${tm[2]}`;foundSer=X.byId.get(r0.seriesId).title;}}
   const cnt=t=>steps.filter(e=>e.type===t).length,lanes=[...new Set(steps.flatMap(e=>eventLaneIds(e,m)))].map(id=>laneTitle(m,id)).filter(Boolean);
   const cover=[cnt("story")?`${cnt("story")} story arc${cnt("story")===1?"":"s"}`:"",cnt("crossover")?`${cnt("crossover")} crossover${cnt("crossover")===1?"":"s"}`:"",cnt("event")?`${cnt("event")} event${cnt("event")===1?"":"s"}`:"",cnt("multiverse")?`${cnt("multiverse")} multiverse work${cnt("multiverse")===1?"":"s"}`:""].filter(Boolean).join(" · ");
   const [who,prio]=pathForOf(rp.type);
   const html=`${eraTop("CURATED READING PATH",rp.title,rp.sub)}
     <div class="cxe-pathfacts"><div><span>WHO IS THIS FOR?</span><p>${esc(who)}</p></div><div><span>WHAT DOES IT COVER?</span><p>${steps.length} stops — ${esc(cover)}${lanes.length?`, across ${esc(lanes.join(", "))}`:""}.</p></div><div><span>WHAT DOES IT PRIORITIZE?</span><p>${esc(prio)}</p></div></div>
     <p class="cxe-note is-soft">${esc(pathTypeLabelOf(rp.type))}. A way in through the big moments — not the one correct reading order, and not a chronology. Open a stop for its series, issues and collected editions.</p>
+    ${found?`<button type="button" class="cxe-bridgerow is-launch" data-tolaunch><span class="cxe-tag">FOUNDATION</span><strong>The New 52 launch</strong><small>${esc(eraTitleOf(m,T("transition-new52")?.from))} → ${esc(launchWhen(m)||"the")} relaunch · includes ${esc(found)} (${esc(foundSer)} #1–6)</small></button>`:""}
     <ul class="cxe-spine">${full?bridge(T("transition-new52")):""}${steps.map((e,i)=>`<li class="cxe-spine-ev">${eventItem(e,m,recordFor(e,X.recs),{stop:i+1})}</li>`).join("")}${full?bridge(T("transition-rebirth")):""}</ul>`;
-  return{html,wire(el){wireEvents(el,X);el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=T(b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));}};
+  return{html,wire(el){wireEvents(el,X);el.querySelectorAll("[data-bridge]").forEach(b=>b.addEventListener("click",()=>{const t=T(b.dataset.bridge);push("eraPhase",t?bridgeLabel(t):"Transition",{continuity:ct,bridge:b.dataset.bridge});}));el.querySelector("[data-tolaunch]")?.addEventListener("click",()=>push("eraPhase","01 · The Launch",{continuity:ct,phase:1}));}};
 }
 
 // A story arc or crossover, from its collected edition(s): the issues it covers, the series involved, and every edition that collects it. When the
