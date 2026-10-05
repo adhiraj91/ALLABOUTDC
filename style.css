@@ -2700,3 +2700,17 @@ main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
 #comicsExplorerContent .cxe-arcs summary:focus-visible{outline:2px solid var(--comics);outline-offset:-2px}
 #comicsExplorerContent .cxe-arcs>.cxe-note{margin:0 14px 6px}
 #comicsExplorerContent .cxe-arcs>.cxe-serlist{padding:0 12px 12px}
+/* Phase 4: issue page, story provenance, scoped previous/next */
+#comicsExplorerContent .cxe-pn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 4px}
+#comicsExplorerContent .cxe-pn button{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;min-height:52px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
+#comicsExplorerContent .cxe-pn button:nth-child(2),#comicsExplorerContent .cxe-pn span+button{text-align:right;align-items:flex-end}
+#comicsExplorerContent .cxe-pn small{font-size:11px;color:var(--muted,#8a8f9c)}
+#comicsExplorerContent .cxe-pn strong{font-size:14px;line-height:1.2;overflow-wrap:anywhere}
+#comicsExplorerContent .cxe-read{min-height:44px;padding:10px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:inherit;cursor:pointer}
+#comicsExplorerContent .cxe-read.is-on{border-color:var(--comics);color:var(--comics)}
+#comicsExplorerContent .tag.is-derived{border-style:dashed}
+#comicsExplorerContent .cxe-rels{display:grid;gap:8px}
+#comicsExplorerContent .cxe-serrow.is-static{cursor:default}
+#comicsExplorerContent .cxe-cissues button em,#comicsExplorerContent .cxe-cissues .is-static em{margin-left:6px;font-style:normal;font-size:11px;opacity:.75}
+#comicsExplorerContent .cxe-nums .cxe-chips{padding:0 12px 12px}
+#comicsExplorerContent .cxe-arcs .cxe-chips{padding:2px 12px 12px}
