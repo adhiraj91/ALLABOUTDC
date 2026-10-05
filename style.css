@@ -2669,3 +2669,34 @@ main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
 .cxe-canon,.cxe-launchmat{margin-top:10px}.cxe-launchmat{margin-bottom:6px}
 .cxe-canon-run{display:block;margin:6px 0 2px;color:var(--muted,#8a8f9c);font-size:12px;line-height:1.4}
 .cxe-canon .cxe-chips button em,.cxe-launchmat .cxe-chips button em{margin-left:6px;font-style:normal;opacity:.7;font-size:11px}
+/* Phase 3: four doors, path facts, run links */
+#comicsExplorerContent .cxe-doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 4px}
+@media(min-width:700px){#comicsExplorerContent .cxe-doors{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#comicsExplorerContent .cxe-door{position:relative;display:block;min-height:96px;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0b0d14;color:#fff;text-align:left;cursor:pointer;font:inherit;isolation:isolate}
+#comicsExplorerContent .cxe-door img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 0;z-index:-2;transition:transform .35s ease}
+#comicsExplorerContent .cxe-door::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,8,14,.0) 0%,rgba(6,8,14,.72) 48%,rgba(6,8,14,.95) 100%)}
+#comicsExplorerContent .cxe-door span{position:absolute;left:0;right:0;bottom:0;padding:8px 10px 9px;display:flex;flex-direction:column;gap:1px}
+#comicsExplorerContent .cxe-door strong{font-family:var(--font-display);font-weight:400;font-size:17px;letter-spacing:.03em;line-height:1.05;text-shadow:0 1px 6px #000}
+#comicsExplorerContent .cxe-door small{font-size:11px;line-height:1.25;color:#d8dcec;text-shadow:0 1px 4px #000}
+#comicsExplorerContent .cxe-door:hover img,#comicsExplorerContent .cxe-door:focus-visible img{transform:scale(1.05)}
+#comicsExplorerContent .cxe-door:focus-visible{outline:2px solid var(--comics);outline-offset:2px}
+#comicsExplorerContent .cxe-pathfacts{display:grid;gap:8px;margin:12px 0 8px}
+@media(min-width:700px){#comicsExplorerContent .cxe-pathfacts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+#comicsExplorerContent .cxe-pathfacts>div{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel-2,var(--panel))}
+#comicsExplorerContent .cxe-pathfacts span{display:block;font-size:10.5px;letter-spacing:.12em;color:var(--muted,#8a8f9c);margin-bottom:3px}
+#comicsExplorerContent .cxe-pathfacts p{margin:0;font-size:13.5px;line-height:1.4}
+#comicsExplorerContent button.cx-run-card.is-link{text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+#comicsExplorerContent button.cx-run-card.is-link:focus-visible{outline:2px solid var(--comics);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#comicsExplorerContent .cxe-door img{transition:none}}
+#comicsExplorerContent .cxe-arcs{margin:14px 0 0;border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+#comicsExplorerContent .cxe-arcs summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;cursor:pointer;min-height:44px}
+#comicsExplorerContent .cxe-arcs summary::-webkit-details-marker{display:none}
+#comicsExplorerContent .cxe-arcs summary span{display:flex;flex-direction:column;gap:2px;min-width:0}
+#comicsExplorerContent .cxe-arcs summary em{font-style:normal;font-size:10.5px;letter-spacing:.12em;color:var(--muted,#8a8f9c)}
+#comicsExplorerContent .cxe-arcs summary strong{font-family:var(--font-display);font-weight:400;font-size:20px;line-height:1.1}
+#comicsExplorerContent .cxe-arcs summary b{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+#comicsExplorerContent .cxe-arcs summary::after{content:"+";font-size:20px;margin-left:4px}
+#comicsExplorerContent .cxe-arcs[open] summary::after{content:"–"}
+#comicsExplorerContent .cxe-arcs summary:focus-visible{outline:2px solid var(--comics);outline-offset:-2px}
+#comicsExplorerContent .cxe-arcs>.cxe-note{margin:0 14px 6px}
+#comicsExplorerContent .cxe-arcs>.cxe-serlist{padding:0 12px 12px}
