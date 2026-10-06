@@ -12,11 +12,14 @@
 // Nothing here is marked verified: the data is the owner's research, transcribed, and defaults to "unverified".
 // ============================================================================
 import { crossoverSpine, transitionEvents } from "./new52-map-data.js?v=4";
+import { FLASHPOINT_SERIES_ID, FLASHPOINT_STORY_ID, flashpointIssueLabels } from "./flashpoint-core.js?v=fp1";
 import { makeEvent, makeRelationship, makeSourceInfo, EVENT_TYPES, ENTITY_TYPES, RELATIONSHIP_TYPES, ORDERING_RELATIONSHIP_TYPES } from "./schema.js";
 
 export const UNIVERSE_ID = "dc-universe";
 export const NEW52_CONTINUITY_ID = "the-new-52";
 export const FLASHPOINT_ID = "flashpoint";
+/** transition record id → canonical Event id (one mapping, used by the era transition view so both screens show the SAME event). */
+export const TRANSITION_EVENT_IDS = { "transition-new52": FLASHPOINT_ID };
 const OWNER = "owner-supplied New 52 map data (new52-map-data.js)";
 const src = (notes, extra = {}) => makeSourceInfo({ sourceName: OWNER, sourceType: "other", verificationStatus: "unverified", notes, ...extra });
 
@@ -26,6 +29,8 @@ const TYPE_OF = { crossover: "crossover", event: "event", multiverse: "multivers
 // Explicit membership. labels are issue labels exactly as the catalogue stores them (slug.buildIssueId(seriesId,label) gives the issue id).
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => String(a + i));
 export const MEMBERS = {
+  // Flashpoint #1–5: the core bridge (flashpoint-core.js builds these catalogue records from the same owner transition record).
+  "flashpoint":      [{ seriesId: FLASHPOINT_SERIES_ID, labels: flashpointIssueLabels() }],
   "night-of-owls":   [{ seriesId: "batman-2011", labels: [...range(8, 11), "Annual 1"] }],
   "death-family":    [{ seriesId: "batman-2011", labels: range(13, 17) }],
   "throne-atlantis": [{ seriesId: "justice-league-2011", labels: range(13, 17) }, { seriesId: "aquaman-2011", labels: range(15, 16) }],
@@ -76,11 +81,11 @@ export function buildEvents() {
   if (fp) {
     out.push(makeEvent({
       id: FLASHPOINT_ID, title: fp.title, eventType: "transition", universeId: UNIVERSE_ID, continuityIds: [],
-      description: fp.summary,
+      description: fp.summary, coreStoryIds: [FLASHPOINT_STORY_ID],
       transitionFromContinuityId: null, transitionFromLabel: "Pre-Flashpoint", // no Pre-Flashpoint continuity record exists yet
       transitionToContinuityId: NEW52_CONTINUITY_ID,
       recordedMaterial: (fp.issues || []).map(label => ({ label, role: "core" })),
-      sourceInfo: src('Transcribed from transitionEvents["transition-new52"]. The five core issues are recorded as labels only: no Flashpoint series/issue records exist in the catalogue.'),
+      sourceInfo: src('Transcribed from transitionEvents["transition-new52"]. Its core story and five core issues are catalogue records built from that same record by flashpoint-core.js; tie-ins and further material are not catalogued.'),
     }));
   }
   return out;

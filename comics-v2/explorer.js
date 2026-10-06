@@ -792,18 +792,66 @@ async function eraCtx(ct){
 // A catalogue series matching a research-index title (the two sources use different ids, so titles are the only join; no match = not clickable).
 const seriesByTitle=(X,t)=>X.series.find(s=>plain(s.title)===plain(t))||X.series.find(s=>plain(String(s.title).replace(/\(.*?\)/g,""))===plain(t))||null;
 
-// A transition bridge, rendered from whatever fields its record has (title, from → to, kicker, summary, core issues, editions).
-function transitionHtml(t,m,X){
-  const issues=Array.isArray(t.issues)?t.issues:[],eds=Array.isArray(t.editions)?t.editions:[];
-  const rel=X.series.filter(s=>issues.some(i=>plain(String(i).replace(/\s*#.*$/,""))===plain(s.title)));
-  return `${eraTop("TRANSITION",t.title,t.kicker)}<div class="cxe-bridge">
-    ${t.from||t.to?`<div class="cxe-xfer"><span>${esc(eraTitleOf(m,t.from))}</span><b aria-hidden="true">↓</b><span>${esc(eraTitleOf(m,t.to))}</span></div>`:""}
-    ${t.summary?`<p>${esc(t.summary)}</p>`:""}</div>
+// The canonical Event behind a transition bridge. The Atlas tile, the timeline row, this view and the Event Hub all resolve to the SAME comicEvents record:
+// the bridge id (e.g. "transition-new52") maps to the event id through events-data.js (TRANSITION_EVENT_IDS) — never through a title match.
+async function canonicalTransition(t){
+  let evId=null;
+  try{const m=await import("./events-data.js?v=fp1");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
+  if(!evId)return null;
+  const [r,issueDocs]=await Promise.all([safe(()=>loadEvent(evId),null),safe(()=>data.getIssuesForEvent(evId),[])]); // independent reads, one round trip
+  if(!r)return null;
+  const ev=r.ev;
+  const issues=sortIssues([...(issueDocs||[])]);
+  const storyIds=ev.coreStoryIds||[];
+  const [sers,conts,covering,viaStories]=await Promise.all([
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.SERIES,[...new Set(issues.map(i=>i.seriesId).filter(Boolean))]),[]),
+    safe(()=>data.getEntitiesByIds(COLLECTIONS.CONTINUITIES,[ev.transitionFromContinuityId,ev.transitionToContinuityId].filter(Boolean)),[]),
+    issues.length?safe(()=>data.getCollectionsCoveringIssues(issues.map(i=>i.id)),[]):[],
+    storyIds.length?safe(()=>data.getCollectionsContainingStories(storyIds),[]):[]]);
+  const cm=new Map();[...(viaStories||[]),...(covering||[])].forEach(c=>cm.set(c.id,c));
+  return{ev,bundled:r.bundled,issues,series:byIdMap(sers),cont:byIdMap(conts),colls:[...cm.values()]};
+}
+// A transition bridge. The recorded fields (title, kicker, summary, editions) keep the existing look; when the canonical Event exists its
+// semantics (before/after), core issues and collected editions come from the Event and the catalogue records, not from the static strings.
+function transitionHtml(t,m,X,C){
+  const rec=Array.isArray(t.issues)?t.issues:[],eds=Array.isArray(t.editions)?t.editions:[];
+  const ev=C?.ev||null;
+  // Each end: the Event's continuity record when it has one, else the era's own title (the established wording), else the Event's label.
+  const end=(contId,eraId,label)=>(ev&&C.cont.get(contId)?.name)||m.eras.find(e=>e.id===eraId)?.title||(ev&&label)||eraId;
+  const fromTxt=end(ev?.transitionFromContinuityId,t.from,ev?.transitionFromLabel),toTxt=end(ev?.transitionToContinuityId,t.to,ev?.transitionToLabel);
+  const rel=X.series.filter(s=>rec.some(i=>plain(String(i).replace(/\s*#.*$/,""))===plain(s.title)));
+  // Core issues: canonical issue records of the event (buttons). A recorded label is matched ONLY against the event's own member issues; anything
+  // left over is a plain, clearly marked, non-clickable label.
+  const short=i=>{const s=C?.series.get(i.seriesId);return `${s?String(s.title).replace(/\s*\(.*?\)/,""):""} ${i.issueLabel||""}`.trim();};
+  const members=C?C.issues.filter(i=>C.series.get(i.seriesId)):[];
+  const memberKeys=new Set(members.map(i=>plain(short(i))));
+  const leftover=rec.filter(l=>!memberKeys.has(plain(l)));
+  const issueBlock=(members.length||rec.length)?`<div class="cxe-sec-sub">CORE ISSUES</div>
+    ${members.length?`<div class="cxe-chips is-btn" data-core-issues>${members.map(i=>`<button type="button" data-cissue="${esc(i.id)}">${esc(short(i))}</button>`).join("")}</div>`:""}
+    ${leftover.length?`<ul class="cxe-issuegrid">${leftover.map(l=>`<li class="is-static"><strong>${esc(l)}</strong></li>`).join("")}</ul><p class="cxe-note is-soft">${members.length?"These aren't catalogued as issues yet, so they don't open.":"Recorded in the owner dataset — these issues aren't catalogued yet, so they don't open."}</p>`:""}`:"";
+  // Collected editions: canonical collection records (buttons); recorded editions with no canonical record stay as recorded cards.
+  const colls=C?C.colls:[];
+  const haveFmt=new Set(colls.map(c=>plain(c.format||"")));
+  const unresolved=eds.filter(e=>!haveFmt.has(plain(e.format||"")));
+  const edCard=e=>`<div class="cxe-ed">${e.format?`<span class="cxe-tag">${esc(e.format)}</span>`:""}${e.title?`<strong>${esc(e.title)}</strong>`:""}${e.coverage?`<small>${esc(e.coverage)}</small>`:""}${e.notes?`<em>${esc(e.notes)}</em>`:""}</div>`;
+  const edBlock=(colls.length||eds.length)?`<div class="cxe-sec-sub">COLLECTED EDITIONS</div>
+    ${colls.length?`<div class="cxe-chips is-btn">${colls.map(c=>`<button type="button" data-coll="${esc(c.id)}">${esc(displayCollectionTitle(c))}<em>${esc(pillLabel(c))}</em></button>`).join("")}</div>`:""}
+    ${unresolved.length?`<div class="cxe-edgrid">${unresolved.map(edCard).join("")}</div><p class="cxe-note is-soft">${colls.length?"As recorded — these aren't separate collected editions in the catalogue.":"As recorded in the owner dataset — not yet catalogued as collected editions."}</p>`:""}`:"";
+  return `${eraTop("TRANSITION",ev?.title||t.title,t.kicker)}<div class="cxe-bridge">
+    ${fromTxt||toTxt?`<div class="cxe-xfer"><span>${esc(fromTxt)}</span><b aria-hidden="true">↓</b><span>${esc(toTxt)}</span></div>`:""}
+    ${(ev?.description||t.summary)?`<p>${esc(t.summary||ev.description)}</p>`:""}</div>
+    ${ev?`<div class="cxe-chips is-btn"><button type="button" data-hub>Open the ${esc(ev.title)} Event Hub →</button></div>`:""}
     ${t.to&&t.to===m.new52Era?.id?`<div class="cxe-sec-sub">INTO THE NEW 52</div>${m.new52Era.description?`<div class="cx-info-card">${esc(m.new52Era.description)}</div>`:""}<div class="cxe-chips is-btn"><button type="button" data-tolaunch>See the New 52 launch →</button></div>`:""}
     ${t.from&&t.from===m.new52Era?.id?`<div class="cxe-sec-sub">OUT OF THE NEW 52</div><p class="cxe-note is-soft">This transition closes the New 52 era and leads into ${esc(eraTitleOf(m,t.to))}.</p>`:""}
-    ${issues.length?`<div class="cxe-sec-sub">CORE ISSUES</div><ul class="cxe-issuegrid">${issues.map(i=>`<li><strong>${esc(i)}</strong></li>`).join("")}</ul>`:""}
-    ${eds.length?`<div class="cxe-sec-sub">COLLECTED EDITIONS</div><div class="cxe-edgrid">${eds.map(e=>`<div class="cxe-ed">${e.format?`<span class="cxe-tag">${esc(e.format)}</span>`:""}${e.title?`<strong>${esc(e.title)}</strong>`:""}${e.coverage?`<small>${esc(e.coverage)}</small>`:""}${e.notes?`<em>${esc(e.notes)}</em>`:""}</div>`).join("")}</div>`:""}
+    ${issueBlock}${edBlock}
     ${rel.length?`<div class="cxe-sec-sub">IN THE CATALOGUE</div><div class="cxe-chips is-btn">${rel.map(s=>`<button type="button" data-series="${esc(s.id)}">${esc(s.title)}</button>`).join("")}</div>`:""}`;
+}
+function wireTransition(el,C){
+  if(!C)return;
+  const scope={label:C.ev.title,ids:C.issues.map(i=>i.id)};
+  el.querySelectorAll("[data-cissue]").forEach(b=>b.addEventListener("click",()=>{const i=C.issues.find(x=>x.id===b.dataset.cissue);if(i)push("issue",i.issueLabel||"Issue",{issue:i,series:C.series.get(i.seriesId)||null,scope});}));
+  el.querySelectorAll("[data-coll]").forEach(b=>b.addEventListener("click",()=>{const c=C.colls.find(x=>x.id===b.dataset.coll);if(c)push("collection",c.title,{collectionEntity:c});}));
+  el.querySelector("[data-hub]")?.addEventListener("click",()=>push("event",C.ev.title,C.bundled?{event:C.ev,bundled:true,eventId:C.ev.id}:{eventId:C.ev.id}));
 }
 
 // Launch material: the opening story of Justice League (2011), reached through the catalogue's own records (series → issues → collection). The
@@ -829,7 +877,8 @@ async function eraPhase(p){
   const X=await eraCtx(ct),{m}=X;
   const openSeries=el=>el.querySelectorAll("[data-series]").forEach(b=>b.addEventListener("click",()=>{const s=X.byId.get(b.dataset.series);if(s)push("series",s.title,{series:s});}));
   if(p.bridge){const t=m.transitionEvents.find(x=>x.id===p.bridge);if(!t)return{html:empty("Transition not found.")};
-    return{html:transitionHtml(t,m,X),wire(el){openSeries(el);el.querySelector("[data-tolaunch]")?.addEventListener("click",()=>push("eraPhase","01 · The Launch",{continuity:ct,phase:1}));}};}
+    const C=await canonicalTransition(t);
+    return{html:transitionHtml(t,m,X,C),wire(el){openSeries(el);wireTransition(el,C);el.querySelector("[data-tolaunch]")?.addEventListener("click",()=>push("eraPhase","01 · The Launch",{continuity:ct,phase:1}));}};}
   const ph=derivePhases(m).find(x=>x.n===p.phase);if(!ph)return{html:empty("Phase not found.")};
   if(ph.kind==="launch"){
     const flash=m.transitionEvents.find(t=>t.id==="transition-new52"),when=launchWhen(m);
@@ -1112,7 +1161,7 @@ const EV_UNVERIFIED={verified:"",partially_verified:"Partially verified",owner_s
 async function loadEvent(id){
   if(!id)return null;
   const ev=await data.getEntity(COLLECTIONS.EVENTS,id).catch(()=>null);if(ev)return{ev,bundled:false};  // not cached: an import made after a first look must show up
-  try{const m=await import("./events-data.js?v=ev1");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
+  try{const m=await import("./events-data.js?v=fp1");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
 }
 const safe=async(fn,fb)=>{try{return await fn();}catch(e){console.warn("[Comics Explorer] event section unavailable",e);return fb;}};
 const byIdMap=list=>new Map((list||[]).filter(Boolean).map(x=>[x.id,x]));
@@ -1190,6 +1239,9 @@ async function fillEvent(host,ev,bundled){
   if(coreItems.length)rows.push(secHtml("CORE EVENT",chipRow(coreItems.map(s=>btn(go("s:"+s.id,"story",s.title,{story:s}),s.title,"core story")),"is-btn")));
   else if(coreLabels.length)rows.push(secHtml("CORE EVENT",chipRow(coreLabels.map(l=>`<span>${esc(l)}</span>`))+ev_note("Recorded as labels in the owner dataset — these issues aren't catalogued yet, so they don't open.")));
   else rows.push(secHtml("CORE EVENT",NOT_MAPPED));
+  // ---- core issues: the catalogue issues of the core stories (canonical records; each opens the normal Issue page)
+  {const coreSet=new Set(ev.coreStoryIds||[]),coreIssues=issueList.filter(i=>(i.storyIds||[]).some(x=>coreSet.has(x))&&se.get(i.seriesId));
+   if(coreIssues.length)rows.push(secHtml(`CORE ISSUES · ${coreIssues.length}`,chipRow(coreIssues.map(i=>`<button type="button" data-issue="${esc(i.id)}" data-iser="${esc(i.seriesId)}">${esc(String(se.get(i.seriesId).title).replace(/\s*\(.*?\)/,""))} ${esc(i.issueLabel||"")}</button>`),"is-btn")));}
   // ---- event material (as recorded)
   const summ=mat.filter(m=>m.role==="summary").map(m=>m.label).filter(Boolean);
   if(summ.length)rows.push(secHtml("EVENT MATERIAL · AS RECORDED",`<p class="cxev-wording">${summ.map(esc).join("<br>")}</p>`+(issueList.length?"":ev_note("This wording is the owner's; no issues are linked to this event in the catalogue yet."))));
@@ -1236,12 +1288,21 @@ async function fillEvent(host,ev,bundled){
   // ---- reading path + story graph
   const rpRows=rp.map(d=>{const a=(d.anchorSeriesIds||[])[0]||(d.seriesIds||[])[0];return a?`<button type="button" data-rpath="${esc(a)}">Explore Reading Path<em>${esc(d.title||"Reading path")}</em></button>`:"";}).filter(Boolean);
   rows.push(secHtml("READING PATH",rpRows.length?chipRow(rpRows,"is-btn")+ev_note("Opens the series page where this reading path lives. Reading order comes from reading paths only, never from event connections."):ev_note((ev.readingPathIds||[]).length?"This event's reading path isn't available right now.":"No reading path is recorded for this event yet.")));
-  if(window.__comicsStoryMap?.open)rows.push(`<div class="cxe-chips is-btn cxev-graph"><button type="button" data-graph>Open Story Graph<em>${esc(ev.title)}</em></button></div>`);
+  rows.push(`<div class="cxe-chips is-btn cxev-graph"><button type="button" data-graph>Open Story Graph<em>${esc(ev.title)}</em></button></div><p class="cxe-note is-soft" data-graphmsg role="status" hidden></p>`);
   host.innerHTML=rows.join("");
   host.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const n=nav.get(b.dataset.go);if(n)push(n[0],n[1],n[2]);}));
   host.querySelectorAll("[data-issue]").forEach(b=>b.addEventListener("click",()=>openIssue(b.dataset.issue,se.get(b.dataset.iser),host.__scope)));
   host.querySelectorAll("[data-rpath]").forEach(b=>b.addEventListener("click",async()=>{const s=se.get(b.dataset.rpath)||await get(COLLECTIONS.SERIES,b.dataset.rpath);if(s)push("series",s.title,{series:s});}));
-  host.querySelector("[data-graph]")?.addEventListener("click",()=>window.__comicsStoryMap?.open?.("event",id));
+  host.querySelector("[data-graph]")?.addEventListener("click",()=>openStoryGraph("event",id,host.querySelector("[data-graphmsg]")));
+}
+// The Story Map API, reached reliably: use it when ready, otherwise load the same module the page loads (same URL = same instance) and wait for it.
+// Never a silent no-op: if the map really cannot open, a short message appears under the button.
+async function openStoryGraph(type,id,msgEl){
+  const say=t=>{if(msgEl){msgEl.textContent=t;msgEl.hidden=!t;}};say("");
+  let api=window.__comicsStoryMap;
+  if(!api?.open){try{await import("./storymap.js?v=dc4");}catch(e){console.warn("[Comics Explorer] story map module",e);}api=window.__comicsStoryMap;}
+  if(!api?.open){say("The Story Graph isn't available right now. Try again in a moment.");return;}
+  try{await api.open(type,id);}catch(e){console.warn("[Comics Explorer] story map",e);say("The Story Graph couldn't open. Try again in a moment.");}
 }
 // Events a set of issues takes part in (issue.eventIds), resolved in one batched read; used by Series and Issue pages.
 async function eventsOfIssues(issues){
@@ -1286,6 +1347,9 @@ function close(){const wasOpen=sheetOpen();document.getElementById("comicsExplor
 // cannot be pre-empted from here) and only treats the step as "leave the explorer" when this returns false — i.e. a Back at depth 0.
 window.__comicsExplorerPop=e=>{
   if(!sheetOpen())return false;
+  // The Story Map opened over this sheet added one history entry; Back that consumed it closes only the map and leaves the Event Hub as it was.
+  const sm=window.__comicsStoryMap;
+  if(sm?.isOpen?.()&&!(history.state&&history.state.storyMap)){sm.closeSilent?.();return true;}
   if(expectPop>0){expectPop--;return true;}
   const target=(history.state&&history.state.cxe)||0;
   if(target<hdepth){stack=stack.slice(0,baseLen+target);hdepth=target;render();return true;}

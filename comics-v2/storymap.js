@@ -1317,6 +1317,7 @@ function explorerTrailFor(n) {
   return trail;
 }
 function openExplorer(trail) {
+  if (el.root) el.root.classList.remove("sm-over-sheet"); // the explorer sheet must be visible above the map again
   const ex = window.__comicsExplorer;
   if (ex && ex.openAt) ex.openAt(trail);
   else if (ex && ex.open) ex.open();
@@ -1382,7 +1383,7 @@ async function resolveRoot(type, id, entity) {
   // Event roots: comicEvents first; a legacy Story record that stood in for an event next; the bundled owner definition last (event not imported yet).
   const legacy = await getOne(COLLECTIONS.STORIES, id);
   if (legacy) return legacy;
-  try { const m = await import("./events-data.js?v=ev1"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
+  try { const m = await import("./events-data.js?v=fp1"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
 }
 export async function openMap(type, id, opts = {}) {
   buildShell();
@@ -1390,6 +1391,8 @@ export async function openMap(type, id, opts = {}) {
   S = newSession(type, id, opts);
   const sess = S;
   el.root.dataset.open = "true";
+  // Opened from inside the Comics Explorer sheet (z-index 41)? Sit above it, otherwise the map renders but is hidden underneath.
+  el.root.classList.toggle("sm-over-sheet", !!document.querySelector('.sheet[data-open="true"]'));
   document.documentElement.classList.add("sm-lock");
   closeDetail();
   el.nodes.innerHTML = ""; el.edgesTree.innerHTML = ""; el.edgesRel.innerHTML = "";
@@ -1445,6 +1448,7 @@ function hideState() { el.state.hidden = true; el.state.innerHTML = ""; }
 function doClose() {
   if (!el.root) return;
   el.root.dataset.open = "false";
+  el.root.classList.remove("sm-over-sheet");
   document.documentElement.classList.remove("sm-lock");
   closeDetail();
   S = null;
@@ -1646,6 +1650,7 @@ document.addEventListener("readerprogress:change", () => {
 window.__comicsStoryMap = {
   open: openMap,
   close: requestClose,
+  closeSilent: doClose, // used by the Explorer's Back handler when the browser already consumed the map's history entry
   isOpen: () => !!(el.root && el.root.dataset.open === "true"),
   view: () => (S ? { ...S.view, mode: S.mode } : null),
   nodes: () => (S ? visibleTree().map(n => ({ key: n.key, type: displayType(n), id: n.id, title: entityTitle(n.type, n.e), expanded: n.expanded, status: n.status, children: n.children ? n.children.length : null })) : []),
