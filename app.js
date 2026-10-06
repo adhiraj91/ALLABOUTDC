@@ -3319,11 +3319,17 @@ $("#importNew52EventsBtn")?.addEventListener("click", async ()=>{
   try{
     const r=await mod.import(m=>{ msg.textContent=m; });
     if(!r?.validation?.valid){ msg.textContent="Validation failed — nothing was written: "+(r?.validation?.errors||[]).slice(0,4).join(" | "); msg.className="form-msg err"; return; }
-    const w=r.written||{}; const bits=[`${w.comicEvents||0} events, ${w.comicIssues||0} issue links, ${w.comicRelationships||0} event links added/updated`];
-    if(r.unresolved?.length) bits.push(`${r.unresolved.length} listed issue(s) not in the catalogue yet (skipped)`);
-    if(r.skipped?.length) bits.push(`${r.skipped.length} skipped: ${r.skipped.slice(0,2).join(" | ")}`);
-    if(r.errors?.length) bits.push(`${r.errors.length} problem(s): ${r.errors.slice(0,3).join(" | ")}`);
-    msg.textContent=bits.join(" · "); msg.className="form-msg "+((r.errors?.length)?"err":"ok");
+    const w=r.written||{}, ev=r.events||{}, lk=r.links||{}, br=r.bridge||{};
+    const L=[
+      `Events: ${ev.created||0} created, ${ev.updated||0} updated, ${ev.keptVerified||0} verified record(s) kept as-is`,
+      `Issue links: ${lk.added||0} added, ${lk.alreadyPresent||0} already present`,
+      `Flashpoint core records: ${(br.created||[]).length} created, ${(br.present||[]).length} already present`,
+      `Event relationships written: ${w.comicRelationships||0}`,
+      `Unresolved issue references: ${(r.unresolved||[]).length}${(r.unresolved||[]).length?" — "+r.unresolved.slice(0,3).join(" | "):""}`,
+      `Owner review (wording only, not linked): ${(r.ownerReview||[]).length}`,
+      `Skipped: ${(r.skipped||[]).length}`,
+      `Errors: ${(r.errors||[]).length}${(r.errors||[]).length?" — "+r.errors.slice(0,3).join(" | "):""}`];
+    msg.style.whiteSpace="pre-line"; msg.textContent=L.join("\n"); msg.className="form-msg "+((r.errors?.length)?"err":"ok");
   }catch(err){ console.error("[Comics v2] events import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
   finally{ btn.disabled=false; }
 });

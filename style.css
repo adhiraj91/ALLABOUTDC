@@ -1286,6 +1286,7 @@ html.sm-lock, html.sm-lock body{ overflow:hidden; }
     var(--bg-2);
   color:var(--ink); font-family:var(--font-body);
 }
+.sm-root.sm-over-sheet{ z-index:44; } /* above the Explorer sheet (41), below the mobile nav (45) */
 .sm-root[data-open="true"]{ display:flex; animation:sm-in .22s ease; }
 @keyframes sm-in{ from{ opacity:0; } to{ opacity:1; } }
 .sm-topbar{
@@ -2738,3 +2739,6 @@ main:has(> .grid > .cxh) > .grid{margin:0;gap:0}
 .cxev-t-btn:focus-visible{outline:2px solid #ffd2a8;outline-offset:2px;border-radius:4px}
 .cxev-t-btn small{color:#ffb27a}
 @media(max-width:520px){.cxev-trans{grid-template-columns:1fr}.cxev-trans>i{justify-self:center;transform:rotate(90deg)}}
+
+#comicsExplorerContent .cxe-issuegrid li.is-static{border-style:dashed;opacity:.8}
+#comicsExplorerContent .cxe-chips.is-btn[data-core-issues] button{min-height:44px}
