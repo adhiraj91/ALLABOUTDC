@@ -3319,16 +3319,20 @@ $("#importNew52EventsBtn")?.addEventListener("click", async ()=>{
   try{
     const r=await mod.import(m=>{ msg.textContent=m; });
     if(!r?.validation?.valid){ msg.textContent="Validation failed — nothing was written: "+(r?.validation?.errors||[]).slice(0,4).join(" | "); msg.className="form-msg err"; return; }
-    const w=r.written||{}, ev=r.events||{}, lk=r.links||{}, br=r.bridge||{};
+    const w=r.written||{}, ev=r.events||{}, lk=r.links||{}, br=r.bridge||{}, st=r.stories||{}, rp=r.readingPaths||{}, rl=r.relationships||{}, ds=r.descriptions||{}, sm=r.semantic||{};
+    const n=x=>(x||[]).length, first=(x,k=2)=>n(x)?" — "+x.slice(0,k).join(" | "):"";
     const L=[
-      `Events: ${ev.created||0} created, ${ev.updated||0} updated, ${ev.keptVerified||0} verified record(s) kept as-is`,
-      `Issue links: ${lk.added||0} added, ${lk.alreadyPresent||0} already present`,
-      `Flashpoint core records: ${(br.created||[]).length} created, ${(br.present||[]).length} already present`,
-      `Event relationships written: ${w.comicRelationships||0}`,
-      `Unresolved issue references: ${(r.unresolved||[]).length}${(r.unresolved||[]).length?" — "+r.unresolved.slice(0,3).join(" | "):""}`,
-      `Owner review (wording only, not linked): ${(r.ownerReview||[]).length}`,
-      `Skipped: ${(r.skipped||[]).length}`,
-      `Errors: ${(r.errors||[]).length}${(r.errors||[]).length?" — "+r.errors.slice(0,3).join(" | "):""}`];
+      `EVENTS: ${ev.created||0} created, ${ev.updated||0} updated, ${ev.unchanged||0} unchanged, ${ev.keptVerified||0} verified kept; structural fields repaired on ${n(ev.structuralRepaired)}`,
+      `ISSUE LINKS: ${lk.added||0} added, ${lk.alreadyPresent||0} already present, ${n(r.unresolved)} unresolved${lk.retiredRemoved?`, ${lk.retiredRemoved} retired link(s) removed`:""}${first(r.unresolved)}`,
+      `STORIES: ${n(st.coreResolved)} core resolved, ${n(st.coreUnresolved)} unresolved, ${st.linksAdded||0} links added${first(st.coreUnresolved)}`,
+      `READING PATHS: ${n(rp.linked)} linked, ${n(rp.unavailable)} unavailable${first(rp.unavailable)}`,
+      `RELATIONSHIPS: ${rl.written||0} written, ${rl.alreadyPresent||0} already present, ${n(rl.unresolved)} unresolved`,
+      `DESCRIPTIONS: ${n(ds.added)} added, ${n(ds.updated)} updated, ${n(ds.preserved)} preserved, ${n(ds.conflicts)} conflicts, ${n(ds.missing)} missing${first(ds.missing)}`,
+      `CLASSIFICATION: ${n(sm.changed)} changed${first(sm.changed,3)}; ${n(sm.ownerReview)} owner-review note(s)`,
+      `FLASHPOINT CORE RECORDS: ${n(br.created)} created, ${n(br.present)} already present`,
+      `OWNER REVIEW (wording only, not linked): ${n(r.ownerReview)}`,
+      `SKIPPED: ${n(r.skipped)}`,
+      `ERRORS: ${n(r.errors)}${first(r.errors,3)}`];
     msg.style.whiteSpace="pre-line"; msg.textContent=L.join("\n"); msg.className="form-msg "+((r.errors?.length)?"err":"ok");
   }catch(err){ console.error("[Comics v2] events import failed",err); msg.textContent="Import failed: "+(err?.message||err); msg.className="form-msg err"; }
   finally{ btn.disabled=false; }
