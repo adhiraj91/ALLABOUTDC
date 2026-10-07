@@ -1383,7 +1383,7 @@ async function resolveRoot(type, id, entity) {
   // Event roots: comicEvents first; a legacy Story record that stood in for an event next; the bundled owner definition last (event not imported yet).
   const legacy = await getOne(COLLECTIONS.STORIES, id);
   if (legacy) return legacy;
-  try { const m = await import("./events-data.js?v=fp1"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
+  try { const m = await import("./events-data.js?v=fp2"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
 }
 export async function openMap(type, id, opts = {}) {
   buildShell();

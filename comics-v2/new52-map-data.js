@@ -91,7 +91,7 @@ export const crossoverSpine = [
   { id:'wrath-first-lantern', title:'Wrath of the First Lantern', issues:'Green Lantern family crossover', lanes:['lantern'], type:'crossover' },
   { id:'lights-out', title:'Lights Out', issues:'Green Lantern #24–29 + Corps/New Guardians/Red Lanterns tie-ins', lanes:['lantern'], type:'crossover' },
   { id:'trinity-war', title:'Trinity War', issues:'Justice League #22–23; Justice League of America #6–7; Justice League Dark #22–23; Pandora #1–3; Phantom Stranger #11; Constantine #5', lanes:['justice','dark'], type:'crossover' },
-  { id:'forever-evil', title:'Forever Evil', issues:'Forever Evil #1–7 + major tie-ins', lanes:['justice','batman','edge'], type:'crossover' },
+  { id:'forever-evil', title:'Forever Evil', issues:'Forever Evil #1–7 + major tie-ins', lanes:['justice','batman','edge'], type:'event' }, // Phase 5 audit: a line-wide event (miniseries + tie-ins across the line), not a single crossover
   { id:'blight', title:'Forever Evil: Blight', issues:'Justice League Dark / Constantine / Pandora / Phantom Stranger / others', lanes:['dark'], type:'crossover' },
   { id:'krypton-returns', title:'Krypton Returns', issues:'Superman-family crossover', lanes:['superman'], type:'crossover' },
   { id:'doomed', title:'Superman: Doomed', issues:'Action Comics / Superman / Superman: Doomed + tie-ins', lanes:['superman'], type:'crossover' },
@@ -99,8 +99,8 @@ export const crossoverSpine = [
   { id:'uprising', title:'Green Lantern: Uprising', issues:'Green Lantern Corps / Green Lantern / New Guardians / Red Lanterns', lanes:['lantern'], type:'crossover' },
   { id:'futures-end', title:'The New 52: Futures End', issues:'Futures End #0–48 + September 2014 Futures End specials', lanes:['justice','batman','superman','lantern','edge'], type:'event' },
   { id:'godhead', title:'Godhead', issues:'Green Lantern family + New Gods: Godhead #1', lanes:['lantern'], type:'crossover' },
-  { id:'robin-rises', title:'Robin Rises', issues:'Batman and Robin #29–40 + Robin Rises: Alpha/Omega', lanes:['batman'], type:'crossover' },
-  { id:'endgame', title:'Batman: Endgame', issues:'Batman #35–40 + Batman-family tie-ins', lanes:['batman'], type:'crossover' },
+  { id:'robin-rises', title:'Robin Rises', issues:'Batman and Robin #29–40 + Robin Rises: Alpha/Omega', lanes:['batman'], type:'story' }, // Phase 5 audit: a Batman and Robin story arc (one series + Alpha/Omega one-shots), not a crossover — see events-data.js RETIRED_EVENTS
+  { id:'endgame', title:'Batman: Endgame', issues:'Batman #35–40 + Batman-family tie-ins', lanes:['batman'], type:'story' }, // Phase 5 audit: DC describes the core as a Batman story arc (#35–40); the tie-ins are one-shots — see events-data.js RETIRED_EVENTS
   { id:'darkseid-war', title:'Darkseid War', issues:'Justice League #40–50 + special material', lanes:['justice'], type:'event' },
   { id:'multiversity', title:'The Multiversity', issues:'Multiversity #1–2 + seven one-shots + guidebook', lanes:['alternate'], type:'multiverse' },
   { id:'convergence', title:'Convergence', issues:'Convergence #0–8 + 40 two-part tie-ins', lanes:['alternate','dc-you'], type:'transition' },

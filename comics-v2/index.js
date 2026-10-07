@@ -13,8 +13,8 @@ import * as batch1 from "./seed-new52-batch1.js?v=b1c";
 import * as batch2 from "./seed-new52-batch2.js?v=b2c";
 import * as batch3 from "./seed-new52-batch3.js?v=b3b";
 import * as pending from "./seed-new52-pending.js?v=p2";
-import * as eventsSeed from "./seed-events.js?v=fp1";
-import * as eventsData from "./events-data.js?v=fp1";
+import * as eventsSeed from "./seed-events.js?v=fp2";
+import * as eventsData from "./events-data.js?v=fp2";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
@@ -191,7 +191,9 @@ export async function importNew52Pending(progress) {
 // comicReadingPaths, at deterministic ids; reads series/collections to verify they exist; never clears or edits anything else.
 // Phase 5 — additive event import (events + issue.eventIds + event→event edges). Validation-first; nothing is deleted or guessed.
 export async function importNew52Events(progress) {
-  return eventsSeed.importEvents({ data, progress });
+  const r = await eventsSeed.importEvents({ data, progress });
+  try { window.__comicsV2.lastEventImport = r; if (r && r.audit && r.audit.length && console.table) console.table(r.audit.map(a => ({ id: a.eventId, type: a.semanticType, desc: a.descriptionPresent, issues: a.issueCount, series: a.participatingSeries, rp: a.readingPathResolved, colls: a.collections, status: a.status }))); } catch (e) { /* diagnostics only */ }
+  return r;
 }
 
 export async function importNew52BranchPaths(progress) {
@@ -235,6 +237,9 @@ window.__comicsV2 = {
     build: eventsData.buildEvents,
     members: eventsSeed.plannedMembership,
     validate: eventsSeed.validateDataset,
+    retired: eventsData.RETIRED_EVENTS,
+    enrichment: eventsData.EVENT_ENRICHMENT,
+    merge: eventsSeed.mergeEvent,
     import: importNew52Events,
   },
   new52BranchPaths: {

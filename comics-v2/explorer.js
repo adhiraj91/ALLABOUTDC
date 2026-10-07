@@ -796,7 +796,7 @@ const seriesByTitle=(X,t)=>X.series.find(s=>plain(s.title)===plain(t))||X.series
 // the bridge id (e.g. "transition-new52") maps to the event id through events-data.js (TRANSITION_EVENT_IDS) — never through a title match.
 async function canonicalTransition(t){
   let evId=null;
-  try{const m=await import("./events-data.js?v=fp1");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
+  try{const m=await import("./events-data.js?v=fp2");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
   if(!evId)return null;
   const [r,issueDocs]=await Promise.all([safe(()=>loadEvent(evId),null),safe(()=>data.getIssuesForEvent(evId),[])]); // independent reads, one round trip
   if(!r)return null;
@@ -1161,7 +1161,7 @@ const EV_UNVERIFIED={verified:"",partially_verified:"Partially verified",owner_s
 async function loadEvent(id){
   if(!id)return null;
   const ev=await data.getEntity(COLLECTIONS.EVENTS,id).catch(()=>null);if(ev)return{ev,bundled:false};  // not cached: an import made after a first look must show up
-  try{const m=await import("./events-data.js?v=fp1");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
+  try{const m=await import("./events-data.js?v=fp2");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
 }
 const safe=async(fn,fb)=>{try{return await fn();}catch(e){console.warn("[Comics Explorer] event section unavailable",e);return fb;}};
 const byIdMap=list=>new Map((list||[]).filter(Boolean).map(x=>[x.id,x]));
@@ -1190,7 +1190,7 @@ async function event(p){
   const kind=evKind(ev),vs=ev.sourceInfo?.verificationStatus,flag=vs&&vs!=="verified"?(EV_UNVERIFIED[vs]||"Unverified"):"";
   let html=`<div class="cx-kicker">${esc(kind.toUpperCase())}</div><h2 class="cx-title">${esc(ev.title)}</h2>`;
   html+=`<div class="cx-tag-row"><span class="tag">${esc(kind)}</span>${flag?`<span class="tag is-flag">${esc(flag)}</span>`:""}${bundled?`<span class="tag is-derived">Owner dataset · not imported yet</span>`:""}</div>`;
-  html+=`<div class="cx-info-card cxev-about">${ev.description?esc(ev.description):"No explanation is recorded for this event yet."}</div>`;
+  if(ev.description)html+=`<div class="cx-info-card cxev-about">${esc(ev.description)}</div>`; // hidden when empty: the importer reports events without a safe description
   html+=`<div class="cxev" data-event="${esc(ev.id)}" aria-label="${esc(`${ev.title} — ${kind}`)}"><div class="cx-loading">Loading event material…</div></div>`;
   return{html,wire(el){const host=el.querySelector(".cxev");if(host)fillEvent(host,ev,bundled).catch(e=>{console.warn("[Comics Explorer] event hub",e);host.innerHTML=FAILED;});}};
 }
@@ -1223,71 +1223,79 @@ async function fillEvent(host,ev,bundled){
   const go=(key,level,label,params)=>{nav.set(key,[level,label,params]);return key;};
   const btn=(key,text,em)=>`<button type="button" data-go="${esc(key)}">${esc(text)}${em?`<em>${esc(em)}</em>`:""}</button>`;
   const rows=[];
-  // ---- before / after (transition mode)
+  // Generic rule for the whole hub: render a section only when it has meaningful data. An empty optional section is hidden, never a "Not mapped yet" block.
+  // A required relationship that FAILED to load shows a short error; an explicitly declared item that cannot resolve shows a compact diagnostic.
+  const serShort=s=>String(s.title).replace(/\s*\(.*?\)/,"");
+  const issueShort=i=>`${se.get(i.seriesId)?serShort(se.get(i.seriesId)):""} ${i.issueLabel||""}`.trim();
+  // ---- before / after (transition events)
   if(ev.eventType==="transition"){
-    const end=(contId,label,fallback)=>{
+    const end=(contId,label)=>{
       const c=contId?cont.get(contId):null;
       if(c)return `<button type="button" class="cxev-t-btn" data-go="${esc(go("c:"+c.id,"eraHub",c.name||c.shortName||"Continuity",{continuity:c}))}"><strong>${esc(c.name||c.shortName)}</strong><small>Open this era →</small></button>`;
       if(label)return `<strong>${esc(label)}</strong><small>Not catalogued as a continuity record yet</small>`;
-      return `<strong>Not mapped yet</strong>`;};
+      return `<strong>Endpoint not recorded</strong>`;};
     rows.push(`<div class="cxev-trans" role="group" aria-label="${esc(`Before and after ${ev.title}`)}"><div class="cxev-t-col is-before"><span>BEFORE</span>${end(ev.transitionFromContinuityId,ev.transitionFromLabel)}</div><i aria-hidden="true">→</i><div class="cxev-t-col is-event"><span>EVENT</span><strong>${esc(ev.title)}</strong><small>${esc(evKind(ev))}</small></div><i aria-hidden="true">→</i><div class="cxev-t-col is-after"><span>AFTER</span>${end(ev.transitionToContinuityId,ev.transitionToLabel)}</div></div>`);
   }
-  // ---- core event
+  // ---- core story: Event.coreStoryIds resolved directly (not through issue membership or recorded wording)
   const coreItems=sec("core").map(x=>st.get(x.id)).filter(Boolean);
-  const mat=ev.recordedMaterial||[];
-  const coreLabels=mat.filter(m=>m.role==="core").map(m=>m.label).filter(Boolean);
-  if(coreItems.length)rows.push(secHtml("CORE EVENT",chipRow(coreItems.map(s=>btn(go("s:"+s.id,"story",s.title,{story:s}),s.title,"core story")),"is-btn")));
-  else if(coreLabels.length)rows.push(secHtml("CORE EVENT",chipRow(coreLabels.map(l=>`<span>${esc(l)}</span>`))+ev_note("Recorded as labels in the owner dataset — these issues aren't catalogued yet, so they don't open.")));
-  else rows.push(secHtml("CORE EVENT",NOT_MAPPED));
+  const coreDeclared=(ev.coreStoryIds||[]).length,coreMissing=(ev.coreStoryIds||[]).filter(i=>!st.get(i));
+  if(coreItems.length)rows.push(secHtml(coreItems.length>1?"CORE STORIES":"CORE STORY",chipRow(coreItems.map(s=>btn(go("s:"+s.id,"story",s.title,{story:s}),s.title,"core story")),"is-btn")));
+  if(coreDeclared&&coreMissing.length&&stories!==null)rows.push(ev_note("A core story is declared for this event but its record isn't available right now."));
   // ---- core issues: the catalogue issues of the core stories (canonical records; each opens the normal Issue page)
   {const coreSet=new Set(ev.coreStoryIds||[]),coreIssues=issueList.filter(i=>(i.storyIds||[]).some(x=>coreSet.has(x))&&se.get(i.seriesId));
-   if(coreIssues.length)rows.push(secHtml(`CORE ISSUES · ${coreIssues.length}`,chipRow(coreIssues.map(i=>`<button type="button" data-issue="${esc(i.id)}" data-iser="${esc(i.seriesId)}">${esc(String(se.get(i.seriesId).title).replace(/\s*\(.*?\)/,""))} ${esc(i.issueLabel||"")}</button>`),"is-btn")));}
-  // ---- event material (as recorded)
-  const summ=mat.filter(m=>m.role==="summary").map(m=>m.label).filter(Boolean);
-  if(summ.length)rows.push(secHtml("EVENT MATERIAL · AS RECORDED",`<p class="cxev-wording">${summ.map(esc).join("<br>")}</p>`+(issueList.length?"":ev_note("This wording is the owner's; no issues are linked to this event in the catalogue yet."))));
-  // ---- participating stories / tie-ins
+   if(coreIssues.length)rows.push(secHtml(`CORE ISSUES · ${coreIssues.length}`,chipRow(coreIssues.map(i=>`<button type="button" data-issue="${esc(i.id)}" data-iser="${esc(i.seriesId)}">${esc(issueShort(i))}</button>`),"is-btn")));}
+  // ---- event material · as recorded: ONLY wording that is not already a catalogue issue. An entry whose issueIds all resolved is dropped (by id); entries from an
+  // older record without ids fall back to a label match against THIS event's own member issues. What remains is plain, clearly marked, non-clickable wording.
+  const resolvedIds=new Set(issueList.map(i=>i.id)),resolvedLabels=new Set(issueList.map(i=>plain(issueShort(i))));
+  const leftover=(ev.recordedMaterial||[]).filter(m=>m&&m.label&&!(Array.isArray(m.issueIds)&&m.issueIds.length?m.issueIds.every(x=>resolvedIds.has(x)):resolvedLabels.has(plain(m.label))));
+  if(leftover.length)rows.push(secHtml("EVENT MATERIAL · AS RECORDED",`<p class="cxev-wording">${leftover.map(m=>esc(m.label)).join("<br>")}</p>`+ev_note("Owner wording for material that isn't catalogued yet, so it doesn't open.")));
+  // ---- participating stories / tie-ins (canonical Story records or explicit story relationships only)
   const storyRow=x=>{const s=st.get(x.id);return s?btn(go("s:"+s.id,"story",s.title,{story:s}),s.title,x.phrase):"";};
   const part=sec("participating").map(storyRow).filter(Boolean),ties=sec("tie_ins").map(storyRow).filter(Boolean);
   if(part.length)rows.push(secHtml(`PARTICIPATING STORIES · ${part.length}`,chipRow(part,"is-btn")));
   if(ties.length)rows.push(secHtml(`TIE-INS · ${ties.length}`,chipRow(ties,"is-btn")));
-  if(!part.length&&!ties.length&&!coreItems.length)rows.push(secHtml("STORIES & TIE-INS",NOT_MAPPED));
   // ---- participating series (derived from the participating issues)
   const serItems=sec("series").map(x=>({x,s:se.get(x.id)})).filter(r=>r.s);
   if(issues===null)rows.push(secHtml("PARTICIPATING SERIES",FAILED));
-  else if(serItems.length){
-    rows.push(secHtml(`PARTICIPATING SERIES · ${serItems.length}`,chipRow(serItems.map(({x,s})=>btn(go("se:"+s.id,"series",s.title,{series:s}),s.title,compressLabels(issueList.filter(i=>i.seriesId===s.id)))),"is-btn")+ev_note("Derived from the issues linked to this event. Taking part is not owning: each series keeps its own story.")));
-  }else rows.push(secHtml("PARTICIPATING SERIES",NOT_MAPPED));
+  else if(serItems.length)rows.push(secHtml(`PARTICIPATING SERIES · ${serItems.length}`,chipRow(serItems.map(({x,s})=>btn(go("se:"+s.id,"series",s.title,{series:s}),s.title,compressLabels(issueList.filter(i=>i.seriesId===s.id)))),"is-btn")+ev_note("Derived from the issues linked to this event. Taking part is not owning: each series keeps its own story.")));
   // ---- issues, grouped by series, labels and types preserved
   if(issueList.length){
     const scope={label:ev.title,ids:issueList.map(i=>i.id)};
-    rows.push(secHtml(`ISSUES · ${issueList.length}`,serItems.map(({s})=>`<div class="cxev-grp"><b>${esc(String(s.title).replace(/\s*\(.*?\)/,""))}</b><div class="cxe-chips is-btn">${issueList.filter(i=>i.seriesId===s.id).map(i=>`<button type="button" data-issue="${esc(i.id)}" data-iser="${esc(s.id)}">${esc(evLabel(i))}</button>`).join("")}</div></div>`).join("")));
+    rows.push(secHtml(`ISSUES · ${issueList.length}`,serItems.map(({s})=>`<div class="cxev-grp"><b>${esc(serShort(s))}</b><div class="cxe-chips is-btn">${issueList.filter(i=>i.seriesId===s.id).map(i=>`<button type="button" data-issue="${esc(i.id)}" data-iser="${esc(s.id)}">${esc(evLabel(i))}</button>`).join("")}</div></div>`).join("")));
     host.__scope=scope;
-  }else if(issues!==null)rows.push(secHtml("ISSUES",NOT_MAPPED));
-  // ---- characters (derived)
+  }
+  // ---- characters (derived from the canonical issue/story records only)
   const chItems=sec("characters").map(x=>ch.get(x.id)).filter(Boolean);
-  rows.push(secHtml("CHARACTERS",chItems.length?chipRow(chItems.slice(0,60).map(c=>`<span>${esc(titleOf(c))}</span>`))+ev_note("Recorded on the participating issues and stories."):NOT_MAPPED));
-  // ---- continuity impact + consequences
+  if(chItems.length)rows.push(secHtml("CHARACTERS",chipRow(chItems.slice(0,60).map(c=>`<span>${esc(titleOf(c))}</span>`))+ev_note("Recorded on the participating issues and stories.")));
+  // ---- continuity: context vs impact. continuityIds say WHERE the event takes place (shown as context); "impact" needs an explicit impacts relationship.
   const contRows=[...(ev.continuityIds||[]).map(i=>cont.get(i)).filter(Boolean)];
   const cons=sec("consequences").map(x=>({x,e:others.get(`${x.type}:${x.id}`)})).filter(r=>r.e);
-  const impact=[...contRows.map(c=>btn(go("c:"+c.id,"eraHub",c.name||c.shortName||"Continuity",{continuity:c}),c.name||c.shortName,"continuity")),...cons.filter(r=>r.x.type==="continuity").map(r=>btn(go("c:"+r.e.id,"eraHub",r.e.name||"Continuity",{continuity:r.e}),r.e.name||r.e.shortName,r.x.phrase))];
-  rows.push(secHtml("CONTINUITY IMPACT",impact.length?chipRow(impact,"is-btn"):NOT_MAPPED));
+  if(contRows.length&&ev.eventType!=="transition")rows.push(secHtml("SET IN",chipRow(contRows.map(c=>btn(go("c:"+c.id,"eraHub",c.name||c.shortName||"Continuity",{continuity:c}),c.name||c.shortName,"continuity")),"is-btn")));
+  const impact=cons.filter(r=>r.x.type==="continuity").map(r=>btn(go("c:"+r.e.id,"eraHub",r.e.name||"Continuity",{continuity:r.e}),r.e.name||r.e.shortName,r.x.phrase));
+  if(impact.length)rows.push(secHtml("CONTINUITY IMPACT",chipRow(impact,"is-btn")));
   const otherCons=cons.filter(r=>r.x.type!=="continuity");
   if(otherCons.length)rows.push(secHtml("CONSEQUENCES",chipRow(otherCons.map(r=>r.x.type==="series"?btn(go("se:"+r.e.id,"series",r.e.title,{series:r.e}),r.e.title,r.x.phrase):`<span>${esc(entTitle(r.e)||titleOf(r.e))}<em>${esc(r.x.phrase)}</em></span>`),"is-btn")));
-  // ---- related / follow-on events (non-ordering unless the edge itself is sequel/prequel/continues)
+  // ---- related / follow-on events: explicit relationships only, each labelled by its own edge ("Follows", "Leads into", …)
   const rel=sec("related").map(x=>({x,e:eventsById.get(x.id)})).filter(r=>r.e);
-  rows.push(secHtml("RELATED & FOLLOW-ON EVENTS",rel.length?chipRow(rel.map(r=>btn(go("e:"+r.e.id,"event",r.e.title,{event:r.e,eventId:r.e.id}),r.e.title,r.x.phrase)),"is-btn")+ev_note("Connections between events are not a reading order."):(rels===null?FAILED:NOT_MAPPED)));
-  // ---- collections (complete issue coverage + explicit story links, kept apart)
+  if(rels===null)rows.push(secHtml("RELATED & FOLLOW-ON EVENTS",FAILED));
+  else if(rel.length)rows.push(secHtml("RELATED & FOLLOW-ON EVENTS",chipRow(rel.map(r=>btn(go("e:"+r.e.id,"event",r.e.title,{event:r.e,eventId:r.e.id}),r.e.title,r.x.phrase)),"is-btn")+ev_note("Connections between events are not a reading order.")));
+  // ---- collections (complete issue coverage + explicit story links, kept apart); hidden when there are none
   const vsIds=new Set((viaStories||[]).map(c=>c.id)),covOnly=(covering||[]).filter(c=>!vsIds.has(c.id));
   const cb=(c,em)=>btn(go("co:"+c.id,"collection",c.title,{collectionEntity:c}),displayCollectionTitle(c),`${pillLabel(c)} · ${em}`);
   if(covering===null||viaStories===null)rows.push(secHtml("COLLECTIONS",FAILED));
   else{
     if(viaStories.length)rows.push(secHtml(`COLLECTED WITH ITS STORIES · ${viaStories.length}`,chipRow(viaStories.map(c=>cb(c,"linked to a story")),"is-btn")));
     if(covOnly.length)rows.push(secHtml(`COLLECTIONS COVERING ITS ISSUES · ${covOnly.length}`,chipRow(covOnly.map(c=>cb(c,"via issue coverage")),"is-btn")+ev_note("These editions include one or more of the event's issues and may also hold material outside it.")));
-    if(!viaStories.length&&!covOnly.length)rows.push(secHtml("COLLECTIONS",ev_note(issueList.length||allStoryIds.length?"No catalogued collected edition covers this event's material yet.":"Not mapped yet — no issues or stories are linked, so no collection can be matched.")));
   }
-  // ---- reading path + story graph
+  // ---- reading path: only a real, curated path. Declared but unresolvable → a compact diagnostic. None declared → nothing.
+  const declared=(ev.readingPathIds||[]).length;
   const rpRows=rp.map(d=>{const a=(d.anchorSeriesIds||[])[0]||(d.seriesIds||[])[0];return a?`<button type="button" data-rpath="${esc(a)}">Explore Reading Path<em>${esc(d.title||"Reading path")}</em></button>`:"";}).filter(Boolean);
-  rows.push(secHtml("READING PATH",rpRows.length?chipRow(rpRows,"is-btn")+ev_note("Opens the series page where this reading path lives. Reading order comes from reading paths only, never from event connections."):ev_note((ev.readingPathIds||[]).length?"This event's reading path isn't available right now.":"No reading path is recorded for this event yet.")));
+  if(rpRows.length)rows.push(secHtml("READING PATH",chipRow(rpRows,"is-btn")+ev_note("Opens the series page where this reading path lives. Reading order comes from reading paths only, never from event connections.")));
+  else if(declared)rows.push(secHtml("READING PATH",ev_note("Reading path unavailable.")));
+  // ---- nothing connected at all: one honest line instead of a column of empty headings
+  if(!coreItems.length&&!issueList.length&&!part.length&&!ties.length&&issues!==null&&stories!==null&&!leftover.length)rows.push(ev_note("No catalogued issues or stories are linked to this event yet."));
+  else if(!issueList.length&&!coreItems.length&&issues!==null&&stories!==null)rows.push(ev_note("No catalogued issues or stories are linked to this event yet; the material above is recorded wording only."));
+  // ---- story graph
   rows.push(`<div class="cxe-chips is-btn cxev-graph"><button type="button" data-graph>Open Story Graph<em>${esc(ev.title)}</em></button></div><p class="cxe-note is-soft" data-graphmsg role="status" hidden></p>`);
   host.innerHTML=rows.join("");
   host.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{const n=nav.get(b.dataset.go);if(n)push(n[0],n[1],n[2]);}));

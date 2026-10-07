@@ -12,7 +12,8 @@
 // Nothing here is marked verified: the data is the owner's research, transcribed, and defaults to "unverified".
 // ============================================================================
 import { crossoverSpine, transitionEvents } from "./new52-map-data.js?v=4";
-import { FLASHPOINT_SERIES_ID, FLASHPOINT_STORY_ID, flashpointIssueLabels } from "./flashpoint-core.js?v=fp1";
+import { FLASHPOINT_SERIES_ID, FLASHPOINT_STORY_ID, flashpointIssueLabels } from "./flashpoint-core.js?v=fp2";
+import { buildIssueId } from "./slug.js";
 import { makeEvent, makeRelationship, makeSourceInfo, EVENT_TYPES, ENTITY_TYPES, RELATIONSHIP_TYPES, ORDERING_RELATIONSHIP_TYPES } from "./schema.js";
 
 export const UNIVERSE_ID = "dc-universe";
@@ -28,20 +29,21 @@ const TYPE_OF = { crossover: "crossover", event: "event", multiverse: "multivers
 
 // Explicit membership. labels are issue labels exactly as the catalogue stores them (slug.buildIssueId(seriesId,label) gives the issue id).
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => String(a + i));
+// Each spec: {seriesId, labels, from} — `from` is the exact segment of the owner's wording that this spec transcribes (validated: it must occur in the
+// wording). It lets recordedMaterial keep ONLY what is not already a catalogue issue; the rest of the wording stays as recorded text.
 export const MEMBERS = {
   // Flashpoint #1–5: the core bridge (flashpoint-core.js builds these catalogue records from the same owner transition record).
-  "flashpoint":      [{ seriesId: FLASHPOINT_SERIES_ID, labels: flashpointIssueLabels() }],
-  "night-of-owls":   [{ seriesId: "batman-2011", labels: [...range(8, 11), "Annual 1"] }],
-  "death-family":    [{ seriesId: "batman-2011", labels: range(13, 17) }],
-  "throne-atlantis": [{ seriesId: "justice-league-2011", labels: range(13, 17) }, { seriesId: "aquaman-2011", labels: range(15, 16) }],
-  "rotworld":        [{ seriesId: "animal-man-2011", labels: range(12, 17) }, { seriesId: "swamp-thing-2011", labels: range(12, 18) }],
-  "trinity-war":     [{ seriesId: "justice-league-2011", labels: range(22, 23) }, { seriesId: "justice-league-of-america-2013", labels: range(6, 7) },
-                      { seriesId: "justice-league-dark-2011", labels: range(22, 23) }, { seriesId: "trinity-of-sin-pandora-2013", labels: range(1, 3) },
-                      { seriesId: "trinity-of-sin-phantom-stranger-2012", labels: ["11"] }, { seriesId: "constantine-2013", labels: ["5"] }],
-  "lights-out":      [{ seriesId: "green-lantern", labels: range(24, 29) }],
-  "darkseid-war":    [{ seriesId: "justice-league-2011", labels: range(40, 50) }],
-  "robin-rises":     [{ seriesId: "batman-and-robin-2011", labels: range(29, 40) }],
-  "endgame":         [{ seriesId: "batman-2011", labels: range(35, 40) }],
+  "flashpoint":      flashpointIssueLabels().map(n => ({ seriesId: FLASHPOINT_SERIES_ID, labels: [n], from: `Flashpoint #${n}` })),
+  "night-of-owls":   [{ seriesId: "batman-2011", labels: range(8, 11), from: "Batman #8–11" }, { seriesId: "batman-2011", labels: ["Annual 1"], from: "Annual #1" }],
+  "death-family":    [{ seriesId: "batman-2011", labels: range(13, 17), from: "Batman #13–17" }],
+  "throne-atlantis": [{ seriesId: "justice-league-2011", labels: range(13, 17), from: "Justice League #13–17" }, { seriesId: "aquaman-2011", labels: range(15, 16), from: "Aquaman #15–16" }],
+  "rotworld":        [{ seriesId: "animal-man-2011", labels: range(12, 17), from: "Animal Man #12–17" }, { seriesId: "swamp-thing-2011", labels: range(12, 18), from: "Swamp Thing #12–18" }],
+  "trinity-war":     [{ seriesId: "justice-league-2011", labels: range(22, 23), from: "Justice League #22–23" }, { seriesId: "justice-league-of-america-2013", labels: range(6, 7), from: "Justice League of America #6–7" },
+                      { seriesId: "justice-league-dark-2011", labels: range(22, 23), from: "Justice League Dark #22–23" }, { seriesId: "trinity-of-sin-pandora-2013", labels: range(1, 3), from: "Pandora #1–3" },
+                      { seriesId: "trinity-of-sin-phantom-stranger-2012", labels: ["11"], from: "Phantom Stranger #11" }, { seriesId: "constantine-2013", labels: ["5"], from: "Constantine #5" }],
+  "lights-out":      [{ seriesId: "green-lantern", labels: range(24, 29), from: "Green Lantern #24–29" }],
+  "darkseid-war":    [{ seriesId: "justice-league-2011", labels: range(40, 50), from: "Justice League #40–50" }],
+  // Batman: Endgame and Robin Rises are NOT here: Phase 5 audit reclassified them as story arcs (see RETIRED_EVENTS).
 };
 
 // event id → its curated branch reading path(s) (comicReadingPaths ids "bp-<key>"). Reading paths stay owner-supplied and separate from the graph.
@@ -59,17 +61,116 @@ export const CHAIN = [
     url: "https://www.dc.com/blog/2013/08/09/ign-confirms-major-trinity-war/forever-evil-news" },
 ];
 
-/** Builds every Event record from the owner map data. Pure + deterministic: same input → same output. */
+// ---------------------------------------------------------------------------
+// EVENT ENRICHMENT — the ONE place where an Event gets its explanation. Keyed by canonical event id; the generic builder below consumes it (nothing
+// is hardcoded in the UI). Each description is an ORIGINAL paraphrase (1–3 sentences), written for readers, spoiler-conscious. `sources` lists ONLY pages that
+// were actually fetched and read while writing it (`official` = dc.com). Status model unchanged: an event backed by a fetched dc.com page is
+// "partially_verified" (the premise is confirmed; identity/membership remain the owner's data); otherwise "unverified". Nothing is marked "verified".
+// An event with no safe description is simply absent from this map — the importer reports why (see NO_DESCRIPTION).
+// ---------------------------------------------------------------------------
+const DC = "https://www.dc.com/blog/";
+export const EVENT_ENRICHMENT = {
+  "night-of-owls": { description: "In spring 2012 the Court of Owls sends its Talon assassins against Gotham in a single night, and Batman and the wider Bat-family defend the city. Scott Snyder's Batman anchors a crossover that runs through the Bat-line's ongoing series — the New 52's first major crossover.",
+    sources: [DC + "2012/02/22/cbr-s-talkin-about-the-night-of-the-owls", "https://en.wikipedia.org/wiki/Batman:_Night_of_the_Owls"], official: true },
+  "death-family": { description: "The Joker returns to Gotham in 2012–13 and goes after Batman's closest allies rather than Batman alone. Scott Snyder and Greg Capullo's Batman is the core, with tie-ins running through the Bat-family titles.",
+    sources: ["https://www.dccomics.com/blog/2012/10/04/52-reasons-were-excited-for-death-of-the-family", DC + "2012/10/14/nycc-2012-dc-comics-batman-death-comes-to-gotham"], official: true },
+  "throne-atlantis": { description: "Arthur Curry is pulled between his place in the Justice League and his claim to Atlantis as tensions between the two worlds are pushed toward war. The story runs across Justice League and Aquaman and reshapes Aquaman's standing.",
+    sources: ["https://www.dc.com/graphic-novels/aquaman-2011/aquaman-war-for-the-throne"], official: true },
+  "rotworld": { description: "The Rot, an elemental force of death, overruns the world in a story shared by Animal Man (Jeff Lemire) and Swamp Thing (Scott Snyder). Buddy Baker and Alec Holland fight it in a corrupted future where heroes have been twisted into monsters.",
+    sources: [DC + "2013/01/10/5-2-reasons-to-venture-into-rotworld"], official: true },
+  "hel-earth": { description: "H'El, a Kryptonian outsider, arrives on Earth in late 2012 with a plan to restore Krypton and overpowers Superman, splitting the Super-family. Superman, Supergirl and Superboy share the crossover.",
+    sources: [DC + "2012/08/10/announcing-hel-on-earth", "https://comicbookreadingorders.com/dc/events/superman-hel-on-earth-reading-order/"], official: true },
+  "rise-third-army": { description: "The Guardians of the Universe decide the Green Lantern Corps' free will makes it unreliable and field an emotionless robotic force, the Third Army, to replace it. The 2012–13 story runs through the four main Green Lantern titles.",
+    sources: [DC + "2012/07/03/rise-of-the-third-army", "https://comicbookreadingorders.com/dc/events/rise-of-the-third-army-reading-order/"], official: true },
+  "wrath-first-lantern": { description: "Following Rise of the Third Army, the Corps and the Guardians' Third Army collide with the First Lantern, the original Lantern, in a 2013 story across the four main Green Lantern titles. It decides the fate of Hal Jordan and Sinestro.",
+    sources: ["https://www.dc.com/graphic-novels/green-lantern-2011/green-lantern-wrath-of-the-first-lantern"], official: true },
+  "lights-out": { description: "Relic, an ancient being, believes the Lantern power rings are failing and moves to wipe out Lanterns across the spectrum. The autumn 2013 story runs through the Green Lantern family titles and concludes in Green Lantern Annual #2.",
+    sources: [DC + "2013/10/04/lights-out-concludes-in-green-lantern-annual-2", "https://www.howtolovecomics.com/2013/09/29/green-lantern-lights-out-reading-order-checklist/"], official: true },
+  "trinity-war": { description: "In summer 2013 the three Justice League teams — Justice League, Justice League of America and Justice League Dark — are drawn into a conflict that forces them to take sides and reshapes the DC Universe heading into Forever Evil. Pandora, Phantom Stranger and Constantine titles carry the tie-ins.",
+    sources: [DC + "2013/04/08/usa-today-announces-trinity-war", DC + "2013/04/25/trinity-war-tie-ins-announced"], official: true },
+  "forever-evil": { description: "In late 2013 the Crime Syndicate, an evil counterpart of the Justice League, seizes Earth while the real League is out of action. Geoff Johns and David Finch's miniseries leads the event, with tie-in series and the Villains Month issues around it, through spring 2014.",
+    sources: [DC + "2013/09/04/villains-month-kicks-off-today"], official: true },
+  "blight": { description: "After the Crime Syndicate invasion, John Constantine sets out to rescue his missing allies and faces Blight, an entity embodying the world's evil. The story runs through Justice League Dark, Constantine and the two Trinity of Sin titles (Pandora and Phantom Stranger), and follows Forever Evil.",
+    sources: [DC + "2013/10/04/whats-new-in-the-new-52-announcing-forever-evil-blight"], official: true },
+  "krypton-returns": { description: "Superman, Superboy and Supergirl are thrown into Krypton's past, where H'El has taken over the planet. The 2013 Superman-family crossover begins in Action Comics Annual #2.",
+    sources: [DC + "2013/09/13/whats-new-in-the-new-52-krypton-returns-launches-in-action-comics-annual-2", "https://comicbookreadingorders.com/dc/events/krypton-returns-reading-order/"], official: true },
+  "doomed": { description: "Doomsday emerges, and Superman is infected while stopping it, slowly turning him into a Doomsday-like creature. The 2014 crossover runs through Action Comics, Superman, Superman/Wonder Woman and related titles.",
+    sources: [DC + "2014/05/16/this-just-happened-is-superman-doomed", "https://en.wikipedia.org/wiki/Superman:_Doomed"], official: true },
+  "red-daughter": { description: "Kara Zor-El, consumed by rage after repeated losses, takes up a Red Lantern ring during a split in that Corps. The Supergirl-led story crosses into Red Lanterns and the wider Green Lantern family.",
+    sources: ["https://www.dc.com/blog/2026-06-22/girl-of-rage-revisiting-supergirl-red-daughter-of-krypton", "https://comicbookreadingorders.com/dc/events/red-daughter-of-krypton-reading-order/"], official: true },
+  "uprising": { description: "In 2014 the Green Lantern Corps faces an open revolt by several species that reject its role as the universe's police force. The story runs through the Green Lantern and Green Lantern Corps titles.",
+    sources: ["https://dc.fandom.com/wiki/Green_Lantern:_Uprising", "https://comicbookreadingorders.com/dc/events/green-lantern-uprising-reading-order/"], official: false },
+  "futures-end": { description: "A weekly series (May 2014–April 2015) set five years beyond the New 52 present, where heroes confront a future overrun by Brother Eye. A September 2014 tie-in month echoed it across DC's ongoing titles, and it led into Convergence.",
+    sources: [DC + "2013/12/11/associated-press-announces-the-new-52-futures-end", "https://en.wikipedia.org/wiki/The_New_52:_Futures_End"], official: true },
+  "godhead": { description: "The New Gods, led by Highfather, try to breach the Source Wall at the edge of the universe and declare war on any Lantern who stands in their way. The autumn 2014 event runs through the Green Lantern family titles and ends in Green Lantern Annual #3.",
+    sources: [DC + "2014/10/03/this-just-happened-godhead-opens-at-the-source-wall", "https://www.howtolovecomics.com/2014/10/11/green-lantern-godhead-reading-order/"], official: true },
+  "darkseid-war": { description: "Darkseid and the Anti-Monitor wage a cosmic war that drags in the Justice League. Geoff Johns and Jason Fabok's story runs through Justice League from 2015 and reshapes the team's lineup.",
+    sources: [DC + "2015/03/11/a-dark-day-dawning-geoff-johns-and-jason-fabok-discuss-darkseid-war", "https://dc.com/comics/justice-league-2011/justice-league-41"], official: true },
+  "multiversity": { description: "Grant Morrison's 2014–15 project about the DC Multiverse, in which extradimensional invaders threaten many parallel Earths. Two bookend issues surround seven one-shots, each styled as a different kind of comic, plus a Guidebook cataloguing the Earths.",
+    sources: ["https://en.wikipedia.org/wiki/The_Multiversity"], official: false },
+  "convergence": { description: "In spring 2015 Brainiac holds cities from many eras and alternate histories on a planet outside time and pits their champions against each other. A weekly core series and 40 two-issue tie-ins temporarily replaced DC's regular titles, closing out the New 52 era.",
+    sources: [DC + "2014/11/03/dc-entertainment-announces-major-publishing-event-convergence", DC + "2015/04/01/convergence-101-a-new-readers-guide", "https://en.wikipedia.org/wiki/Convergence_(comics)"], official: true },
+};
+
+/** Events that were imported as crossovers in the first Phase 5 pass but are, on the evidence, STORY ARCS (the Court of Owls pattern: a Story, never an Event).
+ *  They are no longer built or imported. The importer never deletes: it reports an existing record, removes only the link IDs it wrote itself from issue.eventIds,
+ *  and detaches the stale record from the continuity listing. Evidence (official dc.com collected-edition pages + secondary tie-in lists) is in the notes. */
+export const RETIRED_EVENTS = [
+  { id: "endgame", title: "Batman: Endgame", now: "story arc",
+    reason: "DC's collected-edition page presents Endgame as the Joker story of Batman #35–40 within Snyder's run; the tie-ins (Batman Annual #3, Arkham Manor / Batgirl / Detective Comics / Gotham Academy: Endgame one-shots) are ancillary single issues. Tie-ins do not turn a story arc into an Event. The Story stays a Batman story arc; the tie-ins are not catalogued." },
+  { id: "robin-rises", title: "Robin Rises", now: "story arc",
+    reason: "DC describes it as a storyline within Batman and Robin (#35–40, with the Alpha and Omega one-shots by the same team); it involves one series, not a multi-series crossover." },
+];
+
+/** Differences between the owner's data and what was read while enriching — reported by the importer, NEVER auto-corrected. */
+export const OWNER_REVIEW = [
+  { id: "throne-atlantis", note: "Owner membership is Justice League #13–17 + Aquaman #15–16. DC's 'Aquaman: War for the Throne' page lists Aquaman #0 and #14–16 with Justice League #15–17. Owner data left unchanged." },
+  { id: "lights-out", note: "Owner membership is Green Lantern #24–29. Secondary reading orders place Lights Out at Green Lantern #24, Green Lantern Corps #24, New Guardians #23–24, Red Lanterns #24 and Annual #2. Owner data left unchanged." },
+  { id: "convergence", note: "Owner data bridges Convergence to 'Rebirth'. DC's pages describe it as following Futures End and Earth 2: World's End; secondary sources place the 'DC You' line (June 2015) between Convergence and Rebirth. The 'Rebirth' label is left as owner-supplied." },
+  { id: "red-daughter", note: "Sources disagree on the year (2014 vs 2015); the description avoids a year." },
+  { id: "multiversity", note: "Description rests on a single secondary source; no dc.com page could be fetched." },
+  { id: "uprising", note: "Description rests on secondary sources only (DC Fandom, a reading-order site); they list Green Lantern and Green Lantern Corps, not New Guardians / Red Lanterns as the owner wording does." },
+];
+
+const wordingOf = (sp) => sp.issues || "";
+const issueIdsOf = (eventId, seg) => (MEMBERS[eventId] || []).filter(m => m.from === seg).flatMap(m => m.labels.map(l => buildIssueId(m.seriesId, l)));
+/** recordedMaterial = the owner's wording as RECORDED. Segments that a MEMBERS spec transcribes carry `issueIds`, so a reader screen can drop them once those
+ *  catalogue issues resolve; the rest of the wording (tie-ins, "+ special material") is kept as plain recorded text without ids. */
+function recordedMaterialFor(sp) {
+  const wording = wordingOf(sp), specs = MEMBERS[sp.id] || [];
+  if (!wording) return [];
+  let rest = wording;
+  const out = [];
+  for (const m of specs) {
+    if (!m.from || !wording.includes(m.from)) continue;
+    rest = rest.replace(m.from, "");
+    out.push({ label: m.from, role: "summary", issueIds: m.labels.map(l => buildIssueId(m.seriesId, l)) });
+  }
+  const left = rest.replace(/^[\s+;,]+|[\s+;,]+$/g, "").replace(/\s*[+;,]\s*[+;,]+\s*/g, " + ").replace(/^with\s+/i, "with ");
+  const tail = left.replace(/[\s+;,]+/g, "") ? left : "";
+  if (out.length === 0) return [{ label: wording, role: "summary" }];
+  if (tail) out.push({ label: tail, role: "summary" });
+  return out;
+}
+
+/** Builds every Event record from the owner map data + the enrichment map. Pure + deterministic: same input → same output. */
 export function buildEvents() {
   const out = [];
   for (const sp of crossoverSpine) {
-    if (!TYPE_OF[sp.type]) continue; // story → not an event
+    if (!TYPE_OF[sp.type]) continue; // story → not an event (Court of Owls, Batman: Endgame, Robin Rises)
     const eventType = TYPE_OF[sp.type];
+    const en = EVENT_ENRICHMENT[sp.id];
+    const official = !!(en && en.official);
     const ev = makeEvent({
       id: sp.id, title: sp.title, eventType, universeId: UNIVERSE_ID, continuityIds: [NEW52_CONTINUITY_ID],
+      description: en ? en.description : "",
       readingPathIds: READING_PATHS[sp.id] || [],
-      recordedMaterial: sp.issues ? [{ label: sp.issues, role: "summary" }] : [],
-      sourceInfo: src(`Identity and the wording of its material come from crossoverSpine["${sp.id}"]; participating issues (if any) are transcribed from that wording.`),
+      recordedMaterial: recordedMaterialFor(sp),
+      sourceInfo: en
+        ? makeSourceInfo({ sourceUrl: en.sources[0], sourceName: official ? "DC.com + owner-supplied New 52 map data" : "Secondary sources + owner-supplied New 52 map data", sourceType: official ? "official" : "other",
+            verificationStatus: official ? "partially_verified" : "unverified",
+            notes: `The description is an original paraphrase written from: ${en.sources.join(" ; ")}. Identity, type and issue membership come from the owner's map data (crossoverSpine["${sp.id}"]) and were not independently re-verified.` })
+        : src(`Identity and the wording of its material come from crossoverSpine["${sp.id}"]; participating issues (if any) are transcribed from that wording. No description could be safely sourced (see NO_DESCRIPTION).`),
     });
     if (sp.type === "transition") { // Convergence: owner data (transitionEvents "transition-rebirth") says New 52 → Rebirth
       ev.transitionFromContinuityId = NEW52_CONTINUITY_ID;
@@ -79,16 +180,45 @@ export function buildEvents() {
   }
   const fp = transitionEvents.find(t => t.id === "transition-new52");
   if (fp) {
+    const en = EVENT_ENRICHMENT[FLASHPOINT_ID];
     out.push(makeEvent({
       id: FLASHPOINT_ID, title: fp.title, eventType: "transition", universeId: UNIVERSE_ID, continuityIds: [],
-      description: fp.summary, coreStoryIds: [FLASHPOINT_STORY_ID],
+      description: en ? en.description : fp.summary, coreStoryIds: [FLASHPOINT_STORY_ID],
       transitionFromContinuityId: null, transitionFromLabel: "Pre-Flashpoint", // no Pre-Flashpoint continuity record exists yet
       transitionToContinuityId: NEW52_CONTINUITY_ID,
-      recordedMaterial: (fp.issues || []).map(label => ({ label, role: "core" })),
-      sourceInfo: src('Transcribed from transitionEvents["transition-new52"]. Its core story and five core issues are catalogue records built from that same record by flashpoint-core.js; tie-ins and further material are not catalogued.'),
+      recordedMaterial: (fp.issues || []).map(label => {
+        const n = (String(label).match(/^Flashpoint #(\d+)$/) || [])[1];
+        return n ? { label, role: "core", issueIds: [buildIssueId(FLASHPOINT_SERIES_ID, n)] } : { label, role: "core" };
+      }),
+      sourceInfo: src('Transcribed from transitionEvents["transition-new52"]. Its core story and five core issues are catalogue records built from that same record by flashpoint-core.js; tie-ins and further material are not catalogued. Creators, the 2011 miniseries and its link to the New 52 relaunch are confirmed by DC\'s own pages (https://www.dc.com/blog/2016/10/03/dc-comics-101-why-is-flashpoint-so-important ; https://www.dc.com/blog/2011/07/21/august-31st-is-just-the-beginning-eddie-berganza-how-flashpoint-5-leads-into-dc-comics-the-new-52).',
+        { sourceUrl: "https://www.dc.com/blog/2016/10/03/dc-comics-101-why-is-flashpoint-so-important", sourceType: "official", verificationStatus: "partially_verified" }),
     }));
   }
   return out;
+}
+
+/** Pure: the MEMBERS table must agree with the owner's spine. Every `from` segment must occur in the wording it transcribes; retired ids must not be built. */
+export function validateMembers() {
+  const errs = [], byId = new Map(crossoverSpine.map(e => [e.id, e]));
+  for (const [id, specs] of Object.entries(MEMBERS)) {
+    if (id === FLASHPOINT_ID) { if (!specs.length) errs.push("flashpoint has no member specs"); continue; }
+    const sp = byId.get(id);
+    if (!sp) { errs.push(`MEMBERS["${id}"] has no crossoverSpine record`); continue; }
+    if (!TYPE_OF[sp.type]) errs.push(`MEMBERS["${id}"] belongs to a spine record of type "${sp.type}", which is not an Event`);
+    for (const m of specs) {
+      if (!m.labels || !m.labels.length) errs.push(`MEMBERS["${id}"] spec for ${m.seriesId} has no labels`);
+      if (!m.from) errs.push(`MEMBERS["${id}"] spec for ${m.seriesId} has no source segment`);
+      else if (!(sp.issues || "").includes(m.from)) errs.push(`MEMBERS["${id}"] segment "${m.from}" does not occur in the owner wording "${sp.issues}"`);
+    }
+  }
+  const built = new Set(buildEvents().map(e => e.id));
+  for (const r of RETIRED_EVENTS) if (built.has(r.id)) errs.push(`retired event "${r.id}" is still being built`);
+  return errs;
+}
+
+/** Events that have no description and why (reported by the importer; the reader screen simply hides an empty explanation). */
+export function eventsWithoutDescription() {
+  return buildEvents().filter(e => !e.description).map(e => ({ id: e.id, title: e.title, reason: "no source that could be fetched and read supports a safe description" }));
 }
 
 export function buildEventRelationships() {
