@@ -3324,7 +3324,10 @@ $("#importNew52EventsBtn")?.addEventListener("click", async ()=>{
     const L=[
       `EVENTS: ${ev.created||0} created, ${ev.updated||0} updated, ${ev.unchanged||0} unchanged, ${ev.keptVerified||0} verified kept; structural fields repaired on ${n(ev.structuralRepaired)}`,
       `ISSUE LINKS: ${lk.added||0} added, ${lk.alreadyPresent||0} already present, ${n(r.unresolved)} unresolved${lk.retiredRemoved?`, ${lk.retiredRemoved} retired link(s) removed`:""}${first(r.unresolved)}`,
+      `EDITION-BACKED MEMBERSHIP: ${(r.editions&&r.editions.issueIdsAdded)||0} issue id(s) from ${n(r.editions&&r.editions.used)} edition(s); ${n(r.editions&&r.editions.missing)} edition(s) missing${first(r.editions&&r.editions.missing,2)}`,
       `STORIES: ${n(st.coreResolved)} core resolved, ${n(st.coreUnresolved)} unresolved, ${st.linksAdded||0} links added${first(st.coreUnresolved)}`,
+      `STORY LINKS VIA ISSUES: ${st.viaIssuesResolved||0} resolved, ${n(st.viaIssuesUnresolved)} unresolved; ${st.issuesWithoutStory||0} participating issue(s) have no story record yet${first(st.viaIssuesUnresolved,2)}`,
+      `RETIRED STORY ARCS: ${n(r.retired)}${first(r.retired,3)}`,
       `READING PATHS: ${n(rp.linked)} linked, ${n(rp.unavailable)} unavailable${first(rp.unavailable)}`,
       `RELATIONSHIPS: ${rl.written||0} written, ${rl.alreadyPresent||0} already present, ${n(rl.unresolved)} unresolved`,
       `DESCRIPTIONS: ${n(ds.added)} added, ${n(ds.updated)} updated, ${n(ds.preserved)} preserved, ${n(ds.conflicts)} conflicts, ${n(ds.missing)} missing${first(ds.missing)}`,
