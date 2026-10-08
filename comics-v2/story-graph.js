@@ -148,6 +148,7 @@ export function groupEventStructure(eventId, { coreStoryIds = [], rels = [], iss
     if (otherType === "story" && !outgoing && t === "tie_in_to") return add("tie_ins", otherId, "story", { phrase, rel });
     if (otherType === "story" && !outgoing && t === "crossover_with") return add("participating", otherId, "story", { phrase, rel });
   });
+  { const tie = new Set(out.get("tie_ins").map(x => x.id)); out.set("participating", out.get("participating").filter(x => !tie.has(x.id))); } // an explicit tie-in is a tie-in, not also a participating story
   const bySeries = new Map();
   (issues || []).forEach(i => { add("issues", i.id, "issue"); if (i.seriesId) bySeries.set(i.seriesId, (bySeries.get(i.seriesId) || 0) + 1); });
   [...bySeries].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))).forEach(([sid, n]) => add("series", sid, "series", { count: n }));

@@ -374,6 +374,29 @@ export async function getStoriesForEvent(eventId) {
   return docsOf(await getDocs(q));
 }
 
+/**
+ * THE canonical Event → Story resolver (the Event Hub, the Story Graph and the importer all use it).
+ *   explicit  : stories whose story.eventId is this event (1 query)
+ *   core      : event.coreStoryIds
+ *   viaIssues : issue.storyIds of the event's participating issues (issue.eventIds)
+ * Everything is merged and de-duplicated by story id; ids not already in hand are resolved in ONE batched read (ceil(n/30) `in` queries). Nothing is created,
+ * inferred from a title/volume or fuzzy-matched. Pass `issues` when the caller already has them to avoid a second issue query.
+ * → { stories:[doc], coreIds:Set, viaIssueIds:Set, explicitIds:Set, unresolvedIds:[storyId named but no record], issuesWithoutStory:number, issues:[doc] }
+ */
+export async function getStoriesForEventDeep(eventId, { issues = null, coreStoryIds = [] } = {}) {
+  const [issueList, explicit] = await Promise.all([issues ? Promise.resolve(issues) : getIssuesForEvent(eventId), getStoriesForEvent(eventId)]);
+  const byId = new Map(explicit.map(s => [s.id, s]));
+  const coreIds = new Set((coreStoryIds || []).filter(Boolean));
+  const viaIssueIds = new Set(issueList.flatMap(i => i.storyIds || []).filter(Boolean));
+  const need = [...new Set([...coreIds, ...viaIssueIds])].filter(id => !byId.has(id));
+  const fetched = need.length ? await getEntitiesByIds(COLLECTIONS.STORIES, need) : [];
+  fetched.forEach(s => byId.set(s.id, s));
+  return {
+    stories: [...byId.values()], coreIds, viaIssueIds, explicitIds: new Set(explicit.map(s => s.id)),
+    unresolvedIds: need.filter(id => !byId.has(id)), issuesWithoutStory: issueList.filter(i => !(i.storyIds || []).length).length, issues: issueList,
+  };
+}
+
 /** Collections that EXPLICITLY list any of these stories in collection.storyIds — one array-contains-any query per 30 ids. */
 export async function getCollectionsContainingStories(storyIds) {
   const uniq = [...new Set((storyIds || []).filter(Boolean))];

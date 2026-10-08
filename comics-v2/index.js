@@ -3,7 +3,7 @@
 // ============================================================================
 import * as schema from "./schema.js";
 import * as slug from "./slug.js";
-import * as data from "./data.js";
+import * as data from "./data.js?v=fp3";
 import { db } from "../firebase-config.js";
 import { collection, getDocs, deleteDoc, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { dataset, validateDataset, importDataset } from "./seed-batman-new52.js?v=dc5";
@@ -14,7 +14,7 @@ import * as batch2 from "./seed-new52-batch2.js?v=b2c";
 import * as batch3 from "./seed-new52-batch3.js?v=b3b";
 import * as pending from "./seed-new52-pending.js?v=p2";
 import * as eventsSeed from "./seed-events.js?v=fp2";
-import * as eventsData from "./events-data.js?v=fp2";
+import * as eventsData from "./events-data.js?v=fp3";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 

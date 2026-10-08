@@ -122,6 +122,27 @@ export const RETIRED_EVENTS = [
     reason: "DC describes it as a storyline within Batman and Robin (#35–40, with the Alpha and Omega one-shots by the same team); it involves one series, not a multi-series crossover." },
 ];
 
+/** ONE semantic rule: an id is a retired/reclassified Event when RETIRED_EVENTS names it OR the owner's spine types it "story" (the Court of Owls pattern).
+ *  Everything that lists, opens, relates or graphs Events filters through this, so a stale Firestore comicEvents document can never override the classification. */
+const RETIRED_IDS = new Set([...RETIRED_EVENTS.map(r => r.id), ...crossoverSpine.filter(e => e.type === "story").map(e => e.id)]);
+export const retiredEventIds = () => [...RETIRED_IDS];
+export const isRetiredEvent = id => RETIRED_IDS.has(id);
+export const activeEventsOnly = list => (list || []).filter(e => e && !RETIRED_IDS.has(e.id));
+
+/** Dedicated event EDITIONS whose stored issueCoverage is accepted as membership evidence (explicit issue ids already in the catalogue, declared by the owner's
+ *  branch definition as that event's own edition). Mixed series volumes are deliberately NOT listed (e.g. "Aquaman Vol. 3" also holds #0 and #14, which are not part of
+ *  Throne of Atlantis). The importer reads these collections (one batched read) and unions their issue ids with MEMBERS; ids that do not exist are reported, never created. */
+export const EDITION_MEMBERSHIP = {
+  "death-family": ["the-joker-death-of-the-family", "the-joker-death-of-the-family-hc"],
+  "hel-earth": ["superman-hel-on-earth"],
+  "doomed": ["superman-doomed"],
+  "rise-third-army": ["green-lantern-rise-of-the-third-army"],
+  "wrath-first-lantern": ["green-lantern-the-wrath-of-the-first-lantern"],
+  "lights-out": ["green-lantern-lights-out"],
+  "godhead": ["green-lantern-new-gods-godhead"],
+  "blight": ["forever-evil-blight"],
+};
+
 /** Differences between the owner's data and what was read while enriching — reported by the importer, NEVER auto-corrected. */
 export const OWNER_REVIEW = [
   { id: "throne-atlantis", note: "Owner membership is Justice League #13–17 + Aquaman #15–16. DC's 'Aquaman: War for the Throne' page lists Aquaman #0 and #14–16 with Justice League #15–17. Owner data left unchanged." },
@@ -212,6 +233,8 @@ export function validateMembers() {
     }
   }
   const built = new Set(buildEvents().map(e => e.id));
+  for (const id of Object.keys(EDITION_MEMBERSHIP)) if (!built.has(id)) errs.push(`EDITION_MEMBERSHIP["${id}"] is not an active event`);
+  for (const id of built) if (RETIRED_IDS.has(id)) errs.push(`active event "${id}" is also retired`);
   for (const r of RETIRED_EVENTS) if (built.has(r.id)) errs.push(`retired event "${r.id}" is still being built`);
   return errs;
 }

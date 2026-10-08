@@ -28,11 +28,11 @@
 // "?v=p4" — data.js gained new batched helpers in Pointer 4; the query string makes
 // browsers fetch the new file even if an older data.js is still cached (GitHub Pages
 // caches for ~10 min). It is only a separate module instance of the same stateless file.
-import * as data from "./data.js?v=ev1";
+import * as data from "./data.js?v=fp3";
 import { COLLECTIONS } from "./schema.js";
 // Pointer 6 — reading progress (derived; subtle on the map) + the contextual Story Graph in the detail panel.
 import * as RP from "./reading-progress.js?v=p6";
-import { groupConnections, isNonOrderingGroup, groupEventStructure } from "./story-graph.js?v=ev1";
+import { groupConnections, isNonOrderingGroup, groupEventStructure } from "./story-graph.js?v=ev2";
 import {
   pathTypeLabel, sortPathsByType, pathEntryCount, locateInPath,
   groupCoverageBySeries, compressCoverageRows, coverageSummaryLines,
@@ -273,10 +273,8 @@ async function childSpecs(n) {
   }
   if (n.type === "event") {
     // Queries: issues by eventIds (1) + stories by eventId (1) + core stories (ceil/30) + their relationships and the event's own (batched) + series (ceil/30).
-    const [issues, linked] = await Promise.all([
-      memo("ife:" + e.id, () => data.getIssuesForEvent(e.id)),
-      memo("sfe:" + e.id, () => data.getStoriesForEvent(e.id)),
-    ]);
+    const issues = await memo("ife:" + e.id, () => data.getIssuesForEvent(e.id));
+    const linked = (await memo("sfd:" + e.id, () => data.getStoriesForEventDeep(e.id, { issues, coreStoryIds: e.coreStoryIds || [] }))).stories; // canonical Event → Issues → Stories resolver
     remember(COLLECTIONS.ISSUES, issues); remember(COLLECTIONS.STORIES, linked);
     const core = await getMany(COLLECTIONS.STORIES, e.coreStoryIds || []);
     const coreIds = new Set(core.map(c => c.id));
@@ -1037,11 +1035,14 @@ function issueProgressSectionHtml(issue) {
     Progressive disclosure: issues are summarised per series (the series node on the map holds the chips); characters are capped. Never a reading order. */
 async function eventStructureSectionHtml(n) {
   const e = n.e;
-  const [issues, linked] = await Promise.all([memo("ife:" + e.id, () => data.getIssuesForEvent(e.id)), memo("sfe:" + e.id, () => data.getStoriesForEvent(e.id))]);
+  const issues = await memo("ife:" + e.id, () => data.getIssuesForEvent(e.id));
+  const linked = (await memo("sfd:" + e.id, () => data.getStoriesForEventDeep(e.id, { issues, coreStoryIds: e.coreStoryIds || [] }))).stories;
   await ensureRels([e.id]);
   const synth = linked.map(st => ({ sourceId: st.id, sourceType: "story", targetId: e.id, targetType: "event", relationshipType: "part_of_event" }));
   const charIds = uniq([...issues.flatMap(i => i.characterIds || []), ...linked.flatMap(st => st.characterIds || [])]);
-  const groups = groupEventStructure(e.id, { coreStoryIds: e.coreStoryIds || [], rels: [...relsFor(e.id), ...synth], issues, characterIds: charIds });
+  let isRet = () => false; try { isRet = (await import("./events-data.js?v=fp3")).isRetiredEvent; } catch (_) { /* keep all */ }
+  const liveRels = relsFor(e.id).filter(r => !((r.sourceId === e.id ? r.targetType : r.sourceType) === "event" && isRet(r.sourceId === e.id ? r.targetId : r.sourceId)));
+  const groups = groupEventStructure(e.id, { coreStoryIds: e.coreStoryIds || [], rels: [...liveRels, ...synth], issues, characterIds: charIds });
   const COLS = { story: COLLECTIONS.STORIES, series: COLLECTIONS.SERIES, event: COLLECTIONS.EVENTS, character: COLLECTIONS.CHARACTERS, continuity: COLLECTIONS.CONTINUITIES, universe: COLLECTIONS.UNIVERSES };
   const label = `<div class="sm-d-label">Event structure</div>`;
   if (!groups.length) return `<div class="sm-d-section sm-d-graph">${label}<div class="sm-d-graph-empty">Not mapped yet — no stories, issues or connections are recorded for this event.</div></div>`;
@@ -1080,6 +1081,8 @@ async function continuityEventsSectionHtml(n) {
   ]);
   const seen = new Set(); const list = [];
   [...byField, ...listed].forEach(ev => { if (ev && ev.id && !seen.has(ev.id)) { seen.add(ev.id); list.push(ev); } });
+  let isRet = () => false; try { isRet = (await import("./events-data.js?v=fp3")).isRetiredEvent; } catch (_) { /* keep all */ }
+  for (let k = list.length - 1; k >= 0; k--) if (isRet(list[k].id)) list.splice(k, 1); // a retired/reclassified id is never listed as an Event
   list.sort((a, b) => String(a.title).localeCompare(String(b.title)));
   list.forEach(ev => remember(COLLECTIONS.EVENTS, [ev]));
   const label = `<div class="sm-d-label">Events</div>`;
@@ -1383,7 +1386,7 @@ async function resolveRoot(type, id, entity) {
   // Event roots: comicEvents first; a legacy Story record that stood in for an event next; the bundled owner definition last (event not imported yet).
   const legacy = await getOne(COLLECTIONS.STORIES, id);
   if (legacy) return legacy;
-  try { const m = await import("./events-data.js?v=fp2"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
+  try { const m = await import("./events-data.js?v=fp3"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
 }
 export async function openMap(type, id, opts = {}) {
   buildShell();

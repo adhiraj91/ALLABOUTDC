@@ -1,11 +1,11 @@
 // ALLABOUTDC Comics Explorer — generic DC architecture, currently seeded with New 52 Batman territory.
 // Source of truth: Series -> Publication Units (Issues/Annuals/Specials) -> Collected Editions.
-import * as data from "./data.js?v=dc5";
+import * as data from "./data.js?v=fp3";
 import { COLLECTIONS } from "./schema.js";
 import * as bp from "./branch-paths.js?v=bp6";
 import * as RP from "./reading-progress.js?v=p6";
 import {CATEGORIES,categoryOf,categoryRank} from "./categories.js?v=cat2";
-import { groupEventStructure } from "./story-graph.js?v=ev1";
+import { groupEventStructure } from "./story-graph.js?v=ev2";
 
 const esc=s=>s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;");
 const year=s=>String(s?.startDate||"").slice(0,4);
@@ -796,7 +796,7 @@ const seriesByTitle=(X,t)=>X.series.find(s=>plain(s.title)===plain(t))||X.series
 // the bridge id (e.g. "transition-new52") maps to the event id through events-data.js (TRANSITION_EVENT_IDS) — never through a title match.
 async function canonicalTransition(t){
   let evId=null;
-  try{const m=await import("./events-data.js?v=fp2");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
+  try{const m=await import("./events-data.js?v=fp3");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
   if(!evId)return null;
   const [r,issueDocs]=await Promise.all([safe(()=>loadEvent(evId),null),safe(()=>data.getIssuesForEvent(evId),[])]); // independent reads, one round trip
   if(!r)return null;
@@ -1158,10 +1158,13 @@ const EV_KIND={crossover:"Crossover",event:"Event",transition:"Transition Event"
 const evKind=ev=>EV_KIND[ev?.eventType]||"Event";
 const EV_UNVERIFIED={verified:"",partially_verified:"Partially verified",owner_supplied:"Owner supplied · not independently verified"};
 // The Firestore record when it exists; otherwise the bundled owner definition (events-data.js, the same one the importer writes) — labelled as such.
+// ONE semantic rule (events-data.js): an id retired/reclassified as a Story arc is never an Event here, whatever a stale comicEvents document says.
+const retiredFn=async()=>{try{const m=await import("./events-data.js?v=fp3");return m.isRetiredEvent;}catch(e){return()=>false;}};
 async function loadEvent(id){
   if(!id)return null;
+  if((await retiredFn())(id))return null;
   const ev=await data.getEntity(COLLECTIONS.EVENTS,id).catch(()=>null);if(ev)return{ev,bundled:false};  // not cached: an import made after a first look must show up
-  try{const m=await import("./events-data.js?v=fp2");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
+  try{const m=await import("./events-data.js?v=fp3");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
 }
 const safe=async(fn,fb)=>{try{return await fn();}catch(e){console.warn("[Comics Explorer] event section unavailable",e);return fb;}};
 const byIdMap=list=>new Map((list||[]).filter(Boolean).map(x=>[x.id,x]));
@@ -1196,7 +1199,13 @@ async function event(p){
 }
 async function fillEvent(host,ev,bundled){
   const id=ev.id;
-  const [issues,stories,rels]=await Promise.all([safe(()=>data.getIssuesForEvent(id),null),safe(()=>data.getStoriesForEvent(id),null),safe(()=>data.getRelationshipsForEntity(id),null)]);
+  const isRet=await retiredFn();
+  const [issues,rels0]=await Promise.all([safe(()=>data.getIssuesForEvent(id),null),safe(()=>data.getRelationshipsForEntity(id),null)]);
+  const rels=(rels0||[]).filter(r=>!((r.sourceId===id?r.targetType:r.sourceType)==="event"&&isRet(r.sourceId===id?r.targetId:r.sourceId))); // a retired id is never a related Event
+  // Event → Issues → Issue.storyIds → Stories merged with the explicit event stories (one canonical helper; batched; nothing inferred)
+  const deep=await safe(()=>data.getStoriesForEventDeep(id,{issues:issues||null,coreStoryIds:ev.coreStoryIds||[]}),null);
+  if(deep&&deep.unresolvedIds.length)console.info("[Comics Explorer] event hub: story ids named but not in the catalogue",id,deep.unresolvedIds);
+  const stories=deep?deep.stories:null;
   const issueList=sortIssues([...(issues||[])]),storyList=stories||[];
   // one batched read per entity kind
   const contIds=[...new Set([...(ev.continuityIds||[]),ev.transitionFromContinuityId,ev.transitionToContinuityId].filter(Boolean))];
@@ -1207,13 +1216,13 @@ async function fillEvent(host,ev,bundled){
   const idsOf=(type,extra=[])=>[...new Set([...extra,...struct.flatMap(s=>s.items).filter(x=>x.type===type).map(x=>x.id)])];
   const [conts,sts,sers,chars,evs,others,rp]=await Promise.all([
     safe(()=>data.getEntitiesByIds(COLLECTIONS.CONTINUITIES,contIds),[]),
-    safe(()=>data.getEntitiesByIds(COLLECTIONS.STORIES,idsOf("story",storyList.map(s=>s.id))),[]),
+    safe(()=>{const have=new Set(storyList.map(s=>s.id)),need=idsOf("story").filter(x=>!have.has(x));return need.length?data.getEntitiesByIds(COLLECTIONS.STORIES,need):[];},[]),
     safe(()=>data.getEntitiesByIds(COLLECTIONS.SERIES,idsOf("series")),[]),
     safe(()=>data.getEntitiesByIds(COLLECTIONS.CHARACTERS,idsOf("character")),[]),
     safe(()=>data.getEntitiesByIds(COLLECTIONS.EVENTS,idsOf("event")),[]),
     safe(async()=>{const m=new Map();for(const t of ["continuity","universe","character","series"]){const need=sec("consequences").filter(x=>x.type===t).map(x=>x.id);if(need.length)(await data.getEntitiesByIds(REL_COL[t],need)).forEach(e=>m.set(`${t}:${e.id}`,e));}return m;},new Map()),
     safe(()=>readingPathsFor(ev),[])]);
-  const cont=byIdMap(conts),st=byIdMap(sts),se=byIdMap(sers),ch=byIdMap(chars),eventsById=byIdMap(evs);
+  const cont=byIdMap(conts),st=byIdMap([...storyList,...sts]),se=byIdMap(sers),ch=byIdMap(chars),eventsById=byIdMap(evs);
   const allStoryIds=[...new Set([...(ev.coreStoryIds||[]),...storyList.map(s=>s.id)])];
   const [covering,viaStories]=await Promise.all([
     issueList.length?safe(()=>data.getCollectionsCoveringIssues(issueList.map(i=>i.id)),null):[],
@@ -1308,7 +1317,7 @@ async function fillEvent(host,ev,bundled){
 async function openStoryGraph(type,id,msgEl){
   const say=t=>{if(msgEl){msgEl.textContent=t;msgEl.hidden=!t;}};say("");
   let api=window.__comicsStoryMap;
-  if(!api?.open){try{await import("./storymap.js?v=dc4");}catch(e){console.warn("[Comics Explorer] story map module",e);}api=window.__comicsStoryMap;}
+  if(!api?.open){try{await import("./storymap.js?v=dc5");}catch(e){console.warn("[Comics Explorer] story map module",e);}api=window.__comicsStoryMap;}
   if(!api?.open){say("The Story Graph isn't available right now. Try again in a moment.");return;}
   try{await api.open(type,id);}catch(e){console.warn("[Comics Explorer] story map",e);say("The Story Graph couldn't open. Try again in a moment.");}
 }
@@ -1316,8 +1325,9 @@ async function openStoryGraph(type,id,msgEl){
 async function eventsOfIssues(issues){
   const ids=[...new Set((issues||[]).flatMap(i=>i.eventIds||[]))];
   if(!ids.length)return[];
-  const found=await safe(()=>data.getEntitiesByIds(COLLECTIONS.EVENTS,ids),[]);
-  return found.filter(Boolean).sort((a,b)=>String(a.title).localeCompare(String(b.title)));
+  const isRet=await retiredFn();
+  const found=await safe(()=>data.getEntitiesByIds(COLLECTIONS.EVENTS,ids.filter(x=>!isRet(x))),[]);
+  return found.filter(e=>e&&!isRet(e.id)).sort((a,b)=>String(a.title).localeCompare(String(b.title)));
 }
 const eventChips=evs=>chipRow(evs.map(e=>`<button type="button" data-oevent="${esc(e.id)}">${esc(e.title)}<em>${esc(evKind(e).toLowerCase())}</em></button>`),"is-btn");
 function wireEventChips(el,evs){el.querySelectorAll("[data-oevent]").forEach(b=>b.addEventListener("click",()=>{const e=evs.find(x=>x.id===b.dataset.oevent);push("event",e?e.title:"Event",{event:e,eventId:b.dataset.oevent});}));}
