@@ -31,18 +31,27 @@ const TYPE_OF = { crossover: "crossover", event: "event", multiverse: "multivers
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => String(a + i));
 // Each spec: {seriesId, labels, from} — `from` is the exact segment of the owner's wording that this spec transcribes (validated: it must occur in the
 // wording). It lets recordedMaterial keep ONLY what is not already a catalogue issue; the rest of the wording stays as recorded text.
+const FUTURES_END_SPECIAL_SERIES = ["action-comics-2011", "aquaman-2011", "aquaman-and-the-others-2014", "batgirl-2011", "batman-2011", "batman-and-robin-2011", "batman-superman-2013", "batwing-2011", "batwoman-2011", "birds-of-prey-2011", "constantine-2013", "detective-comics-2011", "earth-2-2012", "grayson-2014", "green-arrow-2011", "justice-league-dark-2011", "justice-league-united-2014", "nightwing-2011", "red-hood-and-the-outlaws-2011", "red-lanterns", "sinestro", "superboy-2011", "supergirl-2011", "swamp-thing-2011", "teen-titans-2011", "the-flash-2011", "trinity-of-sin-pandora-2013", "trinity-of-sin-phantom-stranger-2012", "wonder-woman-2011", "worlds-finest-2012"];
 export const MEMBERS = {
   // Flashpoint #1–5: the core bridge (flashpoint-core.js builds these catalogue records from the same owner transition record).
   "flashpoint":      flashpointIssueLabels().map(n => ({ seriesId: FLASHPOINT_SERIES_ID, labels: [n], from: `Flashpoint #${n}` })),
   "night-of-owls":   [{ seriesId: "batman-2011", labels: range(8, 11), from: "Batman #8–11" }, { seriesId: "batman-2011", labels: ["Annual 1"], from: "Annual #1" }],
   "death-family":    [{ seriesId: "batman-2011", labels: range(13, 17), from: "Batman #13–17" }],
   "throne-atlantis": [{ seriesId: "justice-league-2011", labels: range(13, 17), from: "Justice League #13–17" }, { seriesId: "aquaman-2011", labels: range(15, 16), from: "Aquaman #15–16" }],
-  "rotworld":        [{ seriesId: "animal-man-2011", labels: range(12, 17), from: "Animal Man #12–17" }, { seriesId: "swamp-thing-2011", labels: range(12, 18), from: "Swamp Thing #12–18" }],
+  "rotworld":        [{ seriesId: "animal-man-2011", labels: range(12, 17), from: "Animal Man #12–17" }, { seriesId: "swamp-thing-2011", labels: range(12, 18), from: "Swamp Thing #12–18" },
+                      { seriesId: "frankenstein-agent-of-s-h-a-d-e-2011", labels: range(13, 16), evidence: "branch-paths.js dark-rotworld (owner branching CSV ROTWORLD): branch_to \"Animal Man #12-17; Swamp Thing #12-18; Frankenstein #13-16\"" }],
   "trinity-war":     [{ seriesId: "justice-league-2011", labels: range(22, 23), from: "Justice League #22–23" }, { seriesId: "justice-league-of-america-2013", labels: range(6, 7), from: "Justice League of America #6–7" },
                       { seriesId: "justice-league-dark-2011", labels: range(22, 23), from: "Justice League Dark #22–23" }, { seriesId: "trinity-of-sin-pandora-2013", labels: range(1, 3), from: "Pandora #1–3" },
                       { seriesId: "trinity-of-sin-phantom-stranger-2012", labels: ["11"], from: "Phantom Stranger #11" }, { seriesId: "constantine-2013", labels: ["5"], from: "Constantine #5" }],
   "lights-out":      [{ seriesId: "green-lantern", labels: range(24, 29), from: "Green Lantern #24–29" }],
   "darkseid-war":    [{ seriesId: "justice-league-2011", labels: range(40, 50), from: "Justice League #40–50" }],
+  // Phase 5.1 closure — specs below carry `evidence` (no `from`) when the issue numbers come from another owner source in this repository instead of the spine wording.
+  //   evidence strings are verified to occur in that source by the closure test; nothing here is inferred from titles or ranges.
+  "forever-evil":    [{ seriesId: "justice-league-2011", labels: range(24, 29), evidence: "branch-paths.js jl-forever-evil (owner branching CSV FOREVER_EVIL): branch_to \"Forever Evil #1-7; Justice League #24-29\"" }],
+  "red-daughter":    [{ seriesId: "green-lantern", labels: ["28"], evidence: "new52-map-data.js collection \"Supergirl Vol. 5: Red Daughter of Krypton\": \"Supergirl #26–33 + Green Lantern #28 + Red Lanterns #28–29\"" },
+                      { seriesId: "red-lanterns", labels: ["28", "29"], evidence: "new52-map-data.js collection \"Supergirl Vol. 5: Red Daughter of Krypton\": \"Supergirl #26–33 + Green Lantern #28 + Red Lanterns #28–29\"" }],
+  // the owner's "September 2014 Futures End specials": every catalogue issue the owner CSVs record as the series' "Futures End #1" special (type special). Listed explicitly; no pattern is applied at run time.
+  "futures-end":     FUTURES_END_SPECIAL_SERIES.map(sid => ({ seriesId: sid, labels: ["Futures End #1"], from: "September 2014 Futures End specials" })),
   // Batman: Endgame and Robin Rises are NOT here: Phase 5 audit reclassified them as story arcs (see RETIRED_EVENTS).
 };
 
@@ -141,6 +150,9 @@ export const EDITION_MEMBERSHIP = {
   "lights-out": ["green-lantern-lights-out"],
   "godhead": ["green-lantern-new-gods-godhead"],
   "blight": ["forever-evil-blight"],
+  "krypton-returns": ["superman-krypton-returns"],   // owner-supplied crossover edition: coverage exactly as supplied
+  "uprising": ["green-lantern-corps-vol-5-uprising"], // DC-confirmed contents: GL Corps #28–34 + Green Lantern #31–33 + Annual #2
+  "red-daughter": ["supergirl-vol-5-red-daughter-of-krypton"], // Supergirl #26–33 (Green Lantern #28 + Red Lanterns #28–29 are MEMBERS evidence specs)
 };
 
 /** Differences between the owner's data and what was read while enriching — reported by the importer, NEVER auto-corrected. */
@@ -164,8 +176,10 @@ function recordedMaterialFor(sp) {
   const out = [];
   for (const m of specs) {
     if (!m.from || !wording.includes(m.from)) continue;
+    const ids = m.labels.map(l => buildIssueId(m.seriesId, l)), prev = out.find(o => o.label === m.from);
+    if (prev) { prev.issueIds.push(...ids); continue; } // several specs may transcribe one wording segment (e.g. the Futures End specials)
     rest = rest.replace(m.from, "");
-    out.push({ label: m.from, role: "summary", issueIds: m.labels.map(l => buildIssueId(m.seriesId, l)) });
+    out.push({ label: m.from, role: "summary", issueIds: ids });
   }
   const left = rest.replace(/^[\s+;,]+|[\s+;,]+$/g, "").replace(/\s*[+;,]\s*[+;,]+\s*/g, " + ").replace(/^with\s+/i, "with ");
   const tail = left.replace(/[\s+;,]+/g, "") ? left : "";
@@ -228,16 +242,57 @@ export function validateMembers() {
     if (!TYPE_OF[sp.type]) errs.push(`MEMBERS["${id}"] belongs to a spine record of type "${sp.type}", which is not an Event`);
     for (const m of specs) {
       if (!m.labels || !m.labels.length) errs.push(`MEMBERS["${id}"] spec for ${m.seriesId} has no labels`);
-      if (!m.from) errs.push(`MEMBERS["${id}"] spec for ${m.seriesId} has no source segment`);
-      else if (!(sp.issues || "").includes(m.from)) errs.push(`MEMBERS["${id}"] segment "${m.from}" does not occur in the owner wording "${sp.issues}"`);
+      if (!m.from && !m.evidence) errs.push(`MEMBERS["${id}"] spec for ${m.seriesId} has neither a wording segment nor evidence`);
+      else if (m.from && !(sp.issues || "").includes(m.from)) errs.push(`MEMBERS["${id}"] segment "${m.from}" does not occur in the owner wording "${sp.issues}"`);
     }
+  }
+  for (const [id, specs] of Object.entries(MEMBERS)) { // duplicate membership: the same issue id twice for one event
+    const seen = new Set();
+    for (const m of specs) for (const l of m.labels) { const iid = buildIssueId(m.seriesId, l); if (seen.has(iid)) errs.push(`MEMBERS["${id}"] lists issue "${iid}" twice`); seen.add(iid); }
   }
   const built = new Set(buildEvents().map(e => e.id));
   for (const id of Object.keys(EDITION_MEMBERSHIP)) if (!built.has(id)) errs.push(`EDITION_MEMBERSHIP["${id}"] is not an active event`);
+  for (const id of built) if (!staticMemberCount(id) && !(EDITION_MEMBERSHIP[id] || []).length && !(MEMBERSHIP_UNRESOLVED[id] || []).length) errs.push(`event "${id}" has no membership source and no stated reason (unexplained missing membership)`);
+  for (const id of Object.keys(MEMBERSHIP_UNRESOLVED)) if (!built.has(id)) errs.push(`MEMBERSHIP_UNRESOLVED["${id}"] is not an active event`);
   for (const id of built) if (RETIRED_IDS.has(id)) errs.push(`active event "${id}" is also retired`);
   for (const r of RETIRED_EVENTS) if (built.has(r.id)) errs.push(`retired event "${r.id}" is still being built`);
   return errs;
 }
+
+/** Evidence-based reasons why an Event's issue membership cannot be taken further (hand-audited against the catalogue, the collections, the branch CSV and the owner wording).
+ *  An Event with resolvable issues and NO entry here is FULLY MAPPED; with entries it is PARTIALLY MAPPED; with no resolvable issues it is NO SAFE ISSUE MAPPING.
+ *  Nothing here creates membership — it only explains what stays unresolved. */
+const EDITION_ONLY = "wording is non-specific; membership is limited to the dedicated collected edition's issueCoverage";
+export const MEMBERSHIP_UNRESOLVED = {
+  "night-of-owls":   ["\"with Batman-family tie-ins\" — the wording names no issues and no collected edition is declared for this event"],
+  "death-family":    ["Teen Titans #15 and pages of Suicide Squad #14–15 / Teen Titans #14, #16 — the edition records them as out-of-scope or partial contents, not whole catalogue issues"],
+  "hel-earth":       ["\"crossover chapters\" — " + EDITION_ONLY],
+  "rise-third-army": ["\"Green Lantern family crossover\" — " + EDITION_ONLY],
+  "wrath-first-lantern": ["\"Green Lantern family crossover\" — " + EDITION_ONLY],
+  "lights-out":      ["Corps / New Guardians / Red Lanterns tie-ins beyond the edition's coverage — the wording names no issue numbers"],
+  "forever-evil":    ["Forever Evil #1–7 — no Forever Evil series or issue records exist in the catalogue (the owner's edition lists it as out-of-scope contents and the branch CSV says not to create duplicate issue records)",
+                      "\"major tie-ins\" — non-specific; only Justice League #24–29 is explicit (owner branch CSV)"],
+  "blight":          ["\"others\" — " + EDITION_ONLY],
+  "krypton-returns": ["\"Superman-family crossover\" — " + EDITION_ONLY],
+  "doomed":          ["\"+ tie-ins\" and Superman: Doomed #1–2 (a separate one-shot the edition lists as out-of-scope contents) — " + EDITION_ONLY],
+  "red-daughter":    ["Supergirl / Red Lanterns / Green Lantern family beyond Supergirl #26–33, Green Lantern #28 and Red Lanterns #28–29 — no further issue numbers are recorded"],
+  "uprising":        ["New Guardians / Red Lanterns chapters — the edition's coverage lists none and no issue numbers are recorded"],
+  "futures-end":     ["Futures End #0–48 — the weekly series has no series or issue records in the catalogue",
+                      "specials of any series without a \"Futures End #1\" record in the catalogue — not present, so not linked"],
+  "godhead":         ["\"Green Lantern family\" — " + EDITION_ONLY, "New Gods: Godhead #1 — listed by the edition as out-of-scope contents, no catalogue record"],
+  "darkseid-war":    ["\"special material\" — Justice League: Darkseid War Special #1 and the Divergence #1 Justice League story are out-of-scope contents of the editions, with no catalogue records"],
+  "multiversity":    ["Multiversity #1–2, the seven one-shots and the guidebook — the catalogue has no Multiversity series or issue records and no collection with issueCoverage; the owner map holds titles only"],
+  "convergence":     ["Convergence #0–8 and the 40 two-part tie-ins — the catalogue has no Convergence series, issue records or event collection; \"Sneak Peek\" mentions inside other collections are out-of-scope contents, not membership"],
+};
+export const MEMBERSHIP_STATES = ["FULLY MAPPED", "PARTIALLY MAPPED", "NO SAFE ISSUE MAPPING"];
+/** Pure: the explicit membership state of one Event given how many of its canonical issue ids actually resolve in the catalogue. */
+export function membershipState(eventId, resolvedCount) {
+  const reasons = MEMBERSHIP_UNRESOLVED[eventId] || [];
+  const state = resolvedCount <= 0 ? MEMBERSHIP_STATES[2] : reasons.length ? MEMBERSHIP_STATES[1] : MEMBERSHIP_STATES[0];
+  return { state, reasons };
+}
+/** Pure: planned issue-id count per event from the static sources (MEMBERS only; edition coverage is read from the catalogue at import time). */
+export const staticMemberCount = id => (MEMBERS[id] || []).reduce((n, m) => n + m.labels.length, 0);
 
 /** Events that have no description and why (reported by the importer; the reader screen simply hides an empty explanation). */
 export function eventsWithoutDescription() {

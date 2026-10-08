@@ -15,7 +15,7 @@
 // ============================================================================
 import { COLLECTIONS, validateEvent, validateRelationship, validateSeries, validateStory, validateIssue, validateCollection } from "./schema.js";
 import { buildIssueId } from "./slug.js";
-import { buildEvents, buildEventRelationships, validateEventData, validateMembers, MEMBERS, EDITION_MEMBERSHIP, NEW52_CONTINUITY_ID, RETIRED_EVENTS, OWNER_REVIEW, eventsWithoutDescription } from "./events-data.js?v=fp2";
+import { buildEvents, buildEventRelationships, validateEventData, validateMembers, MEMBERS, EDITION_MEMBERSHIP, membershipState, NEW52_CONTINUITY_ID, RETIRED_EVENTS, OWNER_REVIEW, eventsWithoutDescription } from "./events-data.js?v=fp2";
 import { buildFlashpointBridge } from "./flashpoint-core.js?v=fp2";
 
 /** Pure: which issue ids does each event name, before anything is checked against the catalogue? */
@@ -107,7 +107,7 @@ export async function importEvents({ data, progress } = {}) {
   const out = {
     validation: null, written: { comicEvents: 0, comicIssues: 0, comicRelationships: 0, comicSeries: 0, comicStories: 0, comicCollections: 0 },
     events: { created: 0, updated: 0, unchanged: 0, keptVerified: 0, structuralRepaired: [] }, links: { added: 0, alreadyPresent: 0, retiredRemoved: 0 },
-    stories: { coreResolved: [], coreUnresolved: [], linksAdded: 0, alreadyPresent: 0, viaIssuesResolved: 0, viaIssuesUnresolved: [], issuesWithoutStory: 0 }, retired: [], editions: { used: [], missing: [], issueIdsAdded: 0 }, readingPaths: { linked: [], unavailable: [] },
+    stories: { coreResolved: [], coreUnresolved: [], linksAdded: 0, alreadyPresent: 0, viaIssuesResolved: 0, viaIssuesUnresolved: [], issuesWithoutStory: 0 }, membership: { states: [], mismatches: [], preserved: 0, orphanRefs: [], duplicates: [] }, retired: [], editions: { used: [], missing: [], issueIdsAdded: 0 }, readingPaths: { linked: [], unavailable: [] },
     relationships: { written: 0, alreadyPresent: 0, unresolved: [] }, descriptions: { added: [], updated: [], preserved: [], conflicts: [], missing: [] },
     semantic: { changed: [], ownerReview: [] }, bridge: { created: [], present: [], notes: [] },
     unresolved: [], ownerReview: [], skipped: [], errors: [], audit: [],
@@ -215,7 +215,8 @@ export async function importEvents({ data, progress } = {}) {
     if (!known.has(eventId)) { out.skipped.push(`${eventId}: event record is not in the database — membership not written`); continue; }
     for (const m of list) {
       const i = have.get(m.issueId);
-      if (!i) { out.unresolved.push(`${eventId}: ${m.seriesId} ${m.label} — no issue record "${m.issueId}"`); if (row) row.unresolvedIssues++; continue; }
+      if (!i) { out.unresolved.push(`${eventId}: ${m.seriesId} ${m.label} — no issue record "${m.issueId}"${m.via === "edition" ? " (from the edition's coverage)" : ""}`); if (row) row.unresolvedIssues++; continue; }
+      if ((i.eventIds || []).length !== new Set(i.eventIds || []).size && !out.membership.duplicates.some(x => x.startsWith(i.id + ":"))) out.membership.duplicates.push(`${i.id}: duplicate eventIds (de-duplicated by this import)`);
       const set = toPatch.get(i.id) || new Set(i.eventIds || []);
       if (set.has(eventId)) { out.links.alreadyPresent++; if (row) row.linksAlreadyPresent++; } else { set.add(eventId); out.links.added++; if (row) row.linksAdded++; }
       toPatch.set(i.id, set);
@@ -227,6 +228,31 @@ export async function importEvents({ data, progress } = {}) {
     try { await data.patchEntity(COLLECTIONS.ISSUES, issueId, { eventIds: [...set].sort() }); out.written.comicIssues++; }
     catch (e) { fail(`${issueId}`, e); }
   }
+  // 3d) Membership verification (read-only): every resolvable canonical id must now be on its issue; existing links are preserved and counted; duplicates and
+  // orphan references (an eventId that is neither an active nor a retired event) are reported. One query per event (21), not per issue.
+  const activeIds = new Set(events.map(e => e.id)), retiredIds = new Set(RETIRED_EVENTS.map(r => r.id));
+  const actualOf = new Map();
+  for (const ev of events) {
+    if (!known.has(ev.id)) continue;
+    try {
+      const actual = (await data.getIssuesForEvent(ev.id)) || [];
+      actualOf.set(ev.id, actual);
+      const have2 = new Set(actual.map(i => i.id)), planned = (plan[ev.id] || []).filter(m => have.has(m.issueId));
+      for (const m of planned) if (!have2.has(m.issueId)) out.membership.mismatches.push(`${ev.id}: ${m.issueId} is planned and exists but is not linked`);
+      const plannedIds = new Set(planned.map(m => m.issueId));
+      out.membership.preserved += actual.filter(i => !plannedIds.has(i.id)).length;
+      for (const i of actual) {
+        if (new Set(i.eventIds || []).size !== (i.eventIds || []).length && !out.membership.duplicates.some(x => x.startsWith(i.id + ":"))) out.membership.duplicates.push(`${i.id}: duplicate eventIds`);
+        for (const x of i.eventIds || []) { const msg = `${i.id}: references unknown event "${x}"`; if (!activeIds.has(x) && !retiredIds.has(x) && !out.membership.orphanRefs.includes(msg)) out.membership.orphanRefs.push(msg); }
+      }
+    } catch (e) { fail(`membership check ${ev.id}`, e); }
+  }
+  for (const ev of events) {
+    const resolved = (plan[ev.id] || []).filter(m => have.has(m.issueId)).length, st = membershipState(ev.id, resolved);
+    const missingIds = (plan[ev.id] || []).filter(m => !have.has(m.issueId)).length;
+    out.membership.states.push({ eventId: ev.id, title: ev.title, state: st.state, resolved, planned: (plan[ev.id] || []).length, unresolvedRefs: missingIds, reasons: st.reasons });
+  }
+
   // 3a) Event → Story through the canonical resolver (explicit links + coreStoryIds + issue.storyIds, batched, de-duplicated). Read-only: no Story is ever created from an Issue.
   const storyOf = new Map(); // eventId → { resolved:n, unresolved:[ids], issuesWithoutStory:n }
   if (typeof data.getStoriesForEventDeep === "function") {
@@ -292,6 +318,7 @@ export async function importEvents({ data, progress } = {}) {
       issueLinksAdded: row.linksAdded, issueLinksAlreadyPresent: row.linksAlreadyPresent, unresolvedIssueRefs: row.unresolvedIssues,
       participatingSeries: new Set(iss.map(i => i.seriesId)).size, participatingStories: new Set(iss.flatMap(i => i.storyIds || [])).size,
       storiesResolved: storyOf.get(ev.id)?.resolved ?? null, storiesUnresolved: storyOf.get(ev.id)?.unresolved || [], issuesWithoutStory: storyOf.get(ev.id)?.issuesWithoutStory ?? null,
+      membership: out.membership.states.find(x => x.eventId === ev.id),
       issuesFromEditions: (plan[ev.id] || []).filter(m => m.via === "edition" && have.has(m.issueId)).length,
       characters: new Set(iss.flatMap(i => i.characterIds || [])).size, continuityContext: ev.continuityIds || [], continuityImpact: 0, relatedEvents: rl,
       readingPathIds: ev.readingPathIds || [], readingPathResolved: (ev.readingPathIds || []).length ? (ev.readingPathIds || []).every(p => rpHave.has(p)) : null,

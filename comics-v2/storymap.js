@@ -1040,7 +1040,7 @@ async function eventStructureSectionHtml(n) {
   await ensureRels([e.id]);
   const synth = linked.map(st => ({ sourceId: st.id, sourceType: "story", targetId: e.id, targetType: "event", relationshipType: "part_of_event" }));
   const charIds = uniq([...issues.flatMap(i => i.characterIds || []), ...linked.flatMap(st => st.characterIds || [])]);
-  let isRet = () => false; try { isRet = (await import("./events-data.js?v=fp3")).isRetiredEvent; } catch (_) { /* keep all */ }
+  let isRet = () => false; try { isRet = (await import("./events-data.js?v=fp4")).isRetiredEvent; } catch (_) { /* keep all */ }
   const liveRels = relsFor(e.id).filter(r => !((r.sourceId === e.id ? r.targetType : r.sourceType) === "event" && isRet(r.sourceId === e.id ? r.targetId : r.sourceId)));
   const groups = groupEventStructure(e.id, { coreStoryIds: e.coreStoryIds || [], rels: [...liveRels, ...synth], issues, characterIds: charIds });
   const COLS = { story: COLLECTIONS.STORIES, series: COLLECTIONS.SERIES, event: COLLECTIONS.EVENTS, character: COLLECTIONS.CHARACTERS, continuity: COLLECTIONS.CONTINUITIES, universe: COLLECTIONS.UNIVERSES };
@@ -1081,7 +1081,7 @@ async function continuityEventsSectionHtml(n) {
   ]);
   const seen = new Set(); const list = [];
   [...byField, ...listed].forEach(ev => { if (ev && ev.id && !seen.has(ev.id)) { seen.add(ev.id); list.push(ev); } });
-  let isRet = () => false; try { isRet = (await import("./events-data.js?v=fp3")).isRetiredEvent; } catch (_) { /* keep all */ }
+  let isRet = () => false; try { isRet = (await import("./events-data.js?v=fp4")).isRetiredEvent; } catch (_) { /* keep all */ }
   for (let k = list.length - 1; k >= 0; k--) if (isRet(list[k].id)) list.splice(k, 1); // a retired/reclassified id is never listed as an Event
   list.sort((a, b) => String(a.title).localeCompare(String(b.title)));
   list.forEach(ev => remember(COLLECTIONS.EVENTS, [ev]));
@@ -1386,7 +1386,7 @@ async function resolveRoot(type, id, entity) {
   // Event roots: comicEvents first; a legacy Story record that stood in for an event next; the bundled owner definition last (event not imported yet).
   const legacy = await getOne(COLLECTIONS.STORIES, id);
   if (legacy) return legacy;
-  try { const m = await import("./events-data.js?v=fp3"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
+  try { const m = await import("./events-data.js?v=fp4"); return m.buildEvents().find(x => x.id === id) || null; } catch (e) { return null; }
 }
 export async function openMap(type, id, opts = {}) {
   buildShell();

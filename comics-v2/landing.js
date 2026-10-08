@@ -2,7 +2,7 @@
 // Self-contained UI: no Firestore dependency on load. The explorer / data modules load only when a navigation action is tapped.
 const openExplorer = async (level, label, params = {}) => {
   try {
-    const mod = await import(`./explorer.js?v=dc37`);
+    const mod = await import(`./explorer.js?v=dc38`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     openAt([{ level, label, params }]);
@@ -39,7 +39,7 @@ function pushExplorerEntry(){
 /** Event Hub (Phase 5): generic — the id alone picks the record; the hub itself loads it (Firestore, else the bundled owner definition). Same history pattern as openNew52. */
 async function openEvent(eventId, title){
   try {
-    const mod = await import(`./explorer.js?v=dc37`);
+    const mod = await import(`./explorer.js?v=dc38`);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     pushExplorerEntry();
@@ -50,7 +50,7 @@ async function openEvent(eventId, title){
 /** New 52 Era Hub: resolves the existing New 52 continuity record (no new record is created). The lookup runs on tap only, never on load. */
 async function openNew52(){
   try {
-    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc37`), import(`./data.js?v=fp3`)]);
+    const [mod, data] = await Promise.all([import(`./explorer.js?v=dc38`), import(`./data.js?v=fp3`)]);
     const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
     if (typeof openAt !== "function") throw new Error("Comics Explorer entry point unavailable");
     const all = await data.getAllContinuities(50);
@@ -62,7 +62,7 @@ async function openNew52(){
     console.warn("[Comics landing] New 52 lookup failed — using the era list", e);
     pushExplorerEntry();
     try {
-      const mod = await import(`./explorer.js?v=dc37`);
+      const mod = await import(`./explorer.js?v=dc38`);
       const openAt = mod.openComicsExplorerAt || window.__comicsExplorer?.openAt;
       if (typeof openAt === "function") openAt([{ level: "continuityList", label: "Continuity / Era", params: {} }]);
     } catch (e2) { console.error("[Comics landing] Explorer failed to open", e2); }

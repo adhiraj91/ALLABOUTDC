@@ -796,7 +796,7 @@ const seriesByTitle=(X,t)=>X.series.find(s=>plain(s.title)===plain(t))||X.series
 // the bridge id (e.g. "transition-new52") maps to the event id through events-data.js (TRANSITION_EVENT_IDS) — never through a title match.
 async function canonicalTransition(t){
   let evId=null;
-  try{const m=await import("./events-data.js?v=fp3");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
+  try{const m=await import("./events-data.js?v=fp4");evId=(m.TRANSITION_EVENT_IDS||{})[t.id]||null;}catch(e){/* no canonical event: the recorded material is shown as recorded */}
   if(!evId)return null;
   const [r,issueDocs]=await Promise.all([safe(()=>loadEvent(evId),null),safe(()=>data.getIssuesForEvent(evId),[])]); // independent reads, one round trip
   if(!r)return null;
@@ -1159,12 +1159,12 @@ const evKind=ev=>EV_KIND[ev?.eventType]||"Event";
 const EV_UNVERIFIED={verified:"",partially_verified:"Partially verified",owner_supplied:"Owner supplied · not independently verified"};
 // The Firestore record when it exists; otherwise the bundled owner definition (events-data.js, the same one the importer writes) — labelled as such.
 // ONE semantic rule (events-data.js): an id retired/reclassified as a Story arc is never an Event here, whatever a stale comicEvents document says.
-const retiredFn=async()=>{try{const m=await import("./events-data.js?v=fp3");return m.isRetiredEvent;}catch(e){return()=>false;}};
+const retiredFn=async()=>{try{const m=await import("./events-data.js?v=fp4");return m.isRetiredEvent;}catch(e){return()=>false;}};
 async function loadEvent(id){
   if(!id)return null;
   if((await retiredFn())(id))return null;
   const ev=await data.getEntity(COLLECTIONS.EVENTS,id).catch(()=>null);if(ev)return{ev,bundled:false};  // not cached: an import made after a first look must show up
-  try{const m=await import("./events-data.js?v=fp3");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
+  try{const m=await import("./events-data.js?v=fp4");const b=m.buildEvents().find(e=>e.id===id);return b?{ev:b,bundled:true}:null;}catch(e){return null;}
 }
 const safe=async(fn,fb)=>{try{return await fn();}catch(e){console.warn("[Comics Explorer] event section unavailable",e);return fb;}};
 const byIdMap=list=>new Map((list||[]).filter(Boolean).map(x=>[x.id,x]));
@@ -1317,7 +1317,7 @@ async function fillEvent(host,ev,bundled){
 async function openStoryGraph(type,id,msgEl){
   const say=t=>{if(msgEl){msgEl.textContent=t;msgEl.hidden=!t;}};say("");
   let api=window.__comicsStoryMap;
-  if(!api?.open){try{await import("./storymap.js?v=dc5");}catch(e){console.warn("[Comics Explorer] story map module",e);}api=window.__comicsStoryMap;}
+  if(!api?.open){try{await import("./storymap.js?v=dc6");}catch(e){console.warn("[Comics Explorer] story map module",e);}api=window.__comicsStoryMap;}
   if(!api?.open){say("The Story Graph isn't available right now. Try again in a moment.");return;}
   try{await api.open(type,id);}catch(e){console.warn("[Comics Explorer] story map",e);say("The Story Graph couldn't open. Try again in a moment.");}
 }

@@ -13,8 +13,8 @@ import * as batch1 from "./seed-new52-batch1.js?v=b1c";
 import * as batch2 from "./seed-new52-batch2.js?v=b2c";
 import * as batch3 from "./seed-new52-batch3.js?v=b3b";
 import * as pending from "./seed-new52-pending.js?v=p2";
-import * as eventsSeed from "./seed-events.js?v=fp2";
-import * as eventsData from "./events-data.js?v=fp3";
+import * as eventsSeed from "./seed-events.js?v=fp4";
+import * as eventsData from "./events-data.js?v=fp4";
 
 export const COLLECTIONS = schema.COLLECTIONS;
 
